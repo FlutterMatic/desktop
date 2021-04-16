@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/utils/responsive_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -7,7 +8,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Center());
-  }
+  Widget build(BuildContext context) => ResponsiveLayout(
+        child: const Center(
+          child: Text('Home'),
+        ),
+      );
 }

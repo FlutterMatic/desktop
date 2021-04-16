@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/services/checks.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:flutter_installer/utils/responsive_widget.dart';
 import 'package:lottie/lottie.dart';
 
 class CheckStates extends StatefulWidget {
@@ -38,35 +39,35 @@ class _CheckStatesState extends State<CheckStates> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Hero(
-              tag: 'logo',
-              child: Image.asset(
-                Assets.flutterIcon,
+  Widget build(BuildContext context) => ResponsiveLayout(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Hero(
+                tag: 'logo',
+                child: Image.asset(
+                  Assets.flutterIcon,
+                  height: 0.2 * MediaQuery.of(context).size.height,
+                ),
               ),
-            ),
-            Lottie.asset('assets/lottie/searching.json'),
-            const AnimatedDefaultTextStyle(
-              duration: Duration(milliseconds: 300),
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
+              Lottie.asset('assets/lottie/searching.json',
+                  height: 0.2 * MediaQuery.of(context).size.height),
+              const AnimatedDefaultTextStyle(
+                duration: Duration(milliseconds: 300),
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+                child: Text(
+                  'Checking for pre-installed softwares, It may take a while.',
+                ),
               ),
-              child: Text(
-                'Checking for pre-installed softwares, It may take a while.',
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
