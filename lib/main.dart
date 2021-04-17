@@ -1,7 +1,9 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/screens/check_states.dart';
+import 'package:flutter_installer/screens/splash_screen.dart';
 import 'dart:ui';
+import 'package:flutter_installer/utils/constants.dart';
 
 Future<void> main() async {
   runApp(MyApp());
@@ -17,11 +19,13 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Installer',
-      home: CheckStates(),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Installer',
+        initialRoute: PageRoutes.routeHome,
+        routes: <String, WidgetBuilder>{
+          PageRoutes.routeHome: (BuildContext context) => const SplashScreen(),
+          PageRoutes.routeState: (BuildContext context) => CheckStates(),
+        },
+      );
 }

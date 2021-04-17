@@ -44,10 +44,9 @@ Widget _installedComponents() {
 }
 
 class RoundButton extends StatelessWidget {
+  RoundButton({this.size = 40, required this.onPressed});
   final double size;
   final Function() onPressed;
-
-  RoundButton({this.size = 40, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,11 @@ class RoundButton extends StatelessWidget {
       highlightElevation: 0,
       minWidth: size,
       height: size,
-      child: SizedBox(height: size, width: size, child: Icon(Icons.settings)),
+      child: SizedBox(
+        height: size,
+        width: size,
+        child: const Icon(Icons.settings),
+      ),
     );
   }
 }

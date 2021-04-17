@@ -10,7 +10,7 @@ class CheckStates extends StatefulWidget {
 }
 
 class _CheckStatesState extends State<CheckStates> {
-  Future statesCheck() async {
+  Future<void> statesCheck() async {
     CheckDependencies checkDependencies = CheckDependencies();
     try {
       await checkDependencies.checkFlutter();
@@ -18,14 +18,18 @@ class _CheckStatesState extends State<CheckStates> {
       await checkDependencies.checkVSC();
       await checkDependencies.checkVSCInsiders();
       await checkDependencies.checkAndroidStudios();
-      Navigator.push(
+      await Navigator.push(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+        MaterialPageRoute<Route<dynamic>>(
+          builder: (BuildContext context) => HomeScreen(),
+        ),
       );
     } catch (e) {
-      Navigator.push(
+      await Navigator.push(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+        MaterialPageRoute<Route<dynamic>>(
+          builder: (BuildContext context) => HomeScreen(),
+        ),
       );
     }
   }
@@ -63,7 +67,8 @@ class _CheckStatesState extends State<CheckStates> {
               style: TextStyle(
                   fontFamily: 'Inter', fontSize: 15, color: Colors.black54),
               child: Text(
-                  'Checking for pre-installed softwares. This may take a while.'),
+                'Checking for pre-installed softwares. This may take a while.',
+              ),
             ),
           ],
         ),
