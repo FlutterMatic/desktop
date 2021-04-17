@@ -10,6 +10,7 @@ bool xCode = false;
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
 const String statusIcons = 'assets/icons/status_icons';
+const String footerIcons = 'assets/icons/footer_icons';
 
 //Animations
 const String lottie = 'assets/lottie';
@@ -28,6 +29,12 @@ class Assets {
   static const String done = '$statusIcons/done.svg';
   static const String warning = '$statusIcons/warning.svg';
   static const String error = '$statusIcons/error.svg';
+
+  //Footer Icons
+  static const String gitHub = '$footerIcons/github.svg';
+  static const String twitter = '$footerIcons/twitter.svg';
+  static const String docs = '$footerIcons/docs.svg';
+  static const String dartPad = '$footerIcons/dartpad.svg';
 }
 
 class PageRoutes {

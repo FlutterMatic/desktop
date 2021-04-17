@@ -31,6 +31,7 @@ flutter:
     - assets/icons/
     - assets/icons/status_icons/
     - assets/icons/flutter_icons/
+    - assets/icons/footer_icons/
     - assets/fonts/
     - assets/fonts/Inter/
     - assets/fonts/IconsFont/
