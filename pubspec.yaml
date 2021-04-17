@@ -28,11 +28,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/status_icons/
-    - assets/flutter_icons/
+    - assets/icons/
+    - assets/icons/status_icons/
+    - assets/icons/flutter_icons/
     - assets/fonts/
     - assets/fonts/Inter/
-    - assets/icons/
     - assets/fonts/IconsFont/
     - assets/fonts/LexendDeca/
     - assets/lottie/

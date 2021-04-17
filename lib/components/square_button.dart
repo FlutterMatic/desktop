@@ -24,7 +24,7 @@ class SquareButton extends StatelessWidget {
         onPressed: onPressed,
         padding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(size > 40 ? 10 : 5)),
+            borderRadius: BorderRadius.circular(size > 40 ? 10 : 5),),
         color: color,
         elevation: 0,
         hoverElevation: 0,

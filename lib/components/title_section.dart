@@ -42,7 +42,7 @@ Widget installationStatus(InstallationStatus status, String title,
             status != InstallationStatus.done
                 ? SquareButton(
                     size: 30,
-                    icon: const Icon(Icons.download_rounded),
+                    icon: const Icon(Iconsdata.download),
                     tooltip: 'Download $title',
                     onPressed: onDownload)
                 : const SizedBox.shrink(),
@@ -53,16 +53,18 @@ Widget installationStatus(InstallationStatus status, String title,
             ? Padding(
                 padding: const EdgeInsets.only(top: 15),
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     Container(
-                      width: 2,
+                      width: 3,
                       height: 60,
                       color: status == InstallationStatus.error
                           ? kRedColor
                           : kYellowColor,
                     ),
                     const SizedBox(width: 10),
-                    Expanded(child: SelectableText(description)),
+                    Expanded(
+                      child: SelectableText(description),
+                    ),
                   ],
                 ))
             : const SizedBox.shrink(),

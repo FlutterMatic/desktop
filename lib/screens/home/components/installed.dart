@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/title_section.dart';
+import 'package:flutter_installer/utils/constants.dart';
 
 Widget installedComponents() {
   return SizedBox(
@@ -7,8 +8,8 @@ Widget installedComponents() {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        titleSection('Installed Components', const Icon(Icons.settings), () {},
-            'Settings'),
+        titleSection('Installed Components', const Icon(Iconsdata.settings),
+            () {}, 'Settings'),
         const SizedBox(height: 20),
         installationStatus(
           InstallationStatus.done,

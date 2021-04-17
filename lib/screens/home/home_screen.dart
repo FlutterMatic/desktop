@@ -25,49 +25,55 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 30, 20, 5),
+      body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                  height: 50,
-                  child: FlutterLogo(style: _flutterLogoStyle, size: 100)),
-              const SizedBox(height: 20),
-              // Installed Components
-              MediaQuery.of(context).size.width > 1000
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Installed
-                        installedComponents(),
-                        const SizedBox(width: 200),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            // Controls
-                            controls(),
-                            const SizedBox(height: 20),
-                            // Projects
-                            projects(),
-                          ],
-                        ),
-                      ],
-                    )
-                  : Column(
-                      children: <Widget>[
-                        // Installed
-                        installedComponents(),
-                        const SizedBox(height: 30),
-                        // Controls
-                        controls(),
-                        const SizedBox(height: 20),
-                        // Projects
-                        projects(),
-                      ],
-                    ),
-            ],
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 30,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                    height: 50,
+                    child: FlutterLogo(style: _flutterLogoStyle, size: 100)),
+                const SizedBox(height: 20),
+                // Installed Components
+                MediaQuery.of(context).size.width > 1000
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Installed
+                          installedComponents(),
+                          const SizedBox(width: 200),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              // Controls
+                              controls(),
+                              const SizedBox(height: 20),
+                              // Projects
+                              projects(),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: <Widget>[
+                          // Installed
+                          installedComponents(),
+                          const SizedBox(height: 30),
+                          // Controls
+                          controls(),
+                          const SizedBox(height: 20),
+                          // Projects
+                          projects(),
+                        ],
+                      ),
+              ],
+            ),
           ),
         ),
       ),
