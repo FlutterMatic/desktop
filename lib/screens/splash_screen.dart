@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/services/checks.dart';
-import 'package:flutter_installer/utils/responsive_widget.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -61,32 +60,32 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => ResponsiveLayout(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              const Spacer(),
-              const CircularProgressIndicator(),
-              const Spacer(),
-              _showText
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 300),
-                        style: const TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 15,
-                            color: Colors.black54),
-                        child: Text(
-                          _message ??
-                              'Checking for pre-installed softwares. This may take a while.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : const SizedBox(height: 50),
-            ],
-          ),
-        ),
-      );
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          const Spacer(),
+          const CircularProgressIndicator(),
+          const Spacer(),
+          _showText
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 300),
+                    style: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 15,
+                        color: Colors.black54),
+                    child: Text(
+                      _message ??
+                          'Checking for pre-installed softwares. This may take a while.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : const SizedBox(height: 50),
+        ],
+      ),
+    );
+  }
 }
