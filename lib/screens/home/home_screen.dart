@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/screens/home/components/projects.dart';
 import 'components/controls.dart';
 import 'components/installed.dart';
 
@@ -29,44 +28,40 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 30,
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                    height: 50,
-                    child: FlutterLogo(style: _flutterLogoStyle, size: 100)),
+                  height: 50,
+                  child: FlutterLogo(
+                    style: _flutterLogoStyle,
+                    size: 100,
+                  ),
+                ),
                 const SizedBox(height: 20),
                 // Installed Components
                 MediaQuery.of(context).size.width > 1000
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          // Installed
-                          installedComponents(),
+                          //Installed Components
+                          installedComponents(MediaQuery.of(context).size),
                           const Spacer(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              // Controls
-                              controls(),
-                              const SizedBox(height: 20),
-                              // Projects
-                              projects(),
-                            ],
-                          ),
+                          //Controls
+                          controls(),
                         ],
                       )
                     : Column(
                         children: <Widget>[
-                          // Installed
-                          installedComponents(),
+                          //Installed Components
+                          installedComponents(MediaQuery.of(context).size),
                           const SizedBox(height: 30),
-                          // Controls
+                          //Controls
                           controls(),
-                          const SizedBox(height: 20),
-                          // Projects
-                          projects(),
                         ],
                       ),
               ],

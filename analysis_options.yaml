@@ -4,11 +4,12 @@ analyzer:
     unused_local_variable: warning
     invalid_assignment: warning
     missing_return: error
+    annotate_overrides: error
+    always_specify_types: error
     dead_code: warning
 
 linter:
   rules:
-    annotate_overrides: true
     hash_and_equals: true
     prefer_is_not_empty: true
     avoid_print: true
@@ -25,7 +26,6 @@ linter:
     close_sinks: true
     prefer_conditional_assignment: true
     cast_nullable_to_non_nullable: true
-    always_specify_types: true
     omit_local_variable_types: false
     avoid_returning_null_for_future: true
     always_declare_return_types: true

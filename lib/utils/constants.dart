@@ -8,9 +8,8 @@ bool studioInstalled = false;
 bool xCode = false;
 
 //Assets
-const String flutterIcons = 'assets/flutter_icons';
-const String statusIcons = 'assets/status_icons';
-const String icons = 'assets/icons';
+const String flutterIcons = 'assets/icons/flutter_icons';
+const String statusIcons = 'assets/icons/status_icons';
 
 //Animations
 const String lottie = 'assets/lottie';
@@ -29,10 +28,6 @@ class Assets {
   static const String done = '$statusIcons/done.svg';
   static const String warning = '$statusIcons/warning.svg';
   static const String error = '$statusIcons/error.svg';
-
-  //Icons
-  static const String upgrade = '$icons/upgrade.svg';
-  static const String channels = '$icons/channels.svg';
 }
 
 class PageRoutes {
