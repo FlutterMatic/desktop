@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/screens/home_screen.dart';
+import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/services/checks.dart';
 import 'package:flutter_installer/utils/responsive_widget.dart';
 

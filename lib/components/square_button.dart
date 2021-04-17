@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
-class RoundButton extends StatelessWidget {
+class SquareButton extends StatelessWidget {
   final double size;
+  final Widget icon;
   final Function() onPressed;
+  final Color? color;
   final String tooltip;
-  final Widget? icon;
 
-  RoundButton({
+  SquareButton({
     this.size = 40,
-    this.icon,
+    this.color = kGreyColor,
+    required this.icon,
     required this.tooltip,
     required this.onPressed,
   });
@@ -21,8 +23,9 @@ class RoundButton extends StatelessWidget {
       child: MaterialButton(
         onPressed: onPressed,
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        color: kGreyColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(size > 40 ? 10 : 5)),
+        color: color,
         elevation: 0,
         hoverElevation: 0,
         focusElevation: 0,
@@ -32,7 +35,7 @@ class RoundButton extends StatelessWidget {
         child: SizedBox(
           height: size,
           width: size,
-          child: icon ?? const Icon(Icons.settings),
+          child: icon,
         ),
       ),
     );

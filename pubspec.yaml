@@ -32,6 +32,7 @@ flutter:
     - assets/flutter_icons/
     - assets/fonts/
     - assets/fonts/Inter/
+    - assets/icons/
     - assets/fonts/IconsFont/
     - assets/fonts/LexendDeca/
     - assets/lottie/
