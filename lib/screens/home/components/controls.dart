@@ -89,7 +89,7 @@ Widget controls() {
               Align(
                 alignment: Alignment.centerRight,
                 child: RectangleButton(
-                  width: 150,
+                  width: 110,
                   onPressed: () => launch('https://flutter.dev/docs'),
                   child: Row(
                     children: <Widget>[

@@ -29,12 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 30,
-            ),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
                     height: 50,
@@ -44,10 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 MediaQuery.of(context).size.width > 1000
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           // Installed
                           installedComponents(),
-                          const SizedBox(width: 200),
+                          const Spacer(),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
