@@ -19,7 +19,7 @@ class RoundContainer extends StatelessWidget {
     return Container(
       padding: padding,
       decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+          BoxDecoration(color: color, borderRadius: BorderRadius.circular(10),),
       child: child,
     );
   }

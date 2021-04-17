@@ -6,7 +6,7 @@ class ResponsiveLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) => Scaffold(
-          body: child,
+          body: Center(child: child),
         ),
       );
 }

@@ -24,7 +24,7 @@ class RectangleButton extends StatelessWidget {
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),),
       color: color,
       elevation: 0,
       hoverElevation: 0,
@@ -38,7 +38,7 @@ class RectangleButton extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: child,
-          )),
+          ),),
     );
   }
 }

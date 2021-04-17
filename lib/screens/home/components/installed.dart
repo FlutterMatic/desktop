@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/title_section.dart';
+import 'package:flutter_installer/utils/constants.dart';
 
-Widget installedComponents() {
+Widget installedComponents(Size size) {
   return SizedBox(
-    width: 500,
+    width: size.width > 1000 ? 0.4 * size.width : 0.7 * size.width,
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        titleSection('Installed Components', const Icon(Icons.settings), () {},
-            'Settings'),
+        titleSection('Installed Components', const Icon(Iconsdata.settings),
+            () {}, 'Settings'),
         const SizedBox(height: 20),
         installationStatus(
           InstallationStatus.done,

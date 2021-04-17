@@ -41,7 +41,7 @@ class CheckDependencies {
     }
   }
 
- Future<bool> checkAndroidStudios() async {
+  Future<bool> checkAndroidStudios() async {
     List<ProcessResult> userProfile = await shell.run('echo %USERPROFILE%');
     try {
       List<ProcessResult> appDataStudios = await shell
@@ -80,4 +80,5 @@ class CheckDependencies {
     }
   }
 
+  Future<bool> checkXCode() async => true;
 }

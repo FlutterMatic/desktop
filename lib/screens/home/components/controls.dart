@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
-import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:flutter_svg/svg.dart';
 
 Widget controls() {
   return SizedBox(
-    width: 450,
+    width: 500,
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        titleSection('Controls', const Icon(Icons.settings), () {}, 'Settings'),
+        titleSection(
+            'Controls', const Icon(Iconsdata.settings), () {}, 'Settings'),
         const SizedBox(height: 20),
         RoundContainer(
           child: Column(
@@ -25,27 +24,36 @@ Widget controls() {
                     style: TextStyle(fontSize: 18),
                   ),
                   const Spacer(),
-                  SvgPicture.asset(Assets.channels),
+                  const Icon(Iconsdata.channel),
                 ],
               ),
               const SizedBox(height: 10),
               Row(
-                children: [
-                  Container(height: 20, width: 1, color: Colors.grey),
+                children: <Widget>[
+                  Container(height: 20, width: 2, color: Colors.black),
                   const SizedBox(width: 10),
-                  const Text('Stable - Version 2.0.1',
-                      style: TextStyle(color: Colors.black54)),
+                  const Text(
+                    'Stable - Version 2.0.1',
+                    style: TextStyle(
+                      color: Colors.black54,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  SquareButton(
-                      color: kLightGreyColor,
-                      icon: const Icon(Icons.settings),
-                      tooltip: 'Settings',
-                      onPressed: () {}),
+                  RectangleButton(
+                    onPressed: () {},
+                    child: Row(
+                      children: <Widget>[
+                        const Text('Channel'),
+                        const Spacer(),
+                        const Icon(Iconsdata.changeChannel, size: 20),
+                      ],
+                    ),
+                  ),
                   const SizedBox(width: 10),
                   RectangleButton(
                     onPressed: () {},
@@ -53,7 +61,7 @@ Widget controls() {
                       children: <Widget>[
                         const Text('Upgrade'),
                         const Spacer(),
-                        SvgPicture.asset(Assets.upgrade),
+                        const Icon(Iconsdata.rocket, size: 20),
                       ],
                     ),
                   ),
@@ -80,13 +88,12 @@ Widget controls() {
               Align(
                 alignment: Alignment.centerRight,
                 child: RectangleButton(
-                  width: 150,
                   onPressed: () {},
                   child: Row(
                     children: <Widget>[
-                      const Text('Open Examples'),
+                      const Text('Examples'),
                       const Spacer(),
-                      const Icon(Icons.open_in_new_rounded, size: 20),
+                      const Icon(Iconsdata.examples, size: 20),
                     ],
                   ),
                 ),

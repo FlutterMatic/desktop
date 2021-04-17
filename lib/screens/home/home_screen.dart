@@ -24,38 +24,48 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 30, 20, 5),
+      body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 30,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
                   height: 50,
-                  child: FlutterLogo(style: _flutterLogoStyle, size: 100)),
-              const SizedBox(height: 20),
-              // Installed Components
-              MediaQuery.of(context).size.width > 1050
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //Installed Components
-                        installedComponents(),
-                        const Spacer(),
-                        //Controls
-                        controls(),
-                      ],
-                    )
-                  : Column(
-                      children: <Widget>[
-                        //Installed Components
-                        installedComponents(),
-                        const SizedBox(height: 30),
-                        //Controls
-                        controls(),
-                      ],
-                    ),
-            ],
+                  child: FlutterLogo(
+                    style: _flutterLogoStyle,
+                    size: 100,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Installed Components
+                MediaQuery.of(context).size.width > 1000
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //Installed Components
+                          installedComponents(MediaQuery.of(context).size),
+                          const Spacer(),
+                          //Controls
+                          controls(),
+                        ],
+                      )
+                    : Column(
+                        children: <Widget>[
+                          //Installed Components
+                          installedComponents(MediaQuery.of(context).size),
+                          const SizedBox(height: 30),
+                          //Controls
+                          controls(),
+                        ],
+                      ),
+              ],
+            ),
           ),
         ),
       ),
