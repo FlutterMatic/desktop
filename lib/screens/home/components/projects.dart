@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
+import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -94,11 +97,36 @@ class _ProjectTileState extends State<ProjectTile> {
                 ),
               ),
               _hovered
-                  ? SquareButton(
-                      icon: const Icon(Icons.more_vert_rounded),
-                      onPressed: widget.onOptions,
-                      color: kLightGreyColor,
+                  ? PopupMenuButton(
+                      color: kGreyColor,
                       tooltip: 'Options',
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                        const PopupMenuItem(
+                          child: Text('Open'),
+                        ),
+                        PopupMenuItem(
+                          child: Text(
+                            'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
+                          ),
+                        ),
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              const Text('Delete'),
+                              const Spacer(),
+                              const Icon(Icons.delete, color: kRedColor),
+                            ],
+                          ),
+                        ),
+                      ],
+                      child: RoundContainer(
+                        radius: 5,
+                        height: 35,
+                        width: 35,
+                        padding: EdgeInsets.zero,
+                        color: kLightGreyColor,
+                        child: const Icon(Icons.more_vert_rounded),
+                      ),
                     )
                   : const SizedBox.shrink(),
             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/title_section.dart';
+import 'package:flutter_installer/screens/home/components/controls.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget installedComponents() {
@@ -36,6 +37,7 @@ Widget installedComponents() {
             'If you need to use an Android Emulator, you will need to have Android Studio installed on your machine with all of it\'s components.',
             () {},
           ),
+          examplesTile(),
         ],
       ),
     ),

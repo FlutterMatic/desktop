@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Installer',
         initialRoute: PageRoutes.routeHome,
         routes: <String, WidgetBuilder>{
           PageRoutes.routeHome: (BuildContext context) => const SplashScreen(),

@@ -33,19 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 30,
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(
                       height: 50,
-                      child: FlutterLogo(
-                        style: _flutterLogoStyle,
-                        size: 100,
-                      ),
+                      child: FlutterLogo(style: _flutterLogoStyle, size: 100),
                     ),
                     const SizedBox(height: 20),
                     // Installed Components

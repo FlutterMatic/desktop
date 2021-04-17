@@ -60,14 +60,32 @@ Widget _controlOptions() {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                RectangleButton(
-                  onPressed: () {},
-                  child: Row(
-                    children: <Widget>[
-                      const Text('Channel'),
-                      const Spacer(),
-                      const Icon(Iconsdata.changeChannel, size: 20),
-                    ],
+                PopupMenuButton(
+                  tooltip: 'Switch Channels',
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                    const PopupMenuItem(
+                      child: Text('Master'),
+                    ),
+                    const PopupMenuItem(
+                      child: Text('Beta'),
+                    ),
+                    const PopupMenuItem(
+                      child: Text('Dev'),
+                    ),
+                    const PopupMenuItem(
+                      child: Text('Stable - Current'),
+                    ),
+                  ],
+                  child: RoundContainer(
+                    radius: 5,
+                    color: kLightGreyColor,
+                    child: Row(
+                      children: <Widget>[
+                        const Text('Channel'),
+                        const SizedBox(width: 10),
+                        const Icon(Iconsdata.changeChannel, size: 20),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -86,38 +104,40 @@ Widget _controlOptions() {
           ],
         ),
       ),
-      const SizedBox(height: 30),
-      RoundContainer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text(
-              'Examples',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            const SelectableText(
-              'Interested in learning more about Flutter? There is a wide collection of open-source examples! You can check their source code in GitHub and learn new things you can do with Flutter.',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-            ),
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerRight,
-              child: RectangleButton(
-                width: 110,
-                onPressed: () => launch('https://flutter.dev/docs'),
-                child: Row(
-                  children: <Widget>[
-                    const Text('Examples'),
-                    const Spacer(),
-                    const Icon(Iconsdata.examples, size: 20),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     ],
+  );
+}
+
+Widget examplesTile() {
+  return RoundContainer(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Examples',
+          style: TextStyle(fontSize: 18),
+        ),
+        const SizedBox(height: 10),
+        const SelectableText(
+          'Interested in learning more about Flutter? There is a wide collection of open-source examples! You can check their source code in GitHub and learn new things you can do with Flutter.',
+          style: TextStyle(fontSize: 14, color: Colors.black54),
+        ),
+        const SizedBox(height: 20),
+        Align(
+          alignment: Alignment.centerRight,
+          child: RectangleButton(
+            width: 110,
+            onPressed: () => launch('https://flutter.github.io/samples/'),
+            child: Row(
+              children: <Widget>[
+                const Text('Examples'),
+                const Spacer(),
+                const Icon(Iconsdata.examples, size: 20),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }

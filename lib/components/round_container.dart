@@ -3,12 +3,16 @@ import 'package:flutter_installer/utils/constants.dart';
 
 class RoundContainer extends StatelessWidget {
   final Widget child;
+  final double? height;
+  final double? width;
   final double? radius;
   final Color? color;
   final EdgeInsets? padding;
 
   RoundContainer({
     required this.child,
+    this.height,
+    this.width,
     this.radius,
     this.color = kGreyColor,
     this.padding = const EdgeInsets.all(10),
@@ -17,9 +21,13 @@ class RoundContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: height,
+      width: width,
       padding: padding,
-      decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(10),),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(radius ?? 10),
+      ),
       child: child,
     );
   }
