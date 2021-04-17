@@ -10,19 +10,24 @@ class CheckStates extends StatefulWidget {
 }
 
 class _CheckStatesState extends State<CheckStates> {
-  Future<void> statesCheck() async {
+  Future statesCheck() async {
     CheckDependencies checkDependencies = CheckDependencies();
-    flutterExist = await checkDependencies.checkFlutter();
-    javaInstalled = await checkDependencies.checkJava();
-    vscInstalled = await checkDependencies.checkVSC();
-    vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
-    studioInstalled = await checkDependencies.checkAndroidStudios();
-    await Navigator.push(
-      context,
-      MaterialPageRoute<Widget>(
-        builder: (BuildContext context) => HomeScreen(),
-      ),
-    );
+    try {
+      await checkDependencies.checkFlutter();
+      await checkDependencies.checkJava();
+      await checkDependencies.checkVSC();
+      await checkDependencies.checkVSCInsiders();
+      await checkDependencies.checkAndroidStudios();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      );
+    } catch (e) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      );
+    }
   }
 
   @override
@@ -49,20 +54,16 @@ class _CheckStatesState extends State<CheckStates> {
               tag: 'logo',
               child: Image.asset(
                 Assets.flutterIcon,
+                height: 100,
               ),
             ),
-            Lottie.asset('assets/lottie/searching.json'),
+            Lottie.asset('assets/lottie/searching.json', height: 300),
             const AnimatedDefaultTextStyle(
               duration: Duration(milliseconds: 300),
               style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
+                  fontFamily: 'Inter', fontSize: 15, color: Colors.black54),
               child: Text(
-                'Checking for pre-installed softwares, It may take a while.',
-              ),
+                  'Checking for pre-installed softwares. This may take a while.'),
             ),
           ],
         ),
