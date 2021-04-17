@@ -1,6 +1,5 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/screens/check_states.dart';
 import 'package:flutter_installer/screens/splash_screen.dart';
 import 'dart:ui';
 import 'package:flutter_installer/utils/constants.dart';
@@ -8,12 +7,11 @@ import 'package:flutter_installer/utils/constants.dart';
 Future<void> main() async {
   runApp(MyApp());
   doWhenWindowReady(() {
-    Size initialSize =
-        Size(window.physicalSize.width / 2, window.physicalSize.height / 2);
-    appWindow.minSize = const Size(200, 500);
-    appWindow.size = initialSize;
+    appWindow.minSize = const Size(500, 500);
     appWindow.alignment = Alignment.center;
+    appWindow.title = 'Flutter Installer';
     appWindow.show();
+    appWindow.maximize();
   });
 }
 
@@ -25,7 +23,6 @@ class MyApp extends StatelessWidget {
         initialRoute: PageRoutes.routeHome,
         routes: <String, WidgetBuilder>{
           PageRoutes.routeHome: (BuildContext context) => const SplashScreen(),
-          PageRoutes.routeState: (BuildContext context) => CheckStates(),
         },
       );
 }

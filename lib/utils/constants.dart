@@ -6,7 +6,7 @@ bool vscInstalled = false;
 bool vscInsidersInstalled = false;
 bool studioInstalled = false;
 
-const String images = 'assets/images';
+const String flutterIcons = 'assets/flutter_icons';
 const String lottie = 'assets/lottie';
 
 class LottieAssets {
@@ -14,17 +14,19 @@ class LottieAssets {
 }
 
 class Assets {
-  static const String flutterIcon = '$images/flutter_icon.png';
+  static const String development = '$flutterIcons/icon_development.svg';
+  static const String performance = '$flutterIcons/icon_performance.svg';
+  static const String ui = '$flutterIcons/icon_ui.svg';
+
 }
 
 class PageRoutes {
   static const String routeHome = '/';
-  static const String routeState = '/state';
   static const String routeInstallScreen = '/installScreen';
 }
 
-const kRedColor = Color(0xffDE4629);
-const kYellowColor = Color(0xffFFBA00);
-const kGreenColor = Color(0xff379C81);
-const kGreyColor = Color(0xffF1F1F1);
-const kDarkColor = Color(0xff2F2F2F);
+const Color kRedColor = Color(0xffDE4629);
+const Color kYellowColor = Color(0xffFFBA00);
+const Color kGreenColor = Color(0xff379C81);
+const Color kGreyColor = Color(0xffF1F1F1);
+const Color kDarkColor = Color(0xff2F2F2F);

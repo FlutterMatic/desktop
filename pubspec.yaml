@@ -28,9 +28,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/
-    - assets/images/
     - assets/status_icons/
+    - assets/flutter_icons/
     - assets/fonts/
     - assets/fonts/Inter/
     - assets/fonts/IconsFont/

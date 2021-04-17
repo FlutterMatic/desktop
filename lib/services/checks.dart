@@ -41,7 +41,7 @@ class CheckDependencies {
     }
   }
 
-  Future<bool> checkAndroidStudios() async {
+ Future<bool> checkAndroidStudios() async {
     List<ProcessResult> userProfile = await shell.run('echo %USERPROFILE%');
     try {
       List<ProcessResult> appDataStudios = await shell
@@ -55,21 +55,29 @@ class CheckDependencies {
         return false;
       }
     } on ShellException catch (err) {
-      if (err.result!.stderr.toString().contains('File Not Found')) {
-        List<ProcessResult> studios = await shell
-            .cd('C:/Program\ Files/Android/Android\ Studio/')
-            .run('dir /b /s /p studio.exe');
-        if (studios[0].stdout.toString().contains('\\bin\\studio.exe') &&
-            (studios[0].stdout.toString().contains('Android Studio') ||
-                studios[0].stdout.toString().contains('AndroidStudio'))) {
-          return true;
-        } else {
+      if (err.message.toString().contains('The directory name is invalid.')) {
+        try {
+          List<ProcessResult> studios = await shell
+              .cd('C:/Program\ Files/Android/Android\ Studio/')
+              .run('dir /b /s /p studio.exe');
+          if (studios[0].stdout.toString().contains('\\bin\\studio.exe') &&
+              (studios[0].stdout.toString().contains('Android Studio') ||
+                  studios[0].stdout.toString().contains('AndroidStudio'))) {
+            return true;
+          } else {
+            return false;
+          }
+        } on ShellException catch (_) {
+          return false;
+        } catch (e) {
           return false;
         }
+      } else {
+        return false;
       }
-      throw err.result!.stderr;
     } catch (e) {
-      throw e.toString();
+      return false;
     }
   }
+
 }

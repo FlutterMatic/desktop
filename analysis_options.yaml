@@ -17,9 +17,9 @@ linter:
     camel_case_types: true
     empty_constructor_bodies: true
     prefer_const_constructors: true
-    sort_constructors_first: true
+    sort_constructors_first: false
     prefer_single_quotes: true
-    lines_longer_than_80_chars: true
+    lines_longer_than_80_chars: false
     avoid_empty_else: true
     cancel_subscriptions: true
     close_sinks: true
@@ -33,8 +33,8 @@ linter:
     avoid_returning_null_for_void: true
     avoid_returning_this: true
     avoid_void_async: true
-    prefer_expression_function_bodies: true
+    prefer_expression_function_bodies: false
     unnecessary_await_in_return: true
     unnecessary_final: true
-    sort_pub_dependencies: true
+    sort_pub_dependencies: false
     package_names: true
