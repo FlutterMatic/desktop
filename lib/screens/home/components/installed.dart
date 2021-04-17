@@ -5,7 +5,7 @@ Widget installedComponents() {
   return SizedBox(
     width: 500,
     child: Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         titleSection('Installed Components', const Icon(Icons.settings), () {},
             'Settings'),

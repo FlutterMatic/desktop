@@ -61,30 +61,32 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          const Spacer(),
-          const CircularProgressIndicator(),
-          const Spacer(),
-          _showText
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 30),
-                  child: AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 300),
-                    style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 15,
-                        color: Colors.black54),
-                    child: Text(
-                      _message ??
-                          'Checking for pre-installed softwares. This may take a while.',
-                      textAlign: TextAlign.center,
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            const Spacer(),
+            const CircularProgressIndicator(),
+            const Spacer(),
+            _showText
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 300),
+                      style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 15,
+                          color: Colors.black54),
+                      child: Text(
+                        _message ??
+                            'Checking for pre-installed softwares. This may take a while.',
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                )
-              : const SizedBox(height: 50),
-        ],
+                  )
+                : const SizedBox(height: 50),
+          ],
+        ),
       ),
     );
   }

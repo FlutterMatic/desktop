@@ -5,24 +5,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 Widget titleSection(
     String title, Widget icon, Function() onPressed, String tooltip) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-                fontSize: 25, color: kDarkColor, fontWeight: FontWeight.w500),
-          ),
-          const Spacer(),
-          SquareButton(
-            icon: icon,
-            tooltip: tooltip,
-            onPressed: onPressed,
-          ),
-        ],
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Text(
+        title,
+        style: const TextStyle(
+            fontSize: 25, color: kDarkColor, fontWeight: FontWeight.w500),
       ),
+      const Spacer(),
+      SquareButton(icon: icon, tooltip: tooltip, onPressed: onPressed),
     ],
   );
 }

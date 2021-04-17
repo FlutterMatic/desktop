@@ -5,12 +5,13 @@ import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget controls() {
   return SizedBox(
     width: 450,
     child: Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         titleSection('Controls', const Icon(Icons.settings), () {}, 'Settings'),
         const SizedBox(height: 20),
@@ -81,7 +82,7 @@ Widget controls() {
                 alignment: Alignment.centerRight,
                 child: RectangleButton(
                   width: 150,
-                  onPressed: () {},
+                  onPressed: () => launch('https://flutter.dev/docs'),
                   child: Row(
                     children: <Widget>[
                       const Text('Open Examples'),

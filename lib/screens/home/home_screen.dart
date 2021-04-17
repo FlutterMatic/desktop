@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/screens/home/components/projects.dart';
 import 'components/controls.dart';
 import 'components/installed.dart';
 
@@ -35,24 +36,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FlutterLogo(style: _flutterLogoStyle, size: 100)),
               const SizedBox(height: 20),
               // Installed Components
-              MediaQuery.of(context).size.width > 1050
+              MediaQuery.of(context).size.width > 1000
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //Installed Components
+                        // Installed
                         installedComponents(),
-                        const Spacer(),
-                        //Controls
-                        controls(),
+                        const SizedBox(width: 200),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            // Controls
+                            controls(),
+                            const SizedBox(height: 20),
+                            // Projects
+                            projects(),
+                          ],
+                        ),
                       ],
                     )
                   : Column(
                       children: <Widget>[
-                        //Installed Components
+                        // Installed
                         installedComponents(),
                         const SizedBox(height: 30),
-                        //Controls
+                        // Controls
                         controls(),
+                        const SizedBox(height: 20),
+                        // Projects
+                        projects(),
                       ],
                     ),
             ],
