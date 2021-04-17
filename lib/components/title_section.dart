@@ -41,7 +41,7 @@ Widget installationStatus(InstallationStatus status, String title,
             const Spacer(),
             status != InstallationStatus.done
                 ? SquareButton(
-                    size: 30,
+                    size: 35,
                     icon: const Icon(Iconsdata.download, size: 20),
                     tooltip: 'Download $title',
                     onPressed: onDownload)

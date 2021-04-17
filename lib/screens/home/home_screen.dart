@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
               vertical: 30,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
                   height: 50,
@@ -44,21 +44,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Installed Components
-                MediaQuery.of(context).size.width > 1000
+                MediaQuery.of(context).size.width > 1070
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           //Installed Components
-                          installedComponents(MediaQuery.of(context).size),
-                          const Spacer(),
+                          Expanded(child: installedComponents()),
+                          const SizedBox(width: 150),
                           //Controls
                           controls(),
+                          // Spacer(),
                         ],
                       )
                     : Column(
                         children: <Widget>[
                           //Installed Components
-                          installedComponents(MediaQuery.of(context).size),
+                          installedComponents(),
                           const SizedBox(height: 30),
                           //Controls
                           controls(),
