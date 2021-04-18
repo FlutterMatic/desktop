@@ -9,15 +9,13 @@ import 'package:url_launcher/url_launcher.dart';
 Widget controls() {
   return SizedBox(
     width: 500,
-    child: Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _controlOptions(),
-          const SizedBox(height: 20),
-          projects(),
-        ],
-      ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _controlOptions(),
+        const SizedBox(height: 20),
+        projects(),
+      ],
     ),
   );
 }
@@ -48,9 +46,9 @@ Widget _controlOptions() {
               children: <Widget>[
                 Container(height: 20, width: 2, color: Colors.black),
                 const SizedBox(width: 10),
-                const Text(
-                  'Stable - Version 2.0.1',
-                  style: TextStyle(
+                Text(
+                  '${flutterChannel![0].toUpperCase() + flutterChannel!.substring(1)} - Version $flutterVersion',
+                  style: const TextStyle(
                     color: Colors.black54,
                   ),
                 ),

@@ -1,6 +1,8 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/screens/splash_screen.dart';
+import 'package:flutter_installer/screens/states_check.dart';
 import 'dart:ui';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -19,9 +21,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: PageRoutes.routeHome,
+        initialRoute: PageRoutes.routeSplash,
         routes: <String, WidgetBuilder>{
-          PageRoutes.routeHome: (BuildContext context) => const SplashScreen(),
+          PageRoutes.routeSplash: (BuildContext context) =>
+              const SplashScreen(),
+          PageRoutes.routeState: (BuildContext context) => CheckStates(),
+          PageRoutes.routeHome: (BuildContext context) => HomeScreen(),
         },
       );
 }
