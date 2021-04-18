@@ -56,12 +56,14 @@ Widget installationStatus(InstallationStatus status, String title,
                   children: <Widget>[
                     Container(
                       width: 3,
-                      height: 60,
-                      color: status == InstallationStatus.error
-                          ? kRedColor
-                          : kYellowColor,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: status == InstallationStatus.error
+                              ? kRedColor
+                              : kYellowColor),
+                      height: 40,
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: SelectableText(description),
                     ),

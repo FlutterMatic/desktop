@@ -22,26 +22,29 @@ class SquareButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: size, maxWidth: size),
-      child: Tooltip(
-        message: tooltip!,
-        child: MaterialButton(
-          onPressed: onPressed,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(size > 40 ? 10 : 5),
-          ),
-          color: color,
-          elevation: 0,
-          hoverElevation: 0,
-          focusElevation: 0,
-          highlightElevation: 0,
-          minWidth: size,
-          height: size,
-          child: Padding(
-            padding: padding,
-            child: SizedBox(height: size, width: size, child: icon),
-          ),
-        ),
+      child: tooltip == null
+          ? _button()
+          : Tooltip(message: tooltip!, child: _button()),
+    );
+  }
+
+  Widget _button() {
+    return MaterialButton(
+      onPressed: onPressed,
+      padding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(size > 40 ? 10 : 5),
+      ),
+      color: color,
+      elevation: 0,
+      hoverElevation: 0,
+      focusElevation: 0,
+      highlightElevation: 0,
+      minWidth: size,
+      height: size,
+      child: Padding(
+        padding: padding,
+        child: SizedBox(height: size, width: size, child: icon),
       ),
     );
   }

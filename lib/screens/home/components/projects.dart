@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_template.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
-import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'dart:io';
 
 Widget projects() {
   return SizedBox(
@@ -17,24 +16,18 @@ Widget projects() {
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Show options onPressed
-          onOptions: () {},
           //TODO: Open file onPressed
           onPressed: () {},
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Show options onPressed
-          onOptions: () {},
           //TODO: Open file onPressed
           onPressed: () {},
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Show options onPressed
-          onOptions: () {},
           //TODO: Open file onPressed
           onPressed: () {},
         ),
@@ -47,13 +40,12 @@ class ProjectTile extends StatefulWidget {
   final String fileName;
   final String? lastEdit;
   final Function() onPressed;
-  final Function() onOptions;
 
-  ProjectTile(
-      {required this.fileName,
-      required this.onPressed,
-      required this.onOptions,
-      this.lastEdit});
+  ProjectTile({
+    required this.fileName,
+    required this.onPressed,
+    this.lastEdit,
+  });
 
   @override
   _ProjectTileState createState() => _ProjectTileState();
@@ -67,6 +59,7 @@ class _ProjectTileState extends State<ProjectTile> {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: MouseRegion(
+        onEnter: (event) => setState(() => _hovered = false),
         onHover: (event) => setState(() => _hovered = true),
         onExit: (event) => setState(() => _hovered = false),
         child: RectangleButton(
@@ -98,11 +91,24 @@ class _ProjectTileState extends State<ProjectTile> {
               ),
               _hovered
                   ? PopupMenuButton(
-                      color: kGreyColor,
                       tooltip: 'Options',
                       itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                        const PopupMenuItem(
-                          child: Text('Open'),
+                        const PopupMenuItem(child: Text('Open')),
+                        PopupMenuItem(
+                          child: GestureDetector(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => OpenOptionsDialog(),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('Open with'),
+                                const Spacer(),
+                                const Icon(Icons.arrow_forward_ios_rounded,
+                                    size: 15),
+                              ],
+                            ),
+                          ),
                         ),
                         PopupMenuItem(
                           child: Text(
@@ -123,8 +129,7 @@ class _ProjectTileState extends State<ProjectTile> {
                         radius: 5,
                         height: 35,
                         width: 35,
-                        padding: EdgeInsets.zero,
-                        color: kLightGreyColor,
+                        padding: const EdgeInsets.all(5),
                         child: const Icon(Icons.more_vert_rounded),
                       ),
                     )
@@ -132,6 +137,17 @@ class _ProjectTileState extends State<ProjectTile> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class OpenOptionsDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        children: [],
       ),
     );
   }
