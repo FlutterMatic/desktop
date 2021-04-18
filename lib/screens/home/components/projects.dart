@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
+import 'package:flutter_installer/components/dialog_templates/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/open_options.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'dart:io';
 
-Widget projects() {
+Widget projects(BuildContext context) {
   return SizedBox(
     width: 500,
     child: Column(
       children: <Widget>[
-        titleSection('Projects', const Icon(Icons.add_rounded), () {},
+        titleSection(
+            'Projects',
+            const Icon(Icons.add_rounded),
+            () => showDialog(
+                  context: context,
+                  builder: (_) => NewProjectDialog(),
+                ),
             'New Flutter Project'),
         ProjectTile(
           fileName: 'flutter_tooltip',

@@ -6,6 +6,7 @@ class RoundContainer extends StatelessWidget {
   final double? height;
   final double? width;
   final double? radius;
+  final Color? borderColor;
   final Color? color;
   final EdgeInsets? padding;
 
@@ -14,6 +15,7 @@ class RoundContainer extends StatelessWidget {
     this.height,
     this.width,
     this.radius,
+    this.borderColor = Colors.transparent,
     this.color = kGreyColor,
     this.padding = const EdgeInsets.all(10),
   });
@@ -26,6 +28,7 @@ class RoundContainer extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: color,
+        border: Border.all(color: borderColor!, width: 1),
         borderRadius: BorderRadius.circular(radius ?? 10),
       ),
       child: child,

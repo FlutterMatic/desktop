@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     controls(context),
                                     const SizedBox(height: 20),
-                                    projects(),
+                                    projects(context),
                                   ],
                                 ),
                               ],
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //Controls
                                 controls(context),
                                 const SizedBox(height: 30),
-                                projects(),
+                                projects(context),
                               ],
                             ),
                     ],
