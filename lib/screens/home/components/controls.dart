@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/button_list.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
 import 'package:flutter_installer/components/dialog_templates/change_channel.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
@@ -36,9 +34,11 @@ Widget controls(BuildContext context) {
                 children: <Widget>[
                   Container(height: 20, width: 2, color: Colors.black),
                   const SizedBox(width: 10),
-                  const Text(
-                    'Stable - Version 2.0.1',
-                    style: TextStyle(
+                  Text(
+                    flutterExist
+                        ? '${flutterChannel![0].toUpperCase() + flutterChannel!.substring(1)} - Version $flutterVersion'
+                        : 'Install flutter first',
+                    style: const TextStyle(
                       color: Colors.black54,
                     ),
                   ),
@@ -122,4 +122,4 @@ Widget examplesTile() {
   );
 }
 
-enum FlutterChannel { master, beta, stable, dev }
+enum FlutterChannel { beta, stable, dev }

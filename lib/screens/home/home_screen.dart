@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/screens/home/components/projects.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'components/controls.dart';
 import 'components/installed.dart';
@@ -90,37 +89,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     SquareButton(
-                      padding: const EdgeInsets.all(10),
-                      icon: SvgPicture.asset(Assets.gitHub),
+                      icon: const Icon(Iconsdata.github),
                       tooltip: 'GitHub',
                       onPressed: () => launch('https://www.github.com'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      padding: const EdgeInsets.all(10),
-                      icon: SvgPicture.asset(Assets.twitter),
+                      icon: const Icon(Iconsdata.twitter),
                       tooltip: 'Twitter',
                       onPressed: () => launch('https://www.twitter.com'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      padding: const EdgeInsets.all(10),
-                      icon: SvgPicture.asset(Assets.dartPad),
+                      icon: const Icon(Iconsdata.dartpad),
                       tooltip: 'DartPad',
                       onPressed: () => launch('https://www.dartpad.dev/'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      padding: const EdgeInsets.all(10),
-                      icon: SvgPicture.asset(Assets.docs),
+                      icon: const Icon(Iconsdata.docs),
                       tooltip: 'Docs',
                       onPressed: () => launch('https://flutter.dev/docs'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      padding: const EdgeInsets.all(5),
-                      icon: const Icon(Icons.info_outline_rounded),
-                      tooltip: 'Credits',
+                      icon: const Icon(Iconsdata.info),
+                      tooltip: 'About',
                       onPressed: () {},
                     ),
                   ],

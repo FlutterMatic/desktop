@@ -7,6 +7,8 @@ bool vscInsidersInstalled = false;
 bool studioInstalled = false;
 bool xCode = false;
 
+String? flutterVersion, flutterChannel, codeVersion, javaVersion;
+
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
 const String statusIcons = 'assets/icons/status_icons';
@@ -17,6 +19,7 @@ const String lottie = 'assets/lottie';
 
 class LottieAssets {
   static const String folder = '$lottie/folder.json';
+  static const String searching = '$lottie/searching.json';
 }
 
 class Assets {
@@ -24,6 +27,7 @@ class Assets {
   static const String development = '$flutterIcons/icon_development.svg';
   static const String performance = '$flutterIcons/icon_performance.svg';
   static const String ui = '$flutterIcons/icon_ui.svg';
+  static const String flutterIcon = 'assets/icons/flutter_icon.png';
 
   //Status Icons
   static const String done = '$statusIcons/done.svg';
@@ -38,8 +42,10 @@ class Assets {
 }
 
 class PageRoutes {
-  static const String routeHome = '/';
+  static const String routeSplash = '/';
   static const String routeInstallScreen = '/installScreen';
+  static const String routeState = '/statesCheck';
+  static const String routeHome = '/home';
 }
 
 const String _iconName = 'IconsFont';
@@ -51,6 +57,11 @@ class Iconsdata {
   static const IconData rocket = IconData(0xec45, fontFamily: _iconName);
   static const IconData examples = IconData(0xeb39, fontFamily: _iconName);
   static const IconData changeChannel = IconData(0xebc7, fontFamily: _iconName);
+  static const IconData github = IconData(0xec1c, fontFamily: _iconName);
+  static const IconData twitter = IconData(0xec27, fontFamily: _iconName);
+  static const IconData info = IconData(0xeac5, fontFamily: _iconName);
+  static const IconData docs = IconData(0xeb67, fontFamily: _iconName);
+  static const IconData dartpad = IconData(0xeb0f, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);

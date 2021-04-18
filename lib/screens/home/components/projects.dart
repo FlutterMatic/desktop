@@ -98,7 +98,6 @@ class _ProjectTileState extends State<ProjectTile> {
               _hovered
                   ? SquareButton(
                       tooltip: 'Options',
-                      padding: const EdgeInsets.all(5),
                       onPressed: () {
                         showDialog(
                           context: context,

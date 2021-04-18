@@ -7,11 +7,9 @@ class SquareButton extends StatelessWidget {
   final Function() onPressed;
   final Color? color;
   final String? tooltip;
-  final EdgeInsets padding;
 
   SquareButton({
     this.size = 40,
-    this.padding = EdgeInsets.zero,
     this.color = kGreyColor,
     this.tooltip,
     required this.icon,
@@ -42,9 +40,12 @@ class SquareButton extends StatelessWidget {
       highlightElevation: 0,
       minWidth: size,
       height: size,
-      child: Padding(
-        padding: padding,
-        child: SizedBox(height: size, width: size, child: icon),
+      child: Center(
+        child: SizedBox(
+          height: size,
+          width: size,
+          child: icon,
+        ),
       ),
     );
   }

@@ -39,7 +39,6 @@ class ChangeChannelDialog extends StatelessWidget {
             onPressed: (val) {},
             defaultValue: 'Stable',
             options: [
-              'Master',
               'Stable',
               'Beta',
               'Dev',
