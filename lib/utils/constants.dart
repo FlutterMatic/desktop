@@ -48,14 +48,20 @@ class PageRoutes {
   static const String routeHome = '/home';
 }
 
+const String _iconName = 'IconsFont';
+
 class Iconsdata {
-  static const IconData settings = IconData(0xeb20, fontFamily: 'IconsFont');
-  static const IconData download = IconData(0xea96, fontFamily: 'IconsFont');
-  static const IconData channel = IconData(0xeb9d, fontFamily: 'IconsFont');
-  static const IconData rocket = IconData(0xec45, fontFamily: 'IconsFont');
-  static const IconData examples = IconData(0xeb39, fontFamily: 'IconsFont');
-  static const IconData changeChannel =
-      IconData(0xebc7, fontFamily: 'IconsFont');
+  static const IconData settings = IconData(0xeb20, fontFamily: _iconName);
+  static const IconData download = IconData(0xea96, fontFamily: _iconName);
+  static const IconData channel = IconData(0xeb9d, fontFamily: _iconName);
+  static const IconData rocket = IconData(0xec45, fontFamily: _iconName);
+  static const IconData examples = IconData(0xeb39, fontFamily: _iconName);
+  static const IconData changeChannel = IconData(0xebc7, fontFamily: _iconName);
+  static const IconData github = IconData(0xec1c, fontFamily: _iconName);
+  static const IconData twitter = IconData(0xec27, fontFamily: _iconName);
+  static const IconData info = IconData(0xeac5, fontFamily: _iconName);
+  static const IconData docs = IconData(0xeb67, fontFamily: _iconName);
+  static const IconData dartpad = IconData(0xeb0f, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);

@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/open_options.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/round_container.dart';
+import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -16,24 +15,18 @@ Widget projects() {
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Show options onPressed
-          onOptions: () {},
           //TODO: Open file onPressed
           onPressed: () {},
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Show options onPressed
-          onOptions: () {},
           //TODO: Open file onPressed
           onPressed: () {},
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Show options onPressed
-          onOptions: () {},
           //TODO: Open file onPressed
           onPressed: () {},
         ),
@@ -46,13 +39,12 @@ class ProjectTile extends StatefulWidget {
   final String fileName;
   final String? lastEdit;
   final Function() onPressed;
-  final Function() onOptions;
 
-  ProjectTile(
-      {required this.fileName,
-      required this.onPressed,
-      required this.onOptions,
-      this.lastEdit});
+  ProjectTile({
+    required this.fileName,
+    required this.onPressed,
+    this.lastEdit,
+  });
 
   @override
   _ProjectTileState createState() => _ProjectTileState();
@@ -66,6 +58,7 @@ class _ProjectTileState extends State<ProjectTile> {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: MouseRegion(
+        onEnter: (event) => setState(() => _hovered = false),
         onHover: (event) => setState(() => _hovered = true),
         onExit: (event) => setState(() => _hovered = false),
         child: RectangleButton(
@@ -96,36 +89,15 @@ class _ProjectTileState extends State<ProjectTile> {
                 ),
               ),
               _hovered
-                  ? PopupMenuButton(
-                      color: kGreyColor,
+                  ? SquareButton(
                       tooltip: 'Options',
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                        const PopupMenuItem(
-                          child: Text('Open'),
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
-                          ),
-                        ),
-                        PopupMenuItem(
-                          child: Row(
-                            children: [
-                              const Text('Delete'),
-                              const Spacer(),
-                              const Icon(Icons.delete, color: kRedColor),
-                            ],
-                          ),
-                        ),
-                      ],
-                      child: RoundContainer(
-                        radius: 5,
-                        height: 35,
-                        width: 35,
-                        padding: EdgeInsets.zero,
-                        color: kLightGreyColor,
-                        child: const Icon(Icons.more_vert_rounded),
-                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => OpenOptionsDialog(),
+                        );
+                      },
+                      icon: const Icon(Icons.more_vert_rounded),
                     )
                   : const SizedBox.shrink(),
             ],
