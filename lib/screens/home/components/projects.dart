@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_template.dart';
+import 'package:flutter_installer/components/dialog_templates/open_options.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
+import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
@@ -90,64 +92,21 @@ class _ProjectTileState extends State<ProjectTile> {
                 ),
               ),
               _hovered
-                  ? PopupMenuButton(
+                  ? SquareButton(
                       tooltip: 'Options',
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                        const PopupMenuItem(child: Text('Open')),
-                        PopupMenuItem(
-                          child: GestureDetector(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) => OpenOptionsDialog(),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Open with'),
-                                const Spacer(),
-                                const Icon(Icons.arrow_forward_ios_rounded,
-                                    size: 15),
-                              ],
-                            ),
-                          ),
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
-                          ),
-                        ),
-                        PopupMenuItem(
-                          child: Row(
-                            children: [
-                              const Text('Delete'),
-                              const Spacer(),
-                              const Icon(Icons.delete, color: kRedColor),
-                            ],
-                          ),
-                        ),
-                      ],
-                      child: RoundContainer(
-                        radius: 5,
-                        height: 35,
-                        width: 35,
-                        padding: const EdgeInsets.all(5),
-                        child: const Icon(Icons.more_vert_rounded),
-                      ),
+                      padding: const EdgeInsets.all(5),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => OpenOptionsDialog(),
+                        );
+                      },
+                      icon: const Icon(Icons.more_vert_rounded),
                     )
                   : const SizedBox.shrink(),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class OpenOptionsDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DialogTemplate(
-      child: Column(
-        children: [],
       ),
     );
   }
