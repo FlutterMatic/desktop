@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/utils/constants.dart';
 
 class RoundContainer extends StatelessWidget {
   final Widget child;
@@ -7,7 +6,6 @@ class RoundContainer extends StatelessWidget {
   final double? width;
   final double? radius;
   final Color? borderColor;
-  final Color? color;
   final EdgeInsets? padding;
 
   RoundContainer({
@@ -16,18 +14,18 @@ class RoundContainer extends StatelessWidget {
     this.width,
     this.radius,
     this.borderColor = Colors.transparent,
-    this.color = kGreyColor,
     this.padding = const EdgeInsets.all(10),
   });
 
   @override
   Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
     return Container(
       height: height,
       width: width,
       padding: padding,
       decoration: BoxDecoration(
-        color: color,
+        color: customTheme.primaryColorLight,
         border: Border.all(color: borderColor!, width: 1),
         borderRadius: BorderRadius.circular(radius ?? 10),
       ),

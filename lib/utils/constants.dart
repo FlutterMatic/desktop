@@ -62,6 +62,9 @@ class Iconsdata {
   static const IconData info = IconData(0xeac5, fontFamily: _iconName);
   static const IconData docs = IconData(0xeb67, fontFamily: _iconName);
   static const IconData dartpad = IconData(0xeb0f, fontFamily: _iconName);
+  static const IconData sun = IconData(0xeb30, fontFamily: _iconName);
+  static const IconData moon = IconData(0xece7, fontFamily: _iconName);
+  static const IconData folder = IconData(0xeaad, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);

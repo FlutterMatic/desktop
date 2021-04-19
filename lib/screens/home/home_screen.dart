@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/screens/home/components/projects.dart';
+import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'components/controls.dart';
@@ -15,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 FlutterLogoStyle _flutterLogoStyle = FlutterLogoStyle.markOnly;
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool dark = false;
   Future<void> _animateFlutterLogo() async {
     await Future<void>.delayed(const Duration(seconds: 1));
     setState(() => _flutterLogoStyle = FlutterLogoStyle.horizontal);
@@ -28,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
     return Scrollbar(
       child: Scaffold(
         body: Stack(
@@ -51,7 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 //Installed Components
-                                Expanded(child: installedComponents()),
+                                Expanded(
+                                  child: installedComponents(context),
+                                ),
                                 const SizedBox(width: 150),
                                 //Controls
                                 Column(
@@ -67,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           : Column(
                               children: <Widget>[
                                 //Installed Components
-                                installedComponents(),
+                                installedComponents(context),
                                 const SizedBox(height: 30),
                                 //Controls
                                 controls(context),
@@ -89,36 +94,73 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     SquareButton(
-                      icon: const Icon(Iconsdata.github),
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(
+                        Iconsdata.github,
+                        color: customTheme.iconTheme.color,
+                      ),
                       tooltip: 'GitHub',
                       onPressed: () => launch('https://www.github.com'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      icon: const Icon(Iconsdata.twitter),
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(
+                        Iconsdata.twitter,
+                        color: customTheme.iconTheme.color,
+                      ),
                       tooltip: 'Twitter',
                       onPressed: () => launch('https://www.twitter.com'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      icon: const Icon(Iconsdata.dartpad),
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(
+                        Iconsdata.dartpad,
+                        color: customTheme.iconTheme.color,
+                      ),
                       tooltip: 'DartPad',
                       onPressed: () => launch('https://www.dartpad.dev/'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      icon: const Icon(Iconsdata.docs),
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(
+                        Iconsdata.docs,
+                        color: customTheme.iconTheme.color,
+                      ),
                       tooltip: 'Docs',
                       onPressed: () => launch('https://flutter.dev/docs'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
-                      icon: const Icon(Iconsdata.info),
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(
+                        Iconsdata.info,
+                        color: customTheme.iconTheme.color,
+                      ),
                       tooltip: 'About',
                       onPressed: () {},
                     ),
                   ],
                 ),
+              ),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: IconButton(
+                splashColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                icon: Icon(dark ? Iconsdata.moon : Iconsdata.sun),
+                onPressed: () {
+                  currentTheme.toggleTheme();
+                  setState(() {
+                    dark = !dark;
+                  });
+                },
               ),
             ),
           ],

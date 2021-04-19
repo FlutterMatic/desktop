@@ -6,8 +6,7 @@ import 'package:flutter_installer/components/square_button.dart';
 
 class ChangeChannelDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return DialogTemplate(
+  Widget build(BuildContext context) => DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -31,8 +30,8 @@ class ChangeChannelDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 15),
-          const SelectableText(
-              'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
+          const SelectableText('''
+Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.''',
               style: TextStyle(fontSize: 13)),
           const SizedBox(height: 15),
           SelectTile(
@@ -57,7 +56,6 @@ class ChangeChannelDialog extends StatelessWidget {
               const Spacer(),
               RectangleButton(
                 radius: BorderRadius.circular(5),
-                color: Colors.blue,
                 onPressed: () {},
                 child: const Text(
                   'Continue',
@@ -69,5 +67,4 @@ class ChangeChannelDialog extends StatelessWidget {
         ],
       ),
     );
-  }
 }
