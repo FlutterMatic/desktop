@@ -19,8 +19,7 @@ class CustomTextField extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return TextFormField(
+  Widget build(BuildContext context) => TextFormField(
       decoration: InputDecoration(hintText: hintText),
       maxLength: maxLength,
       autofocus: autoFocus,
@@ -32,5 +31,4 @@ class CustomTextField extends StatelessWidget {
       ],
       onChanged: onChanged,
     );
-  }
 }

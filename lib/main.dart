@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/screens/splash_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
+import 'package:flutter_installer/services/themes.dart';
 import 'dart:ui';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -17,9 +18,25 @@ Future<void> main() async {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    currentTheme.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) => MaterialApp(
+        theme: CustomTheme.lightTheme,
+        darkTheme: CustomTheme.darkTheme,
+        themeMode: currentTheme.currentTheme,
         debugShowCheckedModeBanner: false,
         initialRoute: PageRoutes.routeSplash,
         routes: <String, WidgetBuilder>{

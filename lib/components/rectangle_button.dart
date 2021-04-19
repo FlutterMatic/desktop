@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/utils/constants.dart';
 
 class RectangleButton extends StatelessWidget {
   final double height;
@@ -7,14 +6,12 @@ class RectangleButton extends StatelessWidget {
   final BorderRadius? radius;
   final EdgeInsets? padding;
   final Widget child;
-  final Color? color;
   final Function? onPressed;
 
   RectangleButton({
     this.height = 40,
     this.width = 100,
     this.radius,
-    this.color = kLightGreyColor,
     this.padding,
     required this.child,
     required this.onPressed,
@@ -22,13 +19,18 @@ class RectangleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
     return MaterialButton(
+      focusColor: customTheme.focusColor,
+      highlightColor: customTheme.focusColor,
+      splashColor: customTheme.focusColor,
+      hoverColor: customTheme.focusColor,
       onPressed: onPressed as void Function()?,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),
       ),
-      color: color,
+      color: customTheme.primaryColorLight,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,

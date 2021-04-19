@@ -7,13 +7,22 @@ import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget controls(BuildContext context) {
+  ThemeData customTheme = Theme.of(context);
   return SizedBox(
     width: 500,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         titleSection(
-            'Controls', const Icon(Iconsdata.settings), () {}, 'Settings'),
+          'Controls',
+          Icon(
+            Iconsdata.settings,
+            color: customTheme.iconTheme.color,
+          ),
+          () {},
+          'Settings',
+          context: context,
+        ),
         const SizedBox(height: 20),
         RoundContainer(
           child: Column(
@@ -21,9 +30,12 @@ Widget controls(BuildContext context) {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  const Text(
+                  Text(
                     'Channel',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: customTheme.textTheme.bodyText1!.color,
+                    ),
                   ),
                   const Spacer(),
                   const Icon(Iconsdata.channel),
@@ -32,14 +44,19 @@ Widget controls(BuildContext context) {
               const SizedBox(height: 10),
               Row(
                 children: <Widget>[
-                  Container(height: 20, width: 2, color: Colors.black),
+                  Container(
+                    height: 20,
+                    width: 2,
+                    color: customTheme.dividerColor,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     flutterExist
-                        ? '${flutterChannel![0].toUpperCase() + flutterChannel!.substring(1)} - Version $flutterVersion'
+                        ? '''
+${flutterChannel![0].toUpperCase() + flutterChannel!.substring(1)} - Version $flutterVersion'''
                         : 'Install flutter first',
-                    style: const TextStyle(
-                      color: Colors.black54,
+                    style: TextStyle(
+                      color: customTheme.textTheme.bodyText1!.color,
                     ),
                   ),
                 ],
@@ -50,7 +67,6 @@ Widget controls(BuildContext context) {
                 children: <Widget>[
                   RectangleButton(
                     radius: BorderRadius.circular(5),
-                    color: kLightGreyColor,
                     onPressed: () => showDialog(
                       context: context,
                       builder: (context) => ChangeChannelDialog(),
@@ -58,9 +74,18 @@ Widget controls(BuildContext context) {
                     width: 110,
                     child: Row(
                       children: <Widget>[
-                        const Text('Channel'),
+                        Text(
+                          'Channel',
+                          style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color,
+                          ),
+                        ),
                         const Spacer(),
-                        const Icon(Iconsdata.changeChannel, size: 20),
+                        Icon(
+                          Iconsdata.changeChannel,
+                          size: 20,
+                          color: customTheme.iconTheme.color,
+                        ),
                       ],
                     ),
                   ),
@@ -69,9 +94,18 @@ Widget controls(BuildContext context) {
                     onPressed: () {},
                     child: Row(
                       children: <Widget>[
-                        const Text('Upgrade'),
+                        Text(
+                          'Upgrade',
+                          style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color,
+                          ),
+                        ),
                         const Spacer(),
-                        const Icon(Iconsdata.rocket, size: 20),
+                        Icon(
+                          Iconsdata.rocket,
+                          size: 20,
+                          color: customTheme.iconTheme.color,
+                        ),
                       ],
                     ),
                   ),
@@ -85,7 +119,8 @@ Widget controls(BuildContext context) {
   );
 }
 
-Widget examplesTile() {
+Widget examplesTile(BuildContext context) {
+  ThemeData customTheme = Theme.of(context);
   return RoundContainer(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,9 +130,13 @@ Widget examplesTile() {
           style: TextStyle(fontSize: 18),
         ),
         const SizedBox(height: 10),
-        const SelectableText(
-          'Interested in learning more about Flutter? There is a wide collection of open-source examples! You can check their source code in GitHub and learn new things you can do with Flutter.',
-          style: TextStyle(fontSize: 14, color: Colors.black54),
+        SelectableText(
+          '''
+Interested in learning more about Flutter? There is a wide collection of open-source examples! You can check their source code in GitHub and learn new things you can do with Flutter.''',
+          style: TextStyle(
+            fontSize: 14,
+            color: customTheme.textTheme.bodyText1!.color,
+          ),
         ),
         const SizedBox(height: 20),
         Align(
@@ -109,9 +148,18 @@ Widget examplesTile() {
               onPressed: () => launch('https://flutter.github.io/samples/'),
               child: Row(
                 children: <Widget>[
-                  const Text('Examples'),
+                  Text(
+                    'Examples',
+                    style: TextStyle(
+                      color: customTheme.textTheme.bodyText1!.color,
+                    ),
+                  ),
                   const Spacer(),
-                  const Icon(Iconsdata.examples, size: 20),
+                  Icon(
+                    Iconsdata.examples,
+                    size: 20,
+                    color: customTheme.iconTheme.color,
+                  ),
                 ],
               ),
             ),

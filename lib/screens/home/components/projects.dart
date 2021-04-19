@@ -7,18 +7,24 @@ import 'package:flutter_installer/components/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
+  ThemeData customTheme = Theme.of(context);
   return SizedBox(
     width: 500,
     child: Column(
       children: <Widget>[
         titleSection(
-            'Projects',
-            const Icon(Icons.add_rounded),
-            () => showDialog(
-                  context: context,
-                  builder: (_) => NewProjectDialog(),
-                ),
-            'New Flutter Project'),
+          'Projects',
+          Icon(
+            Icons.add_rounded,
+            color: customTheme.iconTheme.color,
+          ),
+          () => showDialog(
+            context: context,
+            builder: (_) => NewProjectDialog(),
+          ),
+          'New Flutter Project',
+          context: context,
+        ),
         ProjectTile(
           fileName: 'flutter_tooltip',
           lastEdit: 'Jan - 17, 2021',
@@ -46,7 +52,6 @@ class ProjectTile extends StatefulWidget {
   final String fileName;
   final String? lastEdit;
   final Function() onPressed;
-
   ProjectTile({
     required this.fileName,
     required this.onPressed,
@@ -62,6 +67,7 @@ bool _hovered = false;
 class _ProjectTileState extends State<ProjectTile> {
   @override
   Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: MouseRegion(
@@ -74,22 +80,29 @@ class _ProjectTileState extends State<ProjectTile> {
           onPressed: widget.onPressed,
           child: Row(
             children: <Widget>[
-              const Icon(Icons.folder, color: kGreenColor),
+              const Icon(Iconsdata.folder, color: kGreenColor),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(widget.fileName,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                        softWrap: false),
+                    Text(
+                      widget.fileName,
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
+                      style: TextStyle(
+                        color: customTheme.textTheme.bodyText1!.color,
+                      ),
+                    ),
                     widget.lastEdit != null
                         ? Text(
                             widget.lastEdit!,
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.black54),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: customTheme.textTheme.bodyText1!.color,
+                            ),
                           )
                         : const SizedBox.shrink(),
                   ],
@@ -97,6 +110,7 @@ class _ProjectTileState extends State<ProjectTile> {
               ),
               _hovered
                   ? SquareButton(
+                      color: customTheme.focusColor,
                       tooltip: 'Options',
                       onPressed: () {
                         showDialog(
@@ -104,7 +118,10 @@ class _ProjectTileState extends State<ProjectTile> {
                           builder: (_) => OpenOptionsDialog(),
                         );
                       },
-                      icon: const Icon(Icons.more_vert_rounded),
+                      icon: Icon(
+                        Icons.more_vert_rounded,
+                        color: customTheme.iconTheme.color,
+                      ),
                     )
                   : const SizedBox.shrink(),
             ],

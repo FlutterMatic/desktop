@@ -17,17 +17,20 @@ class SquareButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: size, maxWidth: size),
-      child: tooltip == null
-          ? _button()
-          : Tooltip(message: tooltip!, child: _button()),
-    );
-  }
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: size, maxWidth: size),
+        child: tooltip == null
+            ? _button(context)
+            : Tooltip(message: tooltip!, child: _button(context)),
+      );
 
-  Widget _button() {
+  Widget _button(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
     return MaterialButton(
+      focusColor: customTheme.focusColor,
+      highlightColor: customTheme.focusColor,
+      splashColor: customTheme.focusColor,
+      hoverColor: customTheme.focusColor,
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
