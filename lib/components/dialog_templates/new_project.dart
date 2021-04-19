@@ -18,6 +18,7 @@ class NewProjectDialog extends StatefulWidget {
 class _NewProjectDialogState extends State<NewProjectDialog> {
   //Inputs
   String? _projectName;
+  // ignore: unused_field
   String? _projectDescription;
   String? _projectOrg;
 

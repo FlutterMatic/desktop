@@ -4,7 +4,6 @@ import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
 Future<void> main() async {

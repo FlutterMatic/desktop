@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/services/themes.dart';
-import 'package:flutter_installer/utils/constants.dart';
 
 class RectangleButton extends StatelessWidget {
   final double height;
@@ -47,10 +45,7 @@ class RectangleButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),
       ),
-      color: color ??
-          (currentTheme.currentTheme == ThemeMode.dark
-              ? customTheme.buttonColor
-              : kLightGreyColor),
+      color: color ?? customTheme.buttonColor,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,
