@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/utils/constants.dart';
 
 class CheckBoxElement extends StatelessWidget {
   final bool value;

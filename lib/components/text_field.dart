@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomTextField extends StatelessWidget {
   final String? hintText;
   final Function(String?)? validator;
   final ValueChanged<String> onChanged;
@@ -46,61 +46,51 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.textCapitalization,
   });
-  @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
-}
 
-class _CustomTextFieldState extends State<CustomTextField> {
-  bool wasNotEdited = true;
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
-    return Container(
-      width: widget.width,
-      child: TextFormField(
-        scrollPhysics: const BouncingScrollPhysics(),
-        cursorRadius: const Radius.circular(10),
-        focusNode: widget.focusNode,
-        textInputAction: widget.textInputAction,
-        textCapitalization:
-            widget.textCapitalization ?? TextCapitalization.none,
-        readOnly: widget.readOnly,
-        onEditingComplete: widget.onEditCompleted as void Function()?,
-        autofocus: widget.autofocus ?? false,
-        keyboardType: widget.keyboardtype ?? TextInputType.text,
-        obscureText: widget.obscureText,
-        maxLines: widget.numLines ?? 1,
-        style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-        inputFormatters: [
-          widget.filteringTextInputFormatter ??
-              FilteringTextInputFormatter.deny(RegExp(''))
-        ],
-        decoration: InputDecoration(
-          errorStyle: const TextStyle(color: kRedColor),
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          fillColor: Colors.blueGrey.withOpacity(0.2),
-          filled: true,
-          hintText: widget.hintText,
-          counterStyle: TextStyle(
-            color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
-          ),
-          hintStyle: TextStyle(
-              color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
-              fontSize: 15),
+    return TextFormField(
+      scrollPhysics: const BouncingScrollPhysics(),
+      cursorRadius: const Radius.circular(10),
+      focusNode: focusNode,
+      textInputAction: textInputAction,
+      textCapitalization: textCapitalization ?? TextCapitalization.none,
+      readOnly: readOnly,
+      onEditingComplete: onEditCompleted as void Function()?,
+      autofocus: autofocus ?? false,
+      keyboardType: keyboardtype ?? TextInputType.text,
+      obscureText: obscureText,
+      maxLines: numLines ?? 1,
+      style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+      inputFormatters: [
+        filteringTextInputFormatter ??
+            FilteringTextInputFormatter.deny(RegExp(''))
+      ],
+      decoration: InputDecoration(
+        errorStyle: const TextStyle(color: kRedColor),
+        border: OutlineInputBorder(
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(5),
         ),
-        textAlignVertical: TextAlignVertical.center,
-        maxLength: widget.maxLength,
-        maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        validator: widget.validator == null
-            ? null
-            : widget.validator as String? Function(String?)?,
-        keyboardAppearance: Brightness.dark,
-        onChanged: widget.onChanged,
-        controller: widget.controller,
+        fillColor: Colors.blueGrey.withOpacity(0.2),
+        filled: true,
+        hintText: hintText,
+        counterStyle: TextStyle(
+          color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
+        ),
+        hintStyle: TextStyle(
+            color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
+            fontSize: 15),
       ),
+      textAlignVertical: TextAlignVertical.center,
+      maxLength: maxLength,
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
+      validator:
+          validator == null ? null : validator as String? Function(String?)?,
+      keyboardAppearance: Brightness.dark,
+      onChanged: onChanged,
+      controller: controller,
     );
   }
 }

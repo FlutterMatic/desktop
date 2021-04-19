@@ -20,7 +20,7 @@ Widget projects(BuildContext context) {
           ),
           () => showDialog(
             context: context,
-            builder: (_) => NewProjectDialog(),
+            builder: (context) => NewProjectDialog(),
           ),
           context: context,
         ),
@@ -78,7 +78,6 @@ class _ProjectTileState extends State<ProjectTile> {
         child: Container(
           height: 55,
           width: double.infinity,
-          // onPressed: widget.onPressed,
           padding: const EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),

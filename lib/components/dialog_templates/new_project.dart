@@ -58,23 +58,18 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       !_projectOrg!.endsWith('.') &&
       !_projectOrg!.endsWith('_');
 
-  bool _validatePlatformSelection() => _ios == false &&
-          _android == false &&
-          _web == false &&
-          _windows == false &&
-          _macos == false &&
-          _linux == false
-      ? false
-      : true;
+  bool _validatePlatformSelection() => !(_ios == false &&
+      _android == false &&
+      _web == false &&
+      _windows == false &&
+      _macos == false &&
+      _linux == false);
 
   void _createNewProject() {
-    //Index 0 - Name
     if (_createProjectFormKey.currentState!.validate()) {
+      //Index 0 - Name
       if (_index == 0 && _projectNameCondition()) {
-        setState(() {
-          _projectName = _projectName!.toLowerCase();
-          _index = 1;
-        });
+        setState(() => _index = 1);
       }
       // Index 1 - Description
       else if (_index == 1) {
@@ -143,21 +138,21 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             FilteringTextInputFormatter.allow(
                           RegExp('[a-zA-Z-_0-9 ]'),
                         ),
-                        onChanged: (_) {
-                          _projectName = _pNameController.text.isEmpty
-                              ? null
-                              : _pNameController.text
-                                  .trim()
-                                  .replaceAll(RegExp(r'-| '), '_')
-                                  .toLowerCase();
+                        onChanged: (val) {
+                          setState(() {
+                            _projectName = val
+                                .trim()
+                                .replaceAll(RegExp(r'-| '), '_')
+                                .toLowerCase();
+                          });
                         },
-                        validator: (_) => _pNameController.text.isEmpty
+                        validator: (val) => val!.isEmpty
                             ? 'Enter project name'
-                            : _pNameController.text.length < 3
+                            : val.length < 3
                                 ? 'Too short, try adding some more'
                                 : null,
                         maxLength: 70,
-                                              ),
+                      ),
                       const SizedBox(height: 10),
                       //Checks if name doesn't start with a lower-case letter
                       if (_projectName != null &&
@@ -220,10 +215,10 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             ? 'Please enter project description'
                             : null,
                         maxLength: 150,
-                        onChanged: (_) {
-                          _projectDescription = _pDescController.text.isEmpty
-                              ? null
-                              : _pDescController.text;
+                        onChanged: (val) {
+                          setState(() {
+                            _projectDescription = val.isEmpty ? null : val;
+                          });
                         },
                       ),
                       Padding(
@@ -254,14 +249,16 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                         controller: _pOrgController,
                         hintText:
                             'Project Organization (com.example.$_projectName)',
-                        validator: (_) => _pOrgController.text.isEmpty
+                        validator: (val) => val!.isEmpty
                             ? 'Please enter project organization'
-                            : null,
+                            : val.length > 30
+                                ? 'Organization name is too long. Please make it shorter.'
+                                : null,
                         maxLength: 30,
-                        onChanged: (_) {
-                          _projectOrg = _pOrgController.text.isEmpty
-                              ? null
-                              : _pOrgController.text;
+                        onChanged: (val) {
+                          setState(() {
+                            _projectOrg = val.isEmpty ? null : val;
+                          });
                         },
                       ),
                       if (_projectOrg != null &&
@@ -337,6 +334,11 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                   value: _linux,
                   text: 'Linux',
                 ),
+                if (!_validatePlatformSelection())
+                  warningWidget(
+                      'You will need to choose at least one platform. You will be able to change it later.',
+                      Assets.error,
+                      kRedColor),
               ],
             ),
           const SizedBox(height: 10),
