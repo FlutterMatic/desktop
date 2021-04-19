@@ -29,7 +29,7 @@ class DialogTemplate extends StatelessWidget {
             child: SafeArea(
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 500),
-                padding: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.all(20),
                 child: SingleChildScrollView(
                   child: GestureDetector(
                     onTap: () {},

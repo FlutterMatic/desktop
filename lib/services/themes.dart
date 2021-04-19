@@ -30,6 +30,7 @@ class CustomTheme with ChangeNotifier {
 
   static ThemeData get darkTheme => ThemeData(
         primaryColor: Colors.black,
+        buttonColor: darkTheme.primaryColorLight,
         dividerColor: Colors.white,
         accentColor: const Color(0xFF4183E3),
         primaryColorLight: const Color(0xFF373E47),

@@ -46,7 +46,7 @@ class RectangleButton extends StatelessWidget {
       ),
       color: color ??
           (currentTheme.currentTheme == ThemeMode.dark
-              ? customTheme.primaryColorLight
+              ? customTheme.buttonColor
               : kLightGreyColor),
       elevation: 0,
       hoverElevation: 0,

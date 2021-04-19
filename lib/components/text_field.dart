@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText;
   final Function(String?)? validator;
-  final Function(String?)? onChanged;
+  final ValueChanged<String> onChanged;
   final FilteringTextInputFormatter? filteringTextInputFormatter;
   final int? numLines;
   final int? maxLength;
@@ -18,7 +17,6 @@ class CustomTextField extends StatelessWidget {
   final Color? color;
   final Function? onEditCompleted;
   final TextEditingController? controller;
-  final String? initialValue;
   final bool? autofocus;
   final double? width;
   final bool readOnly;
@@ -29,9 +27,9 @@ class CustomTextField extends StatelessWidget {
   CustomTextField({
     this.filteringTextInputFormatter,
     this.validator,
-    this.initialValue,
     this.autofocus,
-    this.onChanged,
+    required this.onChanged,
+    required this.controller,
     this.suffixIcon,
     this.onSuffixIcon,
     this.iconColor,
@@ -39,7 +37,6 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardtype,
     this.textInputAction,
-    this.controller,
     this.maxLength,
     this.color,
     this.hintText,
@@ -49,7 +46,6 @@ class CustomTextField extends StatelessWidget {
     this.readOnly = false,
     this.textCapitalization,
   });
-
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -63,7 +59,6 @@ class CustomTextField extends StatelessWidget {
         textCapitalization: textCapitalization ?? TextCapitalization.none,
         readOnly: readOnly,
         onEditingComplete: onEditCompleted as void Function()?,
-        initialValue: initialValue,
         autofocus: autofocus ?? false,
         keyboardType: keyboardtype ?? TextInputType.text,
         obscureText: obscureText,

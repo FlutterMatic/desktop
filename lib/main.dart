@@ -4,6 +4,7 @@ import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
 Future<void> main() async {
@@ -23,10 +24,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  //Themes
+  bool _isLight = false;
+  late SharedPreferences _pref;
+
+  Future<void> _loadPrefs() async {
+    await SharedPreferences.getInstance();
+    setState(() => _isLight = _pref.getBool('light_mode')!);
+    currentTheme.addListener(() => setState(() {}));
+  }
+
   @override
   void initState() {
+    _loadPrefs();
     super.initState();
-    currentTheme.addListener(() => setState(() {}));
   }
 
   @override
@@ -34,7 +45,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.darkTheme,
-      themeMode: currentTheme.currentTheme,
+      // themeMode: currentTheme.currentTheme,
+      themeMode: _isLight ? ThemeMode.light : ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       initialRoute: PageRoutes.routeState,
       routes: <String, WidgetBuilder>{

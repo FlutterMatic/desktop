@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/services/checks.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StatusCheck extends StatefulWidget {
   const StatusCheck({Key? key}) : super(key: key);
@@ -10,7 +12,10 @@ class StatusCheck extends StatefulWidget {
 }
 
 class _StatusCheckState extends State<StatusCheck> {
+  late SharedPreferences _pref;
+
   Future<void> _loadServices() async {
+    _pref = await SharedPreferences.getInstance();
     if (mounted) {
       CheckDependencies checkDependencies = CheckDependencies();
       flutterInstalled = await checkDependencies.checkFlutter();
@@ -20,7 +25,11 @@ class _StatusCheckState extends State<StatusCheck> {
       studioInstalled = await checkDependencies.checkAndroidStudios();
     }
     if (mounted) {
-      await Navigator.pushReplacementNamed(context, PageRoutes.routeHome);
+      await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HomeScreen(pref: _pref),
+          ));
     }
   }
 
