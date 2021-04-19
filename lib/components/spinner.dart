@@ -82,7 +82,7 @@ class _DualRingPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromPoints(Offset.zero, Offset(size.width, size.height));
+    Rect rect = Rect.fromPoints(Offset.zero, Offset(size.width, size.height));
     canvas.drawArc(rect, 0.0, getRadian(angle), false, ringPaint);
     canvas.drawArc(rect, getRadian(180), getRadian(angle), false, ringPaint);
   }

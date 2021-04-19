@@ -1,7 +1,7 @@
 name: flutter_installer
 description: Flutter Installer.
 
-version: 0.0.0
+version: 1.0.0
 publish_to: none
 
 environment:

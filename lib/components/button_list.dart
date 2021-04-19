@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/round_container.dart';
-import 'package:flutter_installer/utils/constants.dart';
+import 'package:flutter_installer/services/themes.dart';
 
 class SelectTile extends StatefulWidget {
   final List<String> options;
@@ -73,6 +72,7 @@ Widget _selectTile(dynamic leading, Function onPressed, bool selected,
     bool disable, Color color, Color hoverColor, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
+    color: Colors.transparent,
     width: double.infinity,
     onPressed: disable ? null : onPressed,
     radius: BorderRadius.circular(5),
@@ -86,7 +86,11 @@ Widget _selectTile(dynamic leading, Function onPressed, bool selected,
           width: 15,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: customTheme.focusColor, width: 2),
+            border: Border.all(
+                color: currentTheme.currentTheme == ThemeMode.dark
+                    ? Colors.white
+                    : customTheme.focusColor,
+                width: 2),
             color: selected
                 ? customTheme.textTheme.headline1!.color
                 : customTheme.hoverColor,

@@ -18,7 +18,7 @@ FlutterLogoStyle _flutterLogoStyle = FlutterLogoStyle.markOnly;
 class _HomeScreenState extends State<HomeScreen> {
   bool dark = false;
   Future<void> _animateFlutterLogo() async {
-    await Future<void>.delayed(const Duration(seconds: 1));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     setState(() => _flutterLogoStyle = FlutterLogoStyle.horizontal);
   }
 
@@ -45,7 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: <Widget>[
                       SizedBox(
                         height: 50,
-                        child: FlutterLogo(style: _flutterLogoStyle, size: 100),
+                        child: FlutterLogo(
+                            style: _flutterLogoStyle,
+                            size: 100,
+                            textColor: customTheme.textTheme.bodyText1!.color!),
                       ),
                       const SizedBox(height: 20),
                       // Installed Components

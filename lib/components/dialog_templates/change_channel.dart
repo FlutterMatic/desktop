@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/button_list.dart';
 import 'package:flutter_installer/components/dialog_template.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -49,7 +48,6 @@ class ChangeChannelDialog extends StatelessWidget {
               'Dev',
             ],
           ),
-          const SizedBox(height: 10),
           warningWidget(
               'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
               Assets.warning,

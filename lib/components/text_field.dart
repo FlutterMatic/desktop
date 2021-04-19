@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_installer/services/themes.dart';
+import 'package:flutter_installer/utils/constants.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText;
@@ -72,6 +74,7 @@ class CustomTextField extends StatelessWidget {
               FilteringTextInputFormatter.deny(RegExp(''))
         ],
         decoration: InputDecoration(
+          errorStyle: const TextStyle(color: kRedColor),
           border: OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: BorderRadius.circular(5)),

@@ -51,6 +51,7 @@ class ProjectTile extends StatefulWidget {
   final String fileName;
   final String? lastEdit;
   final Function() onPressed;
+
   ProjectTile({
     required this.fileName,
     required this.onPressed,
