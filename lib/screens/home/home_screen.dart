@@ -54,9 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 //Installed Components
-                                Expanded(
-                                  child: installedComponents(context),
-                                ),
+                                Expanded(child: installedComponents(context)),
                                 const SizedBox(width: 150),
                                 //Controls
                                 Column(
@@ -100,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: customTheme.iconTheme.color,
                       ),
                       tooltip: 'GitHub',
-                      onPressed: () => launch('https://www.github.com'),
+                      onPressed: () => launch('https://www.github.com/flutter'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
@@ -110,7 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: customTheme.iconTheme.color,
                       ),
                       tooltip: 'Twitter',
-                      onPressed: () => launch('https://www.twitter.com'),
+                      onPressed: () =>
+                          launch('https://www.twitter.com/flutterdev'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
@@ -154,12 +153,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 hoverColor: Colors.transparent,
                 focusColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                icon: Icon(dark ? Iconsdata.moon : Iconsdata.sun),
+                icon: Icon(dark ? Iconsdata.sun : Iconsdata.moon),
                 onPressed: () {
                   currentTheme.toggleTheme();
-                  setState(() {
-                    dark = !dark;
-                  });
+                  setState(() => dark = !dark);
                 },
               ),
             ),

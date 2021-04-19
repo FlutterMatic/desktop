@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/button_list.dart';
 import 'package:flutter_installer/components/dialog_template.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
+import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
+import 'package:flutter_installer/components/warning_widget.dart';
+import 'package:flutter_installer/utils/constants.dart';
 
 class ChangeChannelDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => DialogTemplate(
+  Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
+    return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -30,19 +35,25 @@ class ChangeChannelDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 15),
-          const SelectableText('''
-Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.''',
+          const SelectableText(
+              'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
               style: TextStyle(fontSize: 13)),
           const SizedBox(height: 15),
           SelectTile(
             onPressed: (val) {},
             defaultValue: 'Stable',
             options: [
+              'Master',
               'Stable',
               'Beta',
               'Dev',
             ],
           ),
+          const SizedBox(height: 10),
+          warningWidget(
+              'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
+              Assets.warning,
+              kYellowColor),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -57,9 +68,10 @@ Choose a new channel to switch to. Switching to a new channel may take a while. 
               RectangleButton(
                 radius: BorderRadius.circular(5),
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   'Continue',
-                  style: TextStyle(color: Colors.white),
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
               ),
             ],
@@ -67,4 +79,5 @@ Choose a new channel to switch to. Switching to a new channel may take a while. 
         ],
       ),
     );
+  }
 }

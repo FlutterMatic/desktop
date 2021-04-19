@@ -30,15 +30,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        theme: CustomTheme.lightTheme,
-        darkTheme: CustomTheme.darkTheme,
-        themeMode: currentTheme.currentTheme,
-        debugShowCheckedModeBanner: false,
-        initialRoute: PageRoutes.routeState,
-        routes: <String, WidgetBuilder>{
-          PageRoutes.routeState: (BuildContext context) => const StatusCheck(),
-          PageRoutes.routeHome: (BuildContext context) => HomeScreen(),
-        },
-      );
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.darkTheme,
+      themeMode: currentTheme.currentTheme,
+      debugShowCheckedModeBanner: false,
+      initialRoute: PageRoutes.routeState,
+      routes: <String, WidgetBuilder>{
+        PageRoutes.routeState: (BuildContext context) => const StatusCheck(),
+        PageRoutes.routeHome: (BuildContext context) => HomeScreen(),
+      },
+    );
+  }
 }

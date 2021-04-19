@@ -22,7 +22,6 @@ Widget projects(BuildContext context) {
             context: context,
             builder: (_) => NewProjectDialog(),
           ),
-          'New Flutter Project',
           context: context,
         ),
         ProjectTile(
@@ -101,7 +100,8 @@ class _ProjectTileState extends State<ProjectTile> {
                             widget.lastEdit!,
                             style: TextStyle(
                               fontSize: 12,
-                              color: customTheme.textTheme.bodyText1!.color,
+                              color: customTheme.textTheme.bodyText1!.color!
+                                  .withOpacity(0.5),
                             ),
                           )
                         : const SizedBox.shrink(),
@@ -110,7 +110,7 @@ class _ProjectTileState extends State<ProjectTile> {
               ),
               _hovered
                   ? SquareButton(
-                      color: customTheme.focusColor,
+                      color: kDarkColor.withOpacity(0.15),
                       tooltip: 'Options',
                       onPressed: () {
                         showDialog(

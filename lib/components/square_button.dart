@@ -28,9 +28,9 @@ class SquareButton extends StatelessWidget {
     ThemeData customTheme = Theme.of(context);
     return MaterialButton(
       focusColor: customTheme.focusColor,
-      highlightColor: customTheme.focusColor,
-      splashColor: customTheme.focusColor,
-      hoverColor: customTheme.focusColor,
+      highlightColor: customTheme.highlightColor,
+      splashColor: customTheme.splashColor,
+      hoverColor: customTheme.hoverColor,
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(

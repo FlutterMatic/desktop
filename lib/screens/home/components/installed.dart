@@ -10,8 +10,13 @@ Widget installedComponents(BuildContext context) {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        titleSection('Flutter SDK & Dependencies',
-            const Icon(Iconsdata.settings), () {}, 'Settings',
+        titleSection(
+            'Flutter SDK & Dependencies',
+            Icon(
+              Icons.settings,
+              color: customTheme.iconTheme.color!.withOpacity(0.9),
+            ),
+            () {},
             context: context),
         const SizedBox(height: 25),
         installationStatus(
@@ -51,7 +56,7 @@ Widget installedComponents(BuildContext context) {
               : 'Android Studio Not Installed',
           'If you need to use an Android Emulator, you will need to have Android Studio installed on your machine with all of it\'s components.',
           onDownload: () {},
-          tooltip: 'Android studio',
+          tooltip: 'Android Studio',
           hoverColor: customTheme.focusColor,
         ),
         examplesTile(context),

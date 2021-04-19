@@ -6,6 +6,7 @@ CustomTheme currentTheme = CustomTheme();
 class CustomTheme with ChangeNotifier {
   static bool _isDarkTheme = false;
   ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
+  ThemeMode get systemTheme => ThemeMode.system;
 
   void toggleTheme() {
     _isDarkTheme = !_isDarkTheme;
@@ -37,18 +38,10 @@ class CustomTheme with ChangeNotifier {
         scaffoldBackgroundColor: const Color(0xFF22272E),
         iconTheme: const IconThemeData(color: Colors.white),
         textTheme: const TextTheme(
-          headline1: TextStyle(
-            color: Colors.white,
-          ),
-          headline2: TextStyle(
-            color: Colors.white,
-          ),
-          bodyText1: TextStyle(
-            color: Colors.white,
-          ),
-          bodyText2: TextStyle(
-            color: Colors.white,
-          ),
+          headline1: TextStyle(color: Colors.white),
+          headline2: TextStyle(color: Colors.white),
+          bodyText1: TextStyle(color: Colors.white),
+          bodyText2: TextStyle(color: Colors.white),
         ),
       );
 }

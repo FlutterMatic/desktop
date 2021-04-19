@@ -16,11 +16,10 @@ Widget controls(BuildContext context) {
         titleSection(
           'Controls',
           Icon(
-            Iconsdata.settings,
-            color: customTheme.iconTheme.color,
+            Icons.settings,
+            color: customTheme.iconTheme.color!.withOpacity(0.9),
           ),
           () {},
-          'Settings',
           context: context,
         ),
         const SizedBox(height: 20),

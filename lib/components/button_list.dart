@@ -28,68 +28,81 @@ String? _selected;
 class _SelectTileState extends State<SelectTile> {
   @override
   void initState() {
-    if (widget.defaultValue != null) {
+    if (widget.defaultValue != null && mounted) {
       setState(() => _selected = widget.defaultValue);
     }
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //Shows options
-          RoundContainer(
-            padding: const EdgeInsets.all(5),
-            child: Column(
-                children: widget.options
-                    .map((val) => _selectTile(val, () {
-                          if (widget.disable == false) {
-                            widget.onPressed!(val);
-                            setState(() => _selected = val);
-                          }
-                        }, val == _selected, widget.disable))
-                    .toList()),
-          ),
-          //Shows error
-          widget.error != null && widget.error != ''
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(widget.error!),
+  Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //Shows options
+        Column(
+            children: widget.options
+                .map(
+                  (val) => _selectTile(val, () {
+                    if (widget.disable == false) {
+                      widget.onPressed!(val);
+                      setState(() => _selected = val);
+                    }
+                  },
+                      val == _selected,
+                      widget.disable,
+                      customTheme.backgroundColor,
+                      customTheme.accentColor,
+                      context),
                 )
-              : const SizedBox.shrink(),
-        ],
-      );
+                .toList()),
+        //Shows error
+        widget.error != null && widget.error != ''
+            ? Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(widget.error!),
+              )
+            : const SizedBox.shrink(),
+      ],
+    );
+  }
 }
 
-Widget _selectTile(
-        dynamic leading, Function onPressed, bool selected, bool disable) =>
-    RectangleButton(
-      width: double.infinity,
-      onPressed: (disable || selected) ? null : onPressed,
-      radius: BorderRadius.circular(5),
-      height: 50,
-      padding: EdgeInsets.zero,
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          Container(
-            height: 15,
-            width: 15,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: kDarkColor, width: 2),
-              color: selected ? kDarkColor : kLightGreyColor,
-            ),
+Widget _selectTile(dynamic leading, Function onPressed, bool selected,
+    bool disable, Color color, Color hoverColor, BuildContext context) {
+  ThemeData customTheme = Theme.of(context);
+  return RectangleButton(
+    width: double.infinity,
+    onPressed: disable ? null : onPressed,
+    radius: BorderRadius.circular(5),
+    height: 50,
+    padding: EdgeInsets.zero,
+    child: Row(
+      children: [
+        const SizedBox(width: 10),
+        Container(
+          height: 15,
+          width: 15,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: customTheme.focusColor, width: 2),
+            color: selected
+                ? customTheme.textTheme.headline1!.color
+                : customTheme.hoverColor,
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: leading.runtimeType == String
-                ? Text(leading, style: const TextStyle(color: kDarkColor))
-                : leading.runtimeType == Widget
-                    ? leading
-                    : const Text('Something unexpected is going on...'),
-          ),
-        ],
-      ),
-    );
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: leading.runtimeType == String
+              ? Text(leading,
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color))
+              : leading.runtimeType == Widget
+                  ? leading
+                  : const Text('Something unexpected is going on...'),
+        ),
+      ],
+    ),
+  );
+}

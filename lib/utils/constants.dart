@@ -12,7 +12,6 @@ String? flutterVersion, flutterChannel, codeVersion, javaVersion;
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
 const String statusIcons = 'assets/icons/status_icons';
-const String footerIcons = 'assets/icons/footer_icons';
 
 //Animations
 const String lottie = 'assets/lottie';
@@ -33,12 +32,6 @@ class Assets {
   static const String done = '$statusIcons/done.svg';
   static const String warning = '$statusIcons/warning.svg';
   static const String error = '$statusIcons/error.svg';
-
-  //Footer Icons
-  static const String gitHub = '$footerIcons/github.svg';
-  static const String twitter = '$footerIcons/twitter.svg';
-  static const String docs = '$footerIcons/docs.svg';
-  static const String dartPad = '$footerIcons/dartpad.svg';
 }
 
 class PageRoutes {
@@ -51,7 +44,6 @@ class PageRoutes {
 const String _iconName = 'IconsFont';
 
 class Iconsdata {
-  static const IconData settings = IconData(0xeb20, fontFamily: _iconName);
   static const IconData download = IconData(0xea96, fontFamily: _iconName);
   static const IconData channel = IconData(0xeb9d, fontFamily: _iconName);
   static const IconData rocket = IconData(0xec45, fontFamily: _iconName);
