@@ -75,17 +75,24 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               _index != 0
                   ? SquareButton(
                       icon: const Icon(Icons.arrow_back_ios_rounded),
+                      color: customTheme.buttonColor,
+                      hoverColor: customTheme.accentColor,
                       tooltip: 'Back',
                       onPressed: () => setState(() => _index--),
                     )
                   : const SizedBox(width: 40),
               const Expanded(
-                  child: Center(
-                child:
-                    Text('Create New Project', style: TextStyle(fontSize: 20)),
-              )),
+                child: Center(
+                  child: Text(
+                    'Create New Project',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
               SquareButton(
                 icon: const Icon(Icons.close_rounded),
+                hoverColor: customTheme.errorColor,
+                color: customTheme.buttonColor,
                 tooltip: 'Close',
                 onPressed: () => Navigator.pop(context),
               ),
@@ -106,7 +113,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                         hintText: 'Project Name',
                         filteringTextInputFormatter:
                             FilteringTextInputFormatter.allow(
-                                RegExp('[a-zA-Z-_0-9 ]')),
+                          RegExp('[a-zA-Z-_0-9 ]'),
+                        ),
                         onChanged: (_) {
                           _projectName = _pNameController.text.isEmpty
                               ? null
@@ -162,8 +170,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                               const Icon(Icons.info),
                               const SizedBox(width: 8),
                               const Expanded(
-                                  child: Text(
-                                      'Your project name can only include lower-case English letters (a-z) and underscores (_).')),
+                                child: Text(
+                                    'Your project name can only include lower-case English letters (a-z) and underscores (_).'),
+                              ),
                             ],
                           ),
                         ),
@@ -199,8 +208,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                               const Icon(Icons.info),
                               const SizedBox(width: 8),
                               const Expanded(
-                                  child: Text(
-                                      'The description will be added in the READ.md file for your new project.')),
+                                child: Text(
+                                    'The description will be added in the READ.md file for your new project.'),
+                              ),
                             ],
                           ),
                         ),
@@ -236,8 +246,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                               const Icon(Icons.info),
                               const SizedBox(width: 8),
                               const Expanded(
-                                  child: Text(
-                                      'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.')),
+                                child: Text(
+                                    'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
+                              ),
                             ],
                           ),
                         ),

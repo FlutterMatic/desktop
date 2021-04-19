@@ -15,12 +15,17 @@ class OpenOptionsDialog extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('Project Options', style: TextStyle(fontSize: 20)),
+              const Text(
+                'Project Options',
+                style: TextStyle(fontSize: 20),
+              ),
               const Spacer(),
               Align(
                 alignment: Alignment.centerRight,
                 child: SquareButton(
                   icon: const Icon(Icons.close_rounded),
+                  color: customTheme.buttonColor,
+                  hoverColor: customTheme.errorColor,
                   tooltip: 'Close',
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -33,7 +38,9 @@ class OpenOptionsDialog extends StatelessWidget {
             color: Colors.blueGrey.withOpacity(0.2),
             hoverColor: Colors.blueGrey.withOpacity(0.3),
             radius: const BorderRadius.only(
-                topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+              topLeft: Radius.circular(5),
+              topRight: Radius.circular(5),
+            ),
             width: double.infinity,
             child: Row(
               children: [
@@ -78,8 +85,9 @@ class OpenOptionsDialog extends StatelessWidget {
             color: Colors.blueGrey.withOpacity(0.2),
             hoverColor: Colors.blueGrey.withOpacity(0.3),
             radius: const BorderRadius.only(
-                bottomLeft: Radius.circular(5),
-                bottomRight: Radius.circular(5)),
+              bottomLeft: Radius.circular(5),
+              bottomRight: Radius.circular(5),
+            ),
             width: double.infinity,
             child: Row(
               children: [
@@ -105,7 +113,10 @@ class OpenOptionsDialog extends StatelessWidget {
             width: double.infinity,
             child: Row(
               children: [
-                const Text('Delete', style: TextStyle(color: Colors.white)),
+                const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.white),
+                ),
                 const Spacer(),
                 const Icon(Icons.delete_forever_outlined, color: Colors.white),
               ],

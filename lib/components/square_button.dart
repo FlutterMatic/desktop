@@ -5,12 +5,13 @@ class SquareButton extends StatelessWidget {
   final double size;
   final Widget icon;
   final Function() onPressed;
-  final Color? color;
+  final Color? color, hoverColor;
   final String? tooltip;
 
   SquareButton({
     this.size = 40,
     this.color = kGreyColor,
+    this.hoverColor,
     this.tooltip,
     required this.icon,
     required this.onPressed,
@@ -21,7 +22,10 @@ class SquareButton extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: size, maxWidth: size),
         child: tooltip == null
             ? _button(context)
-            : Tooltip(message: tooltip!, child: _button(context)),
+            : Tooltip(
+                message: tooltip!,
+                child: _button(context),
+              ),
       );
 
   Widget _button(BuildContext context) {
@@ -30,7 +34,7 @@ class SquareButton extends StatelessWidget {
       focusColor: customTheme.focusColor,
       highlightColor: customTheme.highlightColor,
       splashColor: customTheme.splashColor,
-      hoverColor: customTheme.hoverColor,
+      hoverColor: hoverColor ?? customTheme.buttonColor,
       onPressed: onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(

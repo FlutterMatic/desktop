@@ -13,7 +13,9 @@ Widget warningWidget(String text, String asset, Color color) {
         children: [
           SvgPicture.asset(asset, height: 20),
           const SizedBox(width: 8),
-          Expanded(child: Text(text)),
+          Expanded(
+            child: Text(text),
+          ),
         ],
       ),
     ),

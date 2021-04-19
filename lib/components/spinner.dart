@@ -62,7 +62,9 @@ class _SpinnerState extends State<Spinner> with SingleTickerProviderStateMixin {
             paintWidth: widget.lineWidth,
             color: widget.color,
           ),
-          child: SizedBox.fromSize(size: Size.square(widget.size)),
+          child: SizedBox.fromSize(
+            size: Size.square(widget.size),
+          ),
         ),
       ),
     );

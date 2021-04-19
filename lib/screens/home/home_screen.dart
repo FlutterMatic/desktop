@@ -57,7 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 //Installed Components
-                                Expanded(child: installedComponents(context)),
+                                Expanded(
+                                  child: installedComponents(context),
+                                ),
                                 const SizedBox(width: 150),
                                 //Controls
                                 Column(
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 hoverColor: Colors.transparent,
                 focusColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                icon: Icon(dark ? Iconsdata.sun : Iconsdata.moon),
+                icon: Icon(dark ? Iconsdata.moon : Iconsdata.sun),
                 onPressed: () {
                   currentTheme.toggleTheme();
                   setState(() => dark = !dark);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -84,8 +83,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         decoration: InputDecoration(
           errorStyle: const TextStyle(color: kRedColor),
           border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(5)),
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(5),
+          ),
           fillColor: Colors.blueGrey.withOpacity(0.2),
           filled: true,
           hintText: widget.hintText,
