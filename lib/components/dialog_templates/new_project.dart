@@ -23,15 +23,15 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   bool _loading = false;
   int _index = 0;
   final _createProjectFormKey = GlobalKey<FormState>();
-
+  final TextEditingController _pNameController = TextEditingController();
+  final TextEditingController _pDescController = TextEditingController();
+  final TextEditingController _pOrgController = TextEditingController();
   @override
   void dispose() {
     if (mounted) {
-      setState(() {
-        _projectName = null;
-        _projectDescription = null;
-        _index = 0;
-      });
+      _projectName = null;
+      _projectDescription = null;
+      _index = 0;
     }
     super.dispose();
   }
@@ -102,20 +102,22 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                        controller: _pNameController,
                         hintText: 'Project Name',
                         filteringTextInputFormatter:
                             FilteringTextInputFormatter.allow(
                                 RegExp('[a-zA-Z-_0-9 ]')),
-                        onChanged: (val) => setState(() => _projectName =
-                            val!.isEmpty
-                                ? null
-                                : val
-                                    .trim()
-                                    .replaceAll(RegExp(r'-| '), '_')
-                                    .toLowerCase()),
-                        validator: (val) => val!.isEmpty
+                        onChanged: (_) {
+                          _projectName = _pNameController.text.isEmpty
+                              ? null
+                              : _pNameController.text
+                                  .trim()
+                                  .replaceAll(RegExp(r'-| '), '_')
+                                  .toLowerCase();
+                        },
+                        validator: (_) => _pNameController.text.isEmpty
                             ? 'Enter project name'
-                            : val.length < 3
+                            : _pNameController.text.length < 3
                                 ? 'Too short, try adding some more'
                                 : null,
                         maxLength: 70,
@@ -174,14 +176,18 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                        controller: _pDescController,
                         numLines: 4,
                         hintText: 'Description',
-                        validator: (val) => val!.isEmpty
+                        validator: (String? _pDesc) => _pDesc!.isEmpty
                             ? 'Please enter project description'
                             : null,
                         maxLength: 150,
-                        onChanged: (val) =>
-                            _projectDescription = val!.isEmpty ? null : val,
+                        onChanged: (_) {
+                          _projectDescription = _pDescController.text.isEmpty
+                              ? null
+                              : _pDescController.text;
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
@@ -207,14 +213,18 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                        controller: _pOrgController,
                         hintText:
                             'Project Organization (com.example.$_projectName)',
-                        validator: (val) => val!.isEmpty
+                        validator: (_) => _pOrgController.text.isEmpty
                             ? 'Please enter project organization'
                             : null,
                         maxLength: 30,
-                        onChanged: (val) =>
-                            _projectOrg = val!.isEmpty ? null : val,
+                        onChanged: (_) {
+                          _projectOrg = _pOrgController.text.isEmpty
+                              ? null
+                              : _pOrgController.text;
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
