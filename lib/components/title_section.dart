@@ -74,7 +74,9 @@ Widget installationStatus(
                         height: 40,
                       ),
                       const SizedBox(width: 8),
-                      Expanded(child: SelectableText(description)),
+                      Expanded(
+                        child: SelectableText(description),
+                      ),
                     ],
                   ))
               : const SizedBox.shrink(),

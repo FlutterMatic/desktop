@@ -21,12 +21,17 @@ class ChangeChannelDialog extends StatelessWidget {
             children: [
               const SizedBox(width: 40),
               const Spacer(),
-              const Text('Select Channel', style: TextStyle(fontSize: 20)),
+              const Text(
+                'Select Channel',
+                style: TextStyle(fontSize: 20),
+              ),
               const Spacer(),
               Align(
                 alignment: Alignment.centerRight,
                 child: SquareButton(
                   icon: const Icon(Icons.close_rounded),
+                  color: customTheme.buttonColor,
+                  hoverColor: customTheme.errorColor,
                   tooltip: 'Close',
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -35,8 +40,9 @@ class ChangeChannelDialog extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           const SelectableText(
-              'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
-              style: TextStyle(fontSize: 13)),
+            'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
+            style: TextStyle(fontSize: 13),
+          ),
           const SizedBox(height: 15),
           SelectTile(
             onPressed: (val) {},

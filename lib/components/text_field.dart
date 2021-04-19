@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String? hintText;
   final Function(String?)? validator;
   final ValueChanged<String> onChanged;
@@ -47,35 +47,43 @@ class CustomTextField extends StatelessWidget {
     this.textCapitalization,
   });
   @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool wasNotEdited = true;
+  @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return Container(
-      width: width,
+      width: widget.width,
       child: TextFormField(
         scrollPhysics: const BouncingScrollPhysics(),
         cursorRadius: const Radius.circular(10),
-        focusNode: focusNode,
-        textInputAction: textInputAction,
-        textCapitalization: textCapitalization ?? TextCapitalization.none,
-        readOnly: readOnly,
-        onEditingComplete: onEditCompleted as void Function()?,
-        autofocus: autofocus ?? false,
-        keyboardType: keyboardtype ?? TextInputType.text,
-        obscureText: obscureText,
-        maxLines: numLines ?? 1,
+        focusNode: widget.focusNode,
+        textInputAction: widget.textInputAction,
+        textCapitalization:
+            widget.textCapitalization ?? TextCapitalization.none,
+        readOnly: widget.readOnly,
+        onEditingComplete: widget.onEditCompleted as void Function()?,
+        autofocus: widget.autofocus ?? false,
+        keyboardType: widget.keyboardtype ?? TextInputType.text,
+        obscureText: widget.obscureText,
+        maxLines: widget.numLines ?? 1,
         style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
         inputFormatters: [
-          filteringTextInputFormatter ??
+          widget.filteringTextInputFormatter ??
               FilteringTextInputFormatter.deny(RegExp(''))
         ],
         decoration: InputDecoration(
           errorStyle: const TextStyle(color: kRedColor),
           border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(5)),
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(5),
+          ),
           fillColor: Colors.blueGrey.withOpacity(0.2),
           filled: true,
-          hintText: hintText,
+          hintText: widget.hintText,
           counterStyle: TextStyle(
             color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
           ),
@@ -84,13 +92,14 @@ class CustomTextField extends StatelessWidget {
               fontSize: 15),
         ),
         textAlignVertical: TextAlignVertical.center,
-        maxLength: maxLength,
+        maxLength: widget.maxLength,
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        validator:
-            validator == null ? null : validator as String? Function(String?)?,
+        validator: widget.validator == null
+            ? null
+            : widget.validator as String? Function(String?)?,
         keyboardAppearance: Brightness.dark,
-        onChanged: onChanged,
-        controller: controller,
+        onChanged: widget.onChanged,
+        controller: widget.controller,
       ),
     );
   }

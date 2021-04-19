@@ -31,9 +31,9 @@ class RectangleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return MaterialButton(
-      focusColor: customTheme.focusColor,
-      highlightColor: customTheme.focusColor,
-      splashColor: customTheme.focusColor,
+      focusColor: customTheme.buttonColor,
+      highlightColor: customTheme.buttonColor,
+      splashColor: customTheme.buttonColor,
       hoverColor: hoverColor ?? customTheme.focusColor,
       onPressed: disable
           ? null

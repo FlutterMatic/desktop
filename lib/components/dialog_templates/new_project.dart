@@ -28,7 +28,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   final TextEditingController _pNameController = TextEditingController();
   final TextEditingController _pDescController = TextEditingController();
   final TextEditingController _pOrgController = TextEditingController();
-
   @override
   void dispose() {
     if (mounted) {
@@ -102,21 +101,26 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           Row(
             children: [
               _index != 0
-                  ? _loading
-                      ? const SizedBox(width: 40)
-                      : SquareButton(
-                          icon: const Icon(Icons.arrow_back_ios_rounded),
-                          tooltip: 'Back',
-                          onPressed: () => setState(() => _index--),
-                        )
+                  ? SquareButton(
+                      icon: const Icon(Icons.arrow_back_ios_rounded),
+                      color: customTheme.buttonColor,
+                      hoverColor: customTheme.accentColor,
+                      tooltip: 'Back',
+                      onPressed: () => setState(() => _index--),
+                    )
                   : const SizedBox(width: 40),
               const Expanded(
-                  child: Center(
-                child:
-                    Text('Create New Project', style: TextStyle(fontSize: 20)),
-              )),
+                child: Center(
+                  child: Text(
+                    'Create New Project',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
               SquareButton(
                 icon: const Icon(Icons.close_rounded),
+                hoverColor: customTheme.errorColor,
+                color: customTheme.buttonColor,
                 tooltip: 'Close',
                 onPressed: () => Navigator.pop(context),
               ),
@@ -133,22 +137,27 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                        controller: _pNameController,
                         hintText: 'Project Name',
                         filteringTextInputFormatter:
                             FilteringTextInputFormatter.allow(
-                                RegExp('[a-zA-Z-_0-9 ]')),
-                        onChanged: (val) => setState(() => _projectName =
-                            val.isEmpty
-                                ? null
-                                : val.trim().replaceAll(RegExp(r'-| '), '_')),
-                        validator: (val) => val!.isEmpty
+                          RegExp('[a-zA-Z-_0-9 ]'),
+                        ),
+                        onChanged: (_) {
+                          _projectName = _pNameController.text.isEmpty
+                              ? null
+                              : _pNameController.text
+                                  .trim()
+                                  .replaceAll(RegExp(r'-| '), '_')
+                                  .toLowerCase();
+                        },
+                        validator: (_) => _pNameController.text.isEmpty
                             ? 'Enter project name'
-                            : val.length < 3
+                            : _pNameController.text.length < 3
                                 ? 'Too short, try adding some more'
                                 : null,
                         maxLength: 70,
-                        controller: _pNameController,
-                      ),
+                                              ),
                       const SizedBox(height: 10),
                       //Checks if name doesn't start with a lower-case letter
                       if (_projectName != null &&
@@ -189,8 +198,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                               const Icon(Icons.info),
                               const SizedBox(width: 8),
                               const Expanded(
-                                  child: Text(
-                                      'Your project name can only include lower-case English letters (a-z) and underscores (_).')),
+                                child: Text(
+                                    'Your project name can only include lower-case English letters (a-z) and underscores (_).'),
+                              ),
                             ],
                           ),
                         ),
@@ -203,15 +213,18 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                        controller: _pDescController,
                         numLines: 4,
                         hintText: 'Description',
-                        validator: (val) => val!.isEmpty
+                        validator: (String? _pDesc) => _pDesc!.isEmpty
                             ? 'Please enter project description'
                             : null,
                         maxLength: 150,
-                        onChanged: (val) =>
-                            _projectDescription = val.isEmpty ? null : val,
-                        controller: _pDescController,
+                        onChanged: (_) {
+                          _projectDescription = _pDescController.text.isEmpty
+                              ? null
+                              : _pDescController.text;
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
@@ -223,8 +236,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                               const Icon(Icons.info),
                               const SizedBox(width: 8),
                               const Expanded(
-                                  child: Text(
-                                      'The description will be added in the READ.md file for your new project.')),
+                                child: Text(
+                                    'The description will be added in the READ.md file for your new project.'),
+                              ),
                             ],
                           ),
                         ),
@@ -237,22 +251,18 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                        controller: _pOrgController,
                         hintText:
                             'Project Organization (com.example.$_projectName)',
-                        validator: (val) => val!.isEmpty
-                            ? 'Please enter project organization name'
-                            : (val.contains('.') &&
-                                    val.contains(RegExp('[A-Za-z_]')) &&
-                                    val.contains('.'))
-                                ? null
-                                : 'Invalid organization name. Try "com.example.$_projectName"',
-                        filteringTextInputFormatter:
-                            FilteringTextInputFormatter.allow(
-                                RegExp('[a-zA-Z._]')),
+                        validator: (_) => _pOrgController.text.isEmpty
+                            ? 'Please enter project organization'
+                            : null,
                         maxLength: 30,
-                        onChanged: (val) => setState(
-                            () => _projectOrg = val.isEmpty ? null : val),
-                        controller: _pOrgController,
+                        onChanged: (_) {
+                          _projectOrg = _pOrgController.text.isEmpty
+                              ? null
+                              : _pOrgController.text;
+                        },
                       ),
                       if (_projectOrg != null &&
                           _projectOrg!.contains('.') &&
@@ -278,8 +288,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                               const Icon(Icons.info),
                               const SizedBox(width: 8),
                               const Expanded(
-                                  child: Text(
-                                      'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.')),
+                                child: Text(
+                                    'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
+                              ),
                             ],
                           ),
                         ),

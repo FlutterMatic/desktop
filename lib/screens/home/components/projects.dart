@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/open_options.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/title_section.dart';
+import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
@@ -67,6 +67,7 @@ bool _hovered = false;
 class _ProjectTileState extends State<ProjectTile> {
   @override
   Widget build(BuildContext context) {
+    CustomTheme currentTheme = CustomTheme();
     ThemeData customTheme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: 15),
@@ -74,10 +75,17 @@ class _ProjectTileState extends State<ProjectTile> {
         onEnter: (event) => setState(() => _hovered = false),
         onHover: (event) => setState(() => _hovered = true),
         onExit: (event) => setState(() => _hovered = false),
-        child: RectangleButton(
+        child: Container(
           height: 55,
           width: double.infinity,
-          onPressed: widget.onPressed,
+          // onPressed: widget.onPressed,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: currentTheme.currentTheme == ThemeMode.dark
+                ? customTheme.primaryColorLight
+                : kLightGreyColor,
+          ),
           child: Row(
             children: <Widget>[
               const Icon(Iconsdata.folder, color: kGreenColor),
@@ -111,7 +119,7 @@ class _ProjectTileState extends State<ProjectTile> {
               ),
               _hovered
                   ? SquareButton(
-                      color: kDarkColor.withOpacity(0.15),
+                      color: customTheme.buttonColor,
                       tooltip: 'Options',
                       onPressed: () {
                         showDialog(
