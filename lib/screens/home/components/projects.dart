@@ -81,7 +81,7 @@ class _ProjectTileState extends State<ProjectTile> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: currentTheme.currentTheme == ThemeMode.dark
+            color: currentTheme.currentTheme == ThemeMode.light
                 ? customTheme.primaryColorLight
                 : kLightGreyColor,
           ),

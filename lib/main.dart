@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
 Future<void> main() async {
+  await currentTheme.initSharedPref();
+  await currentTheme.loadPrefs();
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);
@@ -24,20 +26,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //Themes
-  bool? _isLight = false;
-  late SharedPreferences _pref;
-
-  Future<void> _loadPrefs() async {
-    await SharedPreferences.getInstance();
-    if (_pref.containsKey('light_mode')) {
-      setState(() => _isLight = _pref.getBool('light_mode'));
-    }
-  }
-
   @override
   void initState() {
-    _loadPrefs();
     currentTheme.addListener(() => setState(() {}));
     super.initState();
   }
@@ -47,8 +37,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.darkTheme,
-      themeMode: _isLight! ? ThemeMode.light : ThemeMode.dark,
-      // themeMode: currentTheme.currentTheme,
+      // themeMode: _isLight! ? ThemeMode.light : ThemeMode.dark,
+      themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: PageRoutes.routeState,
       routes: <String, WidgetBuilder>{

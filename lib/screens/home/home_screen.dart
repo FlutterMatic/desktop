@@ -163,12 +163,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 hoverColor: Colors.transparent,
                 focusColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                icon: Icon(dark ? Iconsdata.moon : Iconsdata.sun),
+                icon: Icon(
+                  currentTheme.isDarkTheme ? Iconsdata.moon : Iconsdata.sun,
+                ),
                 onPressed: () {
                   currentTheme.toggleTheme();
-                  setState(() => dark = !dark);
-                  widget.pref!.setBool('light_mode',
-                      currentTheme.currentTheme == ThemeMode.light);
                 },
               ),
             ),

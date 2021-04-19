@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 CustomTheme currentTheme = CustomTheme();
 
 class CustomTheme with ChangeNotifier {
-  static bool _isDarkTheme = false;
+  late SharedPreferences _pref;
+
+  Future<void> initSharedPref() async {
+    _pref = await SharedPreferences.getInstance();
+  }
+
+  bool _isDarkTheme = false;
+  bool get isDarkTheme => _isDarkTheme;
   ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
   ThemeMode get systemTheme => ThemeMode.system;
 
   void toggleTheme() {
     _isDarkTheme = !_isDarkTheme;
+    _pref.setBool('light_mode', _isDarkTheme);
     notifyListeners();
+  }
+
+  Future<void> loadPrefs() async {
+    if (_pref.containsKey('light_mode')) {
+      _isDarkTheme = _pref.getBool('light_mode') ?? false;
+    } else {
+      _isDarkTheme = true;
+    }
   }
 
   static ThemeData get lightTheme => ThemeData(
