@@ -9,12 +9,12 @@ Widget installedComponents() {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        titleSection('Flutter SDK and dependencies',
+        titleSection('Flutter SDK & Dependencies',
             const Icon(Iconsdata.settings), () {}, 'Settings'),
-        const SizedBox(height: 20),
+        const SizedBox(height: 25),
         installationStatus(
-          flutterExist ? InstallationStatus.done : InstallationStatus.error,
-          flutterExist
+          flutterInstalled ? InstallationStatus.done : InstallationStatus.error,
+          flutterInstalled
               ? 'Flutter Installed - v$flutterVersion'
               : 'Flutter Not Installed',
           'You will need to have Flutter installed on your machine. This is how your machine will be able to understand the Dart language.',
@@ -34,7 +34,7 @@ Widget installedComponents() {
           vscInstalled ? InstallationStatus.done : InstallationStatus.error,
           vscInstalled
               ? 'Visual Studio Code - v$codeVersion'
-              : 'Visual Studio Code not installed',
+              : 'Visual Studio Code Not installed',
           'We recommend using Visual Studio Code for developing Flutter apps. It is lightweight which means uses less space and memory.',
           onDownload: () {},
           tooltip: 'VSCode',

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-bool flutterExist = false;
+bool flutterInstalled = false;
 bool javaInstalled = false;
 bool vscInstalled = false;
 bool vscInsidersInstalled = false;
 bool studioInstalled = false;
-bool xCode = false;
+bool xCodeInstalled = false;
 
 String? flutterVersion, flutterChannel, codeVersion, javaVersion;
 

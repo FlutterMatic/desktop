@@ -82,7 +82,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               _projectName!.startsWith(RegExp('[a-z]')) &&
               !_projectName!.contains(RegExp('[0-9]')))
             _projectWarningWidget(
-                'Your new project will be called "${_projectName!.replaceAll(RegExp(r'-| '), '_').toLowerCase()}"',
+                'Your new project will be called "${_projectName!.trim().replaceAll(RegExp(r'-| '), '_').toLowerCase()}"',
                 Assets.done,
                 kGreenColor),
           Padding(
@@ -114,6 +114,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               RectangleButton(
                 radius: BorderRadius.circular(5),
                 color: Colors.blue,
+               
                 onPressed: () {},
                 child: const Text(
                   'Continue',

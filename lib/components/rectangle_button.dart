@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/spinner.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class RectangleButton extends StatelessWidget {
@@ -8,11 +9,13 @@ class RectangleButton extends StatelessWidget {
   final EdgeInsets? padding;
   final Widget child;
   final Color? color;
+  final bool disable;
   final Function? onPressed;
 
   RectangleButton({
     this.height = 40,
     this.width = 100,
+    this.disable = false,
     this.radius,
     this.color = kLightGreyColor,
     this.padding,
@@ -23,7 +26,7 @@ class RectangleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      onPressed: onPressed as void Function()?,
+      onPressed: disable ? null : onPressed as void Function()?,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),

@@ -35,9 +35,9 @@ Widget controls(BuildContext context) {
                   Container(height: 20, width: 2, color: Colors.black),
                   const SizedBox(width: 10),
                   Text(
-                    flutterExist
+                    flutterInstalled
                         ? '${flutterChannel![0].toUpperCase() + flutterChannel!.substring(1)} - Version $flutterVersion'
-                        : 'Install flutter first',
+                        : 'Install Flutter first',
                     style: const TextStyle(
                       color: Colors.black54,
                     ),

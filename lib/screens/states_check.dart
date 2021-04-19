@@ -1,69 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/services/checks.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:lottie/lottie.dart';
 
-class CheckStates extends StatefulWidget {
+class StatusCheck extends StatefulWidget {
+  const StatusCheck({Key? key}) : super(key: key);
+
   @override
-  _CheckStatesState createState() => _CheckStatesState();
+  _StatusCheckState createState() => _StatusCheckState();
 }
 
-class _CheckStatesState extends State<CheckStates> {
-  CheckDependencies checkDependencies = CheckDependencies();
-  Future<void> statesCheck() async {
+class _StatusCheckState extends State<StatusCheck> {
+  Future<void> _loadServices() async {
     if (mounted) {
-      flutterExist = await checkDependencies.checkFlutter();
-      javaInstalled = await checkDependencies.checkJava();
-      vscInstalled = await checkDependencies.checkVSC();
-      vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
-      studioInstalled = await checkDependencies.checkAndroidStudios();
+      CheckDependencies checkDependencies = CheckDependencies();
+      setState(() => _message = 'Checking if you have Flutter installed');
+      await checkDependencies.checkFlutter();
+      setState(() => _message = 'Checking if you have Java installed');
+      await checkDependencies.checkJava();
+      setState(
+          () => _message = 'Checking if you have Visual Studio Code installed');
+      await checkDependencies.checkVSC();
+      setState(() => _message =
+          'Checking if you have Visual Studio Code Insider installed');
+      await checkDependencies.checkVSCInsiders();
+      setState(
+          () => _message = 'Checking if you have Android Studio installed');
+      await checkDependencies.checkAndroidStudios();
     }
     if (mounted) {
       await Navigator.pushReplacementNamed(context, PageRoutes.routeHome);
     }
   }
 
+  Future<void> _loadText() async {
+    await Future<void>.delayed(const Duration(seconds: 3), () {
+      setState(() => _showText = true);
+    });
+  }
+
+  bool _showText = false;
+  String? _message;
+
   @override
   void initState() {
     super.initState();
-    statesCheck();
+    _loadServices();
+    _loadText();
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Hero(
-                tag: 'logo',
-                child: Image.asset(
-                  Assets.flutterIcon,
-                  height: 0.2 * MediaQuery.of(context).size.height,
-                ),
-              ),
-              Lottie.asset(LottieAssets.searching,
-                  height: 0.2 * MediaQuery.of(context).size.height),
-              const AnimatedDefaultTextStyle(
-                duration: Duration(milliseconds: 300),
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-                child: Text(
-                  'Checking for pre-installed softwares, It may take a while.',
-                ),
-              ),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            const Spacer(),
+            const CircularProgressIndicator(),
+            const Spacer(),
+            _showText
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 300),
+                      style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 15,
+                          color: Colors.black54),
+                      child: Text(
+                        _message ??
+                            'Checking for pre-installed softwares. This may take a while.',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                : const SizedBox(height: 50),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }
