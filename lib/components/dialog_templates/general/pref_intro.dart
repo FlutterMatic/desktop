@@ -161,10 +161,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
             focusColor: Colors.blueGrey.withOpacity(0.5),
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
-            child: Text(
-              'Get Started',
-              style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-            ),
+            child: const Text('Get Started'),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/widgets/activity_button.dart';
 
 bool flutterInstalled = false;
 bool javaInstalled = false;
@@ -7,7 +8,11 @@ bool vscInsidersInstalled = false;
 bool studioInstalled = false;
 bool xCodeInstalled = false;
 
+bool channelIsUpdating = false;
+
 String? flutterVersion, flutterChannel, codeVersion, javaVersion;
+
+List<BgActivityButton> bgActivities = [];
 
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
