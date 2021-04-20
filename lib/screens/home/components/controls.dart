@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/change_channel.dart';
+import 'package:flutter_installer/components/dialog_templates/flutter_upgrade.dart';
 import 'package:flutter_installer/components/dialog_templates/install_fluter.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
@@ -89,12 +90,16 @@ Widget controls(BuildContext context) {
                   const SizedBox(width: 8),
                   RectangleButton(
                     onPressed: () {
-                      flutterInstalled
-                          ? null
-                          : showDialog(
-                              context: context,
-                              builder: (_) => InstallFlutterDialog(),
-                            );
+                      showDialog(
+                        //Upgrade Flutter Models:
+                        //`NewFlutterDialog()` => Informs user there is a new Flutter version
+                        //`CheckFlutterVersionDialog()` => Informs user that it's checking for the latest version
+                        //`LatestFlutterDialog()` => Informs the user that you are on the latest version
+                        context: context,
+                        builder: (_) => flutterInstalled
+                            ? CheckFlutterVersionDialog()
+                            : InstallFlutterDialog(),
+                      );
                     },
                     child: Row(
                       children: <Widget>[
