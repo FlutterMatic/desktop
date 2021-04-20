@@ -1,16 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/bullet_point.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
-import 'package:flutter_installer/components/info_widget.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/square_button.dart';
+import 'package:flutter_installer/components/widgets/bullet_point.dart';
+import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/info_widget.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'dart:io';
 
 class InstallFlutterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,18 +23,7 @@ class InstallFlutterDialog extends StatelessWidget {
               ),
               const Spacer(),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 20),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/change_channel.dart';
-import 'package:flutter_installer/components/dialog_templates/flutter_upgrade.dart';
-import 'package:flutter_installer/components/dialog_templates/install_fluter.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/round_container.dart';
-import 'package:flutter_installer/components/title_section.dart';
+import 'package:flutter_installer/components/dialog_templates/general/change_channel.dart';
+import 'package:flutter_installer/components/dialog_templates/general/flutter_upgrade.dart';
+import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/round_container.dart';
+import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 

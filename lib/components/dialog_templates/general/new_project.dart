@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_installer/components/check_box_element.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
-import 'package:flutter_installer/components/info_widget.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/square_button.dart';
-import 'package:flutter_installer/components/text_field.dart';
-import 'package:flutter_installer/components/warning_widget.dart';
+import 'package:flutter_installer/components/widgets/check_box_element.dart';
+import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/info_widget.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/square_button.dart';
+import 'package:flutter_installer/components/widgets/text_field.dart';
+import 'package:flutter_installer/components/widgets/warning_widget.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -120,16 +121,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                   ),
                 ),
               ),
-              SquareButton(
-                icon: Icon(
-                  Icons.close_rounded,
-                  color: customTheme.textTheme.bodyText1!.color,
-                ),
-                hoverColor: customTheme.errorColor,
-                color: customTheme.buttonColor,
-                tooltip: 'Close',
-                onPressed: () => Navigator.pop(context),
-              ),
+              CustomCloseButton()
             ],
           ),
           const SizedBox(height: 20),

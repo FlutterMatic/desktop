@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/round_container.dart';
+import 'package:flutter_installer/components/widgets/round_container.dart';
 
 Widget infoWidget(String text) {
   return Padding(

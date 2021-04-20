@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/title_section.dart';
-import 'package:flutter_installer/screens/home/components/controls.dart';
+import 'package:flutter_installer/components/widgets/title_section.dart';
+import 'package:flutter_installer/screens/elements/controls.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget installedComponents(BuildContext context) {

@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/square_button.dart';
-import 'package:flutter_installer/screens/home/components/projects.dart';
+import 'package:flutter_installer/components/widgets/square_button.dart';
+import 'package:flutter_installer/screens/elements/projects.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'components/controls.dart';
-import 'components/installed.dart';
+import 'elements/controls.dart';
+import 'elements/installed.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

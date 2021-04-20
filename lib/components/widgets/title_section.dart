@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/square_button.dart';
+import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

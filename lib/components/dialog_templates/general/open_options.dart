@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/square_button.dart';
-import 'package:flutter_installer/components/text_field.dart';
+import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/text_field.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
 
@@ -26,18 +26,7 @@ class OpenOptionsDialog extends StatelessWidget {
                 ),
               ),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 20),
@@ -164,18 +153,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                 ),
               ),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 20),

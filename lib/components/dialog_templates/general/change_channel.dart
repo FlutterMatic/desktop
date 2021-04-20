@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/button_list.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/square_button.dart';
-import 'package:flutter_installer/components/warning_widget.dart';
+import 'package:flutter_installer/components/widgets/button_list.dart';
+import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class ChangeChannelDialog extends StatelessWidget {
@@ -27,18 +27,7 @@ class ChangeChannelDialog extends StatelessWidget {
               ),
               const Spacer(),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 15),

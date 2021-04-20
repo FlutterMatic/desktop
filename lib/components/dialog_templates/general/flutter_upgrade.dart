@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_template.dart';
-import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/square_button.dart';
+import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class LatestFlutterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -21,18 +21,7 @@ class LatestFlutterDialog extends StatelessWidget {
               const Text('Flutter Upgrade', style: TextStyle(fontSize: 20)),
               const Spacer(),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 30),
@@ -53,7 +42,6 @@ class LatestFlutterDialog extends StatelessWidget {
 class NewFlutterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,18 +55,7 @@ class NewFlutterDialog extends StatelessWidget {
               const Text('New Flutter Version', style: TextStyle(fontSize: 20)),
               const Spacer(),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 30),
@@ -108,7 +85,6 @@ class NewFlutterDialog extends StatelessWidget {
 class CheckFlutterVersionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,18 +98,7 @@ class CheckFlutterVersionDialog extends StatelessWidget {
               const Text('Upgrade Flutter', style: TextStyle(fontSize: 20)),
               const Spacer(),
               Align(
-                alignment: Alignment.centerRight,
-                child: SquareButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  color: customTheme.buttonColor,
-                  hoverColor: customTheme.errorColor,
-                  tooltip: 'Close',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+                  alignment: Alignment.centerRight, child: CustomCloseButton()),
             ],
           ),
           const SizedBox(height: 40),
