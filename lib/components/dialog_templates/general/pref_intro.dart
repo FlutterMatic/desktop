@@ -1,13 +1,14 @@
+import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
+import 'package:file_chooser/src/result.dart';
 import 'package:flutter/material.dart';
-import 'package:filepicker_windows/filepicker_windows.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
 class PrefIntroDialog extends StatefulWidget {
   @override
@@ -117,12 +118,13 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 const SizedBox(width: 8),
                 RectangleButton(
                   onPressed: () async {
-                    OpenFilePicker file = OpenFilePicker()
-                      // ..filterSpecification = {'Directory': '*.dir'}
-                      ..defaultFilterIndex = 0
-                      ..title = 'Select projects path';
-                    File _result = file.getFile()!;
-                    setState(() => _dirPath = _result.path);
+                    FileChooserResult fileResult = await showOpenPanel(
+                      allowedFileTypes: [],
+                      canSelectDirectories: true,
+                    );
+                    if (fileResult.paths!.isNotEmpty) {
+                      debugPrint(fileResult.paths!.single);
+                    }
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
                   splashColor: Colors.transparent,
