@@ -156,6 +156,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 setState(() => _loading = true);
                 _pref = await SharedPreferences.getInstance();
                 await _pref.setString('projects_path', _dirPath!);
+                projDir = _pref.getString('projects_path');
                 flutterInstalled = await checkDependencies.checkFlutter();
                 javaInstalled = await checkDependencies.checkJava();
                 vscInstalled = await checkDependencies.checkVSC();

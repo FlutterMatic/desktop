@@ -27,7 +27,7 @@ Widget projects(BuildContext context) {
         (projs.isEmpty)
             ? const Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 100.0),
+                  padding: EdgeInsets.symmetric(vertical: 100.0),
                   child: Text('No Projects found at the moment.'),
                 ),
               )
