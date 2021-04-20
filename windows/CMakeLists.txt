@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project(fluttermatic_desktop LANGUAGES CXX)
+project(fluttermatic LANGUAGES CXX)
 
-set(BINARY_NAME "fluttermatic_desktop")
+set(BINARY_NAME "fluttermatic")
 
 cmake_policy(SET CMP0063 NEW)
 

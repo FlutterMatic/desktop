@@ -1,3 +1,4 @@
+import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell_run.dart';
 
 class FlutterActions {
@@ -5,10 +6,19 @@ class FlutterActions {
 
   //Create project
   Future<void> flutterCreate(
-      String projName, String projDesc, String projOrg) async {
-    await shell.run(
-      'flutter create --project-name $projName --description $projDesc --org $projOrg',
-    );
+    String projName,
+    String projDesc,
+    String projOrg, {
+    required bool android,
+    required bool windows,
+    required bool ios,
+    required bool macos,
+    required bool linux,
+    required bool web,
+  }) async {
+    await shell.cd(projDir!).run(
+          'flutter create --org=$projOrg --project-name=$projName --description="$projDesc" --platforms=${android ? 'android' : ''}${(android && ios) ? ',' : ''}${ios ? 'ios' : ''}${(ios && windows) ? ',' : ''}${windows ? 'windows' : ''}${(windows && macos) ? ',' : ''}${macos ? 'macos' : ''}${(macos && web) ? ',' : ''}${web ? 'web' : ''}${(web && linux) ? ',' : ''}${linux ? 'linux' : ''} $projName',
+        );
   }
 
   //Change channel

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/general/pref_intro.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/services/checks.dart';
+import 'package:flutter_installer/services/installs.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,18 +19,21 @@ class _StatusCheckState extends State<StatusCheck> {
     _pref = await SharedPreferences.getInstance();
     if (mounted) {
       CheckDependencies checkDependencies = CheckDependencies();
-      flutterInstalled = await checkDependencies.checkFlutter();
-      javaInstalled = await checkDependencies.checkJava();
-      vscInstalled = await checkDependencies.checkVSC();
-      vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
-      studioInstalled = await checkDependencies.checkAndroidStudios();
-      await _pref.clear();
+      Installs installs = Installs();
       if (!_pref.containsKey('projects_path')) {
         await showDialog(
           barrierDismissible: false,
           context: context,
           builder: (_) => PrefIntroDialog(),
         );
+      } else {
+        projDir = _pref.getString('projects_path');
+        flutterInstalled = await checkDependencies.checkFlutter();
+        javaInstalled = await checkDependencies.checkJava();
+        vscInstalled = await checkDependencies.checkVSC();
+        vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
+        studioInstalled = await checkDependencies.checkAndroidStudios();
+        await installs.checkProjects();
       }
     }
     if (mounted) {

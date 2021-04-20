@@ -24,21 +24,37 @@ Widget projects(BuildContext context) {
           ),
           context: context,
         ),
-        ProjectTile(
-          fileName: 'flutter_tooltip',
-          filePath: 'path',
-          lastEdit: 'Jan - 17, 2021',
-        ),
-        ProjectTile(
-          fileName: 'flutter_tooltip',
-          filePath: 'path',
-          lastEdit: 'Jan - 17, 2021',
-        ),
-        ProjectTile(
-          fileName: 'flutter_tooltip',
-          filePath: 'path',
-          lastEdit: 'Jan - 17, 2021',
-        ),
+        (projs.isEmpty)
+            ? const Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 100.0),
+                  child: Text('No Projects found at the moment.'),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: SizedBox(
+                  width: 500,
+                  height: 0.47 * MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: projs.length,
+                    itemBuilder: (_, index) {
+                      List<String> tempName = projs[index].split('\\');
+                      return ProjectTile(
+                        fileName: tempName[tempName.length - 3],
+                        filePath: 'path',
+                        lastEdit: 'Jan - 17, 2021',
+                      );
+                    },
+                  ),
+                ),
+              ),
+        // ProjectTile(
+        //     fileName: 'flutter_tooltip',
+        //     filePath: 'path',
+        //     lastEdit: 'Jan - 17, 2021',
+        //   ),
       ],
     ),
   );

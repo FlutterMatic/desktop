@@ -87,8 +87,17 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       // Index 3 - Platforms
       else if (_index == 3 && _validatePlatformSelection()) {
         setState(() => _index = 4);
-        // flutterActions.flutterCreate(
-        //     _projectName!, _projectDescription!, _projectOrg!);
+        flutterActions.flutterCreate(
+          _projectName!,
+          _projectDescription!,
+          _projectOrg!,
+          android: _android,
+          windows: _windows,
+          ios: _ios,
+          macos: _macos,
+          linux: _linux,
+          web: _web,
+        );
       }
     }
   }
@@ -146,31 +155,35 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                       if (_projectName != null &&
                           !_projectName!.startsWith(RegExp('[a-zA-Z]')))
                         warningWidget(
-                            'Your project name needs to start with a lower-case English character (a-z).',
-                            Assets.error,
-                            kRedColor),
+                          'Your project name needs to start with a lower-case English character (a-z).',
+                          Assets.error,
+                          kRedColor,
+                        ),
                       //Checks if there are numbers included in the project name
                       if (_projectName != null &&
                           _projectName!.contains(RegExp('[0-9]')))
                         warningWidget(
-                            'You can\'t have any numbers in your project name. Try using characters such as English letters (a-z) and underscores (_).',
-                            Assets.error,
-                            kRedColor),
+                          'You can\'t have any numbers in your project name. Try using characters such as English letters (a-z) and underscores (_).',
+                          Assets.error,
+                          kRedColor,
+                        ),
                       //Checks to see if there are any upper-case letters
                       if (_projectName != null &&
                           _projectName!.contains(RegExp(r'[A-Z]')))
                         warningWidget(
-                            'Any upper-case letters in the project name will be turned to a lower-case letter.',
-                            Assets.warning,
-                            kYellowColor),
+                          'Any upper-case letters in the project name will be turned to a lower-case letter.',
+                          Assets.warning,
+                          kYellowColor,
+                        ),
                       //Checks to see if lower-case letter is started with
                       if (_projectName != null &&
                           _projectName!.startsWith(RegExp('[a-zA-Z]')) &&
                           !_projectName!.contains(RegExp('[0-9]')))
                         warningWidget(
-                            'Your new project will be called "${_projectName!.trim().replaceAll(RegExp(r'-| '), '_').toLowerCase()}"',
-                            Assets.done,
-                            kGreenColor),
+                          'Your new project will be called "${_projectName!.trim().replaceAll(RegExp(r'-| '), '_').toLowerCase()}"',
+                          Assets.done,
+                          kGreenColor,
+                        ),
                       infoWidget(
                           'Your project name can only include lower-case English letters (a-z) and underscores (_).')
                     ],
@@ -182,6 +195,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     children: [
                       CustomTextField(
                         controller: _pDescController,
+                        filteringTextInputFormatter:
+                            FilteringTextInputFormatter.allow(
+                                RegExp('[a-zA-Z0-9\.\,\\s]')),
                         numLines: 4,
                         hintText: 'Description',
                         validator: (String? _pDesc) => _pDesc!.isEmpty
@@ -202,6 +218,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     children: [
                       CustomTextField(
                         controller: _pOrgController,
+                        filteringTextInputFormatter:
+                            FilteringTextInputFormatter.allow(
+                                RegExp('[a-zA-Z\_\.]')),
                         hintText:
                             'Project Organization (com.example.$_projectName)',
                         validator: (val) => val!.isEmpty
@@ -218,15 +237,28 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                           _projectOrg!.contains(RegExp('[A-Za-z_]')) &&
                           !_projectOrg!.endsWith('.') &&
                           !_projectOrg!.endsWith('_'))
-                        warningWidget(
-                            '"$_projectOrg" will be your organization name. You can change it later.',
-                            Assets.done,
-                            kGreenColor)
+                        ('.'.allMatches(_projectOrg!).length > 1)
+                            ? warningWidget(
+                                'Hello there, you better don\'t use 2 "."s in your organization for good practice.',
+                                Assets.warning,
+                                kYellowColor,
+                              )
+                            : warningWidget(
+                                '"$_projectOrg.$_projectName" will be your organization name. You can change it later.',
+                                Assets.done,
+                                kGreenColor)
                       else if (_projectOrg != null)
-                        warningWidget(
-                            'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app".',
-                            Assets.error,
-                            kRedColor),
+                        ('.'.allMatches(_projectOrg!).length > 1)
+                            ? warningWidget(
+                                'Hello there, you better don\'t use 2 "."s in your organization for good practice.',
+                                Assets.warning,
+                                kYellowColor,
+                              )
+                            : warningWidget(
+                                'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app".',
+                                Assets.error,
+                                kRedColor,
+                              ),
                       infoWidget(
                           'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
                     ],
@@ -273,9 +305,10 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 ),
                 if (!_validatePlatformSelection())
                   warningWidget(
-                      'You will need to choose at least one platform. You will be able to change it later.',
-                      Assets.error,
-                      kRedColor),
+                    'You will need to choose at least one platform. You will be able to change it later.',
+                    Assets.error,
+                    kRedColor,
+                  ),
               ],
             ),
           if (_index == 4)
@@ -308,7 +341,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                   child: Text(
                     'Next',
                     style: TextStyle(
-                        color: customTheme.textTheme.bodyText1!.color),
+                      color: customTheme.textTheme.bodyText1!.color,
+                    ),
                   ),
                 ),
               ],

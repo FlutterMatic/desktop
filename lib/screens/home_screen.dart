@@ -56,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Installed Components
                       MediaQuery.of(context).size.width > 1070
                           ? Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 //Installed Components
                                 Expanded(
@@ -66,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //Controls
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     controls(context),
                                     const SizedBox(height: 20),
@@ -75,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             )
                           : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 //Installed Components
                                 installedComponents(context),

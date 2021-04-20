@@ -12,7 +12,10 @@ bool channelIsUpdating = false;
 
 String? flutterVersion, flutterChannel, codeVersion, javaVersion;
 
+String? projDir;
+
 List<BgActivityButton> bgActivities = [];
+List<String> projs = [];
 
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
@@ -62,6 +65,7 @@ class Iconsdata {
   static const IconData sun = IconData(0xeb30, fontFamily: _iconName);
   static const IconData moon = IconData(0xece7, fontFamily: _iconName);
   static const IconData folder = IconData(0xeaad, fontFamily: _iconName);
+  static const IconData search = IconData(0xeb1c, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);
