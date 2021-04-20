@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/general/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/general/open_options.dart';
+import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/services/themes.dart';
@@ -26,21 +27,18 @@ Widget projects(BuildContext context) {
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
+          filePath: 'path',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Open file onPressed
-          onPressed: () {},
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
+          filePath: 'path',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Open file onPressed
-          onPressed: () {},
         ),
         ProjectTile(
           fileName: 'flutter_tooltip',
+          filePath: 'path',
           lastEdit: 'Jan - 17, 2021',
-          //TODO: Open file onPressed
-          onPressed: () {},
         ),
       ],
     ),
@@ -49,12 +47,12 @@ Widget projects(BuildContext context) {
 
 class ProjectTile extends StatefulWidget {
   final String fileName;
+  final String filePath;
   final String? lastEdit;
-  final Function() onPressed;
 
   ProjectTile({
     required this.fileName,
-    required this.onPressed,
+    required this.filePath,
     this.lastEdit,
   });
 
@@ -62,78 +60,61 @@ class ProjectTile extends StatefulWidget {
   _ProjectTileState createState() => _ProjectTileState();
 }
 
-bool _hovered = false;
-
 class _ProjectTileState extends State<ProjectTile> {
   @override
   Widget build(BuildContext context) {
-    CustomTheme currentTheme = CustomTheme();
     ThemeData customTheme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: 15),
-      child: MouseRegion(
-        onEnter: (event) => setState(() => _hovered = false),
-        onHover: (event) => setState(() => _hovered = true),
-        onExit: (event) => setState(() => _hovered = false),
-        child: Container(
-          height: 55,
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: currentTheme.currentTheme == ThemeMode.light
-                ? customTheme.primaryColorLight
-                : kLightGreyColor,
-          ),
-          child: Row(
-            children: <Widget>[
-              const Icon(Iconsdata.folder, color: kGreenColor),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.fileName,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                      softWrap: false,
-                      style: TextStyle(
-                        color: customTheme.textTheme.bodyText1!.color,
-                      ),
+      child: RoundContainer(
+        height: 55,
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        radius: 5,
+        child: Row(
+          children: <Widget>[
+            const Icon(Iconsdata.folder, color: kGreenColor),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.fileName,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: TextStyle(
+                      color: customTheme.textTheme.bodyText1!.color,
                     ),
-                    widget.lastEdit != null
-                        ? Text(
-                            widget.lastEdit!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: customTheme.textTheme.bodyText1!.color!
-                                  .withOpacity(0.5),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ],
-                ),
+                  ),
+                  widget.lastEdit != null
+                      ? Text(
+                          widget.lastEdit!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: customTheme.textTheme.bodyText1!.color!
+                                .withOpacity(0.5),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ],
               ),
-              _hovered
-                  ? SquareButton(
-                      color: customTheme.buttonColor,
-                      tooltip: 'Options',
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => OpenOptionsDialog(),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.more_vert_rounded,
-                        color: customTheme.iconTheme.color,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ],
-          ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.more_vert_rounded,
+                color: customTheme.iconTheme.color,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => OpenOptionsDialog(),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
