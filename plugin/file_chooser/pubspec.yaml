@@ -1,0 +1,25 @@
+name: file_chooser
+description: Displays native platform open and save panels.
+version: 0.1.6
+# Do not publish this plugin. See:
+# https://github.com/google/flutter-desktop-embedding/blob/master/plugins/README.md#using-plugins
+# publish_to: none
+homepage: https://gitlab.com/testapp-system/file_chooser/-/tree/file_choolser_fde/plugins/file_chooser
+
+flutter:
+  plugin:
+    platforms:
+      linux:
+        pluginClass: FileChooserPlugin
+      macos:
+        pluginClass: FileChooserPlugin
+      windows:
+        pluginClass: FileChooserPlugin
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
