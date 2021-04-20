@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/general/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/general/open_options.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
-import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
