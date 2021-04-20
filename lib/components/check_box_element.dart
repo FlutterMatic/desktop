@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class CheckBoxElement extends StatelessWidget {
   final bool value;
+  final bool disable;
   final Function(bool?) onChanged;
   final String? text;
 
   CheckBoxElement({
     required this.onChanged,
+    this.disable = false,
     this.text,
     required this.value,
   });
@@ -19,7 +22,7 @@ class CheckBoxElement extends StatelessWidget {
         children: [
           Checkbox(
             value: value,
-            onChanged: onChanged,
+            onChanged: disable ? null : onChanged,
             splashRadius: 20,
             activeColor: Colors.blueGrey,
             hoverColor: Colors.blueGrey.withOpacity(0.2),

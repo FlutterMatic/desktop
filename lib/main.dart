@@ -36,7 +36,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.darkTheme,
-      // themeMode: _isLight! ? ThemeMode.light : ThemeMode.dark,
       themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: PageRoutes.routeState,

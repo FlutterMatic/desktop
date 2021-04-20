@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_installer/components/check_box_element.dart';
 import 'package:flutter_installer/components/dialog_template.dart';
+import 'package:flutter_installer/components/info_widget.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
@@ -23,7 +24,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   String? _projectOrg;
 
   //Utils
-  bool _loading = false;
   int _index = 0;
 
   final _createProjectFormKey = GlobalKey<FormState>();
@@ -73,6 +73,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
     if (_createProjectFormKey.currentState!.validate()) {
       //Index 0 - Name
       if (_index == 0 && _projectNameCondition()) {
+        setState(() => _projectName = _projectName!.toLowerCase());
         setState(() => _index = 1);
       }
       // Index 1 - Description
@@ -85,7 +86,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       }
       // Index 3 - Platforms
       else if (_index == 3 && _validatePlatformSelection()) {
-        setState(() => _loading = true);
+        setState(() => _index = 4);
         // flutterActions.flutterCreate(
         //     _projectName!, _projectDescription!, _projectOrg!);
       }
@@ -101,12 +102,14 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
         children: [
           Row(
             children: [
-              _index != 0
+              _index != 0 && _index != 4
                   ? SquareButton(
-                      icon: const Icon(Icons.arrow_back_ios_rounded),
+                      icon: Icon(
+                        Icons.arrow_back_ios_rounded,
+                        color: customTheme.textTheme.bodyText1!.color,
+                      ),
                       color: customTheme.buttonColor,
                       hoverColor: customTheme.accentColor,
-                      tooltip: 'Back',
                       onPressed: () => setState(() => _index--),
                     )
                   : const SizedBox(width: 40),
@@ -119,7 +122,10 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 ),
               ),
               SquareButton(
-                icon: const Icon(Icons.close_rounded),
+                icon: Icon(
+                  Icons.close_rounded,
+                  color: customTheme.textTheme.bodyText1!.color,
+                ),
                 hoverColor: customTheme.errorColor,
                 color: customTheme.buttonColor,
                 tooltip: 'Close',
@@ -144,14 +150,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             FilteringTextInputFormatter.allow(
                           RegExp('[a-zA-Z-_0-9 ]'),
                         ),
-                        onChanged: (val) {
-                          setState(() {
-                            _projectName = val
-                                .trim()
-                                .replaceAll(RegExp(r'-| '), '_')
-                                .toLowerCase();
-                          });
-                        },
+                        onChanged: (val) => setState(() => _projectName =
+                            val.trim().replaceAll(RegExp(r'-| '), '_')),
                         validator: (val) => val!.isEmpty
                             ? 'Enter project name'
                             : val.length < 3
@@ -189,23 +189,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             'Your new project will be called "${_projectName!.trim().replaceAll(RegExp(r'-| '), '_').toLowerCase()}"',
                             Assets.done,
                             kGreenColor),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: RoundContainer(
-                          color: Colors.blueGrey.withOpacity(0.2),
-                          radius: 5,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.info),
-                              const SizedBox(width: 8),
-                              const Expanded(
-                                child: Text(
-                                    'Your project name can only include lower-case English letters (a-z) and underscores (_).'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      infoWidget(
+                          'Your project name can only include lower-case English letters (a-z) and underscores (_).')
                     ],
                   ),
                 //Index 1
@@ -221,29 +206,11 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             ? 'Please enter project description'
                             : null,
                         maxLength: 150,
-                        onChanged: (val) {
-                          setState(() {
-                            _projectDescription = val.isEmpty ? null : val;
-                          });
-                        },
+                        onChanged: (val) => setState(() =>
+                            _projectDescription = val.isEmpty ? null : val),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: RoundContainer(
-                          color: Colors.blueGrey.withOpacity(0.2),
-                          radius: 5,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.info),
-                              const SizedBox(width: 8),
-                              const Expanded(
-                                child: Text(
-                                    'The description will be added in the READ.md file for your new project.'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      infoWidget(
+                          'The description will be added in the READ.md file for your new project.'),
                     ],
                   ),
                 //Index 2
@@ -258,14 +225,11 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                         validator: (val) => val!.isEmpty
                             ? 'Please enter project organization'
                             : val.length > 30
-                                ? 'Organization name is too long. Please make it shorter.'
+                                ? 'Organization name is too long. Try (com.example.$_projectName)'
                                 : null,
                         maxLength: 30,
-                        onChanged: (val) {
-                          setState(() {
-                            _projectOrg = val.isEmpty ? null : val;
-                          });
-                        },
+                        onChanged: (val) => setState(
+                            () => _projectOrg = val.isEmpty ? null : val),
                       ),
                       if (_projectOrg != null &&
                           _projectOrg!.contains('.') &&
@@ -281,23 +245,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app".',
                             Assets.error,
                             kRedColor),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: RoundContainer(
-                          color: Colors.blueGrey.withOpacity(0.2),
-                          radius: 5,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.info),
-                              const SizedBox(width: 8),
-                              const Expanded(
-                                child: Text(
-                                    'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      infoWidget(
+                          'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
                     ],
                   ),
               ],
@@ -347,29 +296,41 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                       kRedColor),
               ],
             ),
+          if (_index == 4)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 30),
+                const Center(child: CircularProgressIndicator()),
+                const SizedBox(height: 30),
+                const Text(
+                    'Creating your new Flutter project. This may take a while.'),
+              ],
+            ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: Text('Cancel'),
+          if (_index != 4)
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Text('Cancel'),
+                  ),
                 ),
-              ),
-              const Spacer(),
-              RectangleButton(
-                loading: _loading,
-                radius: BorderRadius.circular(5),
-                onPressed: _createNewProject,
-                child: Text(
-                  'Next',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                const Spacer(),
+                RectangleButton(
+                  radius: BorderRadius.circular(5),
+                  onPressed: _createNewProject,
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                        color: customTheme.textTheme.bodyText1!.color),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

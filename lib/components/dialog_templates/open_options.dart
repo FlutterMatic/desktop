@@ -23,7 +23,10 @@ class OpenOptionsDialog extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: SquareButton(
-                  icon: const Icon(Icons.close_rounded),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: customTheme.textTheme.bodyText1!.color,
+                  ),
                   color: customTheme.buttonColor,
                   hoverColor: customTheme.errorColor,
                   tooltip: 'Close',
@@ -50,11 +53,7 @@ class OpenOptionsDialog extends StatelessWidget {
                       TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
                 const Spacer(),
-                Icon(
-                  Icons.folder_open,
-                  color:
-                      customTheme.textTheme.bodyText1!.color!.withOpacity(0.4),
-                ),
+                const Icon(Icons.folder_open, color: Colors.blueGrey),
               ],
             ),
           ),
@@ -72,11 +71,7 @@ class OpenOptionsDialog extends StatelessWidget {
                       TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
                 const Spacer(),
-                Icon(
-                  Icons.code_rounded,
-                  color:
-                      customTheme.textTheme.bodyText1!.color!.withOpacity(0.4),
-                ),
+                const Icon(Icons.code_rounded, color: Colors.blueGrey),
               ],
             ),
           ),
@@ -97,11 +92,7 @@ class OpenOptionsDialog extends StatelessWidget {
                       TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
                 const Spacer(),
-                Icon(
-                  Icons.file_present,
-                  color:
-                      customTheme.textTheme.bodyText1!.color!.withOpacity(0.4),
-                ),
+                const Icon(Icons.file_present, color: Colors.blueGrey),
               ],
             ),
           ),

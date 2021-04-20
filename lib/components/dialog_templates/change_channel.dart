@@ -29,7 +29,10 @@ class ChangeChannelDialog extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: SquareButton(
-                  icon: const Icon(Icons.close_rounded),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: customTheme.textTheme.bodyText1!.color,
+                  ),
                   color: customTheme.buttonColor,
                   hoverColor: customTheme.errorColor,
                   tooltip: 'Close',

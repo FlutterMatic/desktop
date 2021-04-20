@@ -1,0 +1,143 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/bullet_point.dart';
+import 'package:flutter_installer/components/dialog_template.dart';
+import 'package:flutter_installer/components/info_widget.dart';
+import 'package:flutter_installer/components/rectangle_button.dart';
+import 'package:flutter_installer/components/square_button.dart';
+
+class InstallFlutterDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
+    return DialogTemplate(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const SizedBox(width: 40),
+              const Spacer(),
+              const Text(
+                'Install Flutter',
+                style: TextStyle(fontSize: 20),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: SquareButton(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: customTheme.textTheme.bodyText1!.color,
+                  ),
+                  color: customTheme.buttonColor,
+                  hoverColor: customTheme.errorColor,
+                  tooltip: 'Close',
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          if (Platform.isWindows)
+            _windowsTemplate()
+          else if (Platform.isMacOS)
+            _macOSTemplate()
+          else if (Platform.isLinux)
+            _linuxTemplate(),
+          const SizedBox(height: 10),
+          infoWidget(
+              'Please be aware that all necessary components will be installed with Flutter such as git if you don\'t already have it installed.'),
+          const SizedBox(height: 10),
+          RectangleButton(
+            width: double.infinity,
+            color: Colors.blueGrey,
+            splashColor: Colors.blueGrey.withOpacity(0.5),
+            focusColor: Colors.blueGrey.withOpacity(0.5),
+            hoverColor: Colors.grey.withOpacity(0.5),
+            highlightColor: Colors.blueGrey.withOpacity(0.5),
+            onPressed: () {},
+            child: const Text('Install Flutter'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//Windows Template
+Widget _windowsTemplate() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text('Disk Space', style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint('1.64 GB (does not include disk space for IDE/tools).'),
+      const SizedBox(height: 15),
+      const Text('Tools', style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint(
+          'Flutter depends on these tools being available in your environment.'),
+      const SizedBox(height: 10),
+      BulletPoint(
+          'Windows PowerShell 5.0 or newer (this is pre-installed with Windows 10)',
+          2),
+      const SizedBox(height: 10),
+      BulletPoint(
+          'Git for Windows 2.x, with the Use Git from the Windows Command Prompt option.',
+          2),
+      const SizedBox(height: 15),
+      const Text(
+          'If Git for Windows is already installed, make sure you can run git commands from the command prompt or PowerShell.'),
+    ],
+  );
+}
+
+//MacOS Template
+Widget _macOSTemplate() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text('Disk Space', style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint('2.8 GB (does not include disk space for IDE/tools).'),
+      const SizedBox(height: 15),
+      const Text('Tools', style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint(
+          'Flutter uses git for installation and upgrade. We recommend installing Xcode, which includes git, but you can also install git separately.'),
+    ],
+  );
+}
+
+//Linux Template
+Widget _linuxTemplate() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text('Disk Space', style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint('600 MB (does not include disk space for IDE/tools).'),
+      const SizedBox(height: 15),
+      const Text('Tools', style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint(
+          'Flutter depends on these command-line tools being available in your environment.'),
+      const SizedBox(height: 10),
+      BulletPoint(
+          'bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils and zip',
+          2),
+      const SizedBox(height: 15),
+      const Text('Shared libraries',
+          style: TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 10),
+      BulletPoint(
+          '"Flutter test" command depends on this library being available in your environment.'),
+      const SizedBox(height: 10),
+      BulletPoint(
+          '"libGLU.so.1" - provided by mesa packages such as "libglu1-mesa" on Ubuntu/Debian and "mesa-libGLU" on Fedora.',
+          2),
+    ],
+  );
+}

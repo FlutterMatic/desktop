@@ -6,7 +6,6 @@ class DialogTemplate extends StatelessWidget {
   final EdgeInsets? childPadding;
   final bool outerTapExit;
   final Alignment align;
-  final bool popButtonInclude;
   final Color? closeBgColor;
   final Color? closeIconColor;
 
@@ -17,59 +16,52 @@ class DialogTemplate extends StatelessWidget {
     this.outerTapExit = true,
     this.closeBgColor,
     this.closeIconColor,
-    this.popButtonInclude = false,
   });
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: outerTapExit ? () => Navigator.pop(context) : null,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Center(
-            child: SafeArea(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 500),
-                padding: const EdgeInsets.all(20),
-                child: SingleChildScrollView(
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: RoundContainer(
-                      padding: childPadding ?? const EdgeInsets.all(10),
-                      child: Stack(
-                        children: [
-                          popButtonInclude
-                              ? Align(
-                                  alignment: Alignment.topRight,
-                                  child: CloseButton(color: closeBgColor))
-                              : const SizedBox.shrink(),
-                          Center(child: child),
-                        ],
-                      ),
-                    ),
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: outerTapExit ? () => Navigator.pop(context) : null,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          child: SafeArea(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 500),
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: RoundContainer(
+                    padding: childPadding ?? const EdgeInsets.all(10),
+                    child: Center(child: child),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      );
-}
-
-Widget popUpTextTemplate(String title, String description) =>
-    SingleChildScrollView(
-      child: Column(
-        children: [
-          //Title
-          SelectableText(
-            title,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 15),
-          //Description
-          SelectableText(
-            description,
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
+  }
+}
+
+Widget popUpTextTemplate(String title, String description) {
+  return SingleChildScrollView(
+    child: Column(
+      children: [
+        //Title
+        SelectableText(
+          title,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 15),
+        //Description
+        SelectableText(
+          description,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  );
+}

@@ -10,13 +10,8 @@ Widget installedComponents(BuildContext context) {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        titleSection(
-            'Flutter SDK & Dependencies',
-            Icon(
-              Icons.settings,
-              color: customTheme.iconTheme.color!.withOpacity(0.9),
-            ),
-            () {},
+        titleSection('Flutter SDK & Dependencies',
+            Icon(Icons.settings, color: customTheme.iconTheme.color), () {},
             context: context),
         const SizedBox(height: 25),
         installationStatus(

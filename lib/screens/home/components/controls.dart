@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/change_channel.dart';
+import 'package:flutter_installer/components/dialog_templates/install_fluter.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
 import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/title_section.dart';
@@ -15,10 +16,7 @@ Widget controls(BuildContext context) {
       children: [
         titleSection(
           'Controls',
-          Icon(
-            Icons.settings,
-            color: customTheme.iconTheme.color!.withOpacity(0.9),
-          ),
+          Icon(Icons.settings, color: customTheme.iconTheme.color),
           () {},
           context: context,
         ),
@@ -63,33 +61,41 @@ Widget controls(BuildContext context) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  RectangleButton(
-                    radius: BorderRadius.circular(5),
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (context) => ChangeChannelDialog(),
-                    ),
-                    width: 110,
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Channel',
-                          style: TextStyle(
-                            color: customTheme.textTheme.bodyText1!.color,
+                  if (flutterInstalled)
+                    RectangleButton(
+                      radius: BorderRadius.circular(5),
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => ChangeChannelDialog(),
+                      ),
+                      width: 110,
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Channel',
+                            style: TextStyle(
+                              color: customTheme.textTheme.bodyText1!.color,
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        Icon(
-                          Iconsdata.changeChannel,
-                          size: 20,
-                          color: customTheme.iconTheme.color,
-                        ),
-                      ],
+                          const Spacer(),
+                          Icon(
+                            Iconsdata.changeChannel,
+                            size: 20,
+                            color: customTheme.iconTheme.color,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                   const SizedBox(width: 8),
                   RectangleButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      flutterInstalled
+                          ? null
+                          : showDialog(
+                              context: context,
+                              builder: (_) => InstallFlutterDialog(),
+                            );
+                    },
                     child: Row(
                       children: <Widget>[
                         Text(
