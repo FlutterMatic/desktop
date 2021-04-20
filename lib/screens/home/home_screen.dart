@@ -161,13 +161,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 hoverColor: Colors.transparent,
                 focusColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                icon: Icon(dark ? Iconsdata.moon : Iconsdata.sun),
-                onPressed: () async {
+                icon: Icon(
+                  currentTheme.isDarkTheme ? Iconsdata.moon : Iconsdata.sun,
+                ),
+                onPressed: () {
                   currentTheme.toggleTheme();
-                  setState(() => dark = !dark);
-                  _pref = await SharedPreferences.getInstance();
-                  await _pref.setBool('light_mode',
-                      currentTheme.currentTheme == ThemeMode.light);
+                  // setState(() => dark = !dark);
+                  // _pref = await SharedPreferences.getInstance();
+                  // await _pref.setBool('light_mode',
+                  //     currentTheme.currentTheme == ThemeMode.light);
                 },
               ),
             ),

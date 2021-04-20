@@ -108,6 +108,8 @@ class OpenOptionsDialog extends StatelessWidget {
           const SizedBox(height: 10),
           RectangleButton(
             onPressed: () {},
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             color: kRedColor,
             hoverColor: Colors.red,
             width: double.infinity,

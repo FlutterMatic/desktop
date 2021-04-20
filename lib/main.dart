@@ -4,10 +4,11 @@ import 'package:flutter_installer/screens/home/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
 Future<void> main() async {
+  await currentTheme.initSharedPref();
+  await currentTheme.loadPrefs();
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);
@@ -24,20 +25,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //Themes
-  bool? _isLight = true;
-  late SharedPreferences _pref;
-
-  Future<void> _loadPrefs() async {
-    await SharedPreferences.getInstance();
-    if (_pref.containsKey('light_mode') && _pref.getBool('light_mode') == true) {
-      setState(() => _isLight = true);
-    }
-  }
-
   @override
   void initState() {
-    _loadPrefs();
     currentTheme.addListener(() => setState(() {}));
     super.initState();
   }
@@ -47,7 +36,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.darkTheme,
-      themeMode: _isLight! ? ThemeMode.light : ThemeMode.dark,
+      // themeMode: _isLight! ? ThemeMode.light : ThemeMode.dark,
+      themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: PageRoutes.routeState,
       routes: <String, WidgetBuilder>{

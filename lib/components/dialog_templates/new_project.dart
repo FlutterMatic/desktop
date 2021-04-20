@@ -7,6 +7,7 @@ import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/text_field.dart';
 import 'package:flutter_installer/components/warning_widget.dart';
+import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class NewProjectDialog extends StatefulWidget {
@@ -17,6 +18,7 @@ class NewProjectDialog extends StatefulWidget {
 class _NewProjectDialogState extends State<NewProjectDialog> {
   //Inputs
   String? _projectName;
+  // ignore: unused_field
   String? _projectDescription;
   String? _projectOrg;
 
@@ -28,6 +30,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   final TextEditingController _pNameController = TextEditingController();
   final TextEditingController _pDescController = TextEditingController();
   final TextEditingController _pOrgController = TextEditingController();
+
+  FlutterActions flutterActions = FlutterActions();
   @override
   void dispose() {
     if (mounted) {
@@ -82,6 +86,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       // Index 3 - Platforms
       else if (_index == 3 && _validatePlatformSelection()) {
         setState(() => _loading = true);
+        // flutterActions.flutterCreate(
+        //     _projectName!, _projectDescription!, _projectOrg!);
       }
     }
   }

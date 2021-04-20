@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/services/themes.dart';
-import 'package:flutter_installer/utils/constants.dart';
 
 class RectangleButton extends StatelessWidget {
   final double height;
   final double width;
   final BorderRadius? radius;
   final EdgeInsets? padding;
-  final Color? hoverColor;
+  final Color? hoverColor, splashColor, highlightColor, focusColor;
   final Color? color;
   final bool loading;
   final bool disable;
@@ -22,6 +20,9 @@ class RectangleButton extends StatelessWidget {
     this.loading = false,
     this.color,
     this.hoverColor,
+    this.splashColor,
+    this.focusColor,
+    this.highlightColor,
     this.padding,
     required this.child,
     required this.onPressed,
@@ -31,9 +32,9 @@ class RectangleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return MaterialButton(
-      focusColor: customTheme.buttonColor,
-      highlightColor: customTheme.buttonColor,
-      splashColor: customTheme.buttonColor,
+      focusColor: focusColor ?? customTheme.buttonColor,
+      highlightColor: highlightColor ?? customTheme.buttonColor,
+      splashColor: splashColor ?? customTheme.buttonColor,
       hoverColor: hoverColor ?? customTheme.focusColor,
       onPressed: disable
           ? null
@@ -44,10 +45,7 @@ class RectangleButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),
       ),
-      color: color ??
-          (currentTheme.currentTheme == ThemeMode.dark
-              ? customTheme.buttonColor
-              : kLightGreyColor),
+      color: color ?? customTheme.buttonColor,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,
