@@ -4,7 +4,6 @@ import 'package:flutter_installer/components/check_box_element.dart';
 import 'package:flutter_installer/components/dialog_template.dart';
 import 'package:flutter_installer/components/info_widget.dart';
 import 'package:flutter_installer/components/rectangle_button.dart';
-import 'package:flutter_installer/components/round_container.dart';
 import 'package:flutter_installer/components/square_button.dart';
 import 'package:flutter_installer/components/text_field.dart';
 import 'package:flutter_installer/components/warning_widget.dart';
