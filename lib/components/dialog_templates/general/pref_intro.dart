@@ -2,7 +2,6 @@ import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
 import 'package:file_chooser/src/result.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';

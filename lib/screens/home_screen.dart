@@ -153,22 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: IconButton(
-                  splashColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  icon: Icon(currentTheme.isDarkTheme
-                      ? Iconsdata.moon
-                      : Iconsdata.sun),
-                  onPressed: () => currentTheme.toggleTheme(),
-                ),
-              ),
-            ),
-            Align(
               alignment: Alignment.bottomLeft,
               child: Stack(
                 children: [
