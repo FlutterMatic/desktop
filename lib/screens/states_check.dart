@@ -23,7 +23,6 @@ class _StatusCheckState extends State<StatusCheck> {
       vscInstalled = await checkDependencies.checkVSC();
       vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
       studioInstalled = await checkDependencies.checkAndroidStudios();
-      await _pref.clear();
       if (!_pref.containsKey('projects_path')) {
         await showDialog(
           barrierDismissible: false,

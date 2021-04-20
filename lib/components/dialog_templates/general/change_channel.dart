@@ -21,73 +21,103 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
   //Inputs
   String? _selectedChannel;
 
+  //Utils
+  bool _loadingMaterials = true;
+
   final String _getChannelName = flutterChannel!.substring(0, 1).toUpperCase() +
       flutterChannel!.substring(1);
+
+  @override
+  void initState() {
+    setState(() => _loadingMaterials = channelIsUpdating);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          DialogHeader(title: 'Change Channel'),
-          const SizedBox(height: 15),
-          const SelectableText(
-            'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
-            style: TextStyle(fontSize: 13),
-          ),
-          const SizedBox(height: 15),
-          SelectTile(
-            onPressed: (val) => setState(() => _selectedChannel = val),
-            defaultValue: _getChannelName,
-            options: ['Master', 'Stable', 'Beta', 'Dev'],
-          ),
-          warningWidget(
-              'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
-              Assets.warning,
-              kYellowColor),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: Text('Cancel'),
+      child: _loadingMaterials
+          ? Column(
+              children: [
+                DialogHeader(title: 'In Progress'),
+                const SizedBox(height: 15),
+                const Text(
+                  'We are currently updating your Flutter channel. Please check back later once we are finished updating your Flutter channel.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13),
                 ),
-              ),
-              const Spacer(),
-              RectangleButton(
-                onPressed: () {
-                  if (_selectedChannel == null) {
-                    Navigator.pop(context);
-                  }
-                  //  else if (_selectedChannel == _getChannelName) {
-                  //   showDialog(
-                  //     context: context,
-                  //     builder: (_) => AlreadyChannelDialog(),
-                  //   );
-                  // }
-                  else {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (_) =>
-                          ConfirmChannelChangeDialog(_selectedChannel!),
-                    );
-                  }
-                },
-                child: Text(
-                  'Continue',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                const SizedBox(height: 20),
+                RectangleButton(
+                  width: double.infinity,
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                        color: customTheme.textTheme.bodyText1!.color),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                DialogHeader(title: 'Change Channel'),
+                const SizedBox(height: 15),
+                const Text(
+                  'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 15),
+                SelectTile(
+                  onPressed: (val) => setState(() => _selectedChannel = val),
+                  defaultValue: _getChannelName,
+                  options: ['Master', 'Stable', 'Beta', 'Dev'],
+                ),
+                warningWidget(
+                    'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
+                    Assets.warning,
+                    kYellowColor),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Text('Cancel'),
+                      ),
+                    ),
+                    const Spacer(),
+                    RectangleButton(
+                      onPressed: () {
+                        if (_selectedChannel == null) {
+                          Navigator.pop(context);
+                        } else if (_selectedChannel == _getChannelName) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlreadyChannelDialog(),
+                          );
+                        } else {
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (_) =>
+                                ConfirmChannelChangeDialog(_selectedChannel!),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Continue',
+                        style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
     );
   }
 }
