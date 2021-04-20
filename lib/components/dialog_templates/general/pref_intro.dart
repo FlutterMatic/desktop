@@ -123,7 +123,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                       canSelectDirectories: true,
                     );
                     if (fileResult.paths!.isNotEmpty) {
-                      debugPrint(fileResult.paths!.single);
+                      setState(() => _dirPath = fileResult.paths!.first);
                     }
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
