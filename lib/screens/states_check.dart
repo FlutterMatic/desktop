@@ -12,10 +12,8 @@ class StatusCheck extends StatefulWidget {
 }
 
 class _StatusCheckState extends State<StatusCheck> {
-  late SharedPreferences _pref;
 
   Future<void> _loadServices() async {
-    _pref = await SharedPreferences.getInstance();
     if (mounted) {
       CheckDependencies checkDependencies = CheckDependencies();
       flutterInstalled = await checkDependencies.checkFlutter();
@@ -28,7 +26,7 @@ class _StatusCheckState extends State<StatusCheck> {
       await Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => HomeScreen(pref: _pref),
+            builder: (_) => HomeScreen(),
           ));
     }
   }

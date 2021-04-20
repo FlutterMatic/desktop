@@ -10,10 +10,6 @@ import 'components/controls.dart';
 import 'components/installed.dart';
 
 class HomeScreen extends StatefulWidget {
-  final SharedPreferences? pref;
-
-  HomeScreen({this.pref});
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -21,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 FlutterLogoStyle _flutterLogoStyle = FlutterLogoStyle.markOnly;
 
 class _HomeScreenState extends State<HomeScreen> {
+  late SharedPreferences _pref;
+
   bool dark = false;
   Future<void> _animateFlutterLogo() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -164,10 +162,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 focusColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 icon: Icon(dark ? Iconsdata.moon : Iconsdata.sun),
-                onPressed: () {
+                onPressed: () async {
                   currentTheme.toggleTheme();
                   setState(() => dark = !dark);
-                  widget.pref!.setBool('light_mode',
+                  _pref = await SharedPreferences.getInstance();
+                  await _pref.setBool('light_mode',
                       currentTheme.currentTheme == ThemeMode.light);
                 },
               ),
