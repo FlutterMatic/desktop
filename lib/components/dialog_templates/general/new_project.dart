@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/check_box_element.dart';
-import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
@@ -100,29 +100,19 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _index != 0 && _index != 4
-                  ? SquareButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_rounded,
-                        color: customTheme.textTheme.bodyText1!.color,
-                      ),
-                      color: customTheme.buttonColor,
-                      hoverColor: customTheme.accentColor,
-                      onPressed: () => setState(() => _index--),
-                    )
-                  : const SizedBox(width: 40),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    'Create New Project',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
-              CustomCloseButton()
-            ],
+          DialogHeader(
+            leading: _index != 0 && _index != 4
+                ? SquareButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios_rounded,
+                      color: customTheme.textTheme.bodyText1!.color,
+                    ),
+                    color: customTheme.buttonColor,
+                    hoverColor: customTheme.accentColor,
+                    onPressed: () => setState(() => _index--),
+                  )
+                : null,
+            title: 'Create New Project',
           ),
           const SizedBox(height: 20),
           Form(

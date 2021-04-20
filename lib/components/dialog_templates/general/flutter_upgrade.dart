@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -11,18 +11,7 @@ class LatestFlutterDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(width: 40),
-              const Spacer(),
-              const Text('Flutter Upgrade', style: TextStyle(fontSize: 20)),
-              const Spacer(),
-              Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
-            ],
-          ),
+          DialogHeader(title: 'Flutter Upgrade'),
           const SizedBox(height: 30),
           const Icon(Icons.check_circle, size: 40, color: kGreenColor),
           const SizedBox(height: 20),
@@ -45,18 +34,7 @@ class NewFlutterDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(width: 40),
-              const Spacer(),
-              const Text('New Flutter Version', style: TextStyle(fontSize: 20)),
-              const Spacer(),
-              Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
-            ],
-          ),
+          DialogHeader(title: 'New Flutter Version'),
           const SizedBox(height: 30),
           const Icon(Iconsdata.download, size: 50, color: kGreenColor),
           const SizedBox(height: 30),
@@ -88,18 +66,7 @@ class CheckFlutterVersionDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(width: 40),
-              const Spacer(),
-              const Text('Upgrade Flutter', style: TextStyle(fontSize: 20)),
-              const Spacer(),
-              Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
-            ],
-          ),
+          DialogHeader(title: 'Latest Flutter Version'),
           const SizedBox(height: 40),
           const CircularProgressIndicator(),
           const SizedBox(height: 30),

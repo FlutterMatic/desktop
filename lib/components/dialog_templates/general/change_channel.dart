@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/button_list.dart';
-import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/warning_widget.dart';
@@ -14,22 +14,7 @@ class ChangeChannelDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(width: 40),
-              const Spacer(),
-              const Text(
-                'Select Channel',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Spacer(),
-              Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
-            ],
-          ),
+          DialogHeader(title: 'Change Channel'),
           const SizedBox(height: 15),
           const SelectableText(
             'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',

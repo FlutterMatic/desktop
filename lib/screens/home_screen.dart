@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 FlutterLogoStyle _flutterLogoStyle = FlutterLogoStyle.markOnly;
 
 class _HomeScreenState extends State<HomeScreen> {
-
   bool dark = false;
   Future<void> _animateFlutterLogo() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -151,17 +150,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            Positioned(
-              top: 10,
-              right: 10,
-              child: IconButton(
-                splashColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                icon: Icon(
-                    currentTheme.isDarkTheme ? Iconsdata.moon : Iconsdata.sun),
-                onPressed: () => currentTheme.toggleTheme(),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: IconButton(
+                  splashColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  icon: Icon(currentTheme.isDarkTheme
+                      ? Iconsdata.moon
+                      : Iconsdata.sun),
+                  onPressed: () => currentTheme.toggleTheme(),
+                ),
               ),
             ),
           ],

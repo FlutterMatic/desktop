@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/bullet_point.dart';
-import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
@@ -13,19 +13,7 @@ class InstallFlutterDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const SizedBox(width: 40),
-              const Spacer(),
-              const Text(
-                'Install Flutter',
-                style: TextStyle(fontSize: 20),
-              ),
-              const Spacer(),
-              Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
-            ],
-          ),
+          DialogHeader(title: 'Install Flutter'),
           const SizedBox(height: 20),
           if (Platform.isWindows)
             _windowsTemplate()

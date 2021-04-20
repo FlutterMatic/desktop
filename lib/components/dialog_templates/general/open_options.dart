@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
@@ -29,18 +30,16 @@ class OpenOptionsDialog extends StatelessWidget {
                         builder: (_) => ConfirmProjectDelete(),
                       );
                     },
-                    child: Expanded(
-                      child: Row(
-                        children: [
-                          Text(
-                            'Delete',
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color),
-                          ),
-                          const Spacer(),
-                          Icon(Icons.delete, color: customTheme.errorColor),
-                        ],
-                      ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Delete',
+                          style: TextStyle(
+                              color: customTheme.textTheme.bodyText1!.color),
+                        ),
+                        const Spacer(),
+                        Icon(Icons.delete, color: customTheme.errorColor),
+                      ],
                     ),
                   )),
                 ],
@@ -163,21 +162,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const SizedBox(width: 40),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    'Confirm Delete',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
-              Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
-            ],
-          ),
+          DialogHeader(title: 'Confirm Delete'),
           const SizedBox(height: 20),
           const Text(
             'Deleting this project cannot be undone. Please make sure that you are aware of this action.',
