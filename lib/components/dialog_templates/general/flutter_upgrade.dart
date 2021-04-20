@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class LatestFlutterDialog extends StatelessWidget {
