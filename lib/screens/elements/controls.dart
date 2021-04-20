@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/general/change_channel.dart';
 import 'package:flutter_installer/components/dialog_templates/general/flutter_upgrade.dart';
 import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
+import 'package:flutter_installer/components/dialog_templates/settings/control_settings.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
@@ -18,7 +19,12 @@ Widget controls(BuildContext context) {
         titleSection(
           'Controls',
           Icon(Icons.settings, color: customTheme.iconTheme.color),
-          () {},
+          () {
+            showDialog(
+              context: context,
+              builder: (_) => ControlSettings(),
+            );
+          },
           context: context,
         ),
         const SizedBox(height: 20),
@@ -149,27 +155,24 @@ Widget examplesTile(BuildContext context) {
         const SizedBox(height: 20),
         Align(
           alignment: Alignment.centerRight,
-          child: Tooltip(
-            message: 'Open in Browser',
-            child: RectangleButton(
-              width: 110,
-              onPressed: () => launch('https://flutter.github.io/samples/'),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Examples',
-                    style: TextStyle(
-                      color: customTheme.textTheme.bodyText1!.color,
-                    ),
+          child: RectangleButton(
+            width: 110,
+            onPressed: () => launch('https://flutter.github.io/samples/'),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  'Examples',
+                  style: TextStyle(
+                    color: customTheme.textTheme.bodyText1!.color,
                   ),
-                  const Spacer(),
-                  Icon(
-                    Iconsdata.examples,
-                    size: 20,
-                    color: customTheme.iconTheme.color,
-                  ),
-                ],
-              ),
+                ),
+                const Spacer(),
+                Icon(
+                  Iconsdata.examples,
+                  size: 20,
+                  color: customTheme.iconTheme.color,
+                ),
+              ],
             ),
           ),
         ),

@@ -103,6 +103,7 @@ class _ProjectTileState extends State<ProjectTile> {
               ),
             ),
             IconButton(
+              hoverColor: Colors.transparent,
               icon: Icon(
                 Icons.more_vert_rounded,
                 color: customTheme.iconTheme.color,

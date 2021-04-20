@@ -15,12 +15,14 @@ class ControlSettings extends StatelessWidget {
               const SizedBox(width: 40),
               const Spacer(),
               const Text(
-                'Select Channel',
+                'Control Settings',
                 style: TextStyle(fontSize: 20),
               ),
               const Spacer(),
               Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
+                alignment: Alignment.centerRight,
+                child: CustomCloseButton(),
+              ),
             ],
           ),
         ],

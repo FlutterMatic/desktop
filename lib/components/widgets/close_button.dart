@@ -12,7 +12,6 @@ class CustomCloseButton extends StatelessWidget {
       ),
       color: customTheme.buttonColor,
       hoverColor: customTheme.errorColor,
-      tooltip: 'Close',
       onPressed: () => Navigator.pop(context),
     );
   }

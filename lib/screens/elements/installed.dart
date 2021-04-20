@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/settings/dependencies_settings.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/screens/elements/controls.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -11,8 +12,12 @@ Widget installedComponents(BuildContext context) {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         titleSection('Flutter SDK & Dependencies',
-            Icon(Icons.settings, color: customTheme.iconTheme.color), () {},
-            context: context),
+            Icon(Icons.settings, color: customTheme.iconTheme.color), () {
+          showDialog(
+            context: context,
+            builder: (_) => DependenciesSettings(),
+          );
+        }, context: context),
         const SizedBox(height: 25),
         installationStatus(
           flutterInstalled ? InstallationStatus.done : InstallationStatus.error,

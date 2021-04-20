@@ -16,7 +16,35 @@ class OpenOptionsDialog extends StatelessWidget {
         children: [
           Row(
             children: [
-              const SizedBox(width: 40),
+              PopupMenuButton(
+                color: customTheme.primaryColor,
+                itemBuilder: (BuildContext _) => [
+                  PopupMenuItem(
+                      child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        builder: (_) => ConfirmProjectDelete(),
+                      );
+                    },
+                    child: Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            'Delete',
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color),
+                          ),
+                          const Spacer(),
+                          Icon(Icons.delete, color: customTheme.errorColor),
+                        ],
+                      ),
+                    ),
+                  )),
+                ],
+              ),
               const Expanded(
                 child: Center(
                   child: Text(
@@ -30,93 +58,87 @@ class OpenOptionsDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          RectangleButton(
-            onPressed: () {},
-            color: Colors.blueGrey.withOpacity(0.2),
-            hoverColor: Colors.blueGrey.withOpacity(0.3),
-            highlightColor: Colors.blueGrey.withOpacity(0.8),
-            radius: const BorderRadius.only(
-              topLeft: Radius.circular(5),
-              topRight: Radius.circular(5),
-            ),
-            width: double.infinity,
-            child: Row(
-              children: [
-                Text(
-                  'Open',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+          Row(
+            children: [
+              Expanded(
+                child: RectangleButton(
+                  onPressed: () {},
+                  color: Colors.blueGrey.withOpacity(0.2),
+                  hoverColor: Colors.blueGrey.withOpacity(0.3),
+                  highlightColor: Colors.blueGrey.withOpacity(0.8),
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  height: 100,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Expanded(
+                          child:
+                              Icon(Icons.folder_open, color: Colors.blueGrey)),
+                      Text(
+                        'Open',
+                        style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ],
+                  ),
                 ),
-                const Spacer(),
-                const Icon(Icons.folder_open, color: Colors.blueGrey),
-              ],
-            ),
-          ),
-          RectangleButton(
-            onPressed: () {},
-            color: Colors.blueGrey.withOpacity(0.2),
-            hoverColor: Colors.blueGrey.withOpacity(0.3),
-            highlightColor: Colors.blueGrey.withOpacity(0.8),
-            radius: BorderRadius.zero,
-            width: double.infinity,
-            child: Row(
-              children: [
-                Text(
-                  'Open with...',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: RectangleButton(
+                  onPressed: () {},
+                  color: Colors.blueGrey.withOpacity(0.2),
+                  hoverColor: Colors.blueGrey.withOpacity(0.3),
+                  highlightColor: Colors.blueGrey.withOpacity(0.8),
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  height: 100,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Expanded(
+                          child:
+                              Icon(Icons.code_rounded, color: Colors.blueGrey)),
+                      Text(
+                        'Open with...',
+                        style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ],
+                  ),
                 ),
-                const Spacer(),
-                const Icon(Icons.code_rounded, color: Colors.blueGrey),
-              ],
-            ),
-          ),
-          RectangleButton(
-            onPressed: () {},
-            color: Colors.blueGrey.withOpacity(0.2),
-            hoverColor: Colors.blueGrey.withOpacity(0.3),
-            highlightColor: Colors.blueGrey.withOpacity(0.8),
-            radius: const BorderRadius.only(
-              bottomLeft: Radius.circular(5),
-              bottomRight: Radius.circular(5),
-            ),
-            width: double.infinity,
-            child: Row(
-              children: [
-                Text(
-                  'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: RectangleButton(
+                  onPressed: () {},
+                  color: Colors.blueGrey.withOpacity(0.2),
+                  hoverColor: Colors.blueGrey.withOpacity(0.3),
+                  highlightColor: Colors.blueGrey.withOpacity(0.8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  height: 100,
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Expanded(
+                          child:
+                              Icon(Icons.file_present, color: Colors.blueGrey)),
+                      Text(
+                        'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ],
+                  ),
                 ),
-                const Spacer(),
-                const Icon(Icons.file_present, color: Colors.blueGrey),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          RectangleButton(
-            onPressed: () {
-              Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (_) => ConfirmProjectDelete(),
-              );
-            },
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            color: kRedColor,
-            hoverColor: Colors.red,
-            width: double.infinity,
-            child: Row(
-              children: [
-                const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.white),
-                ),
-                const Spacer(),
-                const Icon(Icons.delete_forever_outlined, color: Colors.white),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -171,7 +193,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             onChanged: (val) => setState(() => _confirmInput = val),
             hintText: 'Confirm Delete',
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           RectangleButton(
             width: double.infinity,
             color: customTheme.errorColor,

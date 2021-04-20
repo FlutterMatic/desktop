@@ -49,7 +49,7 @@ class CustomTheme with ChangeNotifier {
       );
 
   static ThemeData get darkTheme => ThemeData(
-        primaryColor: Colors.black,
+        primaryColor: const Color(0xFF373E47),
         backgroundColor: const Color(0xFF22272E),
         scaffoldBackgroundColor: const Color(0xFF22272E),
         primaryColorLight: const Color(0xFF2D333A),
