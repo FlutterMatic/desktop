@@ -29,7 +29,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.autofocus,
     required this.onChanged,
-    required this.controller,
+    this.controller,
     this.suffixIcon,
     this.onSuffixIcon,
     this.iconColor,

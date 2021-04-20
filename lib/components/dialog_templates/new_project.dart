@@ -144,6 +144,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     children: [
                       CustomTextField(
                         controller: _pNameController,
+                        autofocus: true,
                         hintText: 'Project Name',
                         filteringTextInputFormatter:
                             FilteringTextInputFormatter.allow(

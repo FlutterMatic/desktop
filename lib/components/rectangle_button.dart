@@ -5,7 +5,12 @@ class RectangleButton extends StatelessWidget {
   final double width;
   final BorderRadius? radius;
   final EdgeInsets? padding;
-  final Color? hoverColor, splashColor, highlightColor, focusColor;
+  final Color? hoverColor,
+      splashColor,
+      highlightColor,
+      focusColor,
+      disableColor,
+      contentColor;
   final Color? color;
   final bool loading;
   final bool disable;
@@ -16,6 +21,8 @@ class RectangleButton extends StatelessWidget {
     this.height = 40,
     this.width = 100,
     this.disable = false,
+    this.disableColor,
+    this.contentColor,
     this.radius,
     this.loading = false,
     this.color,
@@ -36,16 +43,13 @@ class RectangleButton extends StatelessWidget {
       highlightColor: highlightColor ?? customTheme.buttonColor,
       splashColor: splashColor ?? customTheme.buttonColor,
       hoverColor: hoverColor ?? customTheme.focusColor,
-      onPressed: disable
-          ? null
-          : loading
-              ? null
-              : onPressed as void Function()?,
+      onPressed: (disable || loading) ? null : onPressed as void Function()?,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),
       ),
       color: color ?? customTheme.buttonColor,
+      disabledColor: disableColor,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,
@@ -62,10 +66,10 @@ class RectangleButton extends StatelessWidget {
                   ? Container(
                       height: 20,
                       width: 20,
-                      child: const CircularProgressIndicator(
+                      child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            contentColor ?? Colors.blueGrey),
                       ),
                     )
                   : child),
