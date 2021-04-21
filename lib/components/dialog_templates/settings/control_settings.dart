@@ -3,7 +3,6 @@ import 'package:flutter_installer/components/dialog_templates/dialog_header.dart
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
 import 'package:file_chooser/src/result.dart';
@@ -34,7 +33,7 @@ class _ControlSettingsState extends State<ControlSettings> {
       await _pref.setString('projects_path', _dirPath!);
       if (_dirChanged) {
         try {
-          await FlutterActions().checkProjects();
+          // await FlutterActions().checkProjects();
           await Navigator.pushNamedAndRemoveUntil(
               context, PageRoutes.routeState, (route) => false);
         } catch (_) {

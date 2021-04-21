@@ -163,7 +163,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 vscInsidersInstalled =
                     await checkDependencies.checkVSCInsiders();
                 studioInstalled = await checkDependencies.checkAndroidStudios();
-                await flutterActions.checkProjects();
+                // await flutterActions.checkProjects();
                 await Navigator.pushNamedAndRemoveUntil(
                     context, PageRoutes.routeHome, (route) => false);
               }

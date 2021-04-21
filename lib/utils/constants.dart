@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
+import 'package:flutter_installer/screens/elements/projects.dart';
 
 bool flutterInstalled = false;
 bool javaInstalled = false;
@@ -21,6 +22,7 @@ String? projDir;
 
 List<BgActivityButton> bgActivities = [];
 List<String> projs = [], projsModDate = [];
+List<ProjectTile> projectsTitles = [];
 
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';

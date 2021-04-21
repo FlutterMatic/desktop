@@ -38,49 +38,32 @@ Widget projects(BuildContext context) {
           context: context,
         ),
         const SizedBox(height: 20),
-        (projs.isEmpty)
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 50),
-                  child: Column(
-                    children: [
-                      const Text('No Projects found at the moment.',
-                          textAlign: TextAlign.center),
-                      const SizedBox(height: 20),
-                      RectangleButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => ControlSettings(),
-                          );
-                        },
-                        width: 200,
-                        child: Text(
-                          'Edit Projects Path',
-                          style: TextStyle(
-                              color: customTheme.textTheme.bodyText1!.color),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: SizedBox(
-                  width: 500,
-                  height: 0.7 * MediaQuery.of(context).size.height,
-                  child: StreamBuilder(
-                    stream: FlutterActions().checkProjects(),
-                    builder: (context, results) {
-                      if (results.hasData) {
-                        results.data;
-                      }
-                      return const CircularProgressIndicator();
-                    },
-                  ),
-                ),
-              ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: SizedBox(
+            width: 500,
+            height: 0.7 * MediaQuery.of(context).size.height,
+            child: StreamBuilder<List<ProjectTile>>(
+              stream: flutterActions.checkProjects(),
+              builder: (context, results) {
+                // if (results.connectionState == ConnectionState.waiting) {
+                // const CircularProgressIndicator();
+                // } else if (results.hasData) {
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: projectsTitles.length,
+                  itemBuilder: (_, index) {
+                    return projectsTitles[index];
+                  },
+                );
+                // } else if (!results.hasData) {
+                //   const Text('No data found...');
+                // }
+                // return const Text('Waiting for projects...');
+              },
+            ),
+          ),
+        ),
       ],
     ),
   );
