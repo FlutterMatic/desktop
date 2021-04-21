@@ -4,7 +4,6 @@ import 'package:flutter_installer/components/dialog_templates/general/bg_activit
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
-import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'elements/controls.dart';

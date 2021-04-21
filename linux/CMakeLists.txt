@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
 set(BINARY_NAME "fluttermatic_desktop")
-set(APPLICATION_ID "com.example.fluttermatic_desktop")
+set(APPLICATION_ID "com.fluttermatic.desktop")
 
 cmake_policy(SET CMP0063 NEW)
 

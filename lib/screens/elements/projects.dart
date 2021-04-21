@@ -40,11 +40,10 @@ Widget projects(BuildContext context) {
                     physics: const BouncingScrollPhysics(),
                     itemCount: projs.length,
                     itemBuilder: (_, index) {
-                      List<String> tempName = projs[index].split('\\');
                       return ProjectTile(
-                        fileName: tempName[tempName.length - 3],
-                        filePath: 'path',
-                        lastEdit: 'Jan - 17, 2021',
+                        fileName: projs[index],
+                        filePath: '$projDir/${projs[index]}',
+                        lastEdit: projsModDate[index],
                       );
                     },
                   ),

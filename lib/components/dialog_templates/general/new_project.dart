@@ -219,7 +219,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             _projectDescription = val.isEmpty ? null : val),
                       ),
                       infoWidget(
-                          'The description will be added in the READ.md file for your new project.'),
+                        'The description will be added as description in the pubspec.yaml file of your new project.',
+                      ),
                     ],
                   ),
                 //Index 2
