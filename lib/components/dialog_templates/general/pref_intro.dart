@@ -2,7 +2,7 @@ import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
 import 'package:file_chooser/src/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/services/checks.dart';
-import 'package:flutter_installer/services/installs.dart';
+import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
@@ -25,7 +25,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
   //User Inputs
   String? _dirPath;
   CheckDependencies checkDependencies = CheckDependencies();
-  Installs installs = Installs();
+  FlutterActions flutterActions = FlutterActions();
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -162,7 +162,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 vscInsidersInstalled =
                     await checkDependencies.checkVSCInsiders();
                 studioInstalled = await checkDependencies.checkAndroidStudios();
-                await installs.checkProjects();
+                await flutterActions.checkProjects();
                 await Navigator.pushNamedAndRemoveUntil(
                     context, PageRoutes.routeHome, (route) => false);
               }

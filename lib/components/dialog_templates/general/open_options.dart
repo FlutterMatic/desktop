@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {
+  OpenOptionsDialog(this.fileName);
+  final String fileName;
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -27,7 +30,7 @@ class OpenOptionsDialog extends StatelessWidget {
                       Navigator.pop(context);
                       showDialog(
                         context: context,
-                        builder: (_) => ConfirmProjectDelete(),
+                        builder: (_) => ConfirmProjectDelete(fileName),
                       );
                     },
                     child: Row(
@@ -113,7 +116,9 @@ class OpenOptionsDialog extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: RectangleButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    Directory(projDir!);
+                  },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
                   highlightColor: Colors.blueGrey.withOpacity(0.8),
@@ -146,6 +151,8 @@ class OpenOptionsDialog extends StatelessWidget {
 }
 
 class ConfirmProjectDelete extends StatefulWidget {
+  ConfirmProjectDelete(this.fName);
+  final String fName;
   @override
   _ConfirmProjectDeleteState createState() => _ConfirmProjectDeleteState();
 }
@@ -168,12 +175,14 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             'Deleting this project cannot be undone. Please make sure that you are aware of this action.',
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Please type in below "confirm_delete" to delete this project.',
+          Text(
+            'Please type in below "${widget.fName}" to delete this project.',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           CustomTextField(
+            filteringTextInputFormatter:
+                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z\_]')),
             readOnly: _loading,
             onChanged: (val) => setState(() => _confirmInput = val),
             hintText: 'Confirm Delete',
@@ -186,12 +195,20 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             highlightColor: Colors.red,
             splashColor: kRedColor,
             disableColor: Colors.red.withOpacity(0.5),
-            disable: _confirmInput != 'confirm_delete',
+            disable: _confirmInput != widget.fName,
             contentColor: Colors.white,
             loading: _loading,
-            onPressed: () => setState(() => _loading = true),
+            onPressed: () async {
+              setState(() => _loading = true);
+              await Directory('${projDir!}/${widget.fName}')
+                  .delete(recursive: true)
+                  .whenComplete(() {
+                setState(() => _loading = false);
+                Navigator.pop(context);
+              });
+            },
             child: const Text(
-              'DELETE PROJECT',
+              'Delete Project',
               style: TextStyle(color: Colors.black),
             ),
           ),

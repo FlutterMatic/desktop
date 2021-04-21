@@ -76,21 +76,6 @@ Widget projects(BuildContext context) {
                         ))
                     .toList(),
               ),
-        // SizedBox(
-        //     height: 600,
-        //     child: ListView.builder(
-        //       physics: const BouncingScrollPhysics(),
-        //       itemCount: projs.length,
-        //       itemBuilder: (context, index) {
-        //         List<String> tempName = projs[index].split('\\');
-        //         return ProjectTile(
-        //           fileName: tempName[tempName.length - 3],
-        //           filePath: 'path',
-        //           lastEdit: 'Jan - 17, 2021',
-        //         );
-        //       },
-        //     ),
-        //   ),
       ],
     ),
   );
@@ -157,7 +142,7 @@ class _ProjectTileState extends State<ProjectTile> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (_) => OpenOptionsDialog(),
+                  builder: (_) => OpenOptionsDialog(widget.fileName),
                 );
               },
               color: customTheme.primaryColorLight,

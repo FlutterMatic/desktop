@@ -127,6 +127,7 @@ class AlreadyChannelDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
+      outerTapExit: false,
       child: Column(
         children: [
           DialogHeader(title: 'Same Channel', canClose: false),
@@ -159,21 +160,24 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> _switchChannel() async {
       CheckDependencies checkDependencies = CheckDependencies();
-      BgActivityButton element = BgActivityButton(
-        title: 'Changing to $channelName channel',
-        activityId: 'channel_switch_$channelName${Timeline.now}',
-      );
-      channelIsUpdating = true;
-      bgActivities.add(element);
-      await FlutterActions().changeChannel(channelName);
-      flutterInstalled = await checkDependencies.checkFlutter();
-      javaInstalled = await checkDependencies.checkJava();
-      vscInstalled = await checkDependencies.checkVSC();
-      vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
-      studioInstalled = await checkDependencies.checkAndroidStudios();
-      channelIsUpdating = false;
-      bgActivities.remove(element);
-      await Navigator.pushNamed(context, PageRoutes.routeState);
+      FlutterActions flutterActions = FlutterActions();
+      if (channelName != flutterChannel) {
+        BgActivityButton element = BgActivityButton(
+          title: 'Changing to $channelName channel',
+          activityId: 'channel_switch_$channelName${Timeline.now}',
+        );
+        channelIsUpdating = true;
+        bgActivities.add(element);
+        await flutterActions.changeChannel(channelName.toLowerCase());
+        flutterInstalled = await checkDependencies.checkFlutter();
+        javaInstalled = await checkDependencies.checkJava();
+        vscInstalled = await checkDependencies.checkVSC();
+        vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
+        studioInstalled = await checkDependencies.checkAndroidStudios();
+        channelIsUpdating = false;
+        bgActivities.remove(element);
+        await Navigator.pushNamed(context, PageRoutes.routeState);
+      }
     }
 
     return DialogTemplate(

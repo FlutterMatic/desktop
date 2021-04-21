@@ -20,7 +20,7 @@ String? flutterVersion,
 String? projDir;
 
 List<BgActivityButton> bgActivities = [];
-List<String> projs = [];
+List<String> projs = [], projsModDate = [];
 
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
