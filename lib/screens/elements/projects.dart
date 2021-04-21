@@ -7,6 +7,7 @@ import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
+import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
@@ -69,15 +70,13 @@ Widget projects(BuildContext context) {
                 child: SizedBox(
                   width: 500,
                   height: 0.7 * MediaQuery.of(context).size.height,
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: projs.length,
-                    itemBuilder: (_, index) {
-                      return ProjectTile(
-                        fileName: projs[index],
-                        filePath: '$projDir/${projs[index]}',
-                        lastEdit: projsModDate[index],
-                      );
+                  child: StreamBuilder(
+                    stream: FlutterActions().checkProjects(),
+                    builder: (context, results) {
+                      if (results.hasData) {
+                        results.data;
+                      }
+                      return const CircularProgressIndicator();
                     },
                   ),
                 ),
