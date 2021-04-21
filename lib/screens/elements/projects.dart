@@ -49,11 +49,6 @@ Widget projects(BuildContext context) {
                   ),
                 ),
               ),
-        // ProjectTile(
-        //     fileName: 'flutter_tooltip',
-        //     filePath: 'path',
-        //     lastEdit: 'Jan - 17, 2021',
-        //   ),
       ],
     ),
   );
@@ -120,7 +115,7 @@ class _ProjectTileState extends State<ProjectTile> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (_) => OpenOptionsDialog(),
+                  builder: (_) => OpenOptionsDialog(widget.fileName),
                 );
               },
               color: customTheme.primaryColorLight,
