@@ -53,22 +53,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 20),
                       // Installed Components
-                      MediaQuery.of(context).size.width > 1070
+                      MediaQuery.of(context).size.width > 1100
                           ? Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 //Installed Components
-                                Expanded(child: installedComponents(context)),
-                                const SizedBox(width: 150),
-                                //Controls
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    projects(context),
-                                    controls(context),
-                                  ],
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      installedComponents(context),
+                                      controls(context),
+                                    ],
+                                  ),
                                 ),
+                                const SizedBox(width: 100),
+                                //Controls
+                                projects(context),
                               ],
                             )
                           : Column(

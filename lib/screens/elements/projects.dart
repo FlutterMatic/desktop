@@ -11,7 +11,6 @@ import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
   ThemeData customTheme = Theme.of(context);
-  List<String> _tempName(int index) => projs[index].split('\\');
   return SizedBox(
     width: 500,
     child: Column(
@@ -56,7 +55,7 @@ Widget projects(BuildContext context) {
                         },
                         width: 200,
                         child: Text(
-                          'Add Projects Path',
+                          'Edit Projects Path',
                           style: TextStyle(
                               color: customTheme.textTheme.bodyText1!.color),
                         ),
@@ -65,16 +64,23 @@ Widget projects(BuildContext context) {
                   ),
                 ),
               )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: projs
-                    .map((e) => ProjectTile(
-                          fileName: _tempName(projs.indexOf(e))
-                              .toList()[projs.length - 2],
-                          filePath: 'filePath',
-                          lastEdit: 'Jan - 17, 2021',
-                        ))
-                    .toList(),
+            : Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: SizedBox(
+                  width: 500,
+                  height: 0.7 * MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: projs.length,
+                    itemBuilder: (_, index) {
+                      return ProjectTile(
+                        fileName: projs[index],
+                        filePath: '$projDir/${projs[index]}',
+                        lastEdit: projsModDate[index],
+                      );
+                    },
+                  ),
+                ),
               ),
       ],
     ),

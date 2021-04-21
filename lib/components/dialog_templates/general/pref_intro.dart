@@ -132,6 +132,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.blueGrey.withOpacity(0.8),
                   hoverColor: Colors.blueGrey.withOpacity(0.5),
+                  width: 100,
                   child: Text(
                     'Choose Path',
                     style: TextStyle(

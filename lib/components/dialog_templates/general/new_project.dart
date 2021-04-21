@@ -350,6 +350,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 RectangleButton(
                   radius: BorderRadius.circular(5),
                   onPressed: _createNewProject,
+                  width: 120,
                   child: Text(
                     'Next',
                     style: TextStyle(

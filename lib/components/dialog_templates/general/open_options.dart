@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/close_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/text_field.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -181,12 +181,12 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
           ),
           const SizedBox(height: 20),
           CustomTextField(
-            filteringTextInputFormatter:
-                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z\_]')),
             readOnly: _loading,
             onChanged: (val) => setState(() => _confirmInput = val),
             hintText: 'Confirm Delete',
           ),
+          infoWidget(
+              'Your input is case-sensitive. Please make sure you type in exactly your project name.'),
           const SizedBox(height: 10),
           RectangleButton(
             width: double.infinity,

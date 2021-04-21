@@ -19,7 +19,7 @@ class RectangleButton extends StatelessWidget {
 
   RectangleButton({
     this.height = 40,
-    this.width = 100,
+    this.width = 200,
     this.disable = false,
     this.disableColor,
     this.contentColor,
@@ -61,7 +61,7 @@ class RectangleButton extends StatelessWidget {
         height: height,
         width: width,
         child: Padding(
-          padding: padding ?? const EdgeInsets.all(10),
+          padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
           child: Center(
               child: loading
                   ? Container(
