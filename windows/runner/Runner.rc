@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "Flutter Installer" "\0"
+            VALUE "FileDescription", "A new Flutter project." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "fluttermatic_desktop" "\0"
+            VALUE "InternalName", "fluttermatic" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2021 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "fluttermatic_desktop.exe" "\0"
-            VALUE "ProductName", "fluttermatic_desktop" "\0"
+            VALUE "OriginalFilename", "fluttermatic.exe" "\0"
+            VALUE "ProductName", "fluttermatic" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

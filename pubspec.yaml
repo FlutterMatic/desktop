@@ -10,13 +10,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bitsdojo_window: ^0.1.0
+  bitsdojo_window: ^0.1.0+1
   cupertino_icons: ^1.0.2
   file_chooser:
     path: ./plugin/file_chooser
   filepicker_windows: ^2.0.0
   flutter_svg: ^0.21.0+1
   lottie: ^1.0.1
+  pedantic: ^1.11.0
   process_run: ^0.12.1
   shared_preferences: ^2.0.5
   url_launcher: ^6.0.3

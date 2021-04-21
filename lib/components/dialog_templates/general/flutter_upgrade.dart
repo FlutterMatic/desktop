@@ -37,7 +37,7 @@ class _CheckFlutterVersionDialogState extends State<CheckFlutterVersionDialog> {
       bgActivities.remove(element);
       await Navigator.pushNamed(context, PageRoutes.routeState);
       if (!_updateResult!) {
-        showDialog(
+        await showDialog(
           context: context,
           builder: (_) => DialogTemplate(
             child: Column(

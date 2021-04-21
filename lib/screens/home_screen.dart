@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -57,15 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       MediaQuery.of(context).size.width > 1070
                           ? Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 //Installed Components
-                                Expanded(
-                                  child: installedComponents(context),
-                                ),
+                                Expanded(child: installedComponents(context)),
                                 const SizedBox(width: 150),
                                 //Controls
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     controls(context),
                                     const SizedBox(height: 20),
@@ -75,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             )
                           : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 //Installed Components
                                 installedComponents(context),

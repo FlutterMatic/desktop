@@ -9,7 +9,7 @@ Widget installedComponents(BuildContext context) {
   return SizedBox(
     width: 500,
     child: Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         titleSection('Flutter SDK & Dependencies',
             Icon(Icons.settings, color: customTheme.iconTheme.color), () {
