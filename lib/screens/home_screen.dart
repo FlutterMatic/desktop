@@ -4,7 +4,6 @@ import 'package:flutter_installer/components/dialog_templates/general/bg_activit
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
-import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'elements/controls.dart';
@@ -41,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 60),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -65,11 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //Controls
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    controls(context),
-                                    const SizedBox(height: 20),
                                     projects(context),
+                                    controls(context),
                                   ],
                                 ),
                               ],

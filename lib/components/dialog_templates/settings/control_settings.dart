@@ -3,6 +3,7 @@ import 'package:flutter_installer/components/dialog_templates/dialog_header.dart
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
+import 'package:flutter_installer/services/installs.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
 import 'package:file_chooser/src/result.dart';
@@ -20,7 +21,34 @@ class _ControlSettingsState extends State<ControlSettings> {
   bool _dirPathError = false;
   bool _loading = false;
 
+  Future<void> _closeActivity() async {
+    setState(() {
+      _dirPathError = false;
+      _loading = false;
+    });
+    if (_dirPath == null) {
+      setState(() => _dirPathError = true);
+    } else {
+      setState(() => _loading = true);
+      _pref = await SharedPreferences.getInstance();
+      await _pref.setString('projects_path', _dirPath!);
+      if (_dirChanged) {
+        try {
+          await Installs().checkProjects();
+          await Navigator.pushNamedAndRemoveUntil(
+              context, PageRoutes.routeState, (route) => false);
+        } catch (_) {
+          await Navigator.pushNamedAndRemoveUntil(
+              context, PageRoutes.routeState, (route) => false);
+        }
+      }
+      await Navigator.pushNamedAndRemoveUntil(
+          context, PageRoutes.routeHome, (route) => false);
+    }
+  }
+
   //User Inputs
+  bool _dirChanged = false;
   String? _dirPath;
 
   Future<void> _getProjectPath() async {
@@ -41,7 +69,7 @@ class _ControlSettingsState extends State<ControlSettings> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DialogHeader(title: 'Control Settings'),
+          DialogHeader(title: 'Control Settings', onClose: _closeActivity),
           const SizedBox(height: 20),
           const Text('Theme', style: TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 10),
@@ -87,10 +115,8 @@ class _ControlSettingsState extends State<ControlSettings> {
                     children: [
                       if (!currentTheme.isDarkTheme)
                         const Expanded(
-                          child: Icon(
-                            Icons.check_circle_rounded,
-                            color: Color(0xFF22272E),
-                          ),
+                          child: Icon(Icons.check_circle_rounded,
+                              color: Color(0xFF22272E)),
                         )
                       else
                         const Spacer(),
@@ -130,7 +156,10 @@ class _ControlSettingsState extends State<ControlSettings> {
                       canSelectDirectories: true,
                     );
                     if (fileResult.paths!.isNotEmpty) {
-                      setState(() => _dirPath = fileResult.paths!.first);
+                      setState(() {
+                        _dirPath = fileResult.paths!.first;
+                        _dirChanged = true;
+                      });
                     }
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
@@ -150,21 +179,7 @@ class _ControlSettingsState extends State<ControlSettings> {
           const SizedBox(height: 10),
           RectangleButton(
             loading: _loading,
-            onPressed: () async {
-              setState(() {
-                _dirPathError = false;
-                _loading = false;
-              });
-              if (_dirPath == null) {
-                setState(() => _dirPathError = true);
-              } else {
-                setState(() => _loading = true);
-                _pref = await SharedPreferences.getInstance();
-                await _pref.setString('projects_path', _dirPath!);
-                await Navigator.pushNamedAndRemoveUntil(
-                    context, PageRoutes.routeHome, (route) => false);
-              }
-            },
+            onPressed: _closeActivity,
             width: double.infinity,
             color: Colors.blueGrey,
             splashColor: Colors.blueGrey.withOpacity(0.5),

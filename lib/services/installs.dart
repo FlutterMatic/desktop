@@ -6,6 +6,7 @@ class Installs {
   Shell shell = Shell();
 
   Future<void> checkProjects() async {
+    projs.clear();
     List<ProcessResult> projectsList =
         await shell.cd(projDir!).run('dir /b /s /p main.dart');
     List temp = await projectsList[0].stdout.split('\n');

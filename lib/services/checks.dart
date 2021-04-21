@@ -40,7 +40,7 @@ class CheckDependencies {
     if (vsCodeExectutable != null) {
       ProcessCmd cmd = ProcessCmd('code', ['--version']);
       ProcessResult result = await runCmd(cmd);
-      codeVersion = result.stdout.split(RegExp(r'[/\n]'))[0].toString();
+      vscodeVersion = result.stdout.split(RegExp(r'[/\n]'))[0].toString();
       return true;
     } else {
       return false;

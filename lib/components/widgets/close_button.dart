@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 
 class CustomCloseButton extends StatelessWidget {
+  final Function()? onClose;
+
+  CustomCloseButton({this.onClose});
+
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -12,7 +16,7 @@ class CustomCloseButton extends StatelessWidget {
       ),
       color: customTheme.buttonColor,
       hoverColor: customTheme.errorColor,
-      onPressed: () => Navigator.pop(context),
+      onPressed: onClose ?? () => Navigator.pop(context),
     );
   }
 }

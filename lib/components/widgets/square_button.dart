@@ -22,10 +22,7 @@ class SquareButton extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: size, maxWidth: size),
         child: tooltip == null
             ? _button(context)
-            : Tooltip(
-                message: tooltip!,
-                child: _button(context),
-              ),
+            : Tooltip(message: tooltip!, child: _button(context)),
       );
 
   Widget _button(BuildContext context) {
@@ -40,7 +37,7 @@ class SquareButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(size > 40 ? 10 : 5),
       ),
-      color: color,
+      color: customTheme.buttonColor,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,

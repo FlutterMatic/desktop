@@ -189,9 +189,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             disable: _confirmInput != 'confirm_delete',
             contentColor: Colors.white,
             loading: _loading,
-            onPressed: () {
-              setState(() => _loading = true);
-            },
+            onPressed: () => setState(() => _loading = true),
             child: const Text(
               'DELETE PROJECT',
               style: TextStyle(color: Colors.black),

@@ -1,10 +1,8 @@
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell_run.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FlutterActions {
   Shell shell = Shell();
-  late SharedPreferences _pref;
 
   //Create project
   Future<void> flutterCreate(

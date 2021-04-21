@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
 import 'package:flutter_installer/components/dialog_templates/general/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/general/open_options.dart';
+import 'package:flutter_installer/components/dialog_templates/settings/control_settings.dart';
+import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
@@ -8,6 +11,7 @@ import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
   ThemeData customTheme = Theme.of(context);
+  List<String> _tempName(int index) => projs[index].split('\\');
   return SizedBox(
     width: 500,
     child: Column(
@@ -18,42 +22,74 @@ Widget projects(BuildContext context) {
             Icons.add_rounded,
             color: customTheme.iconTheme.color,
           ),
-          () => showDialog(
-            context: context,
-            builder: (context) => NewProjectDialog(),
-          ),
+          () {
+            if (flutterInstalled) {
+              showDialog(
+                context: context,
+                builder: (_) => NewProjectDialog(),
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (_) => InstallFlutterDialog(),
+              );
+            }
+          },
           context: context,
         ),
+        const SizedBox(height: 20),
         (projs.isEmpty)
-            ? const Center(
+            ? Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 100.0),
-                  child: Text('No Projects found at the moment.'),
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: SizedBox(
-                  width: 500,
-                  height: 0.47 * MediaQuery.of(context).size.height,
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: projs.length,
-                    itemBuilder: (_, index) {
-                      List<String> tempName = projs[index].split('\\');
-                      return ProjectTile(
-                        fileName: tempName[tempName.length - 3],
-                        filePath: 'path',
-                        lastEdit: 'Jan - 17, 2021',
-                      );
-                    },
+                  padding: const EdgeInsets.symmetric(vertical: 50),
+                  child: Column(
+                    children: [
+                      const Text('No Projects found at the moment.',
+                          textAlign: TextAlign.center),
+                      const SizedBox(height: 20),
+                      RectangleButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => ControlSettings(),
+                          );
+                        },
+                        width: 200,
+                        child: Text(
+                          'Add Projects Path',
+                          style: TextStyle(
+                              color: customTheme.textTheme.bodyText1!.color),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: projs
+                    .map((e) => ProjectTile(
+                          fileName: _tempName(projs.indexOf(e))
+                              .toList()[projs.length - 2],
+                          filePath: 'filePath',
+                          lastEdit: 'Jan - 17, 2021',
+                        ))
+                    .toList(),
               ),
-        // ProjectTile(
-        //     fileName: 'flutter_tooltip',
-        //     filePath: 'path',
-        //     lastEdit: 'Jan - 17, 2021',
+        // SizedBox(
+        //     height: 600,
+        //     child: ListView.builder(
+        //       physics: const BouncingScrollPhysics(),
+        //       itemCount: projs.length,
+        //       itemBuilder: (context, index) {
+        //         List<String> tempName = projs[index].split('\\');
+        //         return ProjectTile(
+        //           fileName: tempName[tempName.length - 3],
+        //           filePath: 'path',
+        //           lastEdit: 'Jan - 17, 2021',
+        //         );
+        //       },
+        //     ),
         //   ),
       ],
     ),

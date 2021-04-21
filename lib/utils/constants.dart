@@ -10,7 +10,12 @@ bool xCodeInstalled = false;
 
 bool channelIsUpdating = false;
 
-String? flutterVersion, flutterChannel, codeVersion, javaVersion;
+String? flutterVersion,
+    flutterChannel,
+    vscodeVersion,
+    xcodeVersion,
+    androidSVersion,
+    javaVersion;
 
 String? projDir;
 
