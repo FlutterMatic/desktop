@@ -160,7 +160,6 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> _switchChannel() async {
       CheckDependencies checkDependencies = CheckDependencies();
-      FlutterActions flutterActions = FlutterActions();
       if (channelName != flutterChannel) {
         BgActivityButton element = BgActivityButton(
           title: 'Changing to $channelName channel',

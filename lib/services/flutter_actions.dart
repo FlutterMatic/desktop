@@ -1,8 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:intl/intl.dart';
 import 'package:process_run/shell.dart';
+import 'package:intl/intl.dart';
+
+FlutterActions flutterActions = FlutterActions();
 
 class FlutterActions {
   Shell shell = Shell();
@@ -48,6 +49,8 @@ class FlutterActions {
     List<FileSystemEntity> allContents =
         await Directory(projDir!).list().toList();
     int i = 0;
+    if (projs.isNotEmpty) projs.clear();
+    if (projsModDate.isNotEmpty) projsModDate.clear();
     while (i < allContents.length) {
       if (allContents[i]
           .runtimeType

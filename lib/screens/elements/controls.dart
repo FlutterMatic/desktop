@@ -128,7 +128,7 @@ Widget controls(BuildContext context) {
                       const SizedBox(width: 8),
                       SquareButton(
                         icon: Icon(
-                          Icons.open_in_browser,
+                          Iconsdata.browser,
                           color: customTheme.textTheme.bodyText1!.color,
                         ),
                         onPressed: () {},

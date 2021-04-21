@@ -56,6 +56,7 @@ class CustomTheme with ChangeNotifier {
         buttonColor: const Color(0xFF373E47),
         focusColor: const Color(0xFF444C56),
         accentColor: const Color(0xFF6E7681),
+        errorColor: const Color(0xFFD73A49),
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         iconTheme: const IconThemeData(color: Colors.white),

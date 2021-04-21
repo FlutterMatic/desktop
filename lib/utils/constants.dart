@@ -57,6 +57,7 @@ class PageRoutes {
 const String _iconName = 'IconsFont';
 
 class Iconsdata {
+  static const IconData browser = IconData(0xebb7, fontFamily: _iconName);
   static const IconData download = IconData(0xea96, fontFamily: _iconName);
   static const IconData channel = IconData(0xeb9d, fontFamily: _iconName);
   static const IconData rocket = IconData(0xec45, fontFamily: _iconName);
@@ -71,6 +72,7 @@ class Iconsdata {
   static const IconData moon = IconData(0xece7, fontFamily: _iconName);
   static const IconData folder = IconData(0xeaad, fontFamily: _iconName);
   static const IconData search = IconData(0xeb1c, fontFamily: _iconName);
+  static const IconData delete = IconData(0xeb41, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);

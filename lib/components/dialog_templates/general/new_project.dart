@@ -33,7 +33,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   final TextEditingController _pDescController = TextEditingController();
   final TextEditingController _pOrgController = TextEditingController();
 
-  FlutterActions flutterActions = FlutterActions();
   @override
   void dispose() {
     if (mounted) {
@@ -102,6 +101,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             web: _web,
           );
           //Success
+          await flutterActions.checkProjects();
           Navigator.pop(context);
           await showDialog(
               context: context,
@@ -438,7 +438,7 @@ class ProjectCreatedDialog extends StatelessWidget {
             },
             child: const Text('Open in Preferred Editor'),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,

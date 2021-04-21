@@ -38,7 +38,7 @@ class _StatusCheckState extends State<StatusCheck> {
         vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
         studioInstalled = await checkDependencies.checkAndroidStudios();
         try {
-          await FlutterActions().checkProjects();
+          await flutterActions.checkProjects();
         } catch (_) {
           await showDialog(
             context: context,

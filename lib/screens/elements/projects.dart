@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
 import 'package:flutter_installer/components/dialog_templates/general/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/general/open_options.dart';
-import 'package:flutter_installer/components/dialog_templates/settings/control_settings.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
-import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
@@ -37,39 +34,18 @@ Widget projects(BuildContext context) {
           },
           context: context,
         ),
-        const SizedBox(height: 20),
         (projs.isEmpty)
-            ? Center(
+            ? const Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 50),
-                  child: Column(
-                    children: [
-                      const Text('No Projects found at the moment.',
-                          textAlign: TextAlign.center),
-                      const SizedBox(height: 20),
-                      RectangleButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => ControlSettings(),
-                          );
-                        },
-                        width: 200,
-                        child: Text(
-                          'Edit Projects Path',
-                          style: TextStyle(
-                              color: customTheme.textTheme.bodyText1!.color),
-                        ),
-                      ),
-                    ],
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 100.0),
+                  child: Text('No Projects found at the moment.'),
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.only(bottom: 15),
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: SizedBox(
                   width: 500,
-                  height: 0.7 * MediaQuery.of(context).size.height,
+                  height: 0.9 * MediaQuery.of(context).size.height,
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     itemCount: projs.length,
