@@ -69,7 +69,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       _macos == false &&
       _linux == false);
 
-  void _createNewProject() {
+  Future<void> _createNewProject() async {
     if (_createProjectFormKey.currentState!.validate()) {
       //Index 0 - Name
       if (_index == 0 && _projectNameCondition()) {
@@ -87,8 +87,18 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       // Index 3 - Platforms
       else if (_index == 3 && _validatePlatformSelection()) {
         setState(() => _index = 4);
-        // flutterActions.flutterCreate(
-        //     _projectName!, _projectDescription!, _projectOrg!);
+        try {
+          await flutterActions.flutterCreate(
+              _projectName!, _projectDescription!, _projectOrg!);
+        } catch (_) {
+          Navigator.pop(context);
+          //define
+          showDialog(
+              context: context, builder: (_) => CreateProjectErrorDialog());
+        }
+        Navigator.pop(context);
+        //define
+        showDialog(context: context, builder: (_) => ProjectCreatedDialog());
       }
     }
   }
@@ -313,6 +323,36 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 ),
               ],
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class CreateProjectErrorDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          DialogHeader(title: 'Unable to Create Project'),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+class ProjectCreatedDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          DialogHeader(title: 'Project Created'),
+          const SizedBox(height: 20),
         ],
       ),
     );
