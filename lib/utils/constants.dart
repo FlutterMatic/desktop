@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
-import 'package:flutter_installer/screens/elements/projects.dart';
 
 bool flutterInstalled = false;
 bool javaInstalled = false;
@@ -22,7 +21,6 @@ String? projDir;
 
 List<BgActivityButton> bgActivities = [];
 List<String> projs = [], projsModDate = [];
-List<ProjectTile> projectsTitles = [];
 
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
@@ -59,6 +57,7 @@ class PageRoutes {
 const String _iconName = 'IconsFont';
 
 class Iconsdata {
+  static const IconData browser = IconData(0xebb7, fontFamily: _iconName);
   static const IconData download = IconData(0xea96, fontFamily: _iconName);
   static const IconData channel = IconData(0xeb9d, fontFamily: _iconName);
   static const IconData rocket = IconData(0xec45, fontFamily: _iconName);
@@ -73,6 +72,7 @@ class Iconsdata {
   static const IconData moon = IconData(0xece7, fontFamily: _iconName);
   static const IconData folder = IconData(0xeaad, fontFamily: _iconName);
   static const IconData search = IconData(0xeb1c, fontFamily: _iconName);
+  static const IconData delete = IconData(0xeb41, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);

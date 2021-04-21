@@ -33,7 +33,6 @@ class _ControlSettingsState extends State<ControlSettings> {
       await _pref.setString('projects_path', _dirPath!);
       if (_dirChanged) {
         try {
-          // await FlutterActions().checkProjects();
           await Navigator.pushNamedAndRemoveUntil(
               context, PageRoutes.routeState, (route) => false);
         } catch (_) {
@@ -68,7 +67,10 @@ class _ControlSettingsState extends State<ControlSettings> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DialogHeader(title: 'Control Settings', onClose: _closeActivity),
+          DialogHeader(
+            title: 'Control Settings',
+            onClose: null,
+          ),
           const SizedBox(height: 20),
           const Text('Theme', style: TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 10),

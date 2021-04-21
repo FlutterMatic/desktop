@@ -31,7 +31,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   final TextEditingController _pDescController = TextEditingController();
   final TextEditingController _pOrgController = TextEditingController();
 
-  FlutterActions flutterActions = FlutterActions();
   @override
   void dispose() {
     if (mounted) {
@@ -100,6 +99,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             web: _web,
           );
           //Success
+          await flutterActions.checkProjects();
           Navigator.pop(context);
           await showDialog(
               context: context, builder: (_) => ProjectCreatedDialog());

@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'package:flutter_installer/screens/elements/projects.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:intl/intl.dart';
 import 'package:process_run/shell.dart';
+import 'package:intl/intl.dart';
 
 FlutterActions flutterActions = FlutterActions();
 
@@ -46,10 +45,12 @@ class FlutterActions {
     }
   }
 
-  Stream<List<ProjectTile>> checkProjects() async* {
+  Future<void> checkProjects() async {
     List<FileSystemEntity> allContents =
         await Directory(projDir!).list().toList();
     int i = 0;
+    if (projs.isNotEmpty) projs.clear();
+    if (projsModDate.isNotEmpty) projsModDate.clear();
     while (i < allContents.length) {
       if (allContents[i]
           .runtimeType
@@ -65,13 +66,6 @@ class FlutterActions {
           String projDirName = allContents[i].path.replaceAll('$projDir\\', '');
           projs.add(projDirName);
           projsModDate.add(modDate);
-          projectsTitles.add(
-            ProjectTile(
-              fileName: projs[i],
-              filePath: '$projDir/${projs[i]}',
-              lastEdit: projsModDate[i],
-            ),
-          );
         }
       }
       i++;

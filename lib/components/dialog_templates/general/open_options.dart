@@ -5,6 +5,7 @@ import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/text_field.dart';
+import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
 
@@ -21,30 +22,36 @@ class OpenOptionsDialog extends StatelessWidget {
           Row(
             children: [
               PopupMenuButton(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
                 color: customTheme.primaryColor,
                 itemBuilder: (BuildContext _) => [
                   PopupMenuItem(
-                      child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (_) => ConfirmProjectDelete(fileName),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Text(
-                          'Delete',
-                          style: TextStyle(
-                              color: customTheme.textTheme.bodyText1!.color),
-                        ),
-                        const Spacer(),
-                        Icon(Icons.delete, color: customTheme.errorColor),
-                      ],
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (_) => ConfirmProjectDelete(fileName),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            'Delete',
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color),
+                          ),
+                          const Spacer(),
+                          Icon(Iconsdata.delete, color: customTheme.errorColor),
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
               const Expanded(
@@ -202,7 +209,9 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
               setState(() => _loading = true);
               await Directory('${projDir!}/${widget.fName}')
                   .delete(recursive: true)
-                  .whenComplete(() {
+                  .whenComplete(() async {
+                setState(() {});
+                await flutterActions.checkProjects();
                 setState(() => _loading = false);
                 Navigator.pop(context);
               });

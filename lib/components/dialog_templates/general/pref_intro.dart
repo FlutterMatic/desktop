@@ -25,7 +25,6 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
   //User Inputs
   String? _dirPath;
   CheckDependencies checkDependencies = CheckDependencies();
-  FlutterActions flutterActions = FlutterActions();
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -163,7 +162,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 vscInsidersInstalled =
                     await checkDependencies.checkVSCInsiders();
                 studioInstalled = await checkDependencies.checkAndroidStudios();
-                // await flutterActions.checkProjects();
+                await flutterActions.checkProjects();
                 await Navigator.pushNamedAndRemoveUntil(
                     context, PageRoutes.routeHome, (route) => false);
               }

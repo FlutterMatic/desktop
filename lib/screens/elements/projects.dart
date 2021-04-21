@@ -5,7 +5,6 @@ import 'package:flutter_installer/components/dialog_templates/general/open_optio
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
-import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget projects(BuildContext context) {
@@ -35,33 +34,31 @@ Widget projects(BuildContext context) {
           },
           context: context,
         ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: SizedBox(
-            width: 500,
-            height: 0.7 * MediaQuery.of(context).size.height,
-            child: StreamBuilder<List<ProjectTile>>(
-              stream: flutterActions.checkProjects(),
-              builder: (context, results) {
-                // if (results.connectionState == ConnectionState.waiting) {
-                // const CircularProgressIndicator();
-                // } else if (results.hasData) {
-                return ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: projectsTitles.length,
-                  itemBuilder: (_, index) {
-                    return projectsTitles[index];
-                  },
-                );
-                // } else if (!results.hasData) {
-                //   const Text('No data found...');
-                // }
-                // return const Text('Waiting for projects...');
-              },
-            ),
-          ),
-        ),
+        (projs.isEmpty)
+            ? const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 100.0),
+                  child: Text('No Projects found at the moment.'),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: SizedBox(
+                  width: 500,
+                  height: 0.9 * MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: projs.length,
+                    itemBuilder: (_, index) {
+                      return ProjectTile(
+                        fileName: projs[index],
+                        filePath: '$projDir/${projs[index]}',
+                        lastEdit: projsModDate[index],
+                      );
+                    },
+                  ),
+                ),
+              ),
       ],
     ),
   );
