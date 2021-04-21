@@ -10,6 +10,8 @@ import 'package:flutter_installer/components/widgets/text_field.dart';
 import 'package:flutter_installer/components/widgets/warning_widget.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:process_run/shell_run.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewProjectDialog extends StatefulWidget {
   @override
@@ -102,10 +104,10 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           //Success
           Navigator.pop(context);
           await showDialog(
-              context: context, builder: (_) => ProjectCreatedDialog());
+              context: context,
+              builder: (_) => ProjectCreatedDialog(projectName: _projectName!));
         } catch (_) {
           //Failed
-          Navigator.pop(context);
           await showDialog(
               context: context, builder: (_) => CreateProjectErrorDialog());
         }
@@ -241,36 +243,41 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                                 ? 'Organization name is too long. Try (com.example.$_projectName)'
                                 : null,
                         maxLength: 30,
-                        onChanged: (val) => setState(
-                            () => _projectOrg = val.isEmpty ? null : val),
+                        onChanged: (val) => setState(() {
+                          if (val.isNotEmpty) {
+                            _projectOrg = val;
+                          } else {
+                            _projectOrg = null;
+                          }
+                        }),
                       ),
                       if (_projectOrg != null &&
                           _projectOrg!.contains('.') &&
                           _projectOrg!.contains(RegExp('[A-Za-z_]')) &&
                           !_projectOrg!.endsWith('.') &&
-                          !_projectOrg!.endsWith('_'))
-                        ('.'.allMatches(_projectOrg!).length > 1)
-                            ? warningWidget(
-                                'Hello there, you better don\'t use 2 "."s in your organization for good practice.',
-                                Assets.warning,
-                                kYellowColor,
-                              )
-                            : warningWidget(
-                                '"$_projectOrg.$_projectName" will be your organization name. You can change it later.',
-                                Assets.done,
-                                kGreenColor)
-                      else if (_projectOrg != null)
-                        ('.'.allMatches(_projectOrg!).length > 1)
-                            ? warningWidget(
-                                'Hello there, you better don\'t use 2 "."s in your organization for good practice.',
-                                Assets.warning,
-                                kYellowColor,
-                              )
-                            : warningWidget(
-                                'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app".',
-                                Assets.error,
-                                kRedColor,
-                              ),
+                          !_projectOrg!.endsWith('_') &&
+                          '.'.allMatches(_projectOrg!).length < 3)
+                        warningWidget(
+                            '"$_projectOrg" will be your organization name. You can change it later.',
+                            Assets.done,
+                            kGreenColor),
+                      if (_projectOrg != null &&
+                          (_projectOrg!.endsWith('_') ||
+                              _projectOrg!.endsWith('.') ||
+                              !_projectOrg!.contains('.')) &&
+                          '.'.allMatches(_projectOrg!).length < 3)
+                        warningWidget(
+                          'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app"',
+                          Assets.error,
+                          kRedColor,
+                        ),
+                      if (_projectOrg != null &&
+                          '.'.allMatches(_projectOrg!).length > 2)
+                        warningWidget(
+                          'Please check your organization name. This doesn\'t seem to be a proper one. Try something like com.$_projectName.app',
+                          Assets.error,
+                          kRedColor,
+                        ),
                       infoWidget(
                           'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
                     ],
@@ -375,6 +382,21 @@ class CreateProjectErrorDialog extends StatelessWidget {
         children: [
           DialogHeader(title: 'Unable to Create Project'),
           const SizedBox(height: 20),
+          const Text(
+            'We were unable to create a new project for some reason. Please try again. If this issue continues to happen, then please create a new issue on GitHub.',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          RectangleButton(
+            width: double.infinity,
+            color: Colors.blueGrey,
+            splashColor: Colors.blueGrey.withOpacity(0.5),
+            focusColor: Colors.blueGrey.withOpacity(0.5),
+            hoverColor: Colors.grey.withOpacity(0.5),
+            highlightColor: Colors.blueGrey.withOpacity(0.5),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );
@@ -382,14 +404,51 @@ class CreateProjectErrorDialog extends StatelessWidget {
 }
 
 class ProjectCreatedDialog extends StatelessWidget {
+  final String projectName;
+
+  ProjectCreatedDialog({required this.projectName});
+
   @override
   Widget build(BuildContext context) {
+    SharedPreferences _pref;
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           DialogHeader(title: 'Project Created'),
           const SizedBox(height: 20),
+          const Text(
+              'Your new project has successfully been created. You should be able to open your project and run it!',
+              textAlign: TextAlign.center),
+          const SizedBox(height: 10),
+          RectangleButton(
+            width: double.infinity,
+            color: Colors.blueGrey,
+            splashColor: Colors.blueGrey.withOpacity(0.5),
+            focusColor: Colors.blueGrey.withOpacity(0.5),
+            hoverColor: Colors.grey.withOpacity(0.5),
+            highlightColor: Colors.blueGrey.withOpacity(0.5),
+            onPressed: () async {
+              Shell _shell = Shell();
+              _pref = await SharedPreferences.getInstance();
+              await _shell
+                  .cd('${_pref.getString('projects_path')!}/$projectName/')
+                  .run('code .');
+              Navigator.pop(context);
+            },
+            child: const Text('Open in Preferred Editor'),
+          ),
+          const SizedBox(height: 10),
+          RectangleButton(
+            width: double.infinity,
+            color: Colors.blueGrey,
+            splashColor: Colors.blueGrey.withOpacity(0.5),
+            focusColor: Colors.blueGrey.withOpacity(0.5),
+            hoverColor: Colors.grey.withOpacity(0.5),
+            highlightColor: Colors.blueGrey.withOpacity(0.5),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
         ],
       ),
     );

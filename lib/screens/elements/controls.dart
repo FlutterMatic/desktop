@@ -7,6 +7,7 @@ import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
+import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
 
@@ -120,7 +121,8 @@ Widget controls(BuildContext context) {
                       Expanded(
                         child: RectangleButton(
                           onPressed: () {},
-                          child: _controlButton('Open', Iconsdata.folder, context),
+                          child:
+                              _controlButton('Open', Iconsdata.folder, context),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -198,7 +200,9 @@ class ControlResourceTile extends StatelessWidget {
     ThemeData customTheme = Theme.of(context);
     return RoundContainer(
       radius: 5,
-      color: customTheme.buttonColor.withOpacity(0.5),
+      color: currentTheme.isDarkTheme
+          ? Colors.blueGrey.withOpacity(0.1)
+          : Colors.white,
       height: 150,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

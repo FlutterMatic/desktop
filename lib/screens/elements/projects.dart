@@ -70,13 +70,15 @@ Widget projects(BuildContext context) {
                 child: SizedBox(
                   width: 500,
                   height: 0.7 * MediaQuery.of(context).size.height,
-                  child: StreamBuilder(
-                    stream: FlutterActions().checkProjects(),
-                    builder: (context, results) {
-                      if (results.hasData) {
-                        results.data;
-                      }
-                      return const CircularProgressIndicator();
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: projs.length,
+                    itemBuilder: (_, index) {
+                      return ProjectTile(
+                        fileName: projs[index],
+                        filePath: '$projDir/${projs[index]}',
+                        lastEdit: projsModDate[index],
+                      );
                     },
                   ),
                 ),

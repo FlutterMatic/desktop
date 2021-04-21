@@ -6,6 +6,8 @@ import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/text_field.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:process_run/shell_run.dart';
 import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {
@@ -22,7 +24,7 @@ class OpenOptionsDialog extends StatelessWidget {
             children: [
               PopupMenuButton(
                 color: customTheme.primaryColor,
-                itemBuilder: (BuildContext _) => [
+                itemBuilder: (BuildContext context) => [
                   PopupMenuItem(
                       child: GestureDetector(
                     onTap: () {
@@ -64,7 +66,10 @@ class OpenOptionsDialog extends StatelessWidget {
             children: [
               Expanded(
                 child: RectangleButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    Shell _shell = Shell();
+                    await _shell.cd('').run('code .');
+                  },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
                   highlightColor: Colors.blueGrey.withOpacity(0.8),
@@ -202,15 +207,58 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
               setState(() => _loading = true);
               await Directory('${projDir!}/${widget.fName}')
                   .delete(recursive: true)
-                  .whenComplete(() {
+                  .whenComplete(() async {
                 setState(() => _loading = false);
                 Navigator.pop(context);
+                await showDialog(
+                  context: context,
+                  builder: (_) => DialogTemplate(
+                    child: Column(
+                      children: [
+                        DialogHeader(title: 'File Deleted'),
+                        const SizedBox(height: 20),
+                        Text('Your file ${widget.fName} has been deleted.'),
+                        const SizedBox(height: 15),
+                        RectangleButton(
+                          width: double.infinity,
+                          color: Colors.blueGrey,
+                          splashColor: Colors.blueGrey.withOpacity(0.5),
+                          focusColor: Colors.blueGrey.withOpacity(0.5),
+                          hoverColor: Colors.grey.withOpacity(0.5),
+                          highlightColor: Colors.blueGrey.withOpacity(0.5),
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               });
             },
             child: const Text(
               'Delete Project',
               style: TextStyle(color: Colors.black),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProjectDeletedDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        children: [
+          DialogHeader(title: 'Project Deleted'),
+          const SizedBox(height: 20),
+          SvgPicture.asset(Assets.done),
+          const SizedBox(height: 20),
+          const Text(
+            'Your project has successfully been deleted.',
+            textAlign: TextAlign.center,
           ),
         ],
       ),
