@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: customTheme.iconTheme.color,
                       ),
                       tooltip: 'GitHub',
-                      onPressed: () => launch('https://www.github.com/flutter'),
+                      onPressed: () => launch('https://github.com/FlutterMatic/FlutterMatic-desktop'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       tooltip: 'Twitter',
                       onPressed: () =>
-                          launch('https://www.twitter.com/flutterdev'),
+                          launch('https://twitter.com/FlutterMatic'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(

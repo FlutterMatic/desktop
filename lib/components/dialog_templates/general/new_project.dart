@@ -11,7 +11,6 @@ import 'package:flutter_installer/components/widgets/warning_widget.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell_run.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NewProjectDialog extends StatefulWidget {
   @override
@@ -407,10 +406,10 @@ class ProjectCreatedDialog extends StatelessWidget {
   final String projectName;
 
   ProjectCreatedDialog({required this.projectName});
+  final Shell _shell = Shell(verbose: false);
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences _pref;
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -429,11 +428,7 @@ class ProjectCreatedDialog extends StatelessWidget {
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
             onPressed: () async {
-              Shell _shell = Shell();
-              _pref = await SharedPreferences.getInstance();
-              await _shell
-                  .cd('${_pref.getString('projects_path')!}/$projectName/')
-                  .run('code .');
+              await _shell.run('code $projDir\\$projectName');
               Navigator.pop(context);
             },
             child: const Text('Open in Preferred Editor'),

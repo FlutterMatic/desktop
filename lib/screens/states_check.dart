@@ -66,7 +66,7 @@ class _StatusCheckState extends State<StatusCheck> {
                   const SizedBox(height: 10),
                   RectangleButton(
                     onPressed: () {
-                      launch('https://www.github.com/fluttermatic');
+                      launch('https://github.com/FlutterMatic/FlutterMatic-desktop');
                       Navigator.pop(context);
                     },
                     width: double.infinity,

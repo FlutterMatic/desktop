@@ -17,7 +17,7 @@ String? flutterVersion,
     androidSVersion,
     javaVersion;
 
-String? projDir;
+String? projDir, studioPath, javaPath, vscPath, flutterPath;
 
 List<BgActivityButton> bgActivities = [];
 List<String> projs = [], projsModDate = [];
