@@ -309,8 +309,12 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                 children: [
                   Row(
                     children: [
-                      const Text('GitHub',
-                          style: TextStyle(fontWeight: FontWeight.w600)),
+                      const Text(
+                        'GitHub',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const Spacer(),
                       Icon(Iconsdata.github, color: customTheme.indicatorColor),
                     ],
@@ -324,9 +328,11 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                           child: Column(
                             children: [
                               Expanded(
-                                child: Icon(Icons.error,
-                                    size: 30,
-                                    color: customTheme.indicatorColor),
+                                child: Icon(
+                                  Iconsdata.gitIssue,
+                                  size: 30,
+                                  color: customTheme.iconTheme.color,
+                                ),
                               ),
                               Text(
                                 'Create Issue',
@@ -350,9 +356,9 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                           child: Column(
                             children: [
                               Expanded(
-                                child: Icon(Icons.merge_type_rounded,
+                                child: Icon(Iconsdata.gitPR,
                                     size: 30,
-                                    color: customTheme.indicatorColor),
+                                    color: customTheme.iconTheme.color),
                               ),
                               Text(
                                 'Pull Request',
@@ -388,7 +394,7 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                   const SizedBox(height: 15),
                   ActionOptions(
                     buttonTitles: [
-                      'All Applications',
+                      'Whole Application',
                       'Flutter',
                       'Android Studio',
                       'Visual Studio Code',
@@ -423,7 +429,8 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
             focusColor: Colors.blueGrey.withOpacity(0.5),
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
-            child: const Text('Save Settings'),
+            child: Text('Save Settings', 
+            style: TextStyle(fontWeight: FontWeight.w700,),),
           ),
         ],
       ),

@@ -82,6 +82,8 @@ class Iconsdata {
   static const IconData folder = IconData(0xeaad, fontFamily: _iconName);
   static const IconData search = IconData(0xeb1c, fontFamily: _iconName);
   static const IconData delete = IconData(0xeb41, fontFamily: _iconName);
+  static const IconData gitIssue = IconData(0xea05, fontFamily: _iconName);
+  static const IconData gitPR = IconData(0xeab6, fontFamily: _iconName);
 }
 
 const Color kRedColor = Color(0xffDE4629);
