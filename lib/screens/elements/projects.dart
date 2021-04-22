@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
-import 'package:flutter_installer/components/dialog_templates/general/new_project.dart';
-import 'package:flutter_installer/components/dialog_templates/general/open_options.dart';
-import 'package:flutter_installer/components/dialog_templates/general/search_projects.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/install_fluter.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/new_project.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/open_options.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/search_projects.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
@@ -16,25 +16,9 @@ Widget projects(BuildContext context) {
       children: <Widget>[
         titleSection(
           'Projects',
-          Icon(
-            Icons.add_rounded,
-            color: customTheme.iconTheme.color,
-          ),
-          () {
-            if (flutterInstalled) {
-              showDialog(
-                context: context,
-                builder: (_) => NewProjectDialog(),
-              );
-            } else {
-              showDialog(
-                context: context,
-                builder: (_) => InstallFlutterDialog(),
-              );
-            }
-          },
           context,
           [
+            //Search Projects
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: SquareButton(
@@ -51,6 +35,7 @@ Widget projects(BuildContext context) {
                 },
               ),
             ),
+            //Refresh Projects
             Padding(
               padding: const EdgeInsets.only(left: 8),
               child: SquareButton(
@@ -60,6 +45,28 @@ Widget projects(BuildContext context) {
                   color: customTheme.iconTheme.color,
                 ),
                 onPressed: () {},
+              ),
+            ),
+            //Add Project
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: SquareButton(
+                color: customTheme.primaryColorLight,
+                icon: Icon(
+                  Icons.add_rounded,
+                  color: customTheme.iconTheme.color,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      if (flutterInstalled) {
+                        return NewProjectDialog();
+                      } else
+                        return InstallFlutterDialog();
+                    },
+                  );
+                },
               ),
             ),
           ],

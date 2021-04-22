@@ -5,6 +5,7 @@ class DialogTemplate extends StatelessWidget {
   final Widget child;
   final EdgeInsets? childPadding;
   final bool outerTapExit;
+  final double? width;
   final Alignment align;
   final Color? closeBgColor;
   final Color? closeIconColor;
@@ -12,6 +13,7 @@ class DialogTemplate extends StatelessWidget {
   DialogTemplate({
     required this.child,
     this.childPadding,
+    this.width,
     this.align = Alignment.center,
     this.outerTapExit = true,
     this.closeBgColor,
@@ -27,7 +29,7 @@ class DialogTemplate extends StatelessWidget {
         body: Center(
           child: SafeArea(
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 500),
+              constraints: BoxConstraints(maxWidth: width ?? 500),
               padding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: GestureDetector(

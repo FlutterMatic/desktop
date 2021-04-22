@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 
+//Installed
 bool flutterInstalled = false;
 bool javaInstalled = false;
 bool vscInstalled = false;
@@ -8,8 +9,7 @@ bool vscInsidersInstalled = false;
 bool studioInstalled = false;
 bool xCodeInstalled = false;
 
-bool channelIsUpdating = false;
-
+//Versions
 String? flutterVersion,
     flutterChannel,
     vscodeVersion,
@@ -17,6 +17,9 @@ String? flutterVersion,
     androidSVersion,
     javaVersion;
 
+//Utils
+bool channelIsUpdating = false;
+String desktopVersion = '1.0.0';
 String? projDir, studioPath, javaPath, vscPath, flutterPath;
 
 List<BgActivityButton> bgActivities = [];
@@ -25,6 +28,7 @@ List<String> projs = [], projsModDate = [];
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
 const String statusIcons = 'assets/icons/status_icons';
+const String ideIcons = 'assets/ides';
 
 //Animations
 const String lottie = 'assets/lottie';
@@ -45,6 +49,11 @@ class Assets {
   static const String done = '$statusIcons/done.svg';
   static const String warning = '$statusIcons/warning.svg';
   static const String error = '$statusIcons/error.svg';
+
+  //Ides Icons
+  static const String androidStudio = '$ideIcons/android_studio.svg';
+  static const String vscode = '$ideIcons/vscode.svg';
+  static const String xcode = '$ideIcons/xcode.svg';
 }
 
 class PageRoutes {

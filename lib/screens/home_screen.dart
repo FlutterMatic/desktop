@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/general/bg_activity.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/bg_activity.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/settings.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
@@ -40,7 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 60),
+                  padding: EdgeInsets.fromLTRB(
+                      (MediaQuery.of(context).size.width > 500 ? 20 : 10),
+                      30,
+                      (MediaQuery.of(context).size.width > 500 ? 20 : 10),
+                      60),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -107,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: customTheme.iconTheme.color,
                       ),
                       tooltip: 'GitHub',
-                      onPressed: () => launch('https://github.com/FlutterMatic/FlutterMatic-desktop'),
+                      onPressed: () => launch(
+                          'https://github.com/FlutterMatic/FlutterMatic-desktop'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
@@ -198,7 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: customTheme.primaryColorLight,
                   icon:
                       Icon(Icons.settings, color: customTheme.iconTheme.color),
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => ControlSettingsDialog(),
+                    );
+                  },
                 ),
               ),
             ),

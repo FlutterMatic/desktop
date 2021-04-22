@@ -23,12 +23,17 @@ class CheckBoxElement extends StatelessWidget {
           Checkbox(
             value: value,
             onChanged: disable ? null : onChanged,
-            splashRadius: 20,
+            splashRadius: 0,
             activeColor: Colors.blueGrey,
             hoverColor: Colors.blueGrey.withOpacity(0.2),
           ),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text ?? '')),
+          const SizedBox(width: 3),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(value),
+              child: Text(text ?? ''),
+            ),
+          ),
         ],
       ),
     );

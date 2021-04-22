@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/dialog_templates/general/pref_intro.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/pref_intro.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
@@ -41,6 +41,7 @@ class _StatusCheckState extends State<StatusCheck> {
           await flutterActions.checkProjects();
         } catch (_) {
           await showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (_) => DialogTemplate(
               child: Column(
@@ -66,7 +67,8 @@ class _StatusCheckState extends State<StatusCheck> {
                   const SizedBox(height: 10),
                   RectangleButton(
                     onPressed: () {
-                      launch('https://github.com/FlutterMatic/FlutterMatic-desktop');
+                      launch(
+                          'https://github.com/FlutterMatic/FlutterMatic-desktop');
                       Navigator.pop(context);
                     },
                     width: double.infinity,

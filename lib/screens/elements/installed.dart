@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
-import 'package:flutter_installer/components/dialog_templates/settings/dependencies_settings.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/install_fluter.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 Widget installedComponents(BuildContext context) {
-  ThemeData customTheme = Theme.of(context);
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
-      titleSection('Flutter SDK & Dependencies',
-          Icon(Icons.settings, color: customTheme.iconTheme.color), () {
-        showDialog(
-          context: context,
-          builder: (_) => DependenciesSettings(),
-        );
-      }, context),
+      titleSection('Flutter SDK & Dependencies', context),
       const SizedBox(height: 25),
       installationStatus(
         flutterInstalled ? InstallationStatus.done : InstallationStatus.error,

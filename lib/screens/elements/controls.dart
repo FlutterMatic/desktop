@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/general/change_channel.dart';
-import 'package:flutter_installer/components/dialog_templates/general/flutter_upgrade.dart';
-import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
-import 'package:flutter_installer/components/dialog_templates/settings/control_settings.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/change_channel.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/flutter_upgrade.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/install_fluter.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'dart:io';
-
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
 
 Widget controls(BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      titleSection(
-        'Controls',
-        Icon(Icons.settings, color: customTheme.iconTheme.color),
-        () {
-          showDialog(
-            context: context,
-            builder: (_) => ControlSettings(),
-          );
-        },
-        context,
-      ),
+      titleSection('Controls', context),
       const SizedBox(height: 20),
       RoundContainer(
         child: Column(
@@ -203,7 +191,7 @@ class ControlResourceTile extends StatelessWidget {
     return RoundContainer(
       radius: 5,
       color: currentTheme.isDarkTheme
-          ? Colors.blueGrey.withOpacity(0.05)
+          ? Colors.black.withOpacity(0.1)
           : Colors.white,
       height: 150,
       child: Column(

@@ -419,7 +419,7 @@ class ProjectCreatedDialog extends StatelessWidget {
           const Text(
               'Your new project has successfully been created. You should be able to open your project and run it!',
               textAlign: TextAlign.center),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,
@@ -433,7 +433,7 @@ class ProjectCreatedDialog extends StatelessWidget {
             },
             child: const Text('Open in Preferred Editor'),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,

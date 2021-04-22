@@ -132,7 +132,40 @@ class OpenOptionsDialog extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: RectangleButton(
-                  onPressed: () => launch('${projDir!}\\$fileName'),
+                  onPressed: () {
+                    try {
+                      launch('${projDir!}\\$fileName');
+                    } catch (_) {
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        builder: (_) => DialogTemplate(
+                          child: Column(
+                            children: [
+                              DialogHeader(title: 'Couldn\'t Open'),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Sorry, for some reason, we couldn\'t open $fileName. Please make sure that this project exists. If this issue continues to happen, then please raise an issue on GitHub.',
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 20),
+                              RectangleButton(
+                                onPressed: () => Navigator.pop(context),
+                                width: double.infinity,
+                                color: Colors.blueGrey,
+                                splashColor: Colors.blueGrey.withOpacity(0.5),
+                                focusColor: Colors.blueGrey.withOpacity(0.5),
+                                hoverColor: Colors.grey.withOpacity(0.5),
+                                highlightColor:
+                                    Colors.blueGrey.withOpacity(0.5),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
                   highlightColor: Colors.blueGrey.withOpacity(0.8),
