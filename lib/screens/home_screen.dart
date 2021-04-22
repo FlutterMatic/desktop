@@ -190,6 +190,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: SquareButton(
+                  color: customTheme.primaryColorLight,
+                  icon:
+                      Icon(Icons.settings, color: customTheme.iconTheme.color),
+                  onPressed: () {},
+                ),
+              ),
+            ),
           ],
         ),
       ),

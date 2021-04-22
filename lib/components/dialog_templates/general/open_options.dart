@@ -75,7 +75,8 @@ class OpenOptionsDialog extends StatelessWidget {
                 child: RectangleButton(
                   onPressed: () async {
                     Shell _shell = Shell();
-                    await _shell.cd('').run('code .');
+                    await _shell.cd(projDir! + '\\$fileName').run('code .');
+                    Navigator.pop(context);
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),

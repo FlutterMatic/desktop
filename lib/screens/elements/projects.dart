@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/general/install_fluter.dart';
 import 'package:flutter_installer/components/dialog_templates/general/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/general/open_options.dart';
+import 'package:flutter_installer/components/dialog_templates/general/search_projects.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
@@ -32,7 +33,36 @@ Widget projects(BuildContext context) {
               );
             }
           },
-          context: context,
+          context,
+          [
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: SquareButton(
+                color: customTheme.primaryColorLight,
+                icon: Icon(
+                  Iconsdata.search,
+                  color: customTheme.iconTheme.color,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => SearchProjectsDialog(),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: SquareButton(
+                color: customTheme.primaryColorLight,
+                icon: Icon(
+                  Icons.refresh,
+                  color: customTheme.iconTheme.color,
+                ),
+                onPressed: () {},
+              ),
+            ),
+          ],
         ),
         (projs.isEmpty)
             ? const Center(

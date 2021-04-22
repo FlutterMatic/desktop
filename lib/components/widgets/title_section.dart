@@ -3,8 +3,9 @@ import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-Widget titleSection(String title, Widget icon, Function() onPressed,
-    {required BuildContext context}) {
+Widget titleSection(
+    String title, Widget icon, Function() onPressed, BuildContext context,
+    [List<Widget>? actions]) {
   ThemeData customTheme = Theme.of(context);
   return Row(
     mainAxisSize: MainAxisSize.min,
@@ -18,10 +19,14 @@ Widget titleSection(String title, Widget icon, Function() onPressed,
         ),
       ),
       const Spacer(),
-      SquareButton(
-        color: customTheme.primaryColorLight,
-        icon: icon,
-        onPressed: onPressed,
+      Row(children: actions ?? []),
+      Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: SquareButton(
+          color: customTheme.primaryColorLight,
+          icon: icon,
+          onPressed: onPressed,
+        ),
       ),
     ],
   );
