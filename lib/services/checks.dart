@@ -4,12 +4,24 @@ import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:process_run/which.dart';
 import 'package:process_run/shell_run.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckDependencies {
-  Shell shell = Shell();
+  Shell shell = Shell(
+    verbose: false,
+    commandVerbose: false,
+    commentVerbose: false,
+  );
+  late SharedPreferences _pref;
   Future<bool> checkFlutter() async {
+    _pref = await SharedPreferences.getInstance();
     String? flutterExectutable = await which('flutter');
     if (flutterExectutable != null) {
+      if (!_pref.containsKey('flutter_path')) {
+        await _pref.setString('flutter_path', flutterExectutable).whenComplete(
+              () async => flutterPath = await _pref.getString('flutter_path'),
+            );
+      }
       ProcessCmd cmd = ProcessCmd('flutter', ['--version']);
       ProcessResult result = await runCmd(cmd);
       flutterVersion = result.stdout.split(' ')[1].toString();
@@ -21,8 +33,14 @@ class CheckDependencies {
   }
 
   Future<bool> checkJava() async {
+    _pref = await SharedPreferences.getInstance();
     String? javaExectutable = await which('java');
     if (javaExectutable != null) {
+      if (!_pref.containsKey('java_path')) {
+        await _pref.setString('java_path', javaExectutable).whenComplete(
+              () async => javaPath = await _pref.getString('java_path'),
+            );
+      }
       ProcessResult result = await runCmd(ProcessCmd('java', ['-version']));
       javaVersion = result.stderr
           .split('\n')[0]
@@ -36,8 +54,17 @@ class CheckDependencies {
   }
 
   Future<bool> checkVSC() async {
+    _pref = await SharedPreferences.getInstance();
     String? vsCodeExectutable = await which('code');
     if (vsCodeExectutable != null) {
+      if (!_pref.containsKey('vscode_path')) {
+        await _pref
+            .setString(
+                'vscode_path', vsCodeExectutable.replaceAll('cmd', 'exe'))
+            .whenComplete(
+              () async => vscPath = await _pref.getString('vscode_path'),
+            );
+      }
       ProcessCmd cmd = ProcessCmd('code', ['--version']);
       ProcessResult result = await runCmd(cmd);
       vscodeVersion = result.stdout.split(RegExp(r'[/\n]'))[0].toString();
@@ -48,8 +75,18 @@ class CheckDependencies {
   }
 
   Future<bool> checkVSCInsiders() async {
+    _pref = await SharedPreferences.getInstance();
     String? vsCodeInsidersExectutable = await which('code-insiders');
     if (vsCodeInsidersExectutable != null) {
+      if (!_pref.containsKey('vscode_insiders_path')) {
+        await _pref
+            .setString('vscode_insiders_path',
+                vsCodeInsidersExectutable.replaceAll('cmd', 'exe'))
+            .whenComplete(
+              () async => vsCodeInsidersExectutable =
+                  await _pref.getString('vscode_insiders_path'),
+            );
+      }
       return true;
     } else {
       return false;
@@ -61,10 +98,23 @@ class CheckDependencies {
     try {
       List<ProcessResult> appDataStudios = await shell
           .cd('${userProfile[0].stdout.toString().replaceAll(RegExp(r'[/"/\n]'), '').replaceAll('\\', '/').trim()}/AppData/Local/JetBrains/')
-          .run('dir /b /s /p studio.exe');
-      if (appDataStudios[0].stdout.toString().contains('\\bin\\studio.exe') &&
+          .run('dir /b /s /p studio64.exe');
+      if (appDataStudios[0].stdout.toString().contains('\\bin\\studio64.exe') &&
           (appDataStudios[0].stdout.toString().contains('Android Studio') ||
               appDataStudios[0].stdout.toString().contains('AndroidStudio'))) {
+        if (!_pref.containsKey('android_studio')) {
+          await _pref
+              .setString(
+                  'android_studio',
+                  appDataStudios[0]
+                      .stdout
+                      .toString()
+                      .replaceAll(RegExp('[\\n\\r]'), ''))
+              .whenComplete(
+                () async =>
+                    studioPath = await _pref.getString('android_studio'),
+              );
+        }
         return true;
       } else {
         return false;
@@ -78,6 +128,15 @@ class CheckDependencies {
           if (studios[0].stdout.toString().contains('\\bin\\studio.exe') &&
               (studios[0].stdout.toString().contains('Android Studio') ||
                   studios[0].stdout.toString().contains('AndroidStudio'))) {
+            if (!_pref.containsKey('android_studio')) {
+              await _pref
+                  .setString('android_studio',
+                      studios[0].stdout.toString().replaceAll('\n', ''))
+                  .whenComplete(
+                    () async =>
+                        studioPath = await _pref.getString('android_studio'),
+                  );
+            }
             return true;
           } else {
             return false;

@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 FlutterActions flutterActions = FlutterActions();
 
 class FlutterActions {
-  Shell shell = Shell();
+  Shell shell = Shell(verbose: false);
   //Create project
   Future<void> flutterCreate(
     String projName,

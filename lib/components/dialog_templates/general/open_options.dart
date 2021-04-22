@@ -1,3 +1,5 @@
+import 'dart:developer' as console;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/close_button.dart';
@@ -11,9 +13,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:process_run/shell_run.dart';
 import 'dart:io';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class OpenOptionsDialog extends StatelessWidget {
   OpenOptionsDialog(this.fileName);
   final String fileName;
+  final Shell _shell = Shell(
+    verbose: false,
+  );
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -74,9 +81,13 @@ class OpenOptionsDialog extends StatelessWidget {
               Expanded(
                 child: RectangleButton(
                   onPressed: () async {
+<<<<<<< HEAD
                     Shell _shell = Shell();
                     await _shell.cd(projDir! + '\\$fileName').run('code .');
                     Navigator.pop(context);
+=======
+                    await _shell.run('code $projDir\\$fileName');
+>>>>>>> 6ea7d1722ab0e92fec38a2080a967d95ae3105f1
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
@@ -129,9 +140,7 @@ class OpenOptionsDialog extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: RectangleButton(
-                  onPressed: () async {
-                    Directory(projDir!);
-                  },
+                  onPressed: () => launch('${projDir!}\\$fileName'),
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
                   highlightColor: Colors.blueGrey.withOpacity(0.8),
@@ -218,15 +227,15 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                   .whenComplete(() async {
                 await flutterActions.checkProjects();
                 setState(() => _loading = false);
-                Navigator.pop(context);
                 await showDialog(
                   context: context,
                   builder: (_) => DialogTemplate(
+                    outerTapExit: false,
                     child: Column(
                       children: [
                         DialogHeader(title: 'File Deleted'),
                         const SizedBox(height: 20),
-                        Text('Your file ${widget.fName} has been deleted.'),
+                        const Text('Your project has been deleted.'),
                         const SizedBox(height: 15),
                         RectangleButton(
                           width: double.infinity,
@@ -235,7 +244,14 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                           focusColor: Colors.blueGrey.withOpacity(0.5),
                           hoverColor: Colors.grey.withOpacity(0.5),
                           highlightColor: Colors.blueGrey.withOpacity(0.5),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            try {
+                              Navigator.of(context).pop(true);
+                              Navigator.pop(context);
+                            } catch (e) {
+                              console.log(e.toString());
+                            }
+                          },
                           child: const Text('OK'),
                         ),
                       ],

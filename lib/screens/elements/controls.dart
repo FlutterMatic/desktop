@@ -11,6 +11,8 @@ import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
 
+import 'package:url_launcher/url_launcher.dart';
+
 Widget controls(BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return Column(
@@ -120,7 +122,7 @@ Widget controls(BuildContext context) {
                     [
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () {},
+                          onPressed: () => launch(vscPath!),
                           child:
                               _controlButton('Open', Iconsdata.folder, context),
                         ),
@@ -154,7 +156,7 @@ Widget controls(BuildContext context) {
                       const SizedBox(width: 8),
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () {},
+                          onPressed: () => launch(studioPath!),
                           child:
                               _controlButton('Open', Iconsdata.folder, context),
                         ),
