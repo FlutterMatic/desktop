@@ -1,5 +1,3 @@
-import 'dart:developer' as console;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/close_button.dart';
@@ -11,9 +9,9 @@ import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:process_run/shell_run.dart';
-import 'dart:io';
-
+import 'dart:developer' as console;
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {
   OpenOptionsDialog(this.fileName);
@@ -81,13 +79,7 @@ class OpenOptionsDialog extends StatelessWidget {
               Expanded(
                 child: RectangleButton(
                   onPressed: () async {
-<<<<<<< HEAD
-                    Shell _shell = Shell();
-                    await _shell.cd(projDir! + '\\$fileName').run('code .');
-                    Navigator.pop(context);
-=======
                     await _shell.run('code $projDir\\$fileName');
->>>>>>> 6ea7d1722ab0e92fec38a2080a967d95ae3105f1
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
