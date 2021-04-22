@@ -27,7 +27,7 @@ Widget controls(BuildContext context) {
             builder: (_) => ControlSettings(),
           );
         },
-        context: context,
+        context,
       ),
       const SizedBox(height: 20),
       RoundContainer(
@@ -203,7 +203,7 @@ class ControlResourceTile extends StatelessWidget {
     return RoundContainer(
       radius: 5,
       color: currentTheme.isDarkTheme
-          ? Colors.blueGrey.withOpacity(0.1)
+          ? Colors.blueGrey.withOpacity(0.05)
           : Colors.white,
       height: 150,
       child: Column(

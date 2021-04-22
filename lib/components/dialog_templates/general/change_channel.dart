@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
@@ -91,6 +90,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                     ),
                     const Spacer(),
                     RectangleButton(
+                      width: 120,
                       onPressed: () {
                         if (_selectedChannel == null) {
                           Navigator.pop(context);

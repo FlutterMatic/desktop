@@ -15,7 +15,7 @@ Widget installedComponents(BuildContext context) {
           context: context,
           builder: (_) => DependenciesSettings(),
         );
-      }, context: context),
+      }, context),
       const SizedBox(height: 25),
       installationStatus(
         flutterInstalled ? InstallationStatus.done : InstallationStatus.error,
