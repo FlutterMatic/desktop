@@ -257,7 +257,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                           !_projectOrg!.endsWith('_') &&
                           '.'.allMatches(_projectOrg!).length < 3)
                         warningWidget(
-                            '"$_projectOrg" will be your organization name. You can change it later.',
+                            '"$_projectOrg.$_projectName" will be your organization name. You can change it later.',
                             Assets.done,
                             kGreenColor),
                       if (_projectOrg != null &&
