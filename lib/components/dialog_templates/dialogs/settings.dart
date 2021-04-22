@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/action_options.dart';
@@ -260,45 +262,47 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: RectangleButton(
-                          height: 100,
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                        child: SvgPicture.asset(Assets.xcode)),
-                                    Text(
-                                      'Xcode',
-                                      style: TextStyle(
-                                          color: customTheme
-                                              .textTheme.bodyText1!.color),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (_defaultEditor == 'xcode')
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child:
-                                        Icon(Icons.check, color: kGreenColor),
+                      if (Platform.isMacOS) const SizedBox(width: 10),
+                      if (Platform.isMacOS)
+                        Expanded(
+                          child: RectangleButton(
+                            height: 100,
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                          child:
+                                              SvgPicture.asset(Assets.xcode)),
+                                      Text(
+                                        'Xcode',
+                                        style: TextStyle(
+                                            color: customTheme
+                                                .textTheme.bodyText1!.color),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                            ],
+                                if (_defaultEditor == 'xcode')
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child:
+                                          Icon(Icons.check, color: kGreenColor),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            onPressed: () async {
+                              setState(() => _defaultEditor = 'xcode');
+                              _pref = await SharedPreferences.getInstance();
+                              _pref.setString('default_editor', 'xcode');
+                            },
                           ),
-                          onPressed: () async {
-                            setState(() => _defaultEditor = 'xcode');
-                            _pref = await SharedPreferences.getInstance();
-                            _pref.setString('default_editor', 'xcode');
-                          },
                         ),
-                      ),
                     ],
                   ),
                 ],
@@ -307,14 +311,8 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Text('GitHub',
-                          style: TextStyle(fontWeight: FontWeight.w600)),
-                      const Spacer(),
-                      Icon(Iconsdata.github, color: customTheme.indicatorColor),
-                    ],
-                  ),
+                  const Text('GitHub',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 15),
                   Row(
                     children: [
@@ -532,13 +530,12 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: customTheme.textTheme.bodyText1!.color!
-                            .withOpacity(0.5))),
+                            .withOpacity(0.6))),
               ],
             ),
           ),
           selected
-              ? const Icon(Icons.check_circle_outline_rounded,
-                  color: kGreenColor)
+              ? const Icon(Icons.check_rounded, color: kGreenColor)
               : const SizedBox.shrink()
         ],
       ),

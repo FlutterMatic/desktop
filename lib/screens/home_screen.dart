@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/bg_activity.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'elements/controls.dart';
 import 'elements/installed.dart';
@@ -24,11 +27,29 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _flutterLogoStyle = FlutterLogoStyle.horizontal);
   }
 
+  final _dir = Directory(projDir!);
+  late List<FileSystemEntity> _list;
+
+  void _loadProjects() {
+    _list = _dir.listSync(recursive: true, followLinks: true);
+    final stream = _dir.watch(events: FileSystemEvent.all, recursive: true);
+    stream.listen((event) {
+      _list = _dir.listSync(recursive: true, followLinks: true);
+      setState(() {});
+    });
+  }
+
   @override
   void initState() {
-    _animateFlutterLogo();
     super.initState();
+    _loadProjects();
+    _animateFlutterLogo();
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
