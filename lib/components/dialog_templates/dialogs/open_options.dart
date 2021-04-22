@@ -247,20 +247,60 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             loading: _loading,
             onPressed: () async {
               setState(() => _loading = true);
-              await Directory('${projDir!}/${widget.fName}')
-                  .delete(recursive: true)
-                  .whenComplete(() async {
-                await flutterActions.checkProjects();
-                setState(() => _loading = false);
+              Directory delProjPath =
+                  await Directory('${projDir!}/${widget.fName}');
+              if (await delProjPath.exists()) {
+                await delProjPath
+                    .delete(recursive: true)
+                    .whenComplete(() async {
+                  await flutterActions.checkProjects();
+                  setState(() => _loading = false);
+                  await showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (_) => DialogTemplate(
+                      outerTapExit: false,
+                      child: Column(
+                        children: [
+                          DialogHeader(title: 'File Deleted', canClose: false),
+                          const SizedBox(height: 20),
+                          const Text('Your project has been deleted.'),
+                          const SizedBox(height: 15),
+                          RectangleButton(
+                            width: double.infinity,
+                            color: Colors.blueGrey,
+                            splashColor: Colors.blueGrey.withOpacity(0.5),
+                            focusColor: Colors.blueGrey.withOpacity(0.5),
+                            hoverColor: Colors.grey.withOpacity(0.5),
+                            highlightColor: Colors.blueGrey.withOpacity(0.5),
+                            onPressed: () {
+                              try {
+                                Navigator.of(context).pop(true);
+                                Navigator.pop(context);
+                              } catch (e) {
+                                console.log(e.toString());
+                              }
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                });
+              } else
                 await showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (_) => DialogTemplate(
                     outerTapExit: false,
                     child: Column(
                       children: [
-                        DialogHeader(title: 'File Deleted'),
+                        DialogHeader(
+                            title: 'Failed to delete', canClose: false),
                         const SizedBox(height: 20),
-                        const Text('Your project has been deleted.'),
+                        Text(
+                            'Failed to delete your project ${widget.fName}. Check if you have the project in your directory.'),
                         const SizedBox(height: 15),
                         RectangleButton(
                           width: double.infinity,
@@ -283,7 +323,6 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                     ),
                   ),
                 );
-              });
             },
             child: const Text(
               'Delete Project',

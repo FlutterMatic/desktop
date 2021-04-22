@@ -21,7 +21,8 @@ class CheckDependencies {
         await _pref.setString('flutter_path', flutterExectutable).whenComplete(
               () async => flutterPath = await _pref.getString('flutter_path'),
             );
-      }
+      } else
+        flutterPath = await _pref.getString('flutter_path');
       ProcessCmd cmd = ProcessCmd('flutter', ['--version']);
       ProcessResult result = await runCmd(cmd);
       flutterVersion = result.stdout.split(' ')[1].toString();
@@ -40,7 +41,8 @@ class CheckDependencies {
         await _pref.setString('java_path', javaExectutable).whenComplete(
               () async => javaPath = await _pref.getString('java_path'),
             );
-      }
+      } else
+        javaPath = await _pref.getString('java_path');
       ProcessResult result = await runCmd(ProcessCmd('java', ['-version']));
       javaVersion = result.stderr
           .split('\n')[0]
@@ -64,7 +66,8 @@ class CheckDependencies {
             .whenComplete(
               () async => vscPath = await _pref.getString('vscode_path'),
             );
-      }
+      } else
+        vscPath = await _pref.getString('vscode_path');
       ProcessCmd cmd = ProcessCmd('code', ['--version']);
       ProcessResult result = await runCmd(cmd);
       vscodeVersion = result.stdout.split(RegExp(r'[/\n]'))[0].toString();
@@ -80,13 +83,14 @@ class CheckDependencies {
     if (vsCodeInsidersExectutable != null) {
       if (!_pref.containsKey('vscode_insiders_path')) {
         await _pref
-            .setString('vscode_insiders_path',
-                vsCodeInsidersExectutable.replaceAll('cmd', 'exe'))
+            .setString('vscode_insiders_path', vsCodeInsidersExectutable)
             .whenComplete(
               () async => vsCodeInsidersExectutable =
                   await _pref.getString('vscode_insiders_path'),
             );
-      }
+      } else
+        vsCodeInsidersExectutable =
+            await _pref.getString('vscode_insiders_path');
       return true;
     } else {
       return false;
@@ -114,7 +118,8 @@ class CheckDependencies {
                 () async =>
                     studioPath = await _pref.getString('android_studio'),
               );
-        }
+        } else
+          studioPath = await _pref.getString('android_studio');
         return true;
       } else {
         return false;
@@ -136,7 +141,8 @@ class CheckDependencies {
                     () async =>
                         studioPath = await _pref.getString('android_studio'),
                   );
-            }
+            } else
+              studioPath = await _pref.getString('android_studio');
             return true;
           } else {
             return false;
