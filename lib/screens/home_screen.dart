@@ -26,8 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _animateFlutterLogo();
     super.initState();
+    _animateFlutterLogo();
   }
 
   @override
