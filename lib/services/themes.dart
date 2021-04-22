@@ -34,7 +34,7 @@ class CustomTheme with ChangeNotifier {
         backgroundColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
         primaryColorLight: const Color(0xFFF1F1F1),
-        buttonColor: const Color(0xFFF6F8FA),
+        buttonColor: const Color(0xFFECECEC),
         accentColor: const Color(0xFF6E7681),
         splashColor: Colors.transparent,
         errorColor: const Color(0xFFD73A49),
