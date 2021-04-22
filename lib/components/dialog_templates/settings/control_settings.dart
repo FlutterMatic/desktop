@@ -69,7 +69,7 @@ class _ControlSettingsState extends State<ControlSettings> {
         children: [
           DialogHeader(
             title: 'Control Settings',
-            onClose: null,
+            canClose: false,
           ),
           const SizedBox(height: 20),
           const Text('Theme', style: TextStyle(fontWeight: FontWeight.w600)),
