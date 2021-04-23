@@ -15,12 +15,12 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
   List<Widget> _activities = [];
 
   void _activateReload() {
-    // _activities.clear();
+    _activities.clear();
     if (mounted) {
       setState(() => _activities = bgActivities);
     }
     Timer.periodic(const Duration(seconds: 5), (val) {
-      // _activities.clear();
+      _activities.clear();
       if (mounted) {
         setState(() => _activities = bgActivities);
       }
@@ -50,8 +50,9 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
               ? const Text(
                   'No background activity running at the moment. Check back later.')
               : Column(
-                  children:
-                      _activities.map((val) => val).toList(growable: true),
+                  children: bgActivities.isEmpty
+                      ? _activities.map((val) => val).toList(growable: true)
+                      : bgActivities.map((val) => val).toList(growable: true),
                 ),
           const SizedBox(height: 20),
           RectangleButton(
