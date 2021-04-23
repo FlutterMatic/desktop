@@ -333,7 +333,7 @@ class _SettingDialogState extends State<SettingDialog> {
                     onChanged: (val) async {
                       setState(() => _defaultProjectChoice = val);
                       _pref = await SharedPreferences.getInstance();
-                      _pref.setString('editor_option', val);
+                      await _pref.setString('editor_option', val);
                     },
                   ),
                 ],

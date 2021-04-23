@@ -21,7 +21,7 @@ class CustomTheme with ChangeNotifier {
   //Toggle
   void toggleTheme() {
     _isDarkTheme = !_isDarkTheme;
-    _pref.setBool('light_mode', !_isDarkTheme);
+    _pref.setBool('light_mode', _isDarkTheme);
     notifyListeners();
   }
 
