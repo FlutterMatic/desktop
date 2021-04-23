@@ -22,7 +22,11 @@ Future<void> main() async {
   await currentTheme.loadThemePref();
   // await apiCalls.flutterAPICall();
   await checkPlatform();
-  flutterReleases = await apiCalls.flutterAPICall();
+  try {
+    flutterReleases = await apiCalls.flutterAPICall();
+  } catch (_) {
+    print('');
+  }
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);

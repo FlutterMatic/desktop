@@ -20,12 +20,16 @@ class CheckBoxElement extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Checkbox(
-            value: value,
-            onChanged: disable ? null : onChanged,
-            splashRadius: 0,
-            activeColor: Colors.blueGrey,
-            hoverColor: Colors.blueGrey.withOpacity(0.2),
+          Container(
+            width: 30,
+            height: 30,
+            child: Checkbox(
+              value: value,
+              onChanged: disable ? null : onChanged,
+              splashRadius: 0,
+              activeColor: Colors.blueGrey,
+              hoverColor: Colors.blueGrey.withOpacity(0.2),
+            ),
           ),
           const SizedBox(width: 3),
           Expanded(
