@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:process_run/which.dart';
@@ -129,8 +128,7 @@ class Win32Checks {
         } else {
           studioPath = _pref.getString('android_studio');
           String? std = await which('studio64');
-          debugPrint(std);
-          if (await which('studio64') == null) {
+          if (std == null) {
             await shell.run(
                 '${Scripts.win32PathAdder} ${studioPath!.replaceAll('studio64.exe', '')}');
           }
@@ -182,6 +180,4 @@ class Win32Checks {
       return false;
     }
   }
-
-  Future<bool> checkXCode() async => true;
 }

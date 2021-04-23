@@ -1,157 +1,132 @@
-// import 'package:flutter_installer/utils/constants.dart';
-// import 'package:http/http.dart' as http;
+import 'package:flutter_installer/utils/constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'dart:convert';
 
-// // APICalls apiCalls = APICalls();
+APICalls apiCalls = APICalls();
 
-// // class APICalls {
-// //   Future<void> flutterAPICall() async {
-// //     if (win32) {
-// //       http.Response? apiResponse = await http.get(APILinks.win32RelaseEndpoint);
-// //     } else if (mac) {
-// //       http.Response? apiResponse = await http.get(APILinks.macRelaseEndpoint);
-// //       print(apiResponse.body);
-// //     } else {
-// //       http.Response? apiResponse = await http.get(APILinks.linuxRelaseEndpoint);
-// //       print(apiResponse.body);
-// //     }
-// //     // Map<String, dynamic> data = json.decode(response.body);
-// //   }
-// // }
+class APICalls {
+  Future<FlutterReleases> flutterAPICall() async {
+    if (win32) {
+      http.Response? apiResponse = await http.get(APILinks.win32RelaseEndpoint);
+      Map<String, dynamic> data = json.decode(apiResponse.body);
+      return FlutterReleases.fromJson(data);
+    } else if (mac) {
+      http.Response? apiResponse = await http.get(APILinks.macRelaseEndpoint);
+      Map<String, dynamic> data = json.decode(apiResponse.body);
+      debugPrint(apiResponse.body);
+      return FlutterReleases.fromJson(data);
+    } else {
+      http.Response? apiResponse = await http.get(APILinks.linuxRelaseEndpoint);
+      Map<String, dynamic> data = json.decode(apiResponse.body);
+      debugPrint(apiResponse.body);
+      return FlutterReleases.fromJson(data);
+    }
+  }
+}
 
-// class FlutterReleases {
-//   String _baseUrl;
-//   CurrentRelease _currentRelease;
-//   List<Releases> _releases;
+class FlutterReleases {
+  String? baseUrl;
+  CurrentRelease? currentRelease;
+  List<Releases?>? releases;
 
-//   FlutterReleases(
-//       {String baseUrl,
-//       CurrentRelease currentRelease,
-//       List<Releases> releases}) {
-//     this._baseUrl = baseUrl;
-//     this._currentRelease = currentRelease;
-//     this._releases = releases;
-//   }
+  FlutterReleases(
+      {required String baseUrl,
+      required CurrentRelease currentRelease,
+      required List<Releases> releases}) {
+    baseUrl = baseUrl;
+    currentRelease = currentRelease;
+    releases = releases;
+  }
 
-//   String get baseUrl => _baseUrl;
-//   set baseUrl(String baseUrl) => _baseUrl = baseUrl;
-//   CurrentRelease get currentRelease => _currentRelease;
-//   set currentRelease(CurrentRelease currentRelease) =>
-//       _currentRelease = currentRelease;
-//   List<Releases> get releases => _releases;
-//   set releases(List<Releases> releases) => _releases = releases;
+  FlutterReleases.fromJson(Map<String, dynamic> json) {
+    baseUrl = json['base_url'];
+    currentRelease = json['current_release'] != null
+        ? CurrentRelease.fromJson(json['current_release'])
+        : null;
+    if (json['releases'] != null) {
+      releases = <Releases>[];
+      json['releases'].forEach((v) {
+        releases!.add(Releases.fromJson(v));
+      });
+    }
+  }
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = <String, dynamic>{};
+    data['base_url'] = baseUrl;
+    if (currentRelease != null) {
+      data['current_release'] = currentRelease!.toJson();
+    }
+    return data;
+  }
+}
 
-//   FlutterReleases.fromJson(Map<String, dynamic> json) {
-//     _baseUrl = json['base_url'];
-//     _currentRelease = json['current_release'] != null
-//         ? new CurrentRelease.fromJson(json['current_release'])
-//         : null;
-//     if (json['releases'] != null) {
-//       _releases = new List<Releases>();
-//       json['releases'].forEach((v) {
-//         _releases.add(new Releases.fromJson(v));
-//       });
-//     }
-//   }
+class CurrentRelease {
+  String? beta;
+  String? dev;
+  String? stable;
 
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = new Map<String, dynamic>();
-//     data['base_url'] = this._baseUrl;
-//     if (this._currentRelease != null) {
-//       data['current_release'] = this._currentRelease.toJson();
-//     }
-//     if (this._releases != null) {
-//       data['releases'] = this._releases.map((v) => v.toJson()).toList();
-//     }
-//     return data;
-//   }
-// }
+  CurrentRelease(
+      {required String beta, required String dev, required String stable}) {
+    beta = beta;
+    dev = dev;
+    stable = stable;
+  }
 
-// class CurrentRelease {
-//   String _beta;
-//   String _dev;
-//   String _stable;
+  CurrentRelease.fromJson(Map<String, dynamic> json) {
+    beta = json['beta'];
+    dev = json['dev'];
+    stable = json['stable'];
+  }
 
-//   CurrentRelease({String beta, String dev, String stable}) {
-//     this._beta = beta;
-//     this._dev = dev;
-//     this._stable = stable;
-//   }
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = <String, dynamic>{};
+    data['beta'] = beta;
+    data['dev'] = dev;
+    data['stable'] = stable;
+    return data;
+  }
+}
 
-//   String get beta => _beta;
-//   set beta(String beta) => _beta = beta;
-//   String get dev => _dev;
-//   set dev(String dev) => _dev = dev;
-//   String get stable => _stable;
-//   set stable(String stable) => _stable = stable;
+class Releases {
+  String? hash;
+  String? channel;
+  String? version;
+  String? releaseDate;
+  String? archive;
+  String? sha256;
 
-//   CurrentRelease.fromJson(Map<String, dynamic> json) {
-//     _beta = json['beta'];
-//     _dev = json['dev'];
-//     _stable = json['stable'];
-//   }
+  Releases(
+      {required String hash,
+      required String channel,
+      required String version,
+      required String releaseDate,
+      required String archive,
+      required String sha256}) {
+    hash = hash;
+    channel = channel;
+    version = version;
+    releaseDate = releaseDate;
+    archive = archive;
+    sha256 = sha256;
+  }
+  Releases.fromJson(Map<String, dynamic> json) {
+    hash = json['hash'];
+    channel = json['channel'];
+    version = json['version'];
+    releaseDate = json['release_date'];
+    archive = json['archive'];
+    sha256 = json['sha256'];
+  }
 
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = new Map<String, dynamic>();
-//     data['beta'] = this._beta;
-//     data['dev'] = this._dev;
-//     data['stable'] = this._stable;
-//     return data;
-//   }
-// }
-
-// class Releases {
-//   String _hash;
-//   String _channel;
-//   String _version;
-//   String _releaseDate;
-//   String _archive;
-//   String _sha256;
-
-//   Releases(
-//       {String hash,
-//       String channel,
-//       String version,
-//       String releaseDate,
-//       String archive,
-//       String sha256}) {
-//     this._hash = hash;
-//     this._channel = channel;
-//     this._version = version;
-//     this._releaseDate = releaseDate;
-//     this._archive = archive;
-//     this._sha256 = sha256;
-//   }
-
-//   String get hash => _hash;
-//   set hash(String hash) => _hash = hash;
-//   String get channel => _channel;
-//   set channel(String channel) => _channel = channel;
-//   String get version => _version;
-//   set version(String version) => _version = version;
-//   String get releaseDate => _releaseDate;
-//   set releaseDate(String releaseDate) => _releaseDate = releaseDate;
-//   String get archive => _archive;
-//   set archive(String archive) => _archive = archive;
-//   String get sha256 => _sha256;
-//   set sha256(String sha256) => _sha256 = sha256;
-
-//   Releases.fromJson(Map<String, dynamic> json) {
-//     _hash = json['hash'];
-//     _channel = json['channel'];
-//     _version = json['version'];
-//     _releaseDate = json['release_date'];
-//     _archive = json['archive'];
-//     _sha256 = json['sha256'];
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = new Map<String, dynamic>();
-//     data['hash'] = this._hash;
-//     data['channel'] = this._channel;
-//     data['version'] = this._version;
-//     data['release_date'] = this._releaseDate;
-//     data['archive'] = this._archive;
-//     data['sha256'] = this._sha256;
-//     return data;
-//   }
-// }
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = <String, dynamic>{};
+    data['hash'] = hash;
+    data['channel'] = channel;
+    data['version'] = version;
+    data['release_date'] = releaseDate;
+    data['archive'] = archive;
+    data['sha256'] = sha256;
+    return data;
+  }
+}

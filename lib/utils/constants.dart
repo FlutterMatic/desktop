@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
+import 'package:flutter_installer/models/flutter_api.dart';
 
 const String _iconName = 'IconsFont';
 
@@ -10,6 +11,9 @@ bool vscInstalled = false;
 bool vscInsidersInstalled = false;
 bool studioInstalled = false;
 bool xCodeInstalled = false;
+
+// Flutter release data
+FlutterReleases? flutterReleases;
 
 //Versions
 String? flutterVersion,

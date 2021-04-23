@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter_installer/models/flutter_api.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/themes.dart';
@@ -21,7 +22,7 @@ Future<void> main() async {
   await currentTheme.loadThemePref();
   // await apiCalls.flutterAPICall();
   await checkPlatform();
-  // await apiCalls.flutterAPICall();
+  flutterReleases = await apiCalls.flutterAPICall();
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);
