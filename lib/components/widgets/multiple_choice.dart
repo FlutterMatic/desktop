@@ -53,6 +53,8 @@ class _MultipleChoiceState extends State<MultipleChoice> {
             width: 15,
             height: 15,
             padding: EdgeInsets.zero,
+            radius: BorderRadius.circular(15),
+            onPressed: () => onPressed(message),
             child: Container(
               height: 15,
               width: 15,
@@ -65,15 +67,13 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                     color: Colors.blueGrey.withOpacity(0.5), width: 2),
               ),
             ),
-            radius: BorderRadius.circular(15),
-            onPressed: () => onPressed(message),
           ),
           const SizedBox(width: 10),
           Expanded(
               child: GestureDetector(
                   onTap: () => onPressed(message),
                   child: Text(message,
-                      overflow: TextOverflow.ellipsis, maxLines: 2))),
+                      overflow: TextOverflow.ellipsis, maxLines: 2)),),
         ],
       ),
     );

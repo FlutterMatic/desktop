@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:process_run/which.dart';
 import 'package:process_run/shell_run.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CheckDependencies {
+class Win32Checks {
   Shell shell = Shell(
     verbose: false,
     commandVerbose: false,
     commentVerbose: false,
+    runInShell: true,
   );
   late SharedPreferences _pref;
   Future<bool> checkFlutter() async {
@@ -19,10 +21,11 @@ class CheckDependencies {
     if (flutterExectutable != null) {
       if (!_pref.containsKey('flutter_path')) {
         await _pref.setString('flutter_path', flutterExectutable).whenComplete(
-              () async => flutterPath = await _pref.getString('flutter_path'),
+              () async => flutterPath = _pref.getString('flutter_path'),
             );
-      } else
-        flutterPath = await _pref.getString('flutter_path');
+      } else {
+        flutterPath = _pref.getString('flutter_path');
+      }
       ProcessCmd cmd = ProcessCmd('flutter', ['--version']);
       ProcessResult result = await runCmd(cmd);
       flutterVersion = result.stdout.split(' ')[1].toString();
@@ -39,10 +42,11 @@ class CheckDependencies {
     if (javaExectutable != null) {
       if (!_pref.containsKey('java_path')) {
         await _pref.setString('java_path', javaExectutable).whenComplete(
-              () async => javaPath = await _pref.getString('java_path'),
+              () async => javaPath = _pref.getString('java_path'),
             );
-      } else
-        javaPath = await _pref.getString('java_path');
+      } else {
+        javaPath = _pref.getString('java_path');
+      }
       ProcessResult result = await runCmd(ProcessCmd('java', ['-version']));
       javaVersion = result.stderr
           .split('\n')[0]
@@ -64,10 +68,11 @@ class CheckDependencies {
             .setString(
                 'vscode_path', vsCodeExectutable.replaceAll('cmd', 'exe'))
             .whenComplete(
-              () async => vscPath = await _pref.getString('vscode_path'),
+              () async => vscPath = _pref.getString('vscode_path'),
             );
-      } else
-        vscPath = await _pref.getString('vscode_path');
+      } else {
+        vscPath = _pref.getString('vscode_path');
+      }
       ProcessCmd cmd = ProcessCmd('code', ['--version']);
       ProcessResult result = await runCmd(cmd);
       vscodeVersion = result.stdout.split(RegExp(r'[/\n]'))[0].toString();
@@ -86,11 +91,11 @@ class CheckDependencies {
             .setString('vscode_insiders_path', vsCodeInsidersExectutable)
             .whenComplete(
               () async => vsCodeInsidersExectutable =
-                  await _pref.getString('vscode_insiders_path'),
+                  _pref.getString('vscode_insiders_path'),
             );
-      } else
-        vsCodeInsidersExectutable =
-            await _pref.getString('vscode_insiders_path');
+      } else {
+        vsCodeInsidersExectutable = _pref.getString('vscode_insiders_path');
+      }
       return true;
     } else {
       return false;
@@ -115,11 +120,21 @@ class CheckDependencies {
                       .toString()
                       .replaceAll(RegExp('[\\n\\r]'), ''))
               .whenComplete(
-                () async =>
-                    studioPath = await _pref.getString('android_studio'),
-              );
-        } else
-          studioPath = await _pref.getString('android_studio');
+            () async {
+              studioPath = _pref.getString('android_studio');
+              await shell.run(
+                  '${Scripts.win32PathAdder} ${studioPath!.replaceAll('studio64.exe', '')}');
+            },
+          );
+        } else {
+          studioPath = _pref.getString('android_studio');
+          String? std = await which('studio64');
+          debugPrint(std);
+          if (await which('studio64') == null) {
+            await shell.run(
+                '${Scripts.win32PathAdder} ${studioPath!.replaceAll('studio64.exe', '')}');
+          }
+        }
         return true;
       } else {
         return false;
@@ -138,11 +153,19 @@ class CheckDependencies {
                   .setString('android_studio',
                       studios[0].stdout.toString().replaceAll('\n', ''))
                   .whenComplete(
-                    () async =>
-                        studioPath = await _pref.getString('android_studio'),
-                  );
-            } else
-              studioPath = await _pref.getString('android_studio');
+                () async {
+                  studioPath = _pref.getString('android_studio');
+                  await shell.run(
+                      '${Scripts.win32PathAdder} ${studioPath!.replaceAll('studio64.exe', '')}');
+                },
+              );
+            } else {
+              studioPath = _pref.getString('android_studio');
+              if (await which('studio64') == null) {
+                await shell.run(
+                    '${Scripts.win32PathAdder} ${studioPath!.replaceAll('studio64.exe', '')}');
+              }
+            }
             return true;
           } else {
             return false;

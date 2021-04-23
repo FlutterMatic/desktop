@@ -7,7 +7,6 @@ import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/warning_widget.dart';
-import 'package:flutter_installer/services/checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -159,7 +158,6 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<void> _switchChannel() async {
-      CheckDependencies checkDependencies = CheckDependencies();
       if (channelName != flutterChannel) {
         BgActivityButton element = BgActivityButton(
           title: 'Changing to $channelName channel',
@@ -167,12 +165,9 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
         );
         channelIsUpdating = true;
         bgActivities.add(element);
-        await flutterActions.changeChannel(channelName.toLowerCase());
-        flutterInstalled = await checkDependencies.checkFlutter();
-        javaInstalled = await checkDependencies.checkJava();
-        vscInstalled = await checkDependencies.checkVSC();
-        vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
-        studioInstalled = await checkDependencies.checkAndroidStudios();
+        if (win32) {
+          await flutterActions.changeChannel(channelName.toLowerCase());
+        }
         channelIsUpdating = false;
         bgActivities.remove(element);
         await Navigator.pushNamed(context, PageRoutes.routeState);

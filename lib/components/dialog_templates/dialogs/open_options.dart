@@ -70,7 +70,9 @@ class OpenOptionsDialog extends StatelessWidget {
                 ),
               ),
               Align(
-                  alignment: Alignment.centerRight, child: CustomCloseButton()),
+                alignment: Alignment.centerRight,
+                child: CustomCloseButton(),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -79,7 +81,11 @@ class OpenOptionsDialog extends StatelessWidget {
               Expanded(
                 child: RectangleButton(
                   onPressed: () async {
-                    await _shell.run('code $projDir\\$fileName');
+                    if (defaultEditor == 'code') {
+                      await _shell.run('$defaultEditor $projDir\\$fileName');
+                    } else {
+                      await _shell.run('$defaultEditor $projDir\\$fileName');
+                    }
                   },
                   color: Colors.blueGrey.withOpacity(0.2),
                   hoverColor: Colors.blueGrey.withOpacity(0.3),
@@ -92,12 +98,13 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Expanded(
-                          child:
-                              Icon(Icons.folder_open, color: Colors.blueGrey)),
+                        child: Icon(Icons.folder_open, color: Colors.blueGrey),
+                      ),
                       Text(
                         'Open',
                         style: TextStyle(
-                            color: customTheme.textTheme.bodyText1!.color),
+                          color: customTheme.textTheme.bodyText1!.color,
+                        ),
                       ),
                     ],
                   ),
@@ -118,8 +125,8 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Expanded(
-                          child:
-                              Icon(Icons.code_rounded, color: Colors.blueGrey)),
+                        child: Icon(Icons.code_rounded, color: Colors.blueGrey),
+                      ),
                       Text(
                         'Open with...',
                         style: TextStyle(
@@ -177,8 +184,8 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Expanded(
-                          child:
-                              Icon(Icons.file_present, color: Colors.blueGrey)),
+                        child: Icon(Icons.file_present, color: Colors.blueGrey),
+                      ),
                       Text(
                         'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
                         textAlign: TextAlign.center,
@@ -247,8 +254,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             loading: _loading,
             onPressed: () async {
               setState(() => _loading = true);
-              Directory delProjPath =
-                  await Directory('${projDir!}/${widget.fName}');
+              Directory delProjPath = Directory('${projDir!}/${widget.fName}');
               if (await delProjPath.exists()) {
                 await delProjPath
                     .delete(recursive: true)
@@ -288,7 +294,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                     ),
                   );
                 });
-              } else
+              } else {
                 await showDialog(
                   barrierDismissible: false,
                   context: context,
@@ -323,6 +329,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                     ),
                   ),
                 );
+              }
             },
             child: const Text(
               'Delete Project',

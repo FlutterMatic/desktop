@@ -23,7 +23,7 @@ class DialogHeader extends StatelessWidget {
         leading ?? const SizedBox(width: 40),
         Expanded(
           child: Center(
-            child: Text(title, style: const TextStyle(fontSize: 20)),
+            child: Text(title, style: const TextStyle(fontSize: 20),),
           ),
         ),
         canClose!

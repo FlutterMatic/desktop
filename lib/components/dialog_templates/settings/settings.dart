@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/widgets/action_options.dart';
+import 'package:flutter_installer/components/widgets/check_box_element.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/multiple_choice.dart';
@@ -26,8 +26,10 @@ class _SettingDialogState extends State<SettingDialog> {
   late SharedPreferences _pref;
   bool _dirPathError = false;
   bool _loading = false;
-
-  String? _defaultEditor;
+  bool truShootFullApp = false;
+  bool truShootFlutter = false;
+  bool truShootStudio = false;
+  bool truShootVSC = false;
 
   Future<void> _closeActivity() async {
     setState(() {
@@ -61,7 +63,7 @@ class _SettingDialogState extends State<SettingDialog> {
   Future<void> _getDefaultEditor() async {
     _pref = await SharedPreferences.getInstance();
     if (_pref.containsKey('default_editor')) {
-      setState(() => _defaultEditor = _pref.getString('default_editor'));
+      setState(() => defaultEditor = _pref.getString('default_editor'));
     }
   }
 
@@ -97,8 +99,10 @@ class _SettingDialogState extends State<SettingDialog> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Themes',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text(
+                    'Themes',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 15),
                   _themeTiles(context, !currentTheme.isDarkTheme, 'Light Mode',
                       'Get a bright and shining desktop', () {
@@ -115,8 +119,10 @@ class _SettingDialogState extends State<SettingDialog> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Project Path',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text(
+                    'Project Path',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 15),
                   RoundContainer(
                     borderColor: _dirPathError ? kRedColor : Colors.transparent,
@@ -157,16 +163,33 @@ class _SettingDialogState extends State<SettingDialog> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Editor Options',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 15),
+                  MultipleChoice(
+                    options: [
+                      'Always open projects in preferred editor',
+                      'Ask me which editor to open with every time',
+                    ],
+                    defaultChoiceValue: _defaultProjectChoice,
+                    onChanged: (val) =>
+                        setState(() => _defaultProjectChoice = val),
+                  ),
                 ],
               ),
               //Editors
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Default Editor',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text(
+                    'Default Editor',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   // const SizedBox(height: 15),
-                  if (_defaultEditor == null)
+                  if (defaultEditor == null)
                     warningWidget(
                         'You have no selected default editor. Choose one so we know what to open your projects with.',
                         Assets.warning,
@@ -177,15 +200,21 @@ class _SettingDialogState extends State<SettingDialog> {
                       Expanded(
                         child: RectangleButton(
                           height: 100,
+                          onPressed: () async {
+                            setState(() => defaultEditor = 'code');
+                            _pref = await SharedPreferences.getInstance();
+                            await _pref.setString('default_editor', 'code');
+                          },
                           child: Stack(
                             children: [
                               Center(
                                 child: Column(
                                   children: [
                                     Expanded(
-                                        child: SvgPicture.asset(Assets.vscode)),
+                                      child: SvgPicture.asset(Assets.vscode),
+                                    ),
                                     Text(
-                                      'VSCode',
+                                      'VS Code',
                                       style: TextStyle(
                                           color: customTheme
                                               .textTheme.bodyText1!.color),
@@ -193,37 +222,38 @@ class _SettingDialogState extends State<SettingDialog> {
                                   ],
                                 ),
                               ),
-                              if (_defaultEditor == 'vscode')
-                                Align(
+                              if (defaultEditor == 'code')
+                                const Align(
                                   alignment: Alignment.topLeft,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5),
                                     child:
                                         Icon(Icons.check, color: kGreenColor),
                                   ),
                                 ),
                             ],
                           ),
-                          onPressed: () async {
-                            setState(() => _defaultEditor = 'vscode');
-                            _pref = await SharedPreferences.getInstance();
-                            _pref.setString('default_editor', 'vscode');
-                          },
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: RectangleButton(
                           height: 100,
+                          onPressed: () async {
+                            setState(() => defaultEditor = 'studio64');
+                            _pref = await SharedPreferences.getInstance();
+                            await _pref.setString('default_editor', 'studio64');
+                          },
                           child: Stack(
                             children: [
                               Center(
                                 child: Column(
                                   children: [
                                     Expanded(
-                                        child: SvgPicture.asset(
-                                            Assets.androidStudio)),
+                                      child: SvgPicture.asset(
+                                          Assets.androidStudio),
+                                    ),
                                     Text(
                                       'Android Studio',
                                       style: TextStyle(
@@ -233,23 +263,18 @@ class _SettingDialogState extends State<SettingDialog> {
                                   ],
                                 ),
                               ),
-                              if (_defaultEditor == 'android_studio')
-                                Align(
+                              if (defaultEditor == 'studio64')
+                                const Align(
                                   alignment: Alignment.topLeft,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5),
                                     child:
                                         Icon(Icons.check, color: kGreenColor),
                                   ),
                                 ),
                             ],
                           ),
-                          onPressed: () async {
-                            setState(() => _defaultEditor = 'android_studio');
-                            _pref = await SharedPreferences.getInstance();
-                            _pref.setString('default_editor', 'android_studio');
-                          },
                         ),
                       ),
                       if (Platform.isMacOS) const SizedBox(width: 10),
@@ -257,14 +282,19 @@ class _SettingDialogState extends State<SettingDialog> {
                         Expanded(
                           child: RectangleButton(
                             height: 100,
+                            onPressed: () async {
+                              setState(() => defaultEditor = 'xcode');
+                              _pref = await SharedPreferences.getInstance();
+                              await _pref.setString('default_editor', 'xcode');
+                            },
                             child: Stack(
                               children: [
                                 Center(
                                   child: Column(
                                     children: [
                                       Expanded(
-                                          child:
-                                              SvgPicture.asset(Assets.xcode)),
+                                        child: SvgPicture.asset(Assets.xcode),
+                                      ),
                                       Text(
                                         'Xcode',
                                         style: TextStyle(
@@ -274,23 +304,18 @@ class _SettingDialogState extends State<SettingDialog> {
                                     ],
                                   ),
                                 ),
-                                if (_defaultEditor == 'xcode')
-                                  Align(
+                                if (defaultEditor == 'xcode')
+                                  const Align(
                                     alignment: Alignment.topLeft,
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 5),
                                       child:
                                           Icon(Icons.check, color: kGreenColor),
                                     ),
                                   ),
                               ],
                             ),
-                            onPressed: () async {
-                              setState(() => _defaultEditor = 'xcode');
-                              _pref = await SharedPreferences.getInstance();
-                              _pref.setString('default_editor', 'xcode');
-                            },
                           ),
                         ),
                     ],
@@ -317,14 +342,21 @@ class _SettingDialogState extends State<SettingDialog> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('GitHub',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text(
+                    'GitHub',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 15),
                   Row(
                     children: [
                       Expanded(
                         child: RectangleButton(
-                          height: 90,
+                          height: 100,
+                          onPressed: () {
+                            launch(
+                                'https://github.com/FlutterMatic/FlutterMatic-desktop/issues');
+                            Navigator.pop(context);
+                          },
                           child: Column(
                             children: [
                               Expanded(
@@ -342,17 +374,17 @@ class _SettingDialogState extends State<SettingDialog> {
                               ),
                             ],
                           ),
-                          onPressed: () {
-                            launch(
-                                'https://github.com/FlutterMatic/FlutterMatic-desktop/issues');
-                            Navigator.pop(context);
-                          },
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: RectangleButton(
-                          height: 90,
+                          height: 100,
+                          onPressed: () {
+                            launch(
+                                'https://github.com/FlutterMatic/FlutterMatic-desktop/pulls');
+                            Navigator.pop(context);
+                          },
                           child: Column(
                             children: [
                               Expanded(
@@ -368,41 +400,17 @@ class _SettingDialogState extends State<SettingDialog> {
                               ),
                             ],
                           ),
-                          onPressed: () {
-                            launch(
-                                'https://github.com/FlutterMatic/FlutterMatic-desktop/pulls');
-                            Navigator.pop(context);
-                          },
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 15),
-                  RectangleButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'View GitHub Respiratory',
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color),
-                          ),
-                        ),
-                        Icon(Iconsdata.github,
-                            color: customTheme.indicatorColor),
-                      ],
+                  const Text(
+                    'Contributions',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
                     ),
-                    onPressed: () {
-                      launch(
-                          'https://github.com/FlutterMatic/FlutterMatic-desktop');
-                      Navigator.pop(context);
-                    },
                   ),
-                  const SizedBox(height: 15),
-                  const Text('Contributions',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 5),
                   infoWidget(
                       'We are open-source! We would love to see you make some pull requests to this app!'),
@@ -412,32 +420,43 @@ class _SettingDialogState extends State<SettingDialog> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Troubleshooting',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const Text(
+                    'Troubleshooting',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 15),
-                  ActionOptions(
-                    buttonTitles: [
-                      'Flutter Installer',
-                      'Flutter',
-                      'Android Studio',
-                      'Visual Studio Code',
-                    ],
-                    buttonOnPressed: [
-                      () {},
-                      () {},
-                      () {},
-                      () {},
-                    ],
+                  CheckBoxElement(
+                    onChanged: (val) =>
+                        setState(() => truShootFullApp = !truShootFullApp),
+                    value: truShootFullApp,
+                    text: 'Flutter Installer',
+                  ),
+                  CheckBoxElement(
+                    onChanged: (val) =>
+                        setState(() => truShootFlutter = !truShootFlutter),
+                    value: truShootFlutter,
+                    text: 'Flutter',
+                  ),
+                  CheckBoxElement(
+                    onChanged: (val) =>
+                        setState(() => truShootStudio = !truShootStudio),
+                    value: truShootStudio,
+                    text: 'Android studio',
+                  ),
+                  CheckBoxElement(
+                    onChanged: (val) =>
+                        setState(() => truShootVSC = !truShootVSC),
+                    value: truShootVSC,
+                    text: 'Visual strudio code',
                   ),
                   const SizedBox(height: 15),
                   RoundContainer(
                     color: Colors.blueGrey.withOpacity(0.2),
                     width: double.infinity,
                     child: SelectableText(
-                        'Flutter Installer Version ' +
-                            desktopVersion +
-                            ' - Stable',
-                        style: TextStyle(fontWeight: FontWeight.w600)),
+                      'Flutter Installer Version $desktopVersion - Stable',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),
@@ -452,7 +471,7 @@ class _SettingDialogState extends State<SettingDialog> {
             focusColor: Colors.blueGrey.withOpacity(0.5),
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
-            child: Text('Save Settings'),
+            child: const Text('Save Settings'),
           ),
         ],
       ),
@@ -512,25 +531,28 @@ class _TabViewWidgetState extends State<TabViewWidget> {
       BuildContext context, bool current) {
     ThemeData customTheme = Theme.of(context);
     return RectangleButton(
-        width: 130,
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        color: selected
-            ? currentTheme.isDarkTheme
-                ? null
-                : Colors.grey.withOpacity(0.3)
-            : Colors.transparent,
-        padding: const EdgeInsets.all(10),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(name,
-              style: TextStyle(
-                  color: customTheme.textTheme.bodyText1!.color!
-                      .withOpacity(selected ? 1 : .4))),
+      width: 130,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      color: selected
+          ? currentTheme.isDarkTheme
+              ? null
+              : Colors.grey.withOpacity(0.3)
+          : Colors.transparent,
+      padding: const EdgeInsets.all(10),
+      onPressed: onPressed,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          name,
+          style: TextStyle(
+              color: customTheme.textTheme.bodyText1!.color!
+                  .withOpacity(selected ? 1 : .4)),
         ),
-        onPressed: onPressed);
+      ),
+    );
   }
 }
 
@@ -551,17 +573,21 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: TextStyle(
-                        color: customTheme.textTheme.bodyText1!.color,
-                        fontWeight: FontWeight.w600)),
+                Text(
+                  title,
+                  style: TextStyle(
+                      color: customTheme.textTheme.bodyText1!.color,
+                      fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 4),
-                Text(description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: customTheme.textTheme.bodyText1!.color!
-                            .withOpacity(0.6))),
+                Text(
+                  description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: customTheme.textTheme.bodyText1!.color!
+                          .withOpacity(0.6)),
+                ),
               ],
             ),
           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 
+const String _iconName = 'IconsFont';
+
 //Installed
 bool flutterInstalled = false;
 bool javaInstalled = false;
@@ -17,13 +19,25 @@ String? flutterVersion,
     androidSVersion,
     javaVersion;
 
+// Platforms
+bool win32 = false;
+bool mac = false;
+bool linux = false;
+
 //Utils
 bool channelIsUpdating = false;
 String desktopVersion = '1.0.0';
-String? projDir, studioPath, javaPath, vscPath, flutterPath;
+String? projDir, studioPath, javaPath, vscPath, flutterPath, defaultEditor;
 
+//Lists
+/// List of Background activities.
 List<BgActivityButton> bgActivities = [];
-List<String> projs = [], projsModDate = [];
+
+/// List of Projects.
+List<String> projs = [];
+
+/// List of Projects modified dates.
+List<String> projsModDate = [];
 
 //Assets
 const String flutterIcons = 'assets/icons/flutter_icons';
@@ -36,6 +50,13 @@ const String lottie = 'assets/lottie';
 class LottieAssets {
   static const String folder = '$lottie/folder.json';
   static const String searching = '$lottie/searching.json';
+}
+
+class Scripts {
+  // Scripts to append path to user env
+  static const String win32PathAdder = 'assets/scripts/path/win32.bat';
+  static const String macosPathAdder = 'assets/scripts/path/macos.sh';
+  static const String linuxPathAdder = 'assets/scripts/path/linux.sh';
 }
 
 class Assets {
@@ -62,8 +83,6 @@ class PageRoutes {
   static const String routeState = '/statesCheck';
   static const String routeHome = '/home';
 }
-
-const String _iconName = 'IconsFont';
 
 class Iconsdata {
   static const IconData browser = IconData(0xebb7, fontFamily: _iconName);
@@ -92,3 +111,15 @@ const Color kGreenColor = Color(0xff379C81);
 const Color kGreyColor = Color(0xffF1F1F1);
 const Color kLightGreyColor = Color(0xffE5E5E5);
 const Color kDarkColor = Color(0xff2F2F2F);
+
+// API Links
+class APILinks {
+  static const String flutterAPIBaseURL =
+      'https://storage.googleapis.com/flutter_infra/releases';
+  static Uri win32RelaseEndpoint =
+      Uri.parse('$flutterAPIBaseURL/releases_windows.json');
+  static Uri macRelaseEndpoint =
+      Uri.parse('$flutterAPIBaseURL/releases_macos.json');
+  static Uri linuxRelaseEndpoint =
+      Uri.parse('$flutterAPIBaseURL/releases_linux.json');
+}

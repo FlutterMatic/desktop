@@ -4,7 +4,7 @@ import 'package:flutter_installer/components/dialog_templates/dialogs/pref_intro
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
-import 'package:flutter_installer/services/checks.dart';
+import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -23,7 +23,7 @@ class _StatusCheckState extends State<StatusCheck> {
   Future<void> _loadServices() async {
     _pref = await SharedPreferences.getInstance();
     if (mounted) {
-      CheckDependencies checkDependencies = CheckDependencies();
+      Win32Checks checkDependencies = Win32Checks();
       if (!_pref.containsKey('projects_path')) {
         await showDialog(
           barrierDismissible: false,

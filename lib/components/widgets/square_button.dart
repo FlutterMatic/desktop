@@ -22,7 +22,7 @@ class SquareButton extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: size, maxWidth: size),
         child: tooltip == null
             ? _button(context)
-            : Tooltip(message: tooltip!, child: _button(context)),
+            : Tooltip(message: tooltip!, child: _button(context),),
       );
 
   Widget _button(BuildContext context) {
