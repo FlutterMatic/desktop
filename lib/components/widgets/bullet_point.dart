@@ -11,7 +11,7 @@ class BulletPoint extends StatelessWidget {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.only(left: (15 * level!)),
+          padding: EdgeInsets.only(left: (15 * level!),),
           child: Container(
             height: 15,
             width: 15,
@@ -23,7 +23,7 @@ class BulletPoint extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Flexible(child: Text(text)),
+        Flexible(child: Text(text),),
       ],
     );
   }

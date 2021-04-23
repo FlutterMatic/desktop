@@ -16,14 +16,14 @@ class BgActivityButton extends StatelessWidget {
         const SizedBox(height: 15),
         Row(
           children: [
-            Expanded(child: Text(title)),
+            Expanded(child: Text(title),),
             const SizedBox(width: 8),
             const SizedBox(
                 height: 15,
                 width: 15,
                 child: Tooltip(
                     message: 'In progress...',
-                    child: CircularProgressIndicator(strokeWidth: 2))),
+                    child: CircularProgressIndicator(strokeWidth: 2)),),
           ],
         ),
         const SizedBox(height: 15),

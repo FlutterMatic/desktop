@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
 import 'package:file_chooser/src/result.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/services/checks.dart';
+import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
@@ -24,7 +26,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
 
   //User Inputs
   String? _dirPath;
-  CheckDependencies checkDependencies = CheckDependencies();
+  Win32Checks checkDependencies = Win32Checks();
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -41,7 +43,10 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
           ),
           const SizedBox(height: 20),
           //Theme
-          const Text('Theme', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Theme',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -64,8 +69,10 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                         )
                       else
                         const Spacer(),
-                      const Text('Dark Theme',
-                          style: TextStyle(color: Colors.white)),
+                      const Text(
+                        'Dark Theme',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ],
                   ),
                 ),
@@ -92,8 +99,10 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                         )
                       else
                         const Spacer(),
-                      const Text('Light Theme',
-                          style: TextStyle(color: Colors.black)),
+                      const Text(
+                        'Light Theme',
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ],
                   ),
                 ),
@@ -102,8 +111,10 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
           ),
           const SizedBox(height: 20),
           //Project Location
-          const Text('Projects Location',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Projects Location',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 10),
           RoundContainer(
             borderColor: _dirPathError ? kRedColor : Colors.transparent,
@@ -119,12 +130,16 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 const SizedBox(width: 8),
                 RectangleButton(
                   onPressed: () async {
-                    FileChooserResult fileResult = await showOpenPanel(
-                      allowedFileTypes: [],
-                      canSelectDirectories: true,
-                    );
-                    if (fileResult.paths!.isNotEmpty) {
-                      setState(() => _dirPath = fileResult.paths!.first);
+                    if (Platform.isWindows) {
+                      FileChooserResult fileResult = await showOpenPanel(
+                        allowedFileTypes: [],
+                        canSelectDirectories: true,
+                      );
+                      if (fileResult.paths!.isNotEmpty) {
+                        setState(() => _dirPath = fileResult.paths!.first);
+                      }
+                    } else {
+                      setState(() => _dirPath = '/');
                     }
                   },
                   color: Colors.blueGrey.withOpacity(0.2),

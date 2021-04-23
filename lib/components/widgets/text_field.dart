@@ -65,7 +65,7 @@ class CustomTextField extends StatelessWidget {
       style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
       inputFormatters: [
         filteringTextInputFormatter ??
-            FilteringTextInputFormatter.deny(RegExp('')),
+            FilteringTextInputFormatter.deny(RegExp(''),),
       ],
       decoration: InputDecoration(
         errorStyle: const TextStyle(color: kRedColor),

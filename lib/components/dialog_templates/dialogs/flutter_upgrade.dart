@@ -4,7 +4,7 @@ import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/services/checks.dart';
+import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -20,7 +20,7 @@ class _CheckFlutterVersionDialogState extends State<CheckFlutterVersionDialog> {
   @override
   Widget build(BuildContext context) {
     Future<void> _upgradeFlutter() async {
-      CheckDependencies checkDependencies = CheckDependencies();
+      Win32Checks checkDependencies = Win32Checks();
       BgActivityButton element = BgActivityButton(
         title: 'Upgrading your Flutter version',
         activityId: 'upgrading_flutter_version',

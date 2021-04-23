@@ -30,7 +30,7 @@ class ActionOptions extends StatelessWidget {
 
 Widget _buttonListTile(Function onPressed, String title, Color color, int index,
     int length, BuildContext context) {
-  Radius _curveValue = Radius.circular(5);
+  Radius _curveValue = const Radius.circular(5);
   Radius _curveEmpty = Radius.zero;
   var _endExpression = (length == 1 ? _curveValue : _curveEmpty);
   ThemeData customTheme = Theme.of(context);
@@ -51,7 +51,7 @@ Widget _buttonListTile(Function onPressed, String title, Color color, int index,
             child: Text(
           title,
           style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-        )),
+        ),),
         Icon(
           Icons.arrow_forward_ios_rounded,
           size: 15,

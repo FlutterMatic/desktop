@@ -26,6 +26,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  file_selector: ^0.8.2
+  file_selector_linux: ^0.0.2
+  file_selector_macos: ^0.0.4
+  file_selector_windows: ^0.0.2
+  http: ^0.13.1
 
 flutter:
 
@@ -41,6 +46,7 @@ flutter:
     - assets/fonts/IconsFont/
     - assets/fonts/LexendDeca/
     - assets/lottie/
+    - assets/scripts/path/
 
   fonts:
     - family: Inter

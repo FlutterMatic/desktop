@@ -32,10 +32,10 @@ Widget installedComponents(BuildContext context) {
       ),
       installationStatus(
         vscInstalled ? InstallationStatus.done : InstallationStatus.error,
-        vscInstalled ? 'VSCode Installed' : 'VSCode Not installed',
+        vscInstalled ? 'VS Code Installed' : 'VS Code Not installed',
         'We recommend using Visual Studio Code for developing Flutter apps. It is lightweight which means uses less space and memory.',
         onDownload: () {},
-        tooltip: 'VSCode',
+        tooltip: 'VS Code',
         context: context,
       ),
       installationStatus(

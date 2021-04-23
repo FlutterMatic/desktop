@@ -23,7 +23,7 @@ class SearchProjectsDialog extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('Current Directory',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
+                    style: TextStyle(fontWeight: FontWeight.w600),),
                 const SizedBox(height: 10),
                 Text(projDir!),
               ],

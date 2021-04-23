@@ -62,8 +62,9 @@ Widget projects(BuildContext context) {
                     builder: (_) {
                       if (flutterInstalled) {
                         return NewProjectDialog();
-                      } else
+                      } else {
                         return InstallFlutterDialog();
+                      }
                     },
                   );
                 },

@@ -72,7 +72,7 @@ class _ControlSettingsState extends State<ControlSettings> {
             canClose: false,
           ),
           const SizedBox(height: 20),
-          const Text('Theme', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text('Theme', style: TextStyle(fontWeight: FontWeight.w600),),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -96,7 +96,7 @@ class _ControlSettingsState extends State<ControlSettings> {
                       else
                         const Spacer(),
                       const Text('Dark Theme',
-                          style: TextStyle(color: Colors.white)),
+                          style: TextStyle(color: Colors.white),),
                     ],
                   ),
                 ),
@@ -117,12 +117,12 @@ class _ControlSettingsState extends State<ControlSettings> {
                       if (!currentTheme.isDarkTheme)
                         const Expanded(
                           child: Icon(Icons.check_circle_rounded,
-                              color: Color(0xFF22272E)),
+                              color: Color(0xFF22272E),),
                         )
                       else
                         const Spacer(),
                       const Text('Light Theme',
-                          style: TextStyle(color: Colors.black)),
+                          style: TextStyle(color: Colors.black),),
                     ],
                   ),
                 ),
@@ -131,7 +131,7 @@ class _ControlSettingsState extends State<ControlSettings> {
           ),
           const SizedBox(height: 20),
           const Text('Projects Location',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+              style: TextStyle(fontWeight: FontWeight.w600),),
           const SizedBox(height: 10),
           RoundContainer(
             borderColor: _dirPathError ? kRedColor : Colors.transparent,

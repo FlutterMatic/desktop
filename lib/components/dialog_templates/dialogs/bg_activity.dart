@@ -13,14 +13,14 @@ class BgActivityDialog extends StatelessWidget {
         children: [
           DialogHeader(title: 'Background Activity'),
           const SizedBox(height: 30),
-          const Text('Activity', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text('Activity', style: TextStyle(fontWeight: FontWeight.w600),),
           const SizedBox(height: 10),
           bgActivities.isEmpty
               ? const Text(
                   'No background activity running at the moment. Check back later.')
               : Column(
                   children:
-                      bgActivities.map((val) => val).toList(growable: true)),
+                      bgActivities.map((val) => val).toList(growable: true),),
           const SizedBox(height: 20),
           RectangleButton(
             width: double.infinity,

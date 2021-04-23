@@ -37,7 +37,7 @@ Widget controls(BuildContext context) {
             ),
             const SizedBox(height: 20),
             const Text('Software Development Kits',
-                style: TextStyle(fontWeight: FontWeight.w600)),
+                style: TextStyle(fontWeight: FontWeight.w600),),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -98,7 +98,7 @@ Widget controls(BuildContext context) {
             ),
             const SizedBox(height: 20),
             const Text('IDE Tools',
-                style: TextStyle(fontWeight: FontWeight.w600)),
+                style: TextStyle(fontWeight: FontWeight.w600),),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -144,7 +144,7 @@ Widget controls(BuildContext context) {
                       const SizedBox(width: 8),
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () => launch(studioPath!),
+                          onPressed: () => launch('studio64'),
                           child:
                               _controlButton('Open', Iconsdata.folder, context),
                         ),
@@ -212,7 +212,7 @@ class ControlResourceTile extends StatelessWidget {
               version != null ? ('v' + version!) : 'Unknown Version',
               style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
             ),
-          )),
+          ),),
           Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,

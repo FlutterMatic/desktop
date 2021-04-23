@@ -11,7 +11,7 @@ Widget infoWidget(String text) {
         children: [
           const Icon(Icons.info),
           const SizedBox(width: 8),
-          Expanded(child: Text(text)),
+          Expanded(child: Text(text),),
         ],
       ),
     ),
