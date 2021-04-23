@@ -8,6 +8,7 @@ import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 
@@ -36,8 +37,10 @@ Widget controls(BuildContext context) {
               ],
             ),
             const SizedBox(height: 20),
-            const Text('Software Development Kits',
-                style: TextStyle(fontWeight: FontWeight.w600),),
+            const Text(
+              'Software Development Kits',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -58,7 +61,12 @@ Widget controls(BuildContext context) {
                               builder: (context) => ChangeChannelDialog(),
                             ),
                             child: _controlButton(
-                                'Channel', Iconsdata.changeChannel, context),
+                                'Channel',
+                                Icon(Iconsdata.changeChannel,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
                           ),
                         ),
                       const SizedBox(width: 8),
@@ -71,7 +79,12 @@ Widget controls(BuildContext context) {
                                 : InstallFlutterDialog(),
                           ),
                           child: _controlButton(
-                              'Upgrade', Iconsdata.rocket, context),
+                            'Upgrade',
+                            Icon(Iconsdata.rocket,
+                                color: customTheme.textTheme.bodyText1!.color,
+                                size: 20),
+                            context,
+                          ),
                         ),
                       ),
                     ],
@@ -81,38 +94,49 @@ Widget controls(BuildContext context) {
                 //Java
                 Expanded(
                   child: ControlResourceTile(
-                    flutterInstalled ? 'Java' : 'Install Java',
+                    javaInstalled ? 'Java' : 'Install Java',
                     javaVersion,
-                    [
-                      Expanded(
-                        child: RectangleButton(
-                          onPressed: () {},
-                          child: _controlButton(
-                              'Update', Iconsdata.rocket, context),
-                        ),
-                      ),
-                    ],
+                    !javaInstalled
+                        ? [
+                            Expanded(
+                              child: RectangleButton(
+                                onPressed: () {},
+                                child: _controlButton(
+                                    'Install',
+                                    Icon(Iconsdata.download,
+                                        color: customTheme
+                                            .textTheme.bodyText1!.color,
+                                        size: 20),
+                                    context),
+                              ),
+                            ),
+                          ]
+                        : [],
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            const Text('IDE Tools',
-                style: TextStyle(fontWeight: FontWeight.w600),),
+            const Text(
+              'IDE Tools',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
                 //VSCode
                 Expanded(
                   child: ControlResourceTile(
-                    flutterInstalled ? 'Visual Studio Code' : 'Install VSCode',
+                    vscInstalled ? 'Visual Studio Code' : 'Install VSCode',
                     vscodeVersion,
                     [
                       Expanded(
                         child: RectangleButton(
                           onPressed: () => launch('$vscPath'),
-                          child:
-                              _controlButton('Open', Iconsdata.folder, context),
+                          child: _controlButton(
+                              'Open',
+                              SvgPicture.asset(Assets.vscode, width: 30),
+                              context),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -130,7 +154,7 @@ Widget controls(BuildContext context) {
                 //Android Studio
                 Expanded(
                   child: ControlResourceTile(
-                    flutterInstalled
+                    studioInstalled
                         ? 'Android Studio'
                         : 'Install Android Studio',
                     androidSVersion,
@@ -138,15 +162,20 @@ Widget controls(BuildContext context) {
                       Expanded(
                         child: RectangleButton(
                           onPressed: () {},
-                          child: _controlButton('Emulator', null, context),
+                          child: _controlButton(
+                              'Emulator',
+                              SvgPicture.asset(Assets.emulator, width: 30),
+                              context),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: RectangleButton(
                           onPressed: () => launch('studio64'),
-                          child:
-                              _controlButton('Open', Iconsdata.folder, context),
+                          child: _controlButton(
+                              'Open',
+                              SvgPicture.asset(Assets.androidStudio, width: 30),
+                              context),
                         ),
                       ),
                     ],
@@ -157,7 +186,7 @@ Widget controls(BuildContext context) {
                 if (Platform.isMacOS)
                   Expanded(
                     child: ControlResourceTile(
-                      flutterInstalled ? 'Xcode' : 'Install Xcode',
+                      xCodeInstalled ? 'Xcode' : 'Install Xcode',
                       xcodeVersion,
                       [
                         Expanded(
@@ -206,13 +235,15 @@ class ControlResourceTile extends StatelessWidget {
                 color: customTheme.textTheme.bodyText1!.color, fontSize: 15),
           ),
           Expanded(
-              child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              version != null ? ('v' + version!) : 'Unknown Version',
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                version != null ? ('v' + version!) : 'Unknown Version',
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              ),
             ),
-          ),),
+          ),
           Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +254,7 @@ class ControlResourceTile extends StatelessWidget {
   }
 }
 
-Widget _controlButton(String title, IconData? icon, BuildContext context) {
+Widget _controlButton(String title, Widget? icon, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -236,8 +267,8 @@ Widget _controlButton(String title, IconData? icon, BuildContext context) {
             fontSize: 15, color: customTheme.textTheme.bodyText1!.color),
       ),
       if (icon != null) const SizedBox(width: 10),
-      if (icon != null)
-        Icon(icon, color: customTheme.textTheme.bodyText1!.color, size: 20),
+      if (icon != null) icon,
+      // Icon(icon, color: customTheme.textTheme.bodyText1!.color, size: 20),
     ],
   );
 }

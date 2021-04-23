@@ -77,6 +77,7 @@ class Assets {
 
   //Ides Icons
   static const String androidStudio = '$ideIcons/android_studio.svg';
+  static const String emulator = '$ideIcons/emulator.svg';
   static const String vscode = '$ideIcons/vscode.svg';
   static const String xcode = '$ideIcons/xcode.svg';
 }
