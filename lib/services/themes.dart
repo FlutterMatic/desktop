@@ -10,20 +10,24 @@ class CustomTheme with ChangeNotifier {
     _pref = await SharedPreferences.getInstance();
   }
 
+  //Settings
   bool _isDarkTheme = false;
+  //Themes
   bool get isDarkTheme => _isDarkTheme;
-  ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
-  ThemeMode get systemTheme => ThemeMode.system;
 
+  //Mode
+  ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
+
+  //Toggle
   void toggleTheme() {
     _isDarkTheme = !_isDarkTheme;
-    _pref.setBool('light_mode', _isDarkTheme);
+    _pref.setBool('light_mode', !_isDarkTheme);
     notifyListeners();
   }
 
-  Future<void> loadPrefs() async {
+  Future<void> loadThemePref() async {
     if (_pref.containsKey('light_mode')) {
-      _isDarkTheme = _pref.getBool('light_mode') ?? false;
+      _isDarkTheme = _pref.getBool('light_mode')!;
     } else {
       _isDarkTheme = true;
     }

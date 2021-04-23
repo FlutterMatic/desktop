@@ -21,7 +21,6 @@ Future<void> checkPlatform() async {
 
 Future<void> main() async {
   await currentTheme.initSharedPref();
-  await currentTheme.loadPrefs();
   await checkPlatform();
   flutterReleases = await apiCalls.flutterAPICall();
   runApp(MyApp());
