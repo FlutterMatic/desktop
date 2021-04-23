@@ -75,7 +75,7 @@ Widget controls(BuildContext context) {
                           onPressed: () => showDialog(
                             context: context,
                             builder: (_) => flutterInstalled
-                                ? CheckFlutterVersionDialog()
+                                ? UpgradeFlutterDialog()
                                 : InstallFlutterDialog(),
                           ),
                           child: _controlButton(
