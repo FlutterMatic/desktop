@@ -52,7 +52,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                   height: 100,
                   highlightColor: const Color(0xFF22272E),
                   color: const Color(0xFF22272E),
-                  onPressed: () async {
+                  onPressed: () {
                     if (!currentTheme.isDarkTheme) currentTheme.toggleTheme();
                   },
                   child: Column(
@@ -78,7 +78,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                   hoverColor: Colors.white,
                   splashColor: Colors.transparent,
                   color: Colors.white,
-                  onPressed: () async {
+                  onPressed: () {
                     if (currentTheme.isDarkTheme) currentTheme.toggleTheme();
                   },
                   child: Column(

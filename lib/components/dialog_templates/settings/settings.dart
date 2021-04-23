@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/action_options.dart';
@@ -16,13 +14,14 @@ import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
 
-class ControlSettingsDialog extends StatefulWidget {
+class SettingDialog extends StatefulWidget {
   @override
-  _ControlSettingsDialogState createState() => _ControlSettingsDialogState();
+  _SettingDialogState createState() => _SettingDialogState();
 }
 
-class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
+class _SettingDialogState extends State<SettingDialog> {
   //Utils
   late SharedPreferences _pref;
   bool _dirPathError = false;
@@ -52,7 +51,6 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
   //User Inputs
   bool _dirChanged = false;
   String? _dirPath;
-
   String? _defaultProjectChoice;
 
   Future<void> _getProjectPath() async {
@@ -60,17 +58,25 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
     setState(() => _dirPath = _pref.getString('projects_path'));
   }
 
-  Future<void> _loadEditorOptions() async {
+  Future<void> _getDefaultEditor() async {
     _pref = await SharedPreferences.getInstance();
     if (_pref.containsKey('default_editor')) {
       setState(() => _defaultEditor = _pref.getString('default_editor'));
     }
   }
 
+  Future<void> _getEditorOptions() async {
+    _pref = await SharedPreferences.getInstance();
+    if (_pref.containsKey('editor_option')) {
+      setState(() => _defaultProjectChoice = _pref.getString('editor_option'));
+    }
+  }
+
   @override
   void initState() {
     _getProjectPath();
-    _loadEditorOptions();
+    _getDefaultEditor();
+    _getEditorOptions();
     super.initState();
   }
 
@@ -103,9 +109,6 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                       'For dark and nighty appearence', () {
                     if (!currentTheme.isDarkTheme) currentTheme.toggleTheme();
                   }),
-                  const SizedBox(height: 10),
-                  _themeTiles(context, false, 'System Theme',
-                      'Switch themes according to your system theme', () {}),
                 ],
               ),
               //Projects
@@ -153,19 +156,6 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text('Editor Options',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 15),
-                  MultipleChoice(
-                    options: [
-                      'Always open projects in preferred editor',
-                      'Ask me which editor to open with every time',
-                    ],
-                    defaultChoiceValue: _defaultProjectChoice,
-                    onChanged: (val) =>
-                        setState(() => _defaultProjectChoice = val),
                   ),
                 ],
               ),
@@ -305,6 +295,22 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                         ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  const Text('Editor Options',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 15),
+                  MultipleChoice(
+                    options: [
+                      'Always open projects in preferred editor',
+                      'Ask me which editor to open with every time',
+                    ],
+                    defaultChoiceValue: _defaultProjectChoice,
+                    onChanged: (val) async {
+                      setState(() => _defaultProjectChoice = val);
+                      _pref = await SharedPreferences.getInstance();
+                      _pref.setString('editor_option', val);
+                    },
+                  ),
                 ],
               ),
               //GitHub
@@ -318,7 +324,7 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                     children: [
                       Expanded(
                         child: RectangleButton(
-                          height: 100,
+                          height: 90,
                           child: Column(
                             children: [
                               Expanded(
@@ -346,7 +352,7 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: RectangleButton(
-                          height: 100,
+                          height: 90,
                           child: Column(
                             children: [
                               Expanded(
@@ -372,11 +378,34 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                     ],
                   ),
                   const SizedBox(height: 15),
+                  RectangleButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'View GitHub Respiratory',
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color),
+                          ),
+                        ),
+                        Icon(Iconsdata.github,
+                            color: customTheme.indicatorColor),
+                      ],
+                    ),
+                    onPressed: () {
+                      launch(
+                          'https://github.com/FlutterMatic/FlutterMatic-desktop');
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const SizedBox(height: 15),
                   const Text('Contributions',
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 5),
                   infoWidget(
-                      'We are an open-source community. We would love to see you make some contibutions to this desktop app. Great people like you can make this app even better!'),
+                      'We are open-source! We would love to see you make some pull requests to this app!'),
                 ],
               ),
               //Troubleshoot
@@ -388,7 +417,7 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
                   const SizedBox(height: 15),
                   ActionOptions(
                     buttonTitles: [
-                      'Whole Application',
+                      'Flutter Installer',
                       'Flutter',
                       'Android Studio',
                       'Visual Studio Code',
@@ -423,8 +452,7 @@ class _ControlSettingsDialogState extends State<ControlSettingsDialog> {
             focusColor: Colors.blueGrey.withOpacity(0.5),
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
-            child: Text('Save Settings', 
-            style: TextStyle(fontWeight: FontWeight.w700,),),
+            child: Text('Save Settings'),
           ),
         ],
       ),
@@ -467,7 +495,7 @@ class _TabViewWidgetState extends State<TabViewWidget> {
         const SizedBox(width: 10),
         Expanded(
           child: Container(
-            height: 300,
+            height: 310,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 15),

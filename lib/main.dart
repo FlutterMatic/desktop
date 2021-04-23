@@ -8,7 +8,7 @@ import 'dart:ui';
 
 Future<void> main() async {
   await currentTheme.initSharedPref();
-  await currentTheme.loadPrefs();
+  await currentTheme.loadThemePref();
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);

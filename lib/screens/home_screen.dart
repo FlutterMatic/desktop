@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/bg_activity.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/settings.dart';
+import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => ControlSettingsDialog(),
+                      builder: (_) => SettingDialog(),
                     );
                   },
                 ),
