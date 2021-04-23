@@ -8,15 +8,14 @@ import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
-class CheckFlutterVersionDialog extends StatefulWidget {
+class UpgradeFlutterDialog extends StatefulWidget {
   @override
-  _CheckFlutterVersionDialogState createState() =>
-      _CheckFlutterVersionDialogState();
+  _UpgradeFlutterDialogState createState() => _UpgradeFlutterDialogState();
 }
 
 bool? _updateResult;
 
-class _CheckFlutterVersionDialogState extends State<CheckFlutterVersionDialog> {
+class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
   @override
   Widget build(BuildContext context) {
     Future<void> _upgradeFlutter() async {
@@ -87,7 +86,7 @@ class _CheckFlutterVersionDialogState extends State<CheckFlutterVersionDialog> {
             highlightColor: Colors.blueGrey.withOpacity(0.5),
             onPressed: () {
               _upgradeFlutter();
-              Navigator.pushNamed(context, PageRoutes.routeHome);
+              Navigator.pop(context);
             },
             child: const Text('Upgrade Flutter'),
           ),
