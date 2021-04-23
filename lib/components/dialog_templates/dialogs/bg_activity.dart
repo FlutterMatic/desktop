@@ -1,10 +1,38 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
-class BgActivityDialog extends StatelessWidget {
+class BgActivityDialog extends StatefulWidget {
+  @override
+  _BgActivityDialogState createState() => _BgActivityDialogState();
+}
+
+class _BgActivityDialogState extends State<BgActivityDialog> {
+  List<Widget> _activities = [];
+
+  void _activateReload() {
+    // _activities.clear();
+    if (mounted) {
+      setState(() => _activities = bgActivities);
+    }
+    Timer.periodic(const Duration(seconds: 5), (val) {
+      // _activities.clear();
+      if (mounted) {
+        setState(() => _activities = bgActivities);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    _activateReload();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
@@ -13,14 +41,18 @@ class BgActivityDialog extends StatelessWidget {
         children: [
           DialogHeader(title: 'Background Activity'),
           const SizedBox(height: 30),
-          const Text('Activity', style: TextStyle(fontWeight: FontWeight.w600),),
+          const Text(
+            'Activity',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 10),
-          bgActivities.isEmpty
+          _activities.isEmpty
               ? const Text(
                   'No background activity running at the moment. Check back later.')
               : Column(
                   children:
-                      bgActivities.map((val) => val).toList(growable: true),),
+                      _activities.map((val) => val).toList(growable: true),
+                ),
           const SizedBox(height: 20),
           RectangleButton(
             width: double.infinity,
