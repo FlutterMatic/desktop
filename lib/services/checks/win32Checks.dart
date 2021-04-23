@@ -65,7 +65,10 @@ class Win32Checks {
       if (!_pref.containsKey('vscode_path')) {
         await _pref
             .setString(
-                'vscode_path', vsCodeExectutable.replaceAll('cmd', 'exe'))
+                'vscode_path',
+                vsCodeExectutable
+                    .replaceAll('\\bin', '')
+                    .replaceAll('.cmd', '.exe'))
             .whenComplete(
               () async => vscPath = _pref.getString('vscode_path'),
             );

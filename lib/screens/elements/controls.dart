@@ -132,7 +132,7 @@ Widget controls(BuildContext context) {
                     [
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () => launch('$vscPath'),
+                          onPressed: () => launch(vscPath!),
                           child: _controlButton(
                               'Open',
                               SvgPicture.asset(Assets.vscode, width: 30),
