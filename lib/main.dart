@@ -25,7 +25,6 @@ Future<void> main() async {
   try {
     flutterReleases = await apiCalls.flutterAPICall();
   } catch (_) {
-    print('');
   }
   runApp(MyApp());
   doWhenWindowReady(() {
