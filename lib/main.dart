@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:flutter_installer/models/flutter_api.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
+import 'package:flutter_installer/services/apiServices/api.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'dart:async';
 import 'dart:io';
 
 Future<void> checkPlatform() async {
@@ -20,11 +22,11 @@ Future<void> checkPlatform() async {
 Future<void> main() async {
   await currentTheme.initSharedPref();
   await currentTheme.loadThemePref();
-  // await apiCalls.flutterAPICall();
   await checkPlatform();
   try {
     flutterReleases = await apiCalls.flutterAPICall();
-  } catch (_) {
+  } catch (e) {
+    throw e.toString();
   }
   runApp(MyApp());
   doWhenWindowReady(() {
@@ -45,7 +47,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     currentTheme.addListener(() => setState(() {}));
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result.index == 0 || result.index == 1) {
+        connection = true;
+      } else {
+        connection = false;
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription!.cancel();
   }
 
   @override

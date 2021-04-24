@@ -161,9 +161,11 @@ Widget controls(BuildContext context) {
                     [
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () {},
+                          onPressed: emulatorInstalled ? () {} : null,
                           child: _controlButton(
-                              'Emulator',
+                              emulatorInstalled
+                                  ? 'Emulator'
+                                  : 'Install emulator',
                               SvgPicture.asset(Assets.emulator, width: 30),
                               context),
                         ),
@@ -171,7 +173,8 @@ Widget controls(BuildContext context) {
                       const SizedBox(width: 8),
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () => launch('studio64'),
+                          onPressed:
+                              studioInstalled ? () => launch('studio64') : null,
                           child: _controlButton(
                               'Open',
                               SvgPicture.asset(Assets.androidStudio, width: 30),

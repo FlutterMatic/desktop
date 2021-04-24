@@ -1,8 +1,19 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/models/flutter_api.dart';
 
 const String _iconName = 'IconsFont';
+StreamSubscription<ConnectivityResult>? subscription;
+
+// API data
+String? baseUrl = 'https://storage.googleapis.com/flutter_infra/releases',
+    flutterHASH,
+    flutterChannelHASH,
+    flutterAPIChannel,
+    flutterAPIVersion;
 
 //Installed
 bool flutterInstalled = false;
@@ -10,7 +21,9 @@ bool javaInstalled = false;
 bool vscInstalled = false;
 bool vscInsidersInstalled = false;
 bool studioInstalled = false;
+bool emulatorInstalled = false;
 bool xCodeInstalled = false;
+bool connection = false;
 
 // Flutter release data
 FlutterReleases? flutterReleases;
@@ -31,7 +44,13 @@ bool linux = false;
 //Utils
 bool channelIsUpdating = false;
 String desktopVersion = '1.0.0';
-String? projDir, studioPath, javaPath, vscPath, flutterPath, defaultEditor;
+String? projDir,
+    studioPath,
+    javaPath,
+    vscPath,
+    flutterPath,
+    emulatorPath,
+    defaultEditor;
 
 //Lists
 /// List of Background activities.

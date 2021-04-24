@@ -22,6 +22,7 @@ dependencies:
   process_run: ^0.12.1
   shared_preferences: ^2.0.5
   url_launcher: ^6.0.3
+  connectivity_plus: ^1.0.0
 
 dev_dependencies:
   flutter_test:

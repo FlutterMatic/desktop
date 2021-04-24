@@ -4,7 +4,8 @@ import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/services/checks/win32Checks.dart';
+import 'package:flutter_installer/services/apiServices/api.dart';
+import 'package:flutter_installer/services/other.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -13,26 +14,29 @@ class UpgradeFlutterDialog extends StatefulWidget {
   _UpgradeFlutterDialogState createState() => _UpgradeFlutterDialogState();
 }
 
-bool? _updateResult;
+bool? _updateResult = false;
 
 class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
   @override
   Widget build(BuildContext context) {
     Future<void> _upgradeFlutter() async {
-      Win32Checks checkDependencies = Win32Checks();
       BgActivityButton element = BgActivityButton(
         title: 'Upgrading your Flutter version',
         activityId: 'upgrading_flutter_version',
       );
       bgActivities.add(element);
-      await FlutterActions().upgrade().then((value) {
-        setState(() => _updateResult = value);
+      await apiCalls.flutterAPICall().then((apiData) async {
+        flutterAPIVersion = apiData.releases![0]!.version;
+        if (await compareVersion(
+            latestVersion: flutterAPIVersion!,
+            previousVersion: flutterVersion!)) {
+          await flutterActions.upgrade().then((value) {
+            _updateResult = value;
+          });
+        } else {
+          _updateResult = false;
+        }
       });
-      flutterInstalled = await checkDependencies.checkFlutter();
-      javaInstalled = await checkDependencies.checkJava();
-      vscInstalled = await checkDependencies.checkVSC();
-      vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
-      studioInstalled = await checkDependencies.checkAndroidStudios();
       bgActivities.remove(element);
       await Navigator.pushNamed(context, PageRoutes.routeState);
       if (!_updateResult!) {

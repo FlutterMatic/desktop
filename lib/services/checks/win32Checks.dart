@@ -105,6 +105,7 @@ class Win32Checks {
   }
 
   Future<bool> checkAndroidStudios() async {
+    await checkEmulator();
     List<ProcessResult> userProfile = await shell.run('echo %USERPROFILE%');
     try {
       List<ProcessResult> appDataStudios = await shell
@@ -180,6 +181,41 @@ class Win32Checks {
         return false;
       }
     } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> checkEmulator() async {
+    List<ProcessResult> localAppData = await shell.run('echo %localappdata%');
+    List<ProcessResult> emulator = await shell
+        .cd(localAppData[0].outText.toString())
+        .run('dir /b /s /p emulator.exe');
+    if (emulator[0]
+        .stdout
+        .split('\n')[0]
+        .toString()
+        .trim()
+        .contains('\\Sdk\\emulator\\emulator.exe')) {
+      if (!_pref.containsKey('emulator_path')) {
+        await _pref
+            .setString('emulator_path',
+                emulator[0].stdout.split('\n')[0].toString().trim())
+            .whenComplete(
+          () async {
+            emulatorPath = _pref.getString('emulator_path');
+            await shell.run(
+                '${Scripts.win32PathAdder} ${emulatorPath!.replaceAll('emulator.exe', '')}');
+          },
+        );
+      } else {
+        emulatorPath = _pref.getString('emulator_path');
+        if (await which('emulator') == null) {
+        await shell.run(
+            '${Scripts.win32PathAdder} ${emulatorPath!.replaceAll('emulator.exe', '')}');
+        }
+      }
+      return true;
+    } else {
       return false;
     }
   }
