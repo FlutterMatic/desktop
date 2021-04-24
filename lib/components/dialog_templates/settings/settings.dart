@@ -26,6 +26,9 @@ class _SettingDialogState extends State<SettingDialog> {
   late SharedPreferences _pref;
   bool _dirPathError = false;
   bool _loading = false;
+  bool _requireTruShoot = false;
+
+  //Troubleshoot
   bool truShootFullApp = false;
   bool truShootFlutter = false;
   bool truShootStudio = false;
@@ -71,6 +74,27 @@ class _SettingDialogState extends State<SettingDialog> {
     _pref = await SharedPreferences.getInstance();
     if (_pref.containsKey('editor_option')) {
       setState(() => _defaultProjectChoice = _pref.getString('editor_option'));
+    }
+  }
+
+  void _checkTroubleShoot() {
+    setState(() => _requireTruShoot = false);
+    if (truShootFullApp) {
+      setState(() {
+        truShootFlutter = false;
+        truShootStudio = false;
+        truShootVSC = false;
+      });
+    }
+  }
+
+  void _startTroubleshoot() {
+    setState(() => _requireTruShoot = false);
+    if (truShootFlutter == false &&
+        truShootFullApp == false &&
+        truShootStudio == false &&
+        truShootVSC == false) {
+      setState(() => _requireTruShoot = true);
     }
   }
 
@@ -320,22 +344,6 @@ class _SettingDialogState extends State<SettingDialog> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  const Text('Editor Options',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 15),
-                  MultipleChoice(
-                    options: [
-                      'Always open projects in preferred editor',
-                      'Ask me which editor to open with every time',
-                    ],
-                    defaultChoiceValue: _defaultProjectChoice,
-                    onChanged: (val) async {
-                      setState(() => _defaultProjectChoice = val);
-                      _pref = await SharedPreferences.getInstance();
-                      await _pref.setString('editor_option', val);
-                    },
-                  ),
                 ],
               ),
               //GitHub
@@ -426,30 +434,58 @@ class _SettingDialogState extends State<SettingDialog> {
                   ),
                   const SizedBox(height: 15),
                   CheckBoxElement(
-                    onChanged: (val) =>
-                        setState(() => truShootFullApp = !truShootFullApp),
+                    onChanged: (val) {
+                      setState(() => truShootFullApp = !truShootFullApp);
+                      _checkTroubleShoot();
+                    },
                     value: truShootFullApp,
-                    text: 'Flutter Installer',
+                    text: 'All Applications',
                   ),
                   CheckBoxElement(
-                    onChanged: (val) =>
-                        setState(() => truShootFlutter = !truShootFlutter),
+                    onChanged: (val) {
+                      setState(() => truShootFlutter = !truShootFlutter);
+                      _checkTroubleShoot();
+                    },
                     value: truShootFlutter,
                     text: 'Flutter',
                   ),
                   CheckBoxElement(
-                    onChanged: (val) =>
-                        setState(() => truShootStudio = !truShootStudio),
+                    onChanged: (val) {
+                      setState(() => truShootStudio = !truShootStudio);
+                      _checkTroubleShoot();
+                    },
                     value: truShootStudio,
-                    text: 'Android studio',
+                    text: 'Android Studio',
                   ),
                   CheckBoxElement(
-                    onChanged: (val) =>
-                        setState(() => truShootVSC = !truShootVSC),
+                    onChanged: (val) {
+                      setState(() => truShootVSC = !truShootVSC);
+                      _checkTroubleShoot();
+                    },
                     value: truShootVSC,
-                    text: 'Visual strudio code',
+                    text: 'Visual Studio Code',
                   ),
-                  const SizedBox(height: 15),
+                  if (_requireTruShoot)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: warningWidget(
+                          'You need to choose at least one troubleshoot option.',
+                          Assets.error,
+                          kRedColor),
+                    ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: RectangleButton(
+                      width: 150,
+                      onPressed: _startTroubleshoot,
+                      child: Text(
+                        'Start Troubleshoot',
+                        style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   RoundContainer(
                     color: Colors.blueGrey.withOpacity(0.2),
                     width: double.infinity,

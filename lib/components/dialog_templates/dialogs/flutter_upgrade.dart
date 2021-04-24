@@ -5,7 +5,7 @@ import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/services/apiServices/api.dart';
-import 'package:flutter_installer/services/comp_version.dart';
+import 'package:flutter_installer/services/other.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 

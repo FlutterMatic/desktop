@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
+import 'package:flutter_installer/services/apiServices/api.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'dart:io';
@@ -21,6 +25,11 @@ Future<void> main() async {
   await currentTheme.loadThemePref();
   // await apiCalls.flutterAPICall();
   await checkPlatform();
+  try {
+    flutterReleases = await apiCalls.flutterAPICall();
+  } catch (e) {
+    throw e.toString();
+  }
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);
@@ -40,7 +49,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     currentTheme.addListener(() => setState(() {}));
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result.index == 0 || result.index == 1) {
+        connection = true;
+      } else {
+        connection = false;
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription!.cancel();
   }
 
   @override
