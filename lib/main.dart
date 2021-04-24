@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
-import 'package:flutter_installer/services/apiServices/api.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -23,13 +22,7 @@ Future<void> checkPlatform() async {
 Future<void> main() async {
   await currentTheme.initSharedPref();
   await currentTheme.loadThemePref();
-  // await apiCalls.flutterAPICall();
   await checkPlatform();
-  try {
-    flutterReleases = await apiCalls.flutterAPICall();
-  } catch (e) {
-    throw e.toString();
-  }
   runApp(MyApp());
   doWhenWindowReady(() {
     appWindow.minSize = const Size(500, 500);
