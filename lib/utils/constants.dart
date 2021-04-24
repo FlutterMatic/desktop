@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/models/flutter_api.dart';
+import 'dart:async';
 
 const String _iconName = 'IconsFont';
 StreamSubscription<ConnectivityResult>? subscription;
