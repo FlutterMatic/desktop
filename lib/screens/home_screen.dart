@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/bg_activity.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
@@ -180,19 +179,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  bgActivities.isEmpty
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          right: 0,
-                          top: 0,
+                  bgActivities.isNotEmpty
+                      ? Align(
+                          alignment: Alignment.topRight,
                           child: RoundContainer(
                             height: 15,
                             width: 15,
                             color: Colors.blueGrey,
+                            radius: 100,
                             padding: EdgeInsets.zero,
                             child: const SizedBox.shrink(),
                           ),
-                        ),
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),

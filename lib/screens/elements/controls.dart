@@ -96,9 +96,9 @@ Widget controls(BuildContext context) {
                   child: ControlResourceTile(
                     javaInstalled ? 'Java' : 'Install Java',
                     javaVersion,
-                    !javaInstalled
-                        ? [
-                            Expanded(
+                    [
+                      !javaInstalled
+                          ? Expanded(
                               child: RectangleButton(
                                 onPressed: () {},
                                 child: _controlButton(
@@ -109,9 +109,26 @@ Widget controls(BuildContext context) {
                                         size: 20),
                                     context),
                               ),
+                            )
+                          : Expanded(
+                              child: RectangleButton(
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (_) => flutterInstalled
+                                      ? UpgradeFlutterDialog()
+                                      : InstallFlutterDialog(),
+                                ),
+                                child: _controlButton(
+                                  'Learn more',
+                                  Icon(Icons.book_rounded,
+                                      color: customTheme
+                                          .textTheme.bodyText1!.color,
+                                      size: 20),
+                                  context,
+                                ),
+                              ),
                             ),
-                          ]
-                        : [],
+                    ],
                   ),
                 ),
               ],

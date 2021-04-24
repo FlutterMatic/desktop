@@ -15,7 +15,7 @@ dependencies:
   bitsdojo_window: ^0.1.0+1
   cupertino_icons: ^1.0.2
   filepicker_windows: ^2.0.0
-  flutter_svg: ^0.21.0+1
+  flutter_svg: ^0.22.0
   intl: ^0.17.0
   lottie: ^1.0.1
   pedantic: ^1.11.0
