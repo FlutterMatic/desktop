@@ -4,12 +4,20 @@ import 'package:flutter_installer/models/flutter_api.dart';
 
 const String _iconName = 'IconsFont';
 
+// API data
+String? baseUrl = 'https://storage.googleapis.com/flutter_infra/releases',
+    flutterHASH,
+    flutterChannelHASH,
+    flutterAPIChannel,
+    flutterAPIVersion;
+
 //Installed
 bool flutterInstalled = false;
 bool javaInstalled = false;
 bool vscInstalled = false;
 bool vscInsidersInstalled = false;
 bool studioInstalled = false;
+bool emulatorInstalled = false;
 bool xCodeInstalled = false;
 
 // Flutter release data
@@ -31,7 +39,7 @@ bool linux = false;
 //Utils
 bool channelIsUpdating = false;
 String desktopVersion = '1.0.0';
-String? projDir, studioPath, javaPath, vscPath, flutterPath, defaultEditor;
+String? projDir, studioPath, javaPath, vscPath, flutterPath, emulatorPath, defaultEditor;
 
 //Lists
 /// List of Background activities.
