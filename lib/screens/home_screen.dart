@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/run_command.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/bg_activity.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
@@ -197,19 +198,38 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Align(
               alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: SquareButton(
-                  color: customTheme.primaryColorLight,
-                  icon:
-                      Icon(Icons.settings, color: customTheme.iconTheme.color),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => SettingDialog(),
-                    );
-                  },
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 5, 15),
+                    child: SquareButton(
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(Icons.play_arrow_rounded,
+                          color: customTheme.iconTheme.color),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => RunCommandDialog(),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 15, 15, 15),
+                    child: SquareButton(
+                      color: customTheme.primaryColorLight,
+                      icon: Icon(Icons.settings,
+                          color: customTheme.iconTheme.color),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => SettingDialog(),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

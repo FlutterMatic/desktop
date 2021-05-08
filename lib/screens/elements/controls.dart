@@ -8,7 +8,7 @@ import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:process_run/shell.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 
@@ -52,6 +52,7 @@ Widget controls(BuildContext context) {
                         : 'Install Flutter',
                     flutterVersion,
                     [
+                      // Change Flutter Channel
                       if (flutterInstalled)
                         Expanded(
                           child: RectangleButton(
@@ -70,6 +71,7 @@ Widget controls(BuildContext context) {
                           ),
                         ),
                       const SizedBox(width: 8),
+                      // Upgrade Flutter
                       Expanded(
                         child: RectangleButton(
                           onPressed: () => showDialog(
@@ -97,37 +99,35 @@ Widget controls(BuildContext context) {
                     javaInstalled ? 'Java' : 'Install Java',
                     javaVersion,
                     [
-                      !javaInstalled
-                          ? Expanded(
-                              child: RectangleButton(
-                                onPressed: () {},
-                                child: _controlButton(
-                                    'Install',
-                                    Icon(Iconsdata.download,
-                                        color: customTheme
-                                            .textTheme.bodyText1!.color,
-                                        size: 20),
-                                    context),
-                              ),
-                            )
-                          : Expanded(
-                              child: RectangleButton(
-                                onPressed: () => showDialog(
-                                  context: context,
-                                  builder: (_) => flutterInstalled
-                                      ? UpgradeFlutterDialog()
-                                      : InstallFlutterDialog(),
-                                ),
-                                child: _controlButton(
-                                  'Learn more',
-                                  Icon(Icons.book_rounded,
-                                      color: customTheme
-                                          .textTheme.bodyText1!.color,
-                                      size: 20),
-                                  context,
-                                ),
-                              ),
+                      // Download Java
+                      if (!javaInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () {},
+                            child: _controlButton(
+                                'Install',
+                                Icon(Iconsdata.download,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
+                        ),
+                      // Open Java Docs
+                      if (javaInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () =>
+                                launch('https://docs.oracle.com/en/java/'),
+                            child: _controlButton(
+                              'Learn more',
+                              Icon(Icons.book_rounded,
+                                  color: customTheme.textTheme.bodyText1!.color,
+                                  size: 20),
+                              context,
                             ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -147,22 +147,47 @@ Widget controls(BuildContext context) {
                     vscInstalled ? 'Visual Studio Code' : 'Install VSCode',
                     vscodeVersion,
                     [
-                      Expanded(
-                        child: RectangleButton(
-                          onPressed: () => launch(vscPath!),
-                          child: _controlButton(
-                              'Open',
-                              SvgPicture.asset(Assets.vscode, width: 30),
-                              context),
+                      // Download VS Code
+                      if (!vscInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () => launch(
+                                'https://code.visualstudio.com/Download'),
+                            child: _controlButton(
+                                'Download',
+                                Icon(Iconsdata.download,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
                         ),
-                      ),
+                      // Open VS Code
+                      if (vscInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () {
+                              Shell _shell = Shell();
+                              _shell.run('code .');
+                            },
+                            child: _controlButton(
+                                'Open',
+                                Icon(Icons.code,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
+                        ),
                       const SizedBox(width: 8),
+                      // VS Code Docs
                       SquareButton(
                         icon: Icon(
-                          Iconsdata.browser,
+                          Icons.book_rounded,
                           color: customTheme.textTheme.bodyText1!.color,
                         ),
-                        onPressed: () {},
+                        onPressed: () =>
+                            launch('https://code.visualstudio.com/docs'),
                       ),
                     ],
                   ),
@@ -176,28 +201,73 @@ Widget controls(BuildContext context) {
                         : 'Install Android Studio',
                     androidSVersion,
                     [
-                      Expanded(
-                        child: RectangleButton(
-                          onPressed: emulatorInstalled ? () {} : null,
-                          child: _controlButton(
-                              emulatorInstalled
-                                  ? 'Emulator'
-                                  : 'Install emulator',
-                              SvgPicture.asset(Assets.emulator, width: 30),
-                              context),
+                      // Open Emulator
+                      if (emulatorInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () {},
+                            child: _controlButton(
+                                'Emulator',
+                                Icon(Icons.phone_android,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: RectangleButton(
-                          onPressed:
-                              studioInstalled ? () => launch('studio64') : null,
-                          child: _controlButton(
-                              'Open',
-                              SvgPicture.asset(Assets.androidStudio, width: 30),
-                              context),
+                      if (!studioInstalled && emulatorInstalled)
+                        const SizedBox(width: 8),
+                      // Install Android Studio
+                      if (!studioInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () =>
+                                launch('https://developer.android.com/studio/'),
+                            child: _controlButton(
+                                'Download',
+                                Icon(Iconsdata.download,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
                         ),
-                      ),
+                      if (studioInstalled &&
+                          !emulatorInstalled &&
+                          !studioInstalled)
+                        const SizedBox(width: 8),
+                      // Download Emulator
+                      if (studioInstalled && !emulatorInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () {},
+                            child: _controlButton(
+                                'Emulator',
+                                Icon(Iconsdata.download,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
+                        ),
+                      if (studioInstalled &&
+                          studioInstalled &&
+                          !emulatorInstalled)
+                        const SizedBox(width: 8),
+                      // Open Android Studio
+                      if (studioInstalled)
+                        Expanded(
+                          child: RectangleButton(
+                            onPressed: () => launch('studio64'),
+                            child: _controlButton(
+                                'Open',
+                                Icon(Icons.code,
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color,
+                                    size: 20),
+                                context),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -287,8 +357,7 @@ Widget _controlButton(String title, Widget? icon, BuildContext context) {
             fontSize: 15, color: customTheme.textTheme.bodyText1!.color),
       ),
       if (icon != null) const SizedBox(width: 10),
-      if (icon != null) icon,
-      // Icon(icon, color: customTheme.textTheme.bodyText1!.color, size: 20),
+      if (icon != null) icon
     ],
   );
 }
