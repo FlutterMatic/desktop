@@ -38,8 +38,10 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
         }
       });
       bgActivities.remove(element);
-      await Navigator.pushNamed(context, PageRoutes.routeState);
-      if (!_updateResult!) {
+      if (mounted) {
+        await Navigator.pushNamed(context, PageRoutes.routeState);
+      }
+      if (!_updateResult! && mounted) {
         await showDialog(
           context: context,
           builder: (_) => DialogTemplate(

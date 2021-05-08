@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/install_fluter.dart';
 import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget installedComponents(BuildContext context) {
   return Column(
@@ -26,7 +27,9 @@ Widget installedComponents(BuildContext context) {
         javaInstalled ? InstallationStatus.done : InstallationStatus.error,
         javaInstalled ? 'Java Installed' : 'Java Not Installed',
         'Sometimes Flutter will need to have Java installed on your machine to run your app on a physical device or emulator. We recommend you installing Java on your machine.',
-        onDownload: () {},
+        onDownload: () {
+          launch('https://docs.oracle.com/en/java/');
+        },
         tooltip: 'Java',
         context: context,
       ),
@@ -34,7 +37,9 @@ Widget installedComponents(BuildContext context) {
         vscInstalled ? InstallationStatus.done : InstallationStatus.error,
         vscInstalled ? 'VS Code Installed' : 'VS Code Not installed',
         'We recommend using Visual Studio Code for developing Flutter apps. It is lightweight which means uses less space and memory.',
-        onDownload: () {},
+        onDownload: () {
+          launch('urlString');
+        },
         tooltip: 'VS Code',
         context: context,
       ),
@@ -44,7 +49,9 @@ Widget installedComponents(BuildContext context) {
             ? 'Android Studio Installed'
             : 'Android Studio Not Installed',
         'If you need to use an Android Emulator, you will need to have Android Studio installed on your machine with all of it\'s components.',
-        onDownload: () {},
+        onDownload: () {
+          launch('https://developer.android.com/studio/');
+        },
         tooltip: 'Android Studio',
         context: context,
       ),

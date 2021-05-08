@@ -24,7 +24,7 @@ Future<void> main() async {
   await checkPlatform();
   runApp(MyApp());
   doWhenWindowReady(() {
-    appWindow.minSize = const Size(500, 500);
+    appWindow.minSize = const Size(600, 500);
     appWindow.alignment = Alignment.center;
     appWindow.title = 'Flutter Installer';
     appWindow.show();
