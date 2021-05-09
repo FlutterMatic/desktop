@@ -5,7 +5,7 @@ import 'package:flutter_installer/utils/constants.dart';
 class CustomTextField extends StatelessWidget {
   final String? hintText;
   final Function(String?)? validator;
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onChanged;
   final FilteringTextInputFormatter? filteringTextInputFormatter;
   final int? numLines;
   final int? maxLength;
@@ -28,7 +28,7 @@ class CustomTextField extends StatelessWidget {
     this.filteringTextInputFormatter,
     this.validator,
     this.autofocus,
-    required this.onChanged,
+    this.onChanged,
     this.controller,
     this.suffixIcon,
     this.onSuffixIcon,
@@ -65,7 +65,9 @@ class CustomTextField extends StatelessWidget {
       style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
       inputFormatters: [
         filteringTextInputFormatter ??
-            FilteringTextInputFormatter.deny(RegExp(''),),
+            FilteringTextInputFormatter.deny(
+              RegExp(''),
+            ),
       ],
       decoration: InputDecoration(
         errorStyle: const TextStyle(color: kRedColor),
@@ -74,7 +76,7 @@ class CustomTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         fillColor: Colors.blueGrey.withOpacity(0.2),
-        suffixIcon: suffixIcon,
+        suffix: suffixIcon,
         filled: true,
         hintText: hintText,
         counterStyle: TextStyle(

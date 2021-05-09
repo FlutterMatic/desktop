@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/widgets/spinner.dart';
 
 class RectangleButton extends StatelessWidget {
   final double height;
@@ -64,15 +65,8 @@ class RectangleButton extends StatelessWidget {
           padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
           child: Center(
               child: loading
-                  ? Container(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            contentColor ?? Colors.blueGrey),
-                      ),
-                    )
+                  ? SizedBox(
+                      height: 15, width: 15, child: Spinner(thickness: 2))
                   : child),
         ),
       ),
