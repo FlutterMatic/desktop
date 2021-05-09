@@ -49,7 +49,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
       await showDialog(context: context, builder: (_) => ChangeChannelDialog());
     } else if (_commandController.text.isNotEmpty) {
       setState(() => _loading = true);
-      Shell _shell = Shell();
+      Shell _shell = Shell(verbose: false);
       await _shell
           .run('flutter ' + _commandController.text)
           .then((value) => setState(() {

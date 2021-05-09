@@ -81,7 +81,7 @@ class LottieAssets {
 
 class Scripts {
   // Scripts to append path to user env
-  static const String win32PathAdder = 'assets/scripts/path/win32.bat';
+  static const String win32PathAdder = 'assets/scripts/path/win32.vbs';
   static const String macosPathAdder = 'assets/scripts/path/macos.sh';
   static const String linuxPathAdder = 'assets/scripts/path/linux.sh';
 }

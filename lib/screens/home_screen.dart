@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: customTheme.iconTheme.color,
                       ),
                       tooltip: 'DartPad',
-                      onPressed: () => launch('https://www.dartpad.dev/'),
+                      onPressed: () => launch('https://www.dartpad.dev/flutter?null_safety=true'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(

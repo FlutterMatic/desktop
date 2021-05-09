@@ -17,9 +17,8 @@ Future<bool> compareVersion(
 }
 
 Future<void> setPath(String? path) async {
-  // String pathCMD = 'setx path "%PATH%;$path"';
   try {
-    await shell.run('${Scripts.win32PathAdder} ${path!}');
+    await shell.run('${Scripts.win32PathAdder} "${path!}"');
   } catch (e) {
     debugPrint(e.toString());
   }

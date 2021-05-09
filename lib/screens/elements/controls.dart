@@ -167,7 +167,7 @@ Widget controls(BuildContext context) {
                         Expanded(
                           child: RectangleButton(
                             onPressed: () {
-                              Shell _shell = Shell();
+                              Shell _shell = Shell(verbose: false);
                               _shell.run('code .');
                             },
                             child: _controlButton(

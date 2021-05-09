@@ -29,7 +29,7 @@ doc/api/
 ### DartEditor ###
 .project
 .buildlog
-
+*.log
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/

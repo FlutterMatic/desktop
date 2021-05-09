@@ -18,7 +18,7 @@ class Win32Checks {
   late SharedPreferences _pref;
   Future<bool> checkFlutter() async {
     _pref = await SharedPreferences.getInstance();
-    
+
     String? flutterExectutable = await which('flutter');
     if (flutterExectutable != null) {
       if (!_pref.containsKey('flutter_path')) {
@@ -40,7 +40,7 @@ class Win32Checks {
 
   Future<bool> checkJava() async {
     _pref = await SharedPreferences.getInstance();
-    
+
     String? javaExectutable = await which('java');
     if (javaExectutable != null) {
       if (!_pref.containsKey('java_path')) {
@@ -64,7 +64,7 @@ class Win32Checks {
 
   Future<bool> checkVSC() async {
     _pref = await SharedPreferences.getInstance();
-    
+
     String? vsCodeExectutable = await which('code');
     if (vsCodeExectutable != null) {
       if (!_pref.containsKey('vscode_path')) {
@@ -91,7 +91,7 @@ class Win32Checks {
 
   Future<bool> checkVSCInsiders() async {
     _pref = await SharedPreferences.getInstance();
-    
+
     String? vsCodeInsidersExectutable = await which('code-insiders');
     if (vsCodeInsidersExectutable != null) {
       if (!_pref.containsKey('vscode_insiders_path')) {
@@ -112,12 +112,21 @@ class Win32Checks {
 
   Future<bool> checkAndroidStudios() async {
     _pref = await SharedPreferences.getInstance();
-    
     List<ProcessResult> userProfile = await shell.run('echo %localappdata%');
     try {
       List<ProcessResult> appDataStudios = await shell
           .cd('${userProfile[0].stdout.toString().replaceAll(RegExp(r'[/"/\n]'), '').replaceAll('\\', '/').trim()}/JetBrains/')
           .run('dir /b /s /p studio64.exe');
+      List<FileSystemEntity> studioVersion = await Directory(
+              '${userProfile[0].stdout.toString().replaceAll(RegExp(r'[/"/\n]'), '').replaceAll('\\', '/').trim()}/Google/')
+          .list()
+          .toList();
+      androidSVersion = studioVersion.first
+          .toString()
+          .split('/')
+          .last
+          .replaceAll('\'', '')
+          .replaceAll('AndroidStudio', '');
       if (appDataStudios[0].stdout.toString().contains('\\bin\\studio64.exe') &&
           (appDataStudios[0].stdout.toString().contains('Android Studio') ||
               appDataStudios[0].stdout.toString().contains('AndroidStudio'))) {
@@ -132,29 +141,29 @@ class Win32Checks {
               .whenComplete(
             () async {
               studioPath = _pref.getString('android_studio');
-              await setPath(studioPath!
-                  .replaceAll('studio64.exe', '')
-                  .replaceAll('"', ''));
-              // try {
-              //   await shell.run(
-              //       'setx path \"%PATH%;${studioPath!.replaceAll('studio64.exe', '').replaceAll('"', '')}\"');
-              //   // '${Scripts.win32PathAdder} ${studioPath!.replaceAll('studio64.exe', '')}');
-              //   await checkEmulator();
-              // } catch (e) {
-              //   debugPrint(e.toString());
-              // }
+              try {
+                await setPath(studioPath!
+                    .replaceAll('studio64.exe', '')
+                    .replaceAll('"', ''));
+                await _pref.setBool('studio64', true);
+              } catch (e) {
+                debugPrint(e.toString());
+              }
             },
           );
         } else {
           studioPath = _pref.getString('android_studio');
           String? std = await which('studio64');
-          if (std == null) {
-            try {
-              // await shell.run(
-              //     'setx path \"%PATH%;${studioPath!.replaceAll('studio64.exe', '').replaceAll('"', '')}\"');
-              await checkEmulator();
-            } catch (e) {
-              debugPrint(e.toString());
+          if (_pref.getBool('studio64') == false) {
+            if (std == null) {
+              try {
+                await setPath(studioPath!
+                    .replaceAll('studio64.exe', '')
+                    .replaceAll('"', ''));
+                await _pref.setBool('studio64', true);
+              } catch (e) {
+                debugPrint(e.toString());
+              }
             }
           }
         }
@@ -178,24 +187,30 @@ class Win32Checks {
                   .whenComplete(
                 () async {
                   studioPath = _pref.getString('android_studio');
-                  try {
-                    // await shell.run(
-                    //     'setx path \"%PATH%;${studioPath!.replaceAll('studio64.exe', '').replaceAll('"', '')}\"');
-                    await checkEmulator();
-                  } catch (e) {
-                    debugPrint(e.toString());
+                  if (_pref.getBool('studio64') == false) {
+                    try {
+                      await setPath(studioPath!
+                          .replaceAll('studio64.exe', '')
+                          .replaceAll('"', ''));
+                      await _pref.setBool('studio64', true);
+                    } catch (e) {
+                      debugPrint(e.toString());
+                    }
                   }
                 },
               );
             } else {
               studioPath = _pref.getString('android_studio');
-              if (await which('studio64') == null) {
-                try {
-                  // await shell.run(
-                  //     'setx path \"%PATH%;${studioPath!.replaceAll('studio64.exe', '').replaceAll('"', '')}\"');
-                  await checkEmulator();
-                } catch (e) {
-                  debugPrint(e.toString());
+              if (_pref.getBool('studio64') == false) {
+                if (await which('studio64') == null) {
+                  try {
+                    await setPath(studioPath!
+                        .replaceAll('studio64.exe', '')
+                        .replaceAll('"', ''));
+                    await _pref.setBool('studio64', true);
+                  } catch (e) {
+                    debugPrint(e.toString());
+                  }
                 }
               }
             }
@@ -218,7 +233,7 @@ class Win32Checks {
 
   Future<bool> checkEmulator() async {
     _pref = await SharedPreferences.getInstance();
-    
+
     List<ProcessResult> localAppData = await shell.run('echo %localappdata%');
     List<ProcessResult> emulator = await shell
         .cd(localAppData[0].outText.toString())
@@ -237,8 +252,10 @@ class Win32Checks {
           () async {
             emulatorPath = _pref.getString('emulator_path');
             try {
-              // await shell.run(
-              //     'setx path \"%PATH%;${emulatorPath!.replaceAll('emulator.exe', '').replaceAll('"', '')}\"');
+              await setPath(emulatorPath!
+                  .replaceAll('emulator.exe', '')
+                  .replaceAll('"', ''));
+              await _pref.setBool('emulator', true);
             } catch (e) {
               debugPrint(e.toString());
             }
@@ -246,12 +263,17 @@ class Win32Checks {
         );
       } else {
         emulatorPath = _pref.getString('emulator_path');
-        if (await which('emulator') == null) {
-          try {
-            // await shell.run(
-            //     'setx path \"%PATH%;${emulatorPath!.replaceAll('emulator.exe', '').replaceAll('"', '')}\"');
-          } catch (e) {
-            debugPrint(e.toString());
+        String? emu = await which('emulator');
+        if (_pref.getBool('emulator') == false) {
+          if (emu == null) {
+            try {
+              await setPath(emulatorPath!
+                  .replaceAll('emulator.exe', '')
+                  .replaceAll('"', ''));
+              await _pref.setBool('emulator', true);
+            } catch (e) {
+              debugPrint(e.toString());
+            }
           }
         }
       }
