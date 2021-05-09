@@ -1,16 +1,16 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/change_channel.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/flutter_upgrade.dart';
+import 'package:flutter_installer/components/dialog_templates/dialogs/new_project.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/spinner.dart';
 import 'package:flutter_installer/components/widgets/text_field.dart';
 import 'package:flutter_installer/components/widgets/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';
+import 'dart:io';
 
 class RunCommandDialog extends StatefulWidget {
   @override
@@ -23,17 +23,31 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
   // Utils
   bool _loading = false;
   bool _showTypeRequest = false;
+  String? _trimmedCommand;
 
   String? _commandResult;
 
   Future<void> _runCommand() async {
+    _commandController.text = _commandController.text.replaceAll('flutter', '');
     setState(() {
       _commandResult = null;
       _showTypeRequest = false;
+      _trimmedCommand = _commandController.text.replaceAll(' ', '');
     });
-    if (_commandController.text.isNotEmpty) {
-      _commandController.text =
-          _commandController.text.replaceAll('flutter', '');
+    if (_trimmedCommand == 'create.') {
+      Navigator.pop(context);
+      await showDialog(context: context, builder: (_) => NewProjectDialog());
+    } else if (_trimmedCommand == 'upgrade') {
+      Navigator.pop(context);
+      await showDialog(
+          context: context, builder: (_) => UpgradeFlutterDialog());
+    } else if (_trimmedCommand == 'channelmaster' ||
+        _trimmedCommand == 'channelstable' ||
+        _trimmedCommand == 'channeldev' ||
+        _trimmedCommand == 'channelbeta') {
+      Navigator.pop(context);
+      await showDialog(context: context, builder: (_) => ChangeChannelDialog());
+    } else if (_commandController.text.isNotEmpty) {
       setState(() => _loading = true);
       Shell _shell = Shell();
       await _shell
@@ -74,6 +88,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 250),
               child: RoundContainer(
+                width: double.infinity,
                 color: Colors.blueGrey.withOpacity(0.2),
                 child: Scrollbar(
                   child: SelectableText(_commandResult!),
