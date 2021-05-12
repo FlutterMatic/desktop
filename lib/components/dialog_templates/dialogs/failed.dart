@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 
 class FailedDialog extends StatelessWidget {
@@ -17,7 +16,7 @@ class FailedDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          DialogHeader(title: 'Sorry', canClose: false),
+          DialogHeader(title: 'Sorry'),
           const SizedBox(height: 20),
           Text(sorryText, textAlign: TextAlign.center),
           const SizedBox(height: 20),
