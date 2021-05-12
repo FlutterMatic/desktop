@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/utils/constants.dart';
+import 'package:process_run/shell.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 CustomTheme currentTheme = CustomTheme();
@@ -26,6 +28,17 @@ class CustomTheme with ChangeNotifier {
   }
 
   Future<void> loadThemePref() async {
+    path = await Shell(
+            verbose: false, commandVerbose: false, commentVerbose: false)
+        .run('echo %PATH%');
+    if (_pref.containsKey('path')) {
+      String? tempPath = _pref.getString('path');
+      if (tempPath != path![0].stdout) {
+        await _pref.setString('path', path![0].stdout);
+      }
+    } else {
+      await _pref.setString('path', path![0].stdout);
+    }
     if (_pref.containsKey('light_mode')) {
       _isDarkTheme = _pref.getBool('light_mode')!;
     } else {

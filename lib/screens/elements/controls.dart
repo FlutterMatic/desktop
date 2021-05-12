@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/change_channel.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/flutter_upgrade.dart';
@@ -9,8 +11,16 @@ import 'package:flutter_installer/components/widgets/title_section.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
+
+Shell shell = Shell(
+  verbose: false,
+  commandVerbose: false,
+  commentVerbose: false,
+  runInShell: true,
+);
 
 Widget controls(BuildContext context) {
   ThemeData customTheme = Theme.of(context);
@@ -167,7 +177,7 @@ Widget controls(BuildContext context) {
                         Expanded(
                           child: RectangleButton(
                             onPressed: () {
-                              Shell _shell = Shell();
+                              Shell _shell = Shell(verbose: false);
                               _shell.run('code .');
                             },
                             child: _controlButton(
@@ -205,7 +215,18 @@ Widget controls(BuildContext context) {
                       if (emulatorInstalled)
                         Expanded(
                           child: RectangleButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              SharedPreferences _pref =
+                                  await SharedPreferences.getInstance();
+                              List<ProcessResult> avdList = await shell.run(
+                                  '${_pref.getString('emulator_path')!} -list-avds');
+                              log(avdList.outText);
+                              if (avdList.length == 1) {
+                                return shell.run(
+                                    '${_pref.getString('emulator_path')!} -avd ${avdList[0].stdout}');
+                              }
+                              // TODO (ZiyadF296): show the list of devices in an alert box in else statement.
+                            },
                             child: _controlButton(
                                 'Emulator',
                                 Icon(Icons.phone_android,

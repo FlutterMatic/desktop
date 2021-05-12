@@ -153,8 +153,10 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                             FilteringTextInputFormatter.allow(
                           RegExp('[a-zA-Z-_0-9 ]'),
                         ),
-                        onChanged: (val) => setState(() => _projectName =
-                            val.trim().replaceAll(RegExp(r'-| '), '_'),),
+                        onChanged: (val) => setState(
+                          () => _projectName =
+                              val.trim().replaceAll(RegExp(r'-| '), '_'),
+                        ),
                         validator: (val) => val!.isEmpty
                             ? 'Enter project name'
                             : val.length < 3
@@ -209,7 +211,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                         controller: _pDescController,
                         filteringTextInputFormatter:
                             FilteringTextInputFormatter.allow(
-                                RegExp('[a-zA-Z0-9\.\,\\s]'),),
+                          RegExp('[a-zA-Z0-9\.\,\\s]'),
+                        ),
                         numLines: 4,
                         hintText: 'Description',
                         validator: (String? _pDesc) => _pDesc!.isEmpty
@@ -233,7 +236,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                         controller: _pOrgController,
                         filteringTextInputFormatter:
                             FilteringTextInputFormatter.allow(
-                                RegExp('[a-zA-Z\_\.]'),),
+                          RegExp('[a-zA-Z\_\.]'),
+                        ),
                         hintText:
                             'Project Organization (com.example.$_projectName)',
                         validator: (val) => val!.isEmpty
@@ -335,7 +339,11 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 30),
-                const Center(child: CircularProgressIndicator(),),
+                const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                  ),
+                ),
                 const SizedBox(height: 30),
                 const Text(
                     'Creating your new Flutter project. This may take a while.'),

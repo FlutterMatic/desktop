@@ -1,11 +1,16 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/models/flutter_api.dart';
-import 'dart:async';
 
 const String _iconName = 'IconsFont';
+
 StreamSubscription<ConnectivityResult>? subscription;
+List<ProcessResult>? path;
 
 // API data
 String? baseUrl = 'https://storage.googleapis.com/flutter_infra/releases',
@@ -76,7 +81,7 @@ class LottieAssets {
 
 class Scripts {
   // Scripts to append path to user env
-  static const String win32PathAdder = 'assets/scripts/path/win32.bat';
+  static const String win32PathAdder = 'assets/scripts/path/win32.vbs';
   static const String macosPathAdder = 'assets/scripts/path/macos.sh';
   static const String linuxPathAdder = 'assets/scripts/path/linux.sh';
 }

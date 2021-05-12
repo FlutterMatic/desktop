@@ -110,6 +110,7 @@ class _StatusCheckState extends State<StatusCheck> {
       body: Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+          strokeWidth: 3,
         ),
       ),
     );
