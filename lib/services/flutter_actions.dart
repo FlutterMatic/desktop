@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';
@@ -19,9 +20,14 @@ class FlutterActions {
     required bool linux,
     required bool web,
   }) async {
-    await shell.cd(projDir!).run(
-          'flutter create --org=$projOrg --project-name=$projName --description="$projDesc" --platforms=${android ? 'android' : ''}${(android && ios) ? ',' : ''}${ios ? 'ios' : ''}${(ios && windows) ? ',' : ''}${windows ? 'windows' : ''}${(windows && macos) ? ',' : ''}${macos ? 'macos' : ''}${(macos && web) ? ',' : ''}${web ? 'web' : ''}${(web && linux) ? ',' : ''}${linux ? 'linux' : ''} $projName',
-        );
+    try {
+      await shell.cd(projDir!).run(
+        // TODO(ZiyadF296): Fix commas for all type of combinations.
+            'flutter create --org=$projOrg --project-name=$projName --description="$projDesc" --platforms=${android ? 'android' : ''}${(android && ios) ? ',' : ''}${ios ? 'ios' : ''}${(ios && windows) ? ',' : ''}${windows ? 'windows' : ''}${(windows && macos) ? ',' : ''}${macos ? 'macos' : ''}${(macos && web) ? ',' : ''}${(macos && linux) ? ',' : ''}${web ? 'web' : ''}${(web && linux) ? ',' : ''}${linux ? 'linux' : ''} $projName',
+          );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
 //Change channel

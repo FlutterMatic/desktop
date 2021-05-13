@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/dialog_templates/dialogs/change_channel.dart';
@@ -10,7 +12,6 @@ import 'package:flutter_installer/components/widgets/text_field.dart';
 import 'package:flutter_installer/components/widgets/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';
-import 'dart:io';
 
 class RunCommandDialog extends StatefulWidget {
   @override
@@ -19,7 +20,6 @@ class RunCommandDialog extends StatefulWidget {
 
 class _RunCommandDialogState extends State<RunCommandDialog> {
   final TextEditingController _commandController = TextEditingController();
-
   // Utils
   bool _loading = false;
   bool _showTypeRequest = false;
