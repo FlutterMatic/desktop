@@ -34,7 +34,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
       _showTypeRequest = false;
       _trimmedCommand = _commandController.text.replaceAll(' ', '');
     });
-    if (_trimmedCommand == 'create.') {
+    if (_trimmedCommand == 'create.' || _trimmedCommand == 'createapp') {
       Navigator.pop(context);
       await showDialog(context: context, builder: (_) => NewProjectDialog());
     } else if (_trimmedCommand == 'upgrade') {
@@ -56,10 +56,10 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                 _commandResult = value.outText;
               }))
           .catchError((e) {
-        setState(() {
+        setState(() =>
           _commandResult =
-              '"${_commandController.text}" is not recognized as a flutter command. Run help to see all commands. \n\nPlease note you can only run Flutter commands. To run commands other than Flutter commands, use your ${Platform.isMacOS ? 'macOS' : Platform.isWindows ? 'Windows' : 'Linux'} terminal.';
-        });
+              '"${_commandController.text}" is not recognized as a flutter command. Run help to see all commands. \n\nPlease note you can only run Flutter commands. To run commands other than Flutter commands, use your ${Platform.isMacOS ? 'macOS' : Platform.isWindows ? 'Windows' : 'Linux'} terminal.'
+        );
       });
       setState(() => _loading = false);
     } else {
