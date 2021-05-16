@@ -28,7 +28,7 @@ Widget installationStatus(
     {String? tooltip, Function()? onDownload, required BuildContext context}) {
   ThemeData customTheme = Theme.of(context);
   return Padding(
-    padding: const EdgeInsets.only(bottom: 30),
+    padding: const EdgeInsets.only(left: 5),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -40,7 +40,10 @@ Widget installationStatus(
                     ? Assets.warning
                     : Assets.error),
             const SizedBox(width: 15),
-            Text(title, style: const TextStyle(fontSize: 20),),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18),
+            ),
             const Spacer(),
             status != InstallationStatus.done
                 ? SquareButton(
@@ -70,9 +73,12 @@ Widget installationStatus(
                       height: 40,
                     ),
                     const SizedBox(width: 8),
-                    Expanded(child: SelectableText(description),),
+                    Expanded(
+                      child: SelectableText(description),
+                    ),
                   ],
-                ))
+                ),
+              )
             : const SizedBox.shrink(),
       ],
     ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/pref_intro.dart';
+import 'package:flutter_installer/components/dialog_templates/other/pref_intro.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StatusCheck extends StatefulWidget {
-  const StatusCheck({Key? key}) : super(key: key);
+  static String id = 'status_check';
 
   @override
   _StatusCheckState createState() => _StatusCheckState();
@@ -46,7 +46,7 @@ class _StatusCheckState extends State<StatusCheck> {
             context: context,
             builder: (_) => DialogTemplate(
               child: Column(
-                children: [
+                children: <Widget>[
                   DialogHeader(title: 'No Projects Found'),
                   const SizedBox(height: 20),
                   const Text(
@@ -68,8 +68,7 @@ class _StatusCheckState extends State<StatusCheck> {
                   const SizedBox(height: 10),
                   RectangleButton(
                     onPressed: () {
-                      launch(
-                          'https://github.com/FlutterMatic/FlutterMatic-desktop');
+                      launch(GitHubServices.issueUrl);
                       Navigator.pop(context);
                     },
                     width: double.infinity,

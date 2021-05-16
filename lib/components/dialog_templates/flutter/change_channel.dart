@@ -7,6 +7,8 @@ import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/warning_widget.dart';
+import 'package:flutter_installer/screens/home_screen.dart';
+import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -37,7 +39,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
     return DialogTemplate(
       child: _loadingMaterials
           ? Column(
-              children: [
+              children: <Widget>[
                 DialogHeader(title: 'In Progress'),
                 const SizedBox(height: 15),
                 const Text(
@@ -59,7 +61,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 DialogHeader(title: 'Change Channel'),
                 const SizedBox(height: 15),
                 const Text(
@@ -78,7 +80,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                     kYellowColor),
                 const SizedBox(height: 10),
                 Row(
-                  children: [
+                  children: <Widget>[
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: const Padding(
@@ -128,7 +130,7 @@ class AlreadyChannelDialog extends StatelessWidget {
     return DialogTemplate(
       outerTapExit: false,
       child: Column(
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Same Channel', canClose: false),
           const SizedBox(height: 15),
           Text(
@@ -170,13 +172,13 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
         }
         channelIsUpdating = false;
         bgActivities.remove(element);
-        await Navigator.pushNamed(context, PageRoutes.routeState);
+        await Navigator.pushNamed(context, StatusCheck.id);
       }
     }
 
     return DialogTemplate(
       child: Column(
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Change to $channelName'),
           const SizedBox(height: 15),
           const Text(
@@ -195,7 +197,7 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
             highlightColor: Colors.blueGrey.withOpacity(0.5),
             onPressed: () {
               _switchChannel();
-              Navigator.pushNamed(context, PageRoutes.routeHome);
+              Navigator.pushNamed(context, HomeScreen.id);
             },
             child: const Text('Change Channel'),
           ),

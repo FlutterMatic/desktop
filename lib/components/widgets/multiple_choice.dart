@@ -33,8 +33,12 @@ class _MultipleChoiceState extends State<MultipleChoice> {
     List<Widget> _elements = [];
     _elements.clear();
     for (var i = 0; i < widget.options.length; i++) {
-      _elements.add(_circleElement(_value == widget.options[i],
-          widget.options[i], (val) => setState(() => _value = val)));
+      _elements.add(
+        _circleElement(_value == widget.options[i], widget.options[i], (val) {
+          setState(() => _value = val);
+          widget.onChanged(val);
+        }),
+      );
     }
     return Column(children: _elements);
   }
@@ -46,7 +50,7 @@ class _MultipleChoiceState extends State<MultipleChoice> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           RectangleButton(
             color: Colors.transparent,
             hoverColor: Colors.transparent,
@@ -70,10 +74,11 @@ class _MultipleChoiceState extends State<MultipleChoice> {
           ),
           const SizedBox(width: 10),
           Expanded(
-              child: GestureDetector(
-                  onTap: () => onPressed(message),
-                  child: Text(message,
-                      overflow: TextOverflow.ellipsis, maxLines: 2)),),
+            child: GestureDetector(
+                onTap: () => onPressed(message),
+                child: Text(message,
+                    overflow: TextOverflow.ellipsis, maxLines: 2)),
+          ),
         ],
       ),
     );

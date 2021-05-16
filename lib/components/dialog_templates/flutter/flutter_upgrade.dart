@@ -4,6 +4,7 @@ import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/apiServices/api.dart';
 import 'package:flutter_installer/services/other.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
@@ -39,14 +40,14 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
       });
       bgActivities.remove(element);
       if (mounted) {
-        await Navigator.pushNamed(context, PageRoutes.routeState);
+        await Navigator.pushNamed(context, StatusCheck.id);
       }
       if (!_updateResult! && mounted) {
         await showDialog(
           context: context,
           builder: (_) => DialogTemplate(
             child: Column(
-              children: [
+              children: <Widget>[
                 DialogHeader(title: 'Latest Version'),
                 const SizedBox(height: 20),
                 const Text(
@@ -72,7 +73,7 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Upgrade Flutter'),
           const SizedBox(height: 20),
           const Text(

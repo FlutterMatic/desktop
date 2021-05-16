@@ -12,7 +12,7 @@ class SearchProjectsDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Search Projects'),
           const SizedBox(height: 20),
           RoundContainer(
@@ -21,9 +21,11 @@ class SearchProjectsDialog extends StatelessWidget {
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Current Directory',
-                    style: TextStyle(fontWeight: FontWeight.w600),),
+              children: <Widget>[
+                const Text(
+                  'Current Directory',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 10),
                 Text(projDir!),
               ],
@@ -32,7 +34,7 @@ class SearchProjectsDialog extends StatelessWidget {
           const SizedBox(height: 10),
           CustomTextField(
             hintText: 'Search',
-            suffixIcon: Icon(Icons.search_rounded,
+            suffixIcon: Icon(Iconsdata.search,
                 color: customTheme.textTheme.bodyText1!.color),
             onChanged: (val) {},
           ),

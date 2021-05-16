@@ -4,7 +4,7 @@ import 'package:flutter_installer/components/widgets/bullet_point.dart';
 import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/info_widget.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'dart:io'show Platform;
+import 'dart:io' show Platform;
 
 class InstallFlutterDialog extends StatelessWidget {
   @override
@@ -12,7 +12,7 @@ class InstallFlutterDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Install Flutter'),
           const SizedBox(height: 20),
           if (Platform.isWindows)
@@ -45,12 +45,18 @@ class InstallFlutterDialog extends StatelessWidget {
 Widget _windowsTemplate() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('Disk Space', style: TextStyle(fontWeight: FontWeight.w600),),
+    children: <Widget>[
+      const Text(
+        'Disk Space',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint('1.64 GB (does not include disk space for IDE/tools).'),
       const SizedBox(height: 15),
-      const Text('Tools', style: TextStyle(fontWeight: FontWeight.w600),),
+      const Text(
+        'Tools',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint(
           'Flutter depends on these tools being available in your environment.'),
@@ -73,12 +79,18 @@ Widget _windowsTemplate() {
 Widget _macOSTemplate() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('Disk Space', style: TextStyle(fontWeight: FontWeight.w600),),
+    children: <Widget>[
+      const Text(
+        'Disk Space',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint('2.8 GB (does not include disk space for IDE/tools).'),
       const SizedBox(height: 15),
-      const Text('Tools', style: TextStyle(fontWeight: FontWeight.w600),),
+      const Text(
+        'Tools',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint(
           'Flutter uses git for installation and upgrade. We recommend installing Xcode, which includes git, but you can also install git separately.'),
@@ -90,12 +102,18 @@ Widget _macOSTemplate() {
 Widget _linuxTemplate() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('Disk Space', style: TextStyle(fontWeight: FontWeight.w600),),
+    children: <Widget>[
+      const Text(
+        'Disk Space',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint('600 MB (does not include disk space for IDE/tools).'),
       const SizedBox(height: 15),
-      const Text('Tools', style: TextStyle(fontWeight: FontWeight.w600),),
+      const Text(
+        'Tools',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint(
           'Flutter depends on these command-line tools being available in your environment.'),
@@ -104,8 +122,10 @@ Widget _linuxTemplate() {
           'bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils and zip',
           2),
       const SizedBox(height: 15),
-      const Text('Shared libraries',
-          style: TextStyle(fontWeight: FontWeight.w600),),
+      const Text(
+        'Shared libraries',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       const SizedBox(height: 10),
       BulletPoint(
           '"Flutter test" command depends on this library being available in your environment.'),

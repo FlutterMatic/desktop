@@ -12,18 +12,21 @@ class BgActivityButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         const SizedBox(height: 15),
         Row(
-          children: [
-            Expanded(child: Text(title),),
+          children: <Widget>[
+            Expanded(
+              child: Text(title),
+            ),
             const SizedBox(width: 8),
             const SizedBox(
-                height: 15,
-                width: 15,
-                child: Tooltip(
-                    message: 'In progress...',
-                    child: CircularProgressIndicator(strokeWidth: 2)),),
+              height: 15,
+              width: 15,
+              child: Tooltip(
+                  message: 'In progress...',
+                  child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
           ],
         ),
         const SizedBox(height: 15),
@@ -35,4 +38,3 @@ class BgActivityButton extends StatelessWidget {
     );
   }
 }
-

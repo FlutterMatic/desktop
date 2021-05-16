@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/widgets/spinner.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class SquareButton extends StatelessWidget {
@@ -6,15 +7,17 @@ class SquareButton extends StatelessWidget {
   final Widget icon;
   final Function() onPressed;
   final Color? color, hoverColor;
+  final bool loading;
   final String? tooltip;
 
   SquareButton({
+    required this.icon,
+    required this.onPressed,
     this.size = 40,
     this.color = kGreyColor,
     this.hoverColor,
     this.tooltip,
-    required this.icon,
-    required this.onPressed,
+    this.loading = false,
   });
 
   @override
@@ -22,7 +25,10 @@ class SquareButton extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: size, maxWidth: size),
         child: tooltip == null
             ? _button(context)
-            : Tooltip(message: tooltip!, child: _button(context),),
+            : Tooltip(
+                message: tooltip!,
+                child: _button(context),
+              ),
       );
 
   Widget _button(BuildContext context) {
@@ -32,12 +38,12 @@ class SquareButton extends StatelessWidget {
       highlightColor: customTheme.highlightColor,
       splashColor: customTheme.splashColor,
       hoverColor: hoverColor ?? customTheme.buttonColor,
-      onPressed: onPressed,
+      onPressed: loading ? null : onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(size > 40 ? 10 : 5),
       ),
-      color: customTheme.buttonColor,
+      color: color ?? customTheme.buttonColor,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,
@@ -45,11 +51,13 @@ class SquareButton extends StatelessWidget {
       minWidth: size,
       height: size,
       child: Center(
-        child: SizedBox(
-          height: size,
-          width: size,
-          child: icon,
-        ),
+        child: loading
+            ? Spinner(size: 20, thickness: 3)
+            : SizedBox(
+                height: size,
+                width: size,
+                child: icon,
+              ),
       ),
     );
   }

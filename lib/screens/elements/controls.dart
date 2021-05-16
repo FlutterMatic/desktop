@@ -1,9 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/change_channel.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/flutter_upgrade.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/install_fluter.dart';
+import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
+import 'package:flutter_installer/components/dialog_templates/flutter/change_channel.dart';
+import 'package:flutter_installer/components/dialog_templates/flutter/flutter_upgrade.dart';
+import 'package:flutter_installer/components/dialog_templates/flutter/install_flutter.dart';
+import 'package:flutter_installer/components/dialog_templates/other/select_emulator.dart';
+import 'package:flutter_installer/components/widgets/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
@@ -15,45 +16,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 
-Shell shell = Shell(
+Shell _shell = Shell(
   verbose: false,
   commandVerbose: false,
   commentVerbose: false,
   runInShell: true,
 );
 
-Widget controls(BuildContext context) {
-  ThemeData customTheme = Theme.of(context);
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      titleSection('Controls', context),
-      const SizedBox(height: 20),
-      RoundContainer(
-        child: Column(
+class Controls extends StatefulWidget {
+  @override
+  _ControlsState createState() => _ControlsState();
+}
+
+class _ControlsState extends State<Controls> {
+  @override
+  Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        titleSection('Controls', context),
+        const SizedBox(height: 20),
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text(
-                  'Channels & Versions',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                ),
-                const Spacer(),
-                const Icon(Iconsdata.channel),
-              ],
-            ),
-            const SizedBox(height: 20),
             const Text(
               'Software Development Kits',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
             Row(
-              children: [
+              children: <Widget>[
                 //Flutter
                 Expanded(
                   child: ControlResourceTile(
@@ -66,6 +59,9 @@ Widget controls(BuildContext context) {
                       if (flutterInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             radius: BorderRadius.circular(5),
                             onPressed: () => showDialog(
                               context: context,
@@ -84,6 +80,9 @@ Widget controls(BuildContext context) {
                       // Upgrade Flutter
                       Expanded(
                         child: RectangleButton(
+                          color: currentTheme.isDarkTheme
+                              ? null
+                              : Colors.grey.withOpacity(0.4),
                           onPressed: () => showDialog(
                             context: context,
                             builder: (_) => flutterInstalled
@@ -113,6 +112,9 @@ Widget controls(BuildContext context) {
                       if (!javaInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () {},
                             child: _controlButton(
                                 'Install',
@@ -127,6 +129,9 @@ Widget controls(BuildContext context) {
                       if (javaInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () =>
                                 launch('https://docs.oracle.com/en/java/'),
                             child: _controlButton(
@@ -150,7 +155,7 @@ Widget controls(BuildContext context) {
             ),
             const SizedBox(height: 10),
             Row(
-              children: [
+              children: <Widget>[
                 //VSCode
                 Expanded(
                   child: ControlResourceTile(
@@ -161,6 +166,9 @@ Widget controls(BuildContext context) {
                       if (!vscInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () => launch(
                                 'https://code.visualstudio.com/Download'),
                             child: _controlButton(
@@ -176,6 +184,9 @@ Widget controls(BuildContext context) {
                       if (vscInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () {
                               Shell _shell = Shell(verbose: false);
                               _shell.run('code .');
@@ -192,6 +203,9 @@ Widget controls(BuildContext context) {
                       const SizedBox(width: 8),
                       // VS Code Docs
                       SquareButton(
+                        color: currentTheme.isDarkTheme
+                            ? null
+                            : Colors.grey.withOpacity(0.4),
                         icon: Icon(
                           Icons.book_rounded,
                           color: customTheme.textTheme.bodyText1!.color,
@@ -215,17 +229,39 @@ Widget controls(BuildContext context) {
                       if (emulatorInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () async {
                               SharedPreferences _pref =
                                   await SharedPreferences.getInstance();
-                              List<ProcessResult> avdList = await shell.run(
+                              List<ProcessResult> avdList = await _shell.run(
                                   '${_pref.getString('emulator_path')!} -list-avds');
-                              log(avdList.outText);
-                              if (avdList.length == 1) {
-                                return shell.run(
+                              if (avdList.length < 2) {
+                                await _shell.run(
                                     '${_pref.getString('emulator_path')!} -avd ${avdList[0].stdout}');
+                              } else if (avdList.length > 1) {
+                                await showDialog(
+                                    context: context,
+                                    builder: (_) => SelectEmulatorDialog());
+                              } else {
+                                await showDialog(
+                                  context: context,
+                                  builder: (_) => DialogTemplate(
+                                    child: Column(
+                                      children: [
+                                        DialogHeader(
+                                            title: 'Couldn\'t Open Emulator'),
+                                        const SizedBox(height: 20),
+                                        const Text(
+                                          'For some reason, we couldn\'t open your emulators. Please try again. If you continue to get this error, please report an issue,',
+                                        ),
+                                        const SizedBox(height: 20),
+                                      ],
+                                    ),
+                                  ),
+                                );
                               }
-                              // TODO (ZiyadF296): show the list of devices in an alert box in else statement.
                             },
                             child: _controlButton(
                                 'Emulator',
@@ -236,12 +272,16 @@ Widget controls(BuildContext context) {
                                 context),
                           ),
                         ),
-                      if (!studioInstalled && emulatorInstalled)
+                      if ((!studioInstalled || studioInstalled) &&
+                          emulatorInstalled)
                         const SizedBox(width: 8),
                       // Install Android Studio
                       if (!studioInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () =>
                                 launch('https://developer.android.com/studio/'),
                             child: _controlButton(
@@ -261,6 +301,9 @@ Widget controls(BuildContext context) {
                       if (studioInstalled && !emulatorInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () {},
                             child: _controlButton(
                                 'Emulator',
@@ -279,6 +322,9 @@ Widget controls(BuildContext context) {
                       if (studioInstalled)
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () => launch('studio64'),
                             child: _controlButton(
                                 'Open',
@@ -302,6 +348,9 @@ Widget controls(BuildContext context) {
                       [
                         Expanded(
                           child: RectangleButton(
+                            color: currentTheme.isDarkTheme
+                                ? null
+                                : Colors.grey.withOpacity(0.4),
                             onPressed: () {},
                             child: _controlButton('Open', null, context),
                           ),
@@ -313,9 +362,9 @@ Widget controls(BuildContext context) {
             ),
           ],
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }
 
 class ControlResourceTile extends StatelessWidget {
@@ -331,9 +380,9 @@ class ControlResourceTile extends StatelessWidget {
     return RoundContainer(
       radius: 5,
       color: currentTheme.isDarkTheme
-          ? Colors.black.withOpacity(0.1)
-          : Colors.white,
-      height: 150,
+          ? customTheme.primaryColorLight
+          : Colors.grey.withOpacity(0.3),
+      height: 160,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

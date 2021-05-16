@@ -120,7 +120,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           DialogHeader(
             leading: _index != 0 && _index != 4
                 ? SquareButton(
@@ -139,12 +139,12 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           Form(
             key: _createProjectFormKey,
             child: Column(
-              children: [
+              children: <Widget>[
                 //Index 0
                 if (_index == 0)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       CustomTextField(
                         controller: _pNameController,
                         autofocus: true,
@@ -206,7 +206,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 if (_index == 1)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       CustomTextField(
                         controller: _pDescController,
                         filteringTextInputFormatter:
@@ -231,7 +231,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 if (_index == 2)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       CustomTextField(
                         controller: _pOrgController,
                         filteringTextInputFormatter:
@@ -291,7 +291,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           if (_index == 3)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 const Text(
                     'Choose which enviroments you want to enable for your new Flutter project.'),
                 const SizedBox(height: 10),
@@ -337,7 +337,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 const SizedBox(height: 30),
                 const Center(
                   child: CircularProgressIndicator(
@@ -352,7 +352,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           const SizedBox(height: 10),
           if (_index != 4)
             Row(
-              children: [
+              children: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Padding(
@@ -386,7 +386,7 @@ class CreateProjectErrorDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Unable to Create Project'),
           const SizedBox(height: 20),
           const Text(
@@ -421,7 +421,7 @@ class ProjectCreatedDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Project Created'),
           const SizedBox(height: 20),
           const Text(

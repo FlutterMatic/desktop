@@ -8,10 +8,12 @@ Widget infoWidget(String text) {
       color: Colors.blueGrey.withOpacity(0.2),
       radius: 5,
       child: Row(
-        children: [
+        children: <Widget>[
           const Icon(Icons.info),
           const SizedBox(width: 8),
-          Expanded(child: Text(text),),
+          Expanded(
+            child: Text(text),
+          ),
         ],
       ),
     ),

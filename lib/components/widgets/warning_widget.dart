@@ -10,7 +10,7 @@ Widget warningWidget(String text, String asset, Color color) {
       borderColor: color,
       radius: 5,
       child: Row(
-        children: [
+        children: <Widget>[
           SvgPicture.asset(asset, height: 20),
           const SizedBox(width: 8),
           Expanded(

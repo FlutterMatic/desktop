@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/run_command.dart';
-import 'package:flutter_installer/components/dialog_templates/dialogs/bg_activity.dart';
+import 'package:flutter_installer/components/dialog_templates/other/bg_activity.dart';
+import 'package:flutter_installer/components/dialog_templates/flutter/run_command.dart';
+import 'package:flutter_installer/components/dialog_templates/other/status.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
 import 'package:flutter_installer/components/widgets/round_container.dart';
 import 'package:flutter_installer/components/widgets/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
 import 'package:flutter_installer/utils/constants.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'elements/controls.dart';
-import 'elements/installed.dart';
 
 class HomeScreen extends StatefulWidget {
+  static String id = 'home_page';
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 FlutterLogoStyle _flutterLogoStyle = FlutterLogoStyle.markOnly;
-
-String _pageName = 'home';
 
 class _HomeScreenState extends State<HomeScreen> {
   bool dark = false;
@@ -38,216 +36,157 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scrollbar(
       child: Scaffold(
         body: Stack(
-          children: [
-            Center(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      (MediaQuery.of(context).size.width > 500 ? 20 : 10),
-                      30,
-                      (MediaQuery.of(context).size.width > 500 ? 20 : 10),
-                      60),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 50,
-                        child: FlutterLogo(
-                            style: _flutterLogoStyle,
-                            size: 100,
-                            textColor: customTheme.textTheme.bodyText1!.color!),
-                      ),
-                      const SizedBox(height: 20),
-                      // Installed Components
-                      MediaQuery.of(context).size.width > 1100
-                          ? Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                //Installed Components
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      installedComponents(context),
-                                      controls(context),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 100),
-                                //Controls
-                                projects(context),
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                //Installed Components
-                                installedComponents(context),
-                                const SizedBox(height: 30),
-                                //Controls
-                                controls(context),
-                                const SizedBox(height: 30),
-                                projects(context),
-                              ],
-                            ),
-                    ],
+          children: <Widget>[
+            Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: 1300,
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        (MediaQuery.of(context).size.width > 500 ? 20 : 10),
+                        30,
+                        (MediaQuery.of(context).size.width > 500 ? 20 : 10),
+                        60),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 50,
+                          child: FlutterLogo(
+                              style: _flutterLogoStyle,
+                              size: 100,
+                              textColor:
+                                  customTheme.textTheme.bodyText1!.color!),
+                        ),
+                        const SizedBox(height: 20),
+                        // Installed Components
+                        MediaQuery.of(context).size.width > 1100
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  // Controls
+                                  Expanded(child: Controls()),
+                                  const SizedBox(width: 20),
+                                  // Projects
+                                  Expanded(child: Projects()),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  // Controls
+                                  Controls(),
+                                  const SizedBox(height: 30),
+                                  // Projects
+                                  Projects(),
+                                ],
+                              ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            //Footer
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(
-                        Iconsdata.github,
-                        color: customTheme.iconTheme.color,
-                      ),
-                      tooltip: 'GitHub',
-                      onPressed: () => launch(
-                          'https://github.com/FlutterMatic/FlutterMatic-desktop'),
-                    ),
-                    const SizedBox(width: 5),
-                    SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(
-                        Iconsdata.twitter,
-                        color: customTheme.iconTheme.color,
-                      ),
-                      tooltip: 'Twitter',
-                      onPressed: () =>
-                          launch('https://twitter.com/FlutterMatic'),
-                    ),
-                    const SizedBox(width: 5),
-                    SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(
-                        Iconsdata.dartpad,
-                        color: customTheme.iconTheme.color,
-                      ),
-                      tooltip: 'DartPad',
-                      onPressed: () => launch(
-                          'https://www.dartpad.dev/flutter?null_safety=true'),
-                    ),
-                    const SizedBox(width: 5),
-                    SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(
-                        Iconsdata.docs,
-                        color: customTheme.iconTheme.color,
-                      ),
-                      tooltip: 'Docs',
-                      onPressed: () => launch('https://flutter.dev/docs'),
-                    ),
-                    const SizedBox(width: 5),
-                    SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(
-                        Iconsdata.info,
-                        color: customTheme.iconTheme.color,
-                      ),
-                      tooltip: 'About',
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SquareButton(
-                      color: customTheme.primaryColorLight,
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => BgActivityDialog(),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.sync_alt_rounded,
-                        color: customTheme.textTheme.bodyText1!.color,
-                      ),
-                    ),
-                  ),
-                  bgActivities.isNotEmpty
-                      ? Align(
-                          alignment: Alignment.topRight,
-                          child: RoundContainer(
-                            height: 15,
-                            width: 15,
-                            color: Colors.blueGrey,
-                            radius: 100,
-                            padding: EdgeInsets.zero,
-                            child: const SizedBox.shrink(),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 15, 5, 15),
-                    child: SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(Icons.play_arrow_rounded,
-                          color: customTheme.iconTheme.color),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => RunCommandDialog(),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(5, 15, 15, 15),
-                    child: SquareButton(
-                      color: customTheme.primaryColorLight,
-                      icon: Icon(Icons.settings,
-                          color: customTheme.iconTheme.color),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => SettingDialog(),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _bottomLeft(), // Bg activity
+            _bottomRight(), // Settings, run, etc
           ],
         ),
       ),
     );
   }
 
-  Widget menuTab() {
-    return Container(
-      // color: customTheme.bannerTheme.backgroundColor,
-      width: 300,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [],
+  Widget _bottomLeft() {
+    ThemeData customTheme = Theme.of(context);
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Stack(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: SquareButton(
+              color: customTheme.primaryColorLight,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => BgActivityDialog(),
+                );
+              },
+              icon: Icon(
+                Icons.sync_alt_rounded,
+                color: customTheme.textTheme.bodyText1!.color,
+              ),
+            ),
+          ),
+          bgActivities.isNotEmpty
+              ? Align(
+                  alignment: Alignment.topRight,
+                  child: RoundContainer(
+                    height: 15,
+                    width: 15,
+                    color: Colors.blueGrey,
+                    radius: 100,
+                    padding: EdgeInsets.zero,
+                    child: const SizedBox.shrink(),
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomRight() {
+    ThemeData customTheme = Theme.of(context);
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(5, 15, 5, 15),
+            child: SquareButton(
+              color: customTheme.primaryColorLight,
+              icon: Icon(Icons.play_arrow_rounded,
+                  color: customTheme.iconTheme.color),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => RunCommandDialog(),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(5, 15, 5, 15),
+            child: SquareButton(
+              color: customTheme.primaryColorLight,
+              icon: Icon(Iconsdata.chart, color: customTheme.iconTheme.color),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => StatusDialog(),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(5, 15, 15, 15),
+            child: SquareButton(
+              color: customTheme.primaryColorLight,
+              icon: Icon(Icons.settings, color: customTheme.iconTheme.color),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => SettingDialog(),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

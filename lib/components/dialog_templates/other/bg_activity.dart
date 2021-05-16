@@ -38,7 +38,7 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Background Activity'),
           const SizedBox(height: 30),
           const Text(

@@ -38,7 +38,7 @@ class _SelectTileState extends State<SelectTile> {
     ThemeData customTheme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         //Shows options
         Column(
           children: widget.options
@@ -80,7 +80,7 @@ Widget _selectTile(dynamic leading, Function onPressed, bool selected,
     height: 50,
     padding: EdgeInsets.zero,
     child: Row(
-      children: [
+      children: <Widget>[
         const SizedBox(width: 10),
         Container(
           height: 15,

@@ -1,5 +1,5 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/models/flutter_api.dart';
 import 'dart:async';
@@ -103,13 +103,6 @@ class Assets {
   static const String xcode = '$ideIcons/xcode.svg';
 }
 
-class PageRoutes {
-  static const String routeSplash = '/';
-  static const String routeInstallScreen = '/installScreen';
-  static const String routeState = '/statesCheck';
-  static const String routeHome = '/home';
-}
-
 class Iconsdata {
   static const IconData browser = IconData(0xebb7, fontFamily: _iconName);
   static const IconData download = IconData(0xea96, fontFamily: _iconName);
@@ -123,7 +116,9 @@ class Iconsdata {
   static const IconData docs = IconData(0xeb67, fontFamily: _iconName);
   static const IconData dartpad = IconData(0xeb0f, fontFamily: _iconName);
   static const IconData sun = IconData(0xeb30, fontFamily: _iconName);
+  static const IconData terminal = IconData(0xebef, fontFamily: _iconName);
   static const IconData moon = IconData(0xece7, fontFamily: _iconName);
+  static const IconData chart = IconData(0xea59, fontFamily: _iconName);
   static const IconData folder = IconData(0xeaad, fontFamily: _iconName);
   static const IconData search = IconData(0xeb1c, fontFamily: _iconName);
   static const IconData delete = IconData(0xeb41, fontFamily: _iconName);
@@ -140,12 +135,21 @@ const Color kDarkColor = Color(0xff2F2F2F);
 
 // API Links
 class APILinks {
-  static String flutterAPIBaseURL =
+  static final String flutterAPIBaseURL =
       'https://storage.googleapis.com/flutter_infra/releases';
-  static Uri win32RelaseEndpoint =
+  static final Uri win32RelaseEndpoint =
       Uri.parse('$flutterAPIBaseURL/releases_windows.json');
-  static Uri macRelaseEndpoint =
+  static final Uri macRelaseEndpoint =
       Uri.parse('$flutterAPIBaseURL/releases_macos.json');
-  static Uri linuxRelaseEndpoint =
+  static final Uri linuxRelaseEndpoint =
       Uri.parse('$flutterAPIBaseURL/releases_linux.json');
+}
+
+// GitHub Services
+class GitHubServices {
+  static final String _githubBaseUrl =
+      'https://github.com/FlutterMatic/FlutterMatic-desktop';
+  static final String issueUrl = '$_githubBaseUrl/issues';
+  static final String pr = '$_githubBaseUrl/pulls';
+  static final String repUrl = _githubBaseUrl;
 }

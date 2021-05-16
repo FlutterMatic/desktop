@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter_installer/screens/about.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/themes.dart';
@@ -67,10 +68,11 @@ class _FlutterMainState extends State<FlutterMain> {
       darkTheme: CustomTheme.darkTheme,
       themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: PageRoutes.routeState,
-      routes: <String, WidgetBuilder>{
-        PageRoutes.routeState: (BuildContext context) => const StatusCheck(),
-        PageRoutes.routeHome: (BuildContext context) => HomeScreen(),
+      initialRoute: StatusCheck.id,
+      routes: {
+        StatusCheck.id: (context) => StatusCheck(),
+        HomeScreen.id: (context) => HomeScreen(),
+        FlutterMaticAbout.id: (context) => FlutterMaticAbout(),
       },
     );
   }

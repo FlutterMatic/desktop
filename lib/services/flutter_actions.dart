@@ -1,14 +1,14 @@
-import 'dart:developer';
-import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 
 FlutterActions flutterActions = FlutterActions();
 
 class FlutterActions {
-  Shell shell = Shell(verbose: false);
-  //Create project
+  final Shell _shell = Shell(verbose: false);
+  // Create project
   Future<void> flutterCreate(
     String projName,
     String projDesc,
@@ -21,30 +21,29 @@ class FlutterActions {
     required bool web,
   }) async {
     try {
-      await shell.cd(projDir!).run(
-        // TODO(ZiyadF296): Fix commas for all type of combinations.
-            'flutter create --org=$projOrg --project-name=$projName --description="$projDesc" --platforms=${android ? 'android' : ''}${(android && ios) ? ',' : ''}${ios ? 'ios' : ''}${(ios && windows) ? ',' : ''}${windows ? 'windows' : ''}${(windows && macos) ? ',' : ''}${macos ? 'macos' : ''}${(macos && web) ? ',' : ''}${(macos && linux) ? ',' : ''}${web ? 'web' : ''}${(web && linux) ? ',' : ''}${linux ? 'linux' : ''} $projName',
+      await _shell.cd(projDir!).run(
+            'flutter create --org=$projOrg --project-name=$projName --description="$projDesc" --platforms=${android ? 'android' : ''}${(android && ios) ? ',' : ''}${ios ? 'ios' : ''}${(ios && windows) ? ',' : ''}${windows ? 'windows' : ''}${(windows && macos) ? ',' : ''}${macos ? 'macos' : ''}${(macos && web) ? ',' : ''}${web ? 'web' : ''}${(web && linux) ? ',' : ''}${linux ? 'linux' : ''} $projName',
           );
     } catch (e) {
-      log(e.toString());
+      debugPrint(e.toString());
     }
   }
 
-//Change channel
+  // Change channel
   Future<void> changeChannel(String channel) async {
     List<ProcessResult> channelSwap =
-        await shell.run('flutter channel $channel');
+        await _shell.run('flutter channel $channel');
     if (!channelSwap[0].stderr.toString().contains('Already on \'$channel\'')) {
       await upgrade();
     }
   }
 
-//Upgrade Channel
+  // Upgrade Channel
   Future<bool> upgrade() async {
     try {
-      await shell
+      await _shell
           .run('flutter upgrade')
-          .whenComplete(() => shell.run('flutter doctor'));
+          .whenComplete(() => _shell.run('flutter doctor'));
       return true;
     } catch (_) {
       return false;

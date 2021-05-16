@@ -46,12 +46,13 @@ Widget _buttonListTile(Function onPressed, String title, Color color, int index,
     color: color,
     padding: const EdgeInsets.symmetric(horizontal: 15),
     child: Row(
-      children: [
+      children: <Widget>[
         Expanded(
-            child: Text(
-          title,
-          style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-        ),),
+          child: Text(
+            title,
+            style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+          ),
+        ),
         Icon(
           Icons.arrow_forward_ios_rounded,
           size: 15,

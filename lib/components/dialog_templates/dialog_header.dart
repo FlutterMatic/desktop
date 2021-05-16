@@ -19,11 +19,14 @@ class DialogHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+      children: <Widget>[
         leading ?? const SizedBox(width: 40),
         Expanded(
           child: Center(
-            child: Text(title, style: const TextStyle(fontSize: 20),),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 20),
+            ),
           ),
         ),
         canClose!

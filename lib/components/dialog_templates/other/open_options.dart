@@ -25,9 +25,9 @@ class OpenOptionsDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               PopupMenuButton(
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
@@ -47,7 +47,7 @@ class OpenOptionsDialog extends StatelessWidget {
                         );
                       },
                       child: Row(
-                        children: [
+                        children: <Widget>[
                           Text(
                             'Delete',
                             style: TextStyle(
@@ -77,7 +77,7 @@ class OpenOptionsDialog extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: RectangleButton(
                   onPressed: () async {
@@ -96,7 +96,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   height: 100,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       const Expanded(
                         child: Icon(Icons.folder_open, color: Colors.blueGrey),
                       ),
@@ -123,7 +123,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   height: 100,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       const Expanded(
                         child: Icon(Icons.code_rounded, color: Colors.blueGrey),
                       ),
@@ -148,7 +148,7 @@ class OpenOptionsDialog extends StatelessWidget {
                         context: context,
                         builder: (_) => DialogTemplate(
                           child: Column(
-                            children: [
+                            children: <Widget>[
                               DialogHeader(title: 'Couldn\'t Open'),
                               const SizedBox(height: 20),
                               Text(
@@ -182,7 +182,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   width: double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       const Expanded(
                         child: Icon(Icons.file_present, color: Colors.blueGrey),
                       ),
@@ -222,7 +222,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Confirm Delete'),
           const SizedBox(height: 20),
           const Text(
@@ -267,7 +267,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                     builder: (_) => DialogTemplate(
                       outerTapExit: false,
                       child: Column(
-                        children: [
+                        children: <Widget>[
                           DialogHeader(title: 'File Deleted', canClose: false),
                           const SizedBox(height: 20),
                           const Text('Your project has been deleted.'),
@@ -301,7 +301,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                   builder: (_) => DialogTemplate(
                     outerTapExit: false,
                     child: Column(
-                      children: [
+                      children: <Widget>[
                         DialogHeader(
                             title: 'Failed to delete', canClose: false),
                         const SizedBox(height: 20),
@@ -347,7 +347,7 @@ class ProjectDeletedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return DialogTemplate(
       child: Column(
-        children: [
+        children: <Widget>[
           DialogHeader(title: 'Project Deleted'),
           const SizedBox(height: 20),
           SvgPicture.asset(Assets.done),

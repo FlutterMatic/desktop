@@ -30,7 +30,7 @@ class DialogTemplate extends StatelessWidget {
           child: SafeArea(
             child: Container(
               constraints: BoxConstraints(maxWidth: width ?? 500),
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: SingleChildScrollView(
                 child: GestureDetector(
                   onTap: () {},
@@ -51,7 +51,7 @@ class DialogTemplate extends StatelessWidget {
 Widget popUpTextTemplate(String title, String description) {
   return SingleChildScrollView(
     child: Column(
-      children: [
+      children: <Widget>[
         //Title
         SelectableText(
           title,

@@ -19,12 +19,14 @@ class CheckBoxElement extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
-        children: [
+        children: <Widget>[
           Container(
             width: 30,
             height: 30,
             child: Checkbox(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               value: value,
+              tristate: disable,
               onChanged: disable ? null : onChanged,
               splashRadius: 0,
               activeColor: Colors.blueGrey,
@@ -32,11 +34,9 @@ class CheckBoxElement extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 3),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => onChanged(value),
-              child: Text(text ?? ''),
-            ),
+          GestureDetector(
+            onTap: disable ? null : () => onChanged(!value),
+            child: Text(text ?? ''),
           ),
         ],
       ),

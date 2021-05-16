@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/services/other.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -8,6 +5,8 @@ import 'package:process_run/cmd_run.dart';
 import 'package:process_run/which.dart';
 import 'package:process_run/shell_run.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
+import 'dart:io';
 
 class Win32Checks {
   Shell shell = Shell(
@@ -19,7 +18,7 @@ class Win32Checks {
   late SharedPreferences _pref;
   Future<bool> checkFlutter() async {
     _pref = await SharedPreferences.getInstance();
-    log('Flutter checking');
+    debugPrint('Flutter checking');
     String? flutterExectutable = await which('flutter');
     if (flutterExectutable != null) {
       if (!_pref.containsKey('flutter_path')) {
@@ -33,17 +32,17 @@ class Win32Checks {
       ProcessResult result = await runCmd(cmd);
       flutterVersion = result.stdout.split(' ')[1].toString();
       flutterChannel = result.stdout.split(' ')[4].toString();
-      log('Flutter checking Done');
+      debugPrint('Flutter checking Done');
       return true;
     } else {
-      log('Flutter checking Done');
+      debugPrint('Flutter checking Done');
       return false;
     }
   }
 
   Future<bool> checkJava() async {
     _pref = await SharedPreferences.getInstance();
-    log('Java checking');
+    debugPrint('Java checking');
 
     String? javaExectutable = await which('java');
     if (javaExectutable != null) {
@@ -60,17 +59,17 @@ class Win32Checks {
           .split(' ')[2]
           .toString()
           .replaceAll('"', '');
-      log('Java checking Done');
+      debugPrint('Java checking Done');
       return true;
     } else {
-      log('Java checking Done');
+      debugPrint('Java checking Done');
       return false;
     }
   }
 
   Future<bool> checkVSC() async {
     _pref = await SharedPreferences.getInstance();
-    log('VSC checking ');
+    debugPrint('VSC checking ');
 
     String? vsCodeExectutable = await which('code');
     if (vsCodeExectutable != null) {
@@ -90,10 +89,10 @@ class Win32Checks {
       ProcessCmd cmd = ProcessCmd('code', ['--version']);
       ProcessResult result = await runCmd(cmd);
       vscodeVersion = result.stdout.split(RegExp(r'[/\n]'))[0].toString();
-      log('VSC checking Done');
+      debugPrint('VSC checking Done');
       return true;
     } else {
-      log('VSC checking Done');
+      debugPrint('VSC checking Done');
       return false;
     }
   }
@@ -120,7 +119,7 @@ class Win32Checks {
   }
 
   Future<bool> checkAndroidStudios() async {
-    log('AS checking ');
+    debugPrint('AS checking ');
     _pref = await SharedPreferences.getInstance();
     List<ProcessResult> userProfile = await shell.run('echo %localappdata%');
     try {
@@ -177,10 +176,10 @@ class Win32Checks {
             }
           }
         }
-        log('AS checking Done');
+        debugPrint('AS checking Done');
         return true;
       } else {
-        log('AS checking Done');
+        debugPrint('AS checking Done');
         return false;
       }
     } on ShellException catch (err) {
@@ -226,32 +225,32 @@ class Win32Checks {
                 }
               }
             }
-            log('AS checking Done');
+            debugPrint('AS checking Done');
             return true;
           } else {
-            log('AS checking Done');
+            debugPrint('AS checking Done');
             return false;
           }
         } on ShellException catch (_) {
-          log('AS checking Done');
+          debugPrint('AS checking Done');
           return false;
         } catch (e) {
-          log('AS checking Done');
+          debugPrint('AS checking Done');
           return false;
         }
       } else {
-        log('AS checking Done');
+        debugPrint('AS checking Done');
         return false;
       }
     } catch (e) {
-      log('AS checking Done');
+      debugPrint('AS checking Done');
       return false;
     }
   }
 
   Future<bool> checkEmulator() async {
     _pref = await SharedPreferences.getInstance();
-    log('Emulator checking');
+    debugPrint('Emulator checking');
 
     List<ProcessResult> localAppData = await shell.run('echo %localappdata%');
     List<ProcessResult> emulator = await shell
@@ -296,10 +295,10 @@ class Win32Checks {
           }
         }
       }
-      log('Emulator checking Done');
+      debugPrint('Emulator checking Done');
       return true;
     } else {
-      log('Emulator checking Done');
+      debugPrint('Emulator checking Done');
       return false;
     }
   }

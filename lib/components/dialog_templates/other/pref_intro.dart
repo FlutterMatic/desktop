@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_chooser/file_chooser.dart' show showOpenPanel;
 import 'package:file_chooser/src/result.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +35,8 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
       outerTapExit: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
+          const SizedBox(height: 5),
           DialogHeader(title: 'Welcome to Flutter Installer!', canClose: false),
           const SizedBox(height: 15),
           const Text(
@@ -49,7 +51,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
           ),
           const SizedBox(height: 10),
           Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: RectangleButton(
                   hoverColor: const Color(0xFF22272E),
@@ -61,7 +63,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                     if (!currentTheme.isDarkTheme) currentTheme.toggleTheme();
                   },
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       if (currentTheme.isDarkTheme)
                         const Expanded(
                           child: Icon(Icons.check_circle_rounded,
@@ -89,7 +91,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                     if (currentTheme.isDarkTheme) currentTheme.toggleTheme();
                   },
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       if (!currentTheme.isDarkTheme)
                         const Expanded(
                           child: Icon(
@@ -123,9 +125,23 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
             radius: 5,
             color: Colors.blueGrey.withOpacity(0.2),
             child: Row(
-              children: [
-                const Expanded(
-                  child: Text('Where do you want us to find your projects?'),
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Where do you want us to find your projects?'),
+                      if (_dirPath != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            _dirPath!,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 8),
                 RectangleButton(
@@ -180,7 +196,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 emulatorInstalled = await checkDependencies.checkEmulator();
                 await flutterActions.checkProjects();
                 await Navigator.pushNamedAndRemoveUntil(
-                    context, PageRoutes.routeHome, (route) => false);
+                    context, HomeScreen.id, (route) => false);
               }
             },
             width: double.infinity,
