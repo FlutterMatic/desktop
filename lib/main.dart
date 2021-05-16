@@ -1,12 +1,25 @@
-import 'dart:io';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'dart:io';
+
+Future<void> main() async {
+  await currentTheme.initSharedPref();
+  await currentTheme.loadThemePref();
+  await checkPlatform();
+  runApp(FlutterMain());
+  doWhenWindowReady(() {
+    appWindow.minSize = const Size(600, 500);
+    appWindow.alignment = Alignment.center;
+    appWindow.title = 'Flutter Installer';
+    appWindow.show();
+    appWindow.maximize();
+  });
+}
 
 Future<void> checkPlatform() async {
   if (Platform.isWindows) {
@@ -18,26 +31,12 @@ Future<void> checkPlatform() async {
   }
 }
 
-Future<void> main() async {
-  await currentTheme.initSharedPref();
-  await currentTheme.loadThemePref();
-  await checkPlatform();
-  runApp(MyApp());
-  doWhenWindowReady(() {
-    appWindow.minSize = const Size(600, 500);
-    appWindow.alignment = Alignment.center;
-    appWindow.title = 'Flutter Installer';
-    appWindow.show();
-    appWindow.maximize();
-  });
-}
-
-class MyApp extends StatefulWidget {
+class FlutterMain extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _FlutterMainState createState() => _FlutterMainState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _FlutterMainState extends State<FlutterMain> {
   @override
   void initState() {
     currentTheme.addListener(() => setState(() {}));

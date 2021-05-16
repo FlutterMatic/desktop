@@ -1,11 +1,9 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_installer/components/widgets/activity_button.dart';
 import 'package:flutter_installer/models/flutter_api.dart';
+import 'dart:async';
+import 'dart:io';
 
 const String _iconName = 'IconsFont';
 
@@ -142,7 +140,7 @@ const Color kDarkColor = Color(0xff2F2F2F);
 
 // API Links
 class APILinks {
-  static const String flutterAPIBaseURL =
+  static String flutterAPIBaseURL =
       'https://storage.googleapis.com/flutter_infra/releases';
   static Uri win32RelaseEndpoint =
       Uri.parse('$flutterAPIBaseURL/releases_windows.json');

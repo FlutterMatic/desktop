@@ -17,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 FlutterLogoStyle _flutterLogoStyle = FlutterLogoStyle.markOnly;
 
+String _pageName = 'home';
+
 class _HomeScreenState extends State<HomeScreen> {
   bool dark = false;
   Future<void> _animateFlutterLogo() async {
@@ -134,7 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: customTheme.iconTheme.color,
                       ),
                       tooltip: 'DartPad',
-                      onPressed: () => launch('https://www.dartpad.dev/flutter?null_safety=true'),
+                      onPressed: () => launch(
+                          'https://www.dartpad.dev/flutter?null_safety=true'),
                     ),
                     const SizedBox(width: 5),
                     SquareButton(
@@ -234,6 +237,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget menuTab() {
+    return Container(
+      // color: customTheme.bannerTheme.backgroundColor,
+      width: 300,
+      height: MediaQuery.of(context).size.height,
+      child: Column(
+        children: [],
       ),
     );
   }
