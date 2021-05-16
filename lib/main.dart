@@ -61,6 +61,7 @@ class _FlutterMainState extends State<FlutterMain> {
   @override
   Widget build(BuildContext context) {
     // TODO(yahu1031): Add providers on top of MyApp()
+    // TODO(yahu1031): Add Scrcpy to share the device screen and mention
     return MaterialApp(
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.darkTheme,
