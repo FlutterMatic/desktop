@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/dialog_templates/other/pref_intro.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/services/checks/win32Checks.dart';
-import 'package:flutter_installer/services/flutter_actions.dart';
-import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class StatusCheck extends StatefulWidget {
   static String id = 'status_check';
