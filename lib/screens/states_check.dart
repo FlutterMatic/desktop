@@ -38,53 +38,6 @@ class _StatusCheckState extends State<StatusCheck> {
         vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
         studioInstalled = await checkDependencies.checkAndroidStudios();
         emulatorInstalled = await checkDependencies.checkEmulator();
-        try {
-          await flutterActions.checkProjects();
-        } catch (_) {
-          await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (_) => DialogTemplate(
-              child: Column(
-                children: <Widget>[
-                  DialogHeader(title: 'No Projects Found'),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'There are no Flutter projects in the path provided. Please try updating the path. If there are Flutter projects, then please create a new issue on GitHub.',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  RectangleButton(
-                    onPressed: () => Navigator.pop(context),
-                    width: double.infinity,
-                    child: Text(
-                      'OK',
-                      style: TextStyle(
-                          color: currentTheme.isDarkTheme
-                              ? Colors.white
-                              : Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  RectangleButton(
-                    onPressed: () {
-                      launch(GitHubServices.issueUrl);
-                      Navigator.pop(context);
-                    },
-                    width: double.infinity,
-                    child: Text(
-                      'Go to GitHub',
-                      style: TextStyle(
-                          color: currentTheme.isDarkTheme
-                              ? Colors.white
-                              : Colors.black),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
       }
     }
     if (mounted) {

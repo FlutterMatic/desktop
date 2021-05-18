@@ -71,7 +71,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(child: Controls()),
                                   const SizedBox(width: 20),
                                   // Projects
-                                  Expanded(child: Projects()),
+                                  SizedBox(
+                                    width: 550,
+                                    child: Expanded(child: Projects()),
+                                  ),
                                 ],
                               )
                             : Column(

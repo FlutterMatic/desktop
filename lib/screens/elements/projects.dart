@@ -139,8 +139,8 @@ class _ProjectsState extends State<Projects> {
                               child: Text(
                                 'Update Path',
                                 style: TextStyle(
-                                    color:
-                                        customTheme.textTheme.bodyText1!.color),
+                                    color: customTheme
+                                        .textTheme.bodyText1!.color),
                               ),
                             ),
                             const SizedBox(width: 10),
