@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/close_button.dart';
+import 'package:flutter_installer/components/widgets/buttons/close_button.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;

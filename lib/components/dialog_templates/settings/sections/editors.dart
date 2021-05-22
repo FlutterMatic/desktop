@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/warning_widget.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';

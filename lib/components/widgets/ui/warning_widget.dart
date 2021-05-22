@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-Widget infoWidget(String text) {
+Widget warningWidget(String text, String asset, Color color) {
   return Padding(
     padding: const EdgeInsets.only(top: 10),
     child: RoundContainer(
-      color: Colors.blueGrey.withOpacity(0.2),
+      color: color.withOpacity(0.1),
+      borderColor: color,
       radius: 5,
       child: Row(
         children: <Widget>[
-          const Icon(Icons.info),
+          SvgPicture.asset(asset, height: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Text(text),

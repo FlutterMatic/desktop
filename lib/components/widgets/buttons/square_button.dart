@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/spinner.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class SquareButton extends StatelessWidget {
   final double size;
   final Widget icon;
-  final Function() onPressed;
+  final Function()? onPressed;
   final Color? color, hoverColor;
   final bool loading;
   final String? tooltip;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 
 class SelectEmulatorDialog extends StatelessWidget {
   @override

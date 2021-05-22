@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/text_field.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_installer/components/widgets/inputs/text_field.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class SearchProjectsDialog extends StatelessWidget {

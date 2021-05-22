@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/spinner.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 
 class RectangleButton extends StatelessWidget {
   final double height;

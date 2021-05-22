@@ -8,9 +8,9 @@ import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 

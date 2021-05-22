@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/flutter/install_flutter.dart';
-import 'package:flutter_installer/components/dialog_templates/other/open_options.dart';
+import 'package:flutter_installer/components/dialog_templates/projects/open_options.dart';
 import 'package:flutter_installer/components/dialog_templates/projects/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/projects/search_projects.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/spinner.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
-import 'package:flutter_installer/components/widgets/title_section.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_installer/components/widgets/ui/snackbar_tile.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
+import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
+import 'package:flutter_installer/components/widgets/ui/title_section.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -19,27 +20,47 @@ class Projects extends StatefulWidget {
 
 class _ProjectsState extends State<Projects> {
   bool _reloading = true;
+  bool _isInitial = true;
   final List<String> _projects = [];
   final List<String> _modDate = [];
 
   Future<void> _initializeProjects() async {
     setState(() => _reloading = true);
-    await FlutterActions().checkProjects();
-    _projects.clear();
-    for (var i = 0; i < projs.length; i++) {
-      _projects.add(projs[i]);
+    try {
+      await FlutterActions().checkProjects();
+      _projects.clear();
+      for (var i = 0; i < projs.length; i++) {
+        _projects.add(projs[i]);
+      }
+      _modDate.clear();
+      for (var i = 0; i < projsModDate.length; i++) {
+        _modDate.add(projsModDate[i]);
+      }
+      if (!_isInitial) {
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+            'Projects reloaded successfully',
+            type: SnackBarType.done));
+      }
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile('Failed to reload projects', type: SnackBarType.error));
     }
-    _modDate.clear();
-    for (var i = 0; i < projsModDate.length; i++) {
-      _modDate.add(projsModDate[i]);
-    }
-    setState(() => _reloading = false);
+    setState(() {
+      _isInitial = false;
+      _reloading = false;
+    });
   }
 
   @override
   void initState() {
     _initializeProjects();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _isInitial = true;
+    super.dispose();
   }
 
   @override
@@ -77,7 +98,7 @@ class _ProjectsState extends State<Projects> {
                   Icons.refresh,
                   color: customTheme.iconTheme.color,
                 ),
-                onPressed: _reloading ? () {} : () => _initializeProjects(),
+                onPressed: _reloading ? null : () => _initializeProjects(),
               ),
             ),
             //Add Project
@@ -139,8 +160,8 @@ class _ProjectsState extends State<Projects> {
                               child: Text(
                                 'Update Path',
                                 style: TextStyle(
-                                    color: customTheme
-                                        .textTheme.bodyText1!.color),
+                                    color:
+                                        customTheme.textTheme.bodyText1!.color),
                               ),
                             ),
                             const SizedBox(width: 10),

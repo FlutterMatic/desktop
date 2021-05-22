@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 
 class DialogTemplate extends StatelessWidget {
   final Widget child;

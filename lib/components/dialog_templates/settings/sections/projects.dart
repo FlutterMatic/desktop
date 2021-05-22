@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_chooser/file_chooser.dart';
-import 'package:flutter_installer/components/widgets/multiple_choice.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
+import 'package:flutter_installer/components/widgets/inputs/multiple_choice.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

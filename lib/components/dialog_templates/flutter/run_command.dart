@@ -5,13 +5,13 @@ import 'package:flutter_installer/components/dialog_templates/dialog_header.dart
 import 'package:flutter_installer/components/dialog_templates/flutter/change_channel.dart';
 import 'package:flutter_installer/components/dialog_templates/flutter/flutter_upgrade.dart';
 import 'package:flutter_installer/components/dialog_templates/projects/new_project.dart';
-import 'package:flutter_installer/components/widgets/check_box_element.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/spinner.dart';
-import 'package:flutter_installer/components/widgets/text_field.dart';
-import 'package:flutter_installer/components/widgets/warning_widget.dart';
+import 'package:flutter_installer/components/widgets/inputs/check_box_element.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
+import 'package:flutter_installer/components/widgets/inputs/text_field.dart';
+import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -117,7 +117,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                 color: Colors.blueGrey.withOpacity(0.2),
                 child: Scrollbar(
                   child: SelectableText(_commandResult!
-                      .replaceAll('[âœ“]', '[✔]') // Format checks
+                      .replaceAll(r'[âˆš]', '[✔]') // Format checks
                       .replaceAll('[!]', '[❗]') // Format warnings
                       .replaceAll('âœ—', '❌') // Format errors
                       .replaceAll('ðŸ”¨', '🔨') // Format builds

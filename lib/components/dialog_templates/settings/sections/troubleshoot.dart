@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/check_box_element.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/warning_widget.dart';
+import 'package:flutter_installer/components/widgets/inputs/check_box_element.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {

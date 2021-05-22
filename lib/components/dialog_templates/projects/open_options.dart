@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/widgets/close_button.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/info_widget.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/text_field.dart';
+import 'package:flutter_installer/components/widgets/buttons/close_button.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/ui/info_widget.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/inputs/text_field.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,58 +26,12 @@ class OpenOptionsDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              PopupMenuButton(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
-                  ),
-                ),
-                color: customTheme.primaryColor,
-                itemBuilder: (BuildContext context) => [
-                  PopupMenuItem(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        showDialog(
-                          context: context,
-                          builder: (_) => ConfirmProjectDelete(fileName),
-                        );
-                      },
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Delete',
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color),
-                          ),
-                          const Spacer(),
-                          Icon(Iconsdata.delete, color: customTheme.errorColor),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    'Project Options',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomCloseButton(),
-              ),
-            ],
-          ),
+          DialogHeader(title: 'Project Options'),
           const SizedBox(height: 20),
+          // Row 1
           Row(
             children: <Widget>[
+              // Open in Default Editor
               Expanded(
                 child: RectangleButton(
                   onPressed: () async {
@@ -93,7 +47,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   width: double.infinity,
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  height: 100,
+                  height: 110,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -111,6 +65,7 @@ class OpenOptionsDialog extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
+              // Open With
               Expanded(
                 child: RectangleButton(
                   onPressed: () {},
@@ -120,7 +75,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   width: double.infinity,
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  height: 100,
+                  height: 110,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -136,7 +91,13 @@ class OpenOptionsDialog extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Row 2
+          Row(
+            children: <Widget>[
+              // Open in File Explorer / Finder
               Expanded(
                 child: RectangleButton(
                   onPressed: () {
@@ -178,7 +139,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   highlightColor: Colors.blueGrey.withOpacity(0.8),
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                  height: 100,
+                  height: 110,
                   width: double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -188,6 +149,41 @@ class OpenOptionsDialog extends StatelessWidget {
                       ),
                       Text(
                         'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              // Delete Project
+              Expanded(
+                child: RectangleButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (_) => ConfirmProjectDelete(fileName),
+                    );
+                  },
+                  color: Colors.blueGrey.withOpacity(0.2),
+                  hoverColor: customTheme.errorColor,
+                  splashColor: kRedColor,
+                  highlightColor: customTheme.errorColor,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  height: 110,
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      const Expanded(
+                        child: Icon(Iconsdata.delete, color: Colors.blueGrey),
+                      ),
+                      Text(
+                        'Delete Project',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: customTheme.textTheme.bodyText1!.color),

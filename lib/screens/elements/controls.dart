@@ -4,11 +4,11 @@ import 'package:flutter_installer/components/dialog_templates/flutter/change_cha
 import 'package:flutter_installer/components/dialog_templates/flutter/flutter_upgrade.dart';
 import 'package:flutter_installer/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:flutter_installer/components/dialog_templates/other/select_emulator.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
-import 'package:flutter_installer/components/widgets/title_section.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
+import 'package:flutter_installer/components/widgets/ui/title_section.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:process_run/shell.dart';

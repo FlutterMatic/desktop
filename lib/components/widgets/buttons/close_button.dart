@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
+import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
 
 class CustomCloseButton extends StatelessWidget {
   final Function()? onClose;

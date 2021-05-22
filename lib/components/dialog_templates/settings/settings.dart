@@ -6,9 +6,9 @@ import 'package:flutter_installer/components/dialog_templates/settings/sections/
 import 'package:flutter_installer/components/dialog_templates/settings/sections/projects.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/sections/theme.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/sections/troubleshoot.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/services/themes.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/buttons/tab_item.dart';
 
 class SettingDialog extends StatefulWidget {
   final String? goToPage;
@@ -113,7 +113,7 @@ class _TabViewWidgetState extends State<TabViewWidget> {
     List<Widget> _itemsHeader = [];
     _itemsHeader.clear();
     for (var i = 0; i < widget.tabNames.length; i++) {
-      _itemsHeader.add(_tabHeaderWidget(widget.tabNames[i],
+      _itemsHeader.add(tabItemWidget(widget.tabNames[i],
           () => setState(() => _index = i), _index == i, context, i == _index));
     }
     return Row(
@@ -136,34 +136,6 @@ class _TabViewWidgetState extends State<TabViewWidget> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _tabHeaderWidget(String name, Function() onPressed, bool selected,
-      BuildContext context, bool current) {
-    ThemeData customTheme = Theme.of(context);
-    return RectangleButton(
-      width: 130,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      color: selected
-          ? currentTheme.isDarkTheme
-              ? null
-              : Colors.grey.withOpacity(0.3)
-          : Colors.transparent,
-      padding: const EdgeInsets.all(10),
-      onPressed: onPressed,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          name,
-          style: TextStyle(
-              color: customTheme.textTheme.bodyText1!.color!
-                  .withOpacity(selected ? 1 : .4)),
-        ),
-      ),
     );
   }
 }

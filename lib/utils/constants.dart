@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_installer/components/widgets/activity_button.dart';
+import 'package:flutter_installer/components/widgets/ui/activity_tile.dart';
 import 'package:flutter_installer/models/flutter_api.dart';
 import 'dart:async';
 import 'dart:io';

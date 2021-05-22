@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
-import 'package:flutter_installer/components/widgets/bullet_point.dart';
-import 'package:flutter_installer/components/widgets/dialog_template.dart';
-import 'package:flutter_installer/components/widgets/info_widget.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/bullet_point.dart';
+import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
+import 'package:flutter_installer/components/widgets/ui/info_widget.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
 import 'dart:io' show Platform;
 
 class InstallFlutterDialog extends StatelessWidget {

@@ -3,8 +3,8 @@ import 'package:flutter_installer/components/dialog_templates/other/bg_activity.
 import 'package:flutter_installer/components/dialog_templates/flutter/run_command.dart';
 import 'package:flutter_installer/components/dialog_templates/other/status.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
-import 'package:flutter_installer/components/widgets/round_container.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
+import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'elements/controls.dart';
@@ -62,14 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 20),
                         // Installed Components
-                        MediaQuery.of(context).size.width > 1100
+                        MediaQuery.of(context).size.width > 1200
                             ? Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   // Controls
                                   Expanded(child: Controls()),
-                                  const SizedBox(width: 20),
+                                  const SizedBox(width: 40),
                                   // Projects
                                   SizedBox(
                                     width: 550,

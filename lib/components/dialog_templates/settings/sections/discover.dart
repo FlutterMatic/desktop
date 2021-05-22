@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_installer/components/widgets/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/square_button.dart';
+import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
 import 'package:flutter_installer/screens/about.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
