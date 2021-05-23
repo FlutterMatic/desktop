@@ -131,7 +131,7 @@ const Color kYellowColor = Color(0xffFFBA00);
 const Color kGreenColor = Color(0xff379C81);
 const Color kGreyColor = Color(0xffF1F1F1);
 const Color kLightGreyColor = Color(0xffE5E5E5);
-const Color kDarkColor = Color(0xff2F2F2F);
+const Color kDarkColor = Color(0xFF373E47);
 
 // API Links
 class APILinks {

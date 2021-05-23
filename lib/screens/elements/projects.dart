@@ -10,6 +10,7 @@ import 'package:flutter_installer/components/widgets/ui/snackbar_tile.dart';
 import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
 import 'package:flutter_installer/components/widgets/ui/title_section.dart';
+import 'package:flutter_installer/models/projects.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -21,21 +22,11 @@ class Projects extends StatefulWidget {
 class _ProjectsState extends State<Projects> {
   bool _reloading = true;
   bool _isInitial = true;
-  final List<String> _projects = [];
-  final List<String> _modDate = [];
 
   Future<void> _initializeProjects() async {
     setState(() => _reloading = true);
     try {
       await FlutterActions().checkProjects();
-      _projects.clear();
-      for (var i = 0; i < projs.length; i++) {
-        _projects.add(projs[i]);
-      }
-      _modDate.clear();
-      for (var i = 0; i < projsModDate.length; i++) {
-        _modDate.add(projsModDate[i]);
-      }
       if (!_isInitial) {
         ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
             'Projects reloaded successfully',
@@ -84,7 +75,9 @@ class _ProjectsState extends State<Projects> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (_) => SearchProjectsDialog(),
+                    builder: (_) => SearchProjectsDialog(
+                      projects: [],
+                    ),
                   );
                 },
               ),
@@ -188,12 +181,14 @@ class _ProjectsState extends State<Projects> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
-                    itemCount: _projects.length,
-                    itemBuilder: (_, index) {
+                    itemCount: projs.length,
+                    itemBuilder: (_, i) {
                       return ProjectTile(
-                        fileName: _projects[index],
-                        filePath: '$projDir/${_projects[index]}',
-                        lastEdit: projsModDate[index],
+                        projects: ProjectsModel(
+                          name: projs[i],
+                          path: '$projDir/${projs[i]}',
+                          modDate: projsModDate[i],
+                        ),
                       );
                     },
                   ),
@@ -204,11 +199,9 @@ class _ProjectsState extends State<Projects> {
 }
 
 class ProjectTile extends StatelessWidget {
-  final String fileName;
-  final String filePath;
-  final String? lastEdit;
+  final ProjectsModel projects;
 
-  ProjectTile({required this.fileName, required this.filePath, this.lastEdit});
+  ProjectTile({required this.projects});
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -229,7 +222,7 @@ class ProjectTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    fileName,
+                    projects.name,
                     maxLines: 1,
                     overflow: TextOverflow.fade,
                     softWrap: false,
@@ -237,16 +230,15 @@ class ProjectTile extends StatelessWidget {
                       color: customTheme.textTheme.bodyText1!.color,
                     ),
                   ),
-                  lastEdit != null
-                      ? Text(
-                          lastEdit!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: customTheme.textTheme.bodyText1!.color!
-                                .withOpacity(0.5),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                  if (projects.modDate != null)
+                    Text(
+                      projects.modDate!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: customTheme.textTheme.bodyText1!.color!
+                            .withOpacity(0.5),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -254,7 +246,7 @@ class ProjectTile extends StatelessWidget {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (_) => OpenOptionsDialog(fileName),
+                  builder: (_) => OpenOptionsDialog(projects.name),
                 );
               },
               color: customTheme.primaryColorLight,

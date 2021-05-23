@@ -51,7 +51,7 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       const Expanded(
-                        child: Icon(Icons.folder_open, color: Colors.blueGrey),
+                        child: Icon(Icons.folder_open, color: Colors.white),
                       ),
                       Text(
                         'Open',
@@ -79,7 +79,7 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       const Expanded(
-                        child: Icon(Icons.code_rounded, color: Colors.blueGrey),
+                        child: Icon(Icons.code_rounded, color: Colors.white),
                       ),
                       Text(
                         'Open with...',
@@ -144,7 +144,7 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       const Expanded(
-                        child: Icon(Icons.file_present, color: Colors.blueGrey),
+                        child: Icon(Icons.file_present, color: Colors.white),
                       ),
                       Text(
                         'View in ${Platform.isMacOS ? 'Finder' : 'File Explorer'}',
@@ -179,7 +179,7 @@ class OpenOptionsDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       const Expanded(
-                        child: Icon(Iconsdata.delete, color: Colors.blueGrey),
+                        child: Icon(Iconsdata.delete, color: Colors.white),
                       ),
                       Text(
                         'Delete Project',

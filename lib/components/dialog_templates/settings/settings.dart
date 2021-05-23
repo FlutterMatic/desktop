@@ -102,7 +102,9 @@ class _TabViewWidgetState extends State<TabViewWidget> {
   @override
   void initState() {
     if (widget.defaultPage != null &&
-        widget.tabNames.contains(widget.defaultPage)) {
+        widget.tabNames.contains(
+            widget.defaultPage!.toLowerCase().substring(0, 1).toUpperCase() +
+                widget.defaultPage!.substring(1))) {
       setState(() => _index = widget.tabNames.indexOf(widget.defaultPage!));
     }
     super.initState();
