@@ -56,7 +56,7 @@ String? projDir,
 
 //Lists
 /// List of Background activities.
-List<BgActivityButton> bgActivities = [];
+List<BgActivityTile> bgActivities = [];
 
 /// List of Projects.
 List<String> projs = [];

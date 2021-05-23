@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/dialog_templates/about/about_us.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
-import 'package:flutter_installer/screens/about.dart';
 import 'package:flutter_installer/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -111,10 +111,10 @@ class DiscoverSettingsSection extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Row(
-          children: [
+          children: <Widget>[
             const Expanded(
               child: Text(
-                'Learn more about the people behind FlutterMatic',
+                'Learn more about FlutterMatic and the people behind it.',
               ),
             ),
             const SizedBox(width: 15),
@@ -124,7 +124,10 @@ class DiscoverSettingsSection extends StatelessWidget {
               color: customTheme.buttonColor,
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, FlutterMaticAbout.id);
+                showDialog(
+                  context: context,
+                  builder: (_) => AboutUsDialog(),
+                );
               },
             ),
           ],

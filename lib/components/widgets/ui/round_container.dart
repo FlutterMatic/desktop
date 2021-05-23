@@ -6,14 +6,14 @@ class RoundContainer extends StatelessWidget {
   final double? width;
   final double? radius;
   final Color? color;
-  final double? borderWith;
+  final double borderWith;
   final Color? borderColor;
   final EdgeInsets? padding;
 
   RoundContainer({
     required this.child,
     this.color,
-    this.borderWith,
+    this.borderWith = 1,
     this.height,
     this.width,
     this.radius,
@@ -30,7 +30,7 @@ class RoundContainer extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: color ?? customTheme.primaryColorLight,
-        border: Border.all(color: borderColor!, width: borderWith ?? 1),
+        border: Border.all(color: borderColor!, width: borderWith),
         borderRadius: BorderRadius.circular(radius ?? 5),
       ),
       child: child,

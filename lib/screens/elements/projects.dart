@@ -128,7 +128,7 @@ class _ProjectsState extends State<Projects> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 100),
                     child: Column(
-                      children: [
+                      children: <Widget>[
                         const Icon(Iconsdata.folder, size: 30),
                         const SizedBox(height: 20),
                         const SizedBox(
@@ -141,7 +141,7 @@ class _ProjectsState extends State<Projects> {
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+                          children: <Widget>[
                             RectangleButton(
                               onPressed: () {
                                 showDialog(

@@ -21,12 +21,12 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
   @override
   Widget build(BuildContext context) {
     Future<void> _upgradeFlutter() async {
-      BgActivityButton element = BgActivityButton(
+      BgActivityTile element = BgActivityTile(
         title: 'Upgrading your Flutter version',
         activityId: 'upgrading_flutter_version',
       );
       bgActivities.add(element);
-      await apiCalls.flutterAPICall().then((apiData) async {
+      await flutterApi.flutterAPICall().then((apiData) async {
         flutterAPIVersion = apiData.releases![0]!.version;
         if (await compareVersion(
             latestVersion: flutterAPIVersion!,

@@ -1,10 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
+import 'package:flutter_installer/components/widgets/ui/activity_tile.dart';
 import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/utils/constants.dart';
+import 'dart:async';
 
 class BgActivityDialog extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class BgActivityDialog extends StatefulWidget {
 }
 
 class _BgActivityDialogState extends State<BgActivityDialog> {
-  List<Widget> _activities = [];
+  List<BgActivityTile> _activities = [];
 
   void _activateReload() {
     _activities.clear();
@@ -46,14 +47,27 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 10),
-          _activities.isEmpty
-              ? const Text(
-                  'No background activity running at the moment. Check back later.')
-              : Column(
+          if (_activities.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: RoundContainer(
+                color: kDarkColor,
+                child: const Text(
+                  'There are currently no background activities running. Check back later.',
+                ),
+              ),
+            )
+          else
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: SingleChildScrollView(
+                child: Column(
                   children: bgActivities.isEmpty
                       ? _activities.map((val) => val).toList(growable: true)
                       : bgActivities.map((val) => val).toList(growable: true),
                 ),
+              ),
+            ),
           const SizedBox(height: 20),
           RectangleButton(
             width: double.infinity,

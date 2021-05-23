@@ -6,6 +6,7 @@ import 'package:flutter_installer/components/widgets/buttons/button_list.dart';
 import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/ui/info_widget.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/screens/states_check.dart';
@@ -23,102 +24,102 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
 
   //Utils
   bool _loadingMaterials = true;
+  bool _loading = true;
 
-  final String _getChannelName = flutterChannel!.substring(0, 1).toUpperCase() +
-      flutterChannel!.substring(1);
+  // final String _getChannelName =
+
+  void _loadChannel() {
+    setState(() {
+      _loading = false;
+      _loadingMaterials = channelIsUpdating;
+      _selectedChannel = flutterChannel!.substring(0, 1).toUpperCase() +
+          flutterChannel!.substring(1);
+    });
+  }
 
   @override
   void initState() {
-    setState(() => _loadingMaterials = channelIsUpdating);
+    _loadChannel();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _loadingMaterials = true;
+    _loading = true;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
-      child: _loadingMaterials
-          ? Column(
-              children: <Widget>[
-                DialogHeader(title: 'In Progress'),
-                const SizedBox(height: 15),
-                const Text(
-                  'We are currently updating your Flutter channel. Please check back later once we are finished updating your Flutter channel.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13),
-                ),
-                const SizedBox(height: 20),
-                RectangleButton(
-                  width: double.infinity,
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                        color: customTheme.textTheme.bodyText1!.color),
-                  ),
-                ),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                DialogHeader(title: 'Change Channel'),
-                const SizedBox(height: 15),
-                const Text(
-                  'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
-                  style: TextStyle(fontSize: 13),
-                ),
-                const SizedBox(height: 15),
-                SelectTile(
-                  onPressed: (val) => setState(() => _selectedChannel = val),
-                  defaultValue: _getChannelName,
-                  options: ['Master', 'Stable', 'Beta', 'Dev'],
-                ),
-                warningWidget(
-                    'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
-                    Assets.warning,
-                    kYellowColor),
-                const SizedBox(height: 10),
-                Row(
+      child: _loading
+          ? SizedBox(height: 300, width: 300, child: Spinner())
+          : _loadingMaterials
+              ? _updatingChannels(context)
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        child: Text('Cancel'),
-                      ),
+                    DialogHeader(title: 'Change Channel'),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommned staying on the stable channel.',
+                      style: TextStyle(fontSize: 13),
                     ),
-                    const Spacer(),
-                    RectangleButton(
-                      width: 120,
-                      onPressed: () {
-                        if (_selectedChannel == null) {
-                          Navigator.pop(context);
-                        } else if (_selectedChannel == _getChannelName) {
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlreadyChannelDialog(),
-                          );
-                        } else {
-                          Navigator.pop(context);
-                          showDialog(
-                            context: context,
-                            builder: (_) =>
-                                ConfirmChannelChangeDialog(_selectedChannel!),
-                          );
-                        }
-                      },
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(
-                            color: customTheme.textTheme.bodyText1!.color),
-                      ),
+                    const SizedBox(height: 15),
+                    SelectTile(
+                      onPressed: (val) =>
+                          setState(() => _selectedChannel = val),
+                      options: ['Master', 'Stable', 'Beta', 'Dev'],
+                    ),
+                    warningWidget(
+                        'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
+                        Assets.warning,
+                        kYellowColor),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            child: Text('Cancel'),
+                          ),
+                        ),
+                        const Spacer(),
+                        RectangleButton(
+                          width: 120,
+                          onPressed: () {
+                            if (_selectedChannel == null) {
+                              Navigator.pop(context);
+                            } else if (_selectedChannel ==
+                                flutterChannel!.substring(0, 1).toUpperCase() +
+                                    flutterChannel!.substring(1)) {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlreadyChannelDialog(),
+                              );
+                            } else {
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context,
+                                builder: (_) => ConfirmChannelChangeDialog(
+                                    _selectedChannel!),
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Continue',
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
     );
   }
 }
@@ -161,7 +162,7 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> _switchChannel() async {
       if (channelName != flutterChannel) {
-        BgActivityButton element = BgActivityButton(
+        BgActivityTile element = BgActivityTile(
           title: 'Changing to $channelName channel',
           activityId: 'channel_switch_$channelName${Timeline.now}',
         );
@@ -205,4 +206,28 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _updatingChannels(BuildContext context) {
+  ThemeData customTheme = Theme.of(context);
+  return Column(
+    children: <Widget>[
+      DialogHeader(title: 'In Progress'),
+      const SizedBox(height: 15),
+      const Text(
+        'We are currently updating your Flutter channel. Please check back later once we are finished updating your Flutter channel.',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 13),
+      ),
+      const SizedBox(height: 20),
+      RectangleButton(
+        width: double.infinity,
+        onPressed: () => Navigator.pop(context),
+        child: Text(
+          'OK',
+          style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+        ),
+      ),
+    ],
+  );
 }

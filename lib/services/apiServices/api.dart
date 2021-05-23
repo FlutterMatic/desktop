@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-APICalls apiCalls = APICalls();
+FlutterApi flutterApi = FlutterApi();
 
-class APICalls {
+class FlutterApi {
   Future<FlutterReleases> flutterAPICall() async {
     if (win32) {
       http.Response? apiResponse = await http.get(APILinks.win32RelaseEndpoint);

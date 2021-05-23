@@ -3,7 +3,7 @@ import 'package:flutter_installer/components/widgets/buttons/close_button.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;
-  final bool? canClose;
+  final bool canClose;
   final Function()? onClose;
   final Widget? leading;
 
@@ -23,17 +23,14 @@ class DialogHeader extends StatelessWidget {
         leading ?? const SizedBox(width: 40),
         Expanded(
           child: Center(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 20),
-            ),
+            child: Text(title, style: const TextStyle(fontSize: 20)),
           ),
         ),
-        canClose!
-            ? Align(
-                alignment: Alignment.centerRight,
-                child: CustomCloseButton(onClose: onClose))
-            : const SizedBox(width: 40),
+        if (canClose)
+          Align(
+            alignment: Alignment.centerRight,
+            child: CustomCloseButton(onClose: onClose),
+          ),
       ],
     );
   }

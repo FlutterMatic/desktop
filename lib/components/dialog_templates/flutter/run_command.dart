@@ -127,11 +127,11 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
             ),
           const SizedBox(height: 15),
           Row(
-            children: [
+            children: <Widget>[
               if (_preferVerbose == null)
                 Expanded(
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       SizedBox(
                           height: 20, width: 20, child: Spinner(thickness: 2)),
                       const Spacer(),

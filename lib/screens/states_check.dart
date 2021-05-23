@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/other/pref_intro.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
 import 'package:flutter_installer/services/checks/win32Checks.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -31,7 +32,7 @@ class _StatusCheckState extends State<StatusCheck> {
         vscInstalled = await checkDependencies.checkVSC();
         vscInsidersInstalled = await checkDependencies.checkVSCInsiders();
         studioInstalled = await checkDependencies.checkAndroidStudios();
-        emulatorInstalled = await checkDependencies.checkEmulator();
+        // emulatorInstalled = await checkDependencies.checkEmulator();
       }
     }
     if (mounted) {
@@ -52,13 +53,6 @@ class _StatusCheckState extends State<StatusCheck> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
-          strokeWidth: 3,
-        ),
-      ),
-    );
+    return Scaffold(body: Center(child: Spinner(size: 40, thickness: 3)));
   }
 }

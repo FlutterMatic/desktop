@@ -35,6 +35,10 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
     height: 65,
     width: double.infinity,
     hoverColor: Colors.transparent,
+    focusColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+    color: currentTheme.isDarkTheme ? kDarkColor : Colors.grey.withOpacity(0.3),
     onPressed: onPressed,
     padding: const EdgeInsets.all(10),
     child: Align(
@@ -71,4 +75,3 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
     ),
   );
 }
-

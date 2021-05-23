@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 
-class BgActivityButton extends StatelessWidget {
+class BgActivityTile extends StatelessWidget {
   final String title;
   final String activityId;
 
-  BgActivityButton({
+  BgActivityTile({
     required this.title,
     required this.activityId,
   });
@@ -20,20 +21,14 @@ class BgActivityButton extends StatelessWidget {
               child: Text(title),
             ),
             const SizedBox(width: 8),
-            const SizedBox(
-              height: 15,
-              width: 15,
-              child: Tooltip(
-                  message: 'In progress...',
-                  child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
+            Spinner(thickness: 2, size: 15),
           ],
         ),
         const SizedBox(height: 15),
-        Container(
-            color: Colors.blueGrey.withOpacity(0.5),
-            width: double.infinity,
-            height: 2),
+        ColoredBox(
+          color: Colors.blueGrey.withOpacity(0.5),
+          child: const SizedBox(width: double.infinity, height: 2),
+        ),
       ],
     );
   }

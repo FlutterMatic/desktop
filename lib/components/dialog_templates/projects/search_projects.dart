@@ -3,6 +3,7 @@ import 'package:flutter_installer/components/dialog_templates/dialog_header.dart
 import 'package:flutter_installer/components/dialog_templates/projects/open_options.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/current_directory.dart';
 import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/components/widgets/inputs/text_field.dart';
@@ -82,37 +83,19 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
         children: <Widget>[
           DialogHeader(title: 'Search Projects'),
           const SizedBox(height: 20),
-          RoundContainer(
-            color: Colors.blueGrey.withOpacity(0.2),
-            radius: 5,
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Text(
-                  'Current Directory',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 10),
-                Text(projDir!),
-              ],
-            ),
-          ),
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: ColoredBox(
-                color: kDarkColor,
-                child: SizedBox(width: 250, height: 2),
-              ),
-            ),
-          ),
+          // const Center(
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(vertical: 10),
+          //     child: ColoredBox(
+          //       color: kDarkColor,
+          //       child: SizedBox(width: 250, height: 2),
+          //     ),
+          //   ),
+          // ),
           if (!_loading && projs.isNotEmpty)
             CustomTextField(
               hintText: 'Search',
               autofocus: true,
-              suffixIcon: Icon(Iconsdata.search,
-                  size: 18, color: customTheme.textTheme.bodyText1!.color),
               onChanged: (val) {
                 setState(() {
                   if (val.isNotEmpty) {
@@ -134,7 +117,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
           if (!_loading && projs.isEmpty)
             Center(
               child: Column(
-                children: [
+                children: <Widget>[
                   const Text(
                     'No Projects Found',
                     style: TextStyle(fontWeight: FontWeight.w600),
@@ -165,6 +148,9 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  currentDirectoryTile(),
+                  const SizedBox(height: 10),
                 ],
               ),
             )
@@ -172,7 +158,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
           else if (_searchInput == null)
             Center(
               child: Column(
-                children: [
+                children: <Widget>[
                   const Icon(Iconsdata.search),
                   const SizedBox(height: 15),
                   const Text(
@@ -197,7 +183,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
           if (!_loading && _searchInput != null && _searchResults.isEmpty)
             Center(
               child: Column(
-                children: [
+                children: <Widget>[
                   const Icon(Icons.error),
                   const SizedBox(height: 15),
                   const Text(
@@ -214,6 +200,8 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                           color: customTheme.textTheme.bodyText1!.color),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  currentDirectoryTile(),
                   const SizedBox(height: 10),
                 ],
               ),

@@ -7,6 +7,8 @@ import 'package:flutter_installer/components/widgets/ui/info_widget.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
 import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
 import 'package:flutter_installer/components/widgets/inputs/text_field.dart';
+import 'package:flutter_installer/components/widgets/ui/snackbar_tile.dart';
+import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -92,12 +94,12 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             _projectName!,
             _projectDescription!,
             _projectOrg!,
-            android: _android,
-            windows: _windows,
             ios: _ios,
+            android: _android,
+            web: _web,
+            windows: _windows,
             macos: _macos,
             linux: _linux,
-            web: _web,
           );
           //Success
           await flutterActions.checkProjects();
@@ -106,9 +108,10 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               context: context,
               builder: (_) => ProjectCreatedDialog(projectName: _projectName!));
         } catch (_) {
-          //Failed
-          await showDialog(
-              context: context, builder: (_) => CreateProjectErrorDialog());
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+              'Failed to create project. Please file an issue.',
+              type: SnackBarType.error));
         }
       }
     }
@@ -261,7 +264,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                           !_projectOrg!.endsWith('_') &&
                           '.'.allMatches(_projectOrg!).length < 3)
                         warningWidget(
-                            '"$_projectOrg.$_projectName" will be your organization name. You can change it later.',
+                            '"$_projectOrg" will be your organization name. You can change it later.',
                             Assets.done,
                             kGreenColor),
                       if (_projectOrg != null &&
@@ -339,14 +342,11 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(height: 30),
-                const Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                  ),
-                ),
+                Center(child: Spinner(thickness: 3)),
                 const SizedBox(height: 30),
                 const Text(
-                    'Creating your new Flutter project. This may take a while.'),
+                  'Creating your new Flutter project. This may take a while.',
+                ),
               ],
             ),
           const SizedBox(height: 10),
@@ -374,36 +374,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 ),
               ],
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class CreateProjectErrorDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DialogTemplate(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          DialogHeader(title: 'Unable to Create Project'),
-          const SizedBox(height: 20),
-          const Text(
-            'We were unable to create a new project for some reason. Please try again. If this issue continues to happen, then please create a new issue on GitHub.',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          RectangleButton(
-            width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
         ],
       ),
     );

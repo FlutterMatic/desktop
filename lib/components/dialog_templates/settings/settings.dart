@@ -8,7 +8,7 @@ import 'package:flutter_installer/components/dialog_templates/settings/sections/
 import 'package:flutter_installer/components/dialog_templates/settings/sections/troubleshoot.dart';
 import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/buttons/tab_item.dart';
+import 'package:flutter_installer/components/widgets/ui/tab_view.dart';
 
 class SettingDialog extends StatefulWidget {
   final String? goToPage;
@@ -76,68 +76,6 @@ class _SettingDialogState extends State<SettingDialog> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class TabViewWidget extends StatefulWidget {
-  final String? defaultPage;
-  final List<String> tabNames;
-  final List<Widget> tabItems;
-
-  TabViewWidget(
-      {required this.tabNames, required this.tabItems, this.defaultPage})
-      : assert(tabNames.length == tabItems.length,
-            'Both item lengths must be the same'),
-        assert(tabNames.isNotEmpty && tabItems.isNotEmpty,
-            'Item list cannot be empty');
-
-  @override
-  _TabViewWidgetState createState() => _TabViewWidgetState();
-}
-
-int _index = 0;
-
-class _TabViewWidgetState extends State<TabViewWidget> {
-  @override
-  void initState() {
-    if (widget.defaultPage != null &&
-        widget.tabNames.contains(
-            widget.defaultPage!.toLowerCase().substring(0, 1).toUpperCase() +
-                widget.defaultPage!.substring(1))) {
-      setState(() => _index = widget.tabNames.indexOf(widget.defaultPage!));
-    }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> _itemsHeader = [];
-    _itemsHeader.clear();
-    for (var i = 0; i < widget.tabNames.length; i++) {
-      _itemsHeader.add(tabItemWidget(widget.tabNames[i],
-          () => setState(() => _index = i), _index == i, context, i == _index));
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _itemsHeader),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Container(
-            height: 310,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: widget.tabItems[_index],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

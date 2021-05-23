@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // Projects
                                   SizedBox(
                                     width: 550,
-                                    child: Expanded(child: Projects()),
+                                    child: Projects(),
                                   ),
                                 ],
                               )

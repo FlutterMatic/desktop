@@ -249,7 +249,7 @@ class _ControlsState extends State<Controls> {
                                   context: context,
                                   builder: (_) => DialogTemplate(
                                     child: Column(
-                                      children: [
+                                      children: <Widget>[
                                         DialogHeader(
                                             title: 'Couldn\'t Open Emulator'),
                                         const SizedBox(height: 20),

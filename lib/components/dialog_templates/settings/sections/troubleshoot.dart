@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/inputs/check_box_element.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
-import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -111,15 +110,6 @@ class _TroubleShootSettingsSectionState
               'Start Troubleshoot',
               style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
             ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
-          width: double.infinity,
-          child: SelectableText(
-            'FlutterMatic Installer Version $desktopVersion - Stable',
-            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
       ],

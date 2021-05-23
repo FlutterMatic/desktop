@@ -13,17 +13,31 @@ class FlutterActions {
     String projName,
     String projDesc,
     String projOrg, {
-    required bool android,
-    required bool windows,
     required bool ios,
+    required bool android,
+    required bool web,
+    required bool windows,
     required bool macos,
     required bool linux,
-    required bool web,
   }) async {
+    List<String> _allPlatforms = [
+      if (ios) 'ios',
+      if (android) 'android',
+      if (web) 'web',
+      if (windows) 'windows',
+      if (macos) 'macos',
+      if (linux) 'linux',
+    ];
     try {
+      //TODO(yahu1031): Fix flutter create command.
       await _shell.cd(projDir!).run(
-            'flutter create --org=$projOrg --project-name=$projName --description="$projDesc" --platforms=${android ? 'android' : ''}${(android && ios) ? ',' : ''}${ios ? 'ios' : ''}${(ios && windows) ? ',' : ''}${windows ? 'windows' : ''}${(windows && macos) ? ',' : ''}${macos ? 'macos' : ''}${(macos && web) ? ',' : ''}${web ? 'web' : ''}${(web && linux) ? ',' : ''}${linux ? 'linux' : ''} $projName',
-          );
+        '''flutter create 
+            --org=$projOrg 
+            --project-name=$projName 
+            --description="$projDesc"
+            --platforms=${_allPlatforms.toString().replaceAll(RegExp(r'\[\]'), '')}
+            $projName''',
+      );
     } catch (e) {
       debugPrint(e.toString());
     }

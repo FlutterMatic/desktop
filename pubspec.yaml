@@ -21,6 +21,7 @@ dependencies:
   lottie: ^1.0.1
   pedantic: ^1.11.0
   process_run: ^0.12.1
+  flutter_markdown: ^0.6.2
   shared_preferences: ^2.0.5
   url_launcher: ^6.0.3
   xterm: ^2.0.0

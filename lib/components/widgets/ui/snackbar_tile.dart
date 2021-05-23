@@ -10,7 +10,7 @@ SnackBar snackBarTile(String message, {SnackBarType? type}) {
     backgroundColor: const Color(0xFF373E47),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     content: Row(
-      children: [
+      children: <Widget>[
         if (type != null)
           Padding(
             padding: const EdgeInsets.only(right: 10),

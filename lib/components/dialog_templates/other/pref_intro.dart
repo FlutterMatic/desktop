@@ -129,7 +129,7 @@ class _PrefIntroDialogState extends State<PrefIntroDialog> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       const Text('Where do you want us to find your projects?'),
                       if (_dirPath != null)
                         Padding(
