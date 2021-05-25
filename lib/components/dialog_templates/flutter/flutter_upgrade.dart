@@ -4,7 +4,7 @@ import 'package:flutter_installer/components/widgets/ui/activity_tile.dart';
 import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/ui/info_widget.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
-import 'package:flutter_installer/screens/states_check.dart';
+import 'package:flutter_installer/models/flutter_api.dart';
 import 'package:flutter_installer/services/apiServices/api.dart';
 import 'package:flutter_installer/services/other.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
@@ -15,61 +15,32 @@ class UpgradeFlutterDialog extends StatefulWidget {
   _UpgradeFlutterDialogState createState() => _UpgradeFlutterDialogState();
 }
 
-bool? _updateResult = false;
-
 class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
+  Future<void> _upgradeFlutter() async {
+    Navigator.pop(context);
+    BgActivityTile _element = BgActivityTile(
+      title: 'Upgrading your Flutter version',
+      activityId: 'upgrading_flutter_version',
+    );
+    bgActivities.add(_element);
+    FlutterReleases _result =
+        await flutterApi.flutterAPICall().then((apiData) => apiData);
+    String? flutterAPIVersion = _result.releases![0]!.version;
+    bool _versionisGreater = await compareVersion(
+        latestVersion: flutterAPIVersion!, previousVersion: flutterVersion!);
+    // There is a new version
+    if (_versionisGreater) {
+      await FlutterActions().upgrade();
+    }
+    // No new version - latest already
+    else {
+      debugPrint('Latest Flutter version already');
+    }
+    bgActivities.remove(_element);
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future<void> _upgradeFlutter() async {
-      BgActivityTile element = BgActivityTile(
-        title: 'Upgrading your Flutter version',
-        activityId: 'upgrading_flutter_version',
-      );
-      bgActivities.add(element);
-      await flutterApi.flutterAPICall().then((apiData) async {
-        flutterAPIVersion = apiData.releases![0]!.version;
-        if (await compareVersion(
-            latestVersion: flutterAPIVersion!,
-            previousVersion: flutterVersion!)) {
-          await flutterActions.upgrade().then((value) {
-            _updateResult = value;
-          });
-        } else {
-          _updateResult = false;
-        }
-      });
-      bgActivities.remove(element);
-      if (mounted) {
-        await Navigator.pushNamed(context, StatusCheck.id);
-      }
-      if (!_updateResult! && mounted) {
-        await showDialog(
-          context: context,
-          builder: (_) => DialogTemplate(
-            child: Column(
-              children: <Widget>[
-                DialogHeader(title: 'Latest Version'),
-                const SizedBox(height: 20),
-                const Text(
-                    'You are already on the latest version of Flutter. You are good to go!'),
-                const SizedBox(height: 20),
-                RectangleButton(
-                  width: double.infinity,
-                  color: Colors.blueGrey,
-                  splashColor: Colors.blueGrey.withOpacity(0.5),
-                  focusColor: Colors.blueGrey.withOpacity(0.5),
-                  hoverColor: Colors.grey.withOpacity(0.5),
-                  highlightColor: Colors.blueGrey.withOpacity(0.5),
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
-    }
-
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,10 +62,7 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
             focusColor: Colors.blueGrey.withOpacity(0.5),
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
-            onPressed: () {
-              _upgradeFlutter();
-              Navigator.pop(context);
-            },
+            onPressed: _upgradeFlutter,
             child: const Text('Upgrade Flutter'),
           ),
         ],

@@ -4,7 +4,7 @@ import 'package:process_run/shell.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 
-FlutterActions flutterActions = FlutterActions();
+// FlutterActions() FlutterActions() = FlutterActions()();
 
 class FlutterActions {
   final Shell _shell = Shell(verbose: false);
@@ -44,11 +44,19 @@ class FlutterActions {
   }
 
   // Change channel
-  Future<void> changeChannel(String channel) async {
-    List<ProcessResult> channelSwap =
-        await _shell.run('flutter channel $channel');
-    if (!channelSwap[0].stderr.toString().contains('Already on \'$channel\'')) {
-      await upgrade();
+  Future<bool> changeChannel(String channel) async {
+    try {
+      List<ProcessResult> channelSwap =
+          await _shell.run('flutter channel $channel');
+      if (!channelSwap[0]
+          .stderr
+          .toString()
+          .contains('Already on \'$channel\'')) {
+        await upgrade();
+      }
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 

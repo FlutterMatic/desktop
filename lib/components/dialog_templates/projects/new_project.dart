@@ -90,7 +90,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       else if (_index == 3 && _validatePlatformSelection()) {
         setState(() => _index = 4);
         try {
-          await flutterActions.flutterCreate(
+          await FlutterActions().flutterCreate(
             _projectName!,
             _projectDescription!,
             _projectOrg!,
@@ -102,7 +102,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             linux: _linux,
           );
           //Success
-          await flutterActions.checkProjects();
+          await FlutterActions().checkProjects();
           Navigator.pop(context);
           await showDialog(
               context: context,

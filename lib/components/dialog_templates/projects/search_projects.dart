@@ -27,9 +27,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
   bool _showResults = false;
   String? _searchInput;
   List<ProjectsModel> _searchResults = [];
-  // Path:
-  // '$projDir/${_projects[i]}'
-
+  
   Future<void> _loadProjects() async {
     setState(() => _loading = true);
     try {

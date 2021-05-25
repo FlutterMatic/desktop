@@ -216,7 +216,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
                 await delProjPath
                     .delete(recursive: true)
                     .whenComplete(() async {
-                  await flutterActions.checkProjects();
+                  await FlutterActions().checkProjects();
                   setState(() => _loading = false);
                 });
                 Navigator.pop(context);

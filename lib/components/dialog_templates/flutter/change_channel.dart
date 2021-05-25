@@ -139,6 +139,7 @@ class AlreadyChannelDialog extends StatelessWidget {
           const SizedBox(height: 20),
           RectangleButton(
             width: double.infinity,
+            color: customTheme.focusColor,
             onPressed: () => Navigator.pop(context),
             child: Text(
               'OK',
@@ -167,7 +168,7 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
         channelIsUpdating = true;
         bgActivities.add(element);
         if (win32) {
-          await flutterActions.changeChannel(channelName.toLowerCase());
+          await FlutterActions().changeChannel(channelName.toLowerCase());
         }
         channelIsUpdating = false;
         bgActivities.remove(element);
