@@ -20,7 +20,6 @@ class OpenOptionsDialog extends StatelessWidget {
   );
   @override
   Widget build(BuildContext context) {
-    // ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

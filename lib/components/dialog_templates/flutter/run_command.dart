@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/dialog_header.dart';
 import 'package:flutter_installer/components/dialog_templates/flutter/change_channel.dart';
 import 'package:flutter_installer/components/dialog_templates/flutter/flutter_upgrade.dart';
-import 'package:flutter_installer/components/dialog_templates/projects/new_project.dart';
+import 'package:flutter_installer/components/dialog_templates/projects/new_project/new_project.dart';
 import 'package:flutter_installer/components/widgets/inputs/check_box_element.dart';
 import 'package:flutter_installer/components/widgets/ui/dialog_template.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';

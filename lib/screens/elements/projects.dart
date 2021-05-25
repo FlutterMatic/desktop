@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:flutter_installer/components/dialog_templates/projects/open_options.dart';
-import 'package:flutter_installer/components/dialog_templates/projects/new_project.dart';
+import 'package:flutter_installer/components/dialog_templates/projects/new_project/new_project.dart';
 import 'package:flutter_installer/components/dialog_templates/projects/search_projects.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
