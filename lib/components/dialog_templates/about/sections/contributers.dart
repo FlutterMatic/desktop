@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_installer/components/widgets/buttons/rectangle_button.dart';
+import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/services/themes.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -7,13 +8,16 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 
+bool _failedRequest = false;
+
 class ContributersAboutSection extends StatelessWidget {
-  final List<ContributerTile> _contributers = [
-    ContributerTile('56755783'), // Ziyad Farhan
-    ContributerTile('35523357'), // Minnu
-  ];
   @override
   Widget build(BuildContext context) {
+    List<ContributerTile> _contributers = [
+      ContributerTile('56755783'), // Ziyad Farhan
+      ContributerTile('35523357'), // Minnu
+    ];
+    ThemeData customTheme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,12 +26,62 @@ class ContributersAboutSection extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 10),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: _contributers.length,
-          itemBuilder: (_, i) {
-            return _contributers[i];
-          },
+        _failedRequest
+            ? RoundContainer(
+                color: customTheme.focusColor,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 5),
+                    const Icon(Icons.lock),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Reloaded Too Many Times',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'It seems that you have reloaded this page way too many times. Try again in about an hour.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              )
+            : Column(children: _contributers.map((e) => (e)).toList()),
+        const SizedBox(height: 10),
+        RoundContainer(
+          width: double.infinity,
+          color: customTheme.focusColor,
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Want to contribute?',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                        'We appreciate people like you to contribute to this project.'),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              RectangleButton(
+                hoverColor: customTheme.hoverColor,
+                width: 90,
+                onPressed: () => launch(GitHubServices.issueUrl),
+                child: Text(
+                  'Get Started',
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -56,7 +110,7 @@ class _ContributerTileState extends State<ContributerTile> {
   Future<void> _loadProfile() async {
     Map<String, String> _header = {
       'Content-type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
     };
 
     http.Response _result = await http.get(
@@ -74,6 +128,7 @@ class _ContributerTileState extends State<ContributerTile> {
       });
     } else {
       setState(() {
+        _failedRequest = true;
         _failed = true;
         _loading = false;
       });

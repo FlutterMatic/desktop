@@ -9,7 +9,6 @@ import 'package:flutter_installer/components/widgets/buttons/rectangle_button.da
 import 'package:flutter_installer/components/widgets/ui/spinner.dart';
 import 'package:flutter_installer/components/widgets/ui/warning_widget.dart';
 import 'package:flutter_installer/screens/home_screen.dart';
-import 'package:flutter_installer/screens/states_check.dart';
 import 'package:flutter_installer/services/flutter_actions.dart';
 import 'package:flutter_installer/utils/constants.dart';
 
@@ -25,8 +24,6 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
   //Utils
   bool _loadingMaterials = true;
   bool _loading = true;
-
-  // final String _getChannelName =
 
   void _loadChannel() {
     setState(() {
@@ -71,6 +68,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                     SelectTile(
                       onPressed: (val) =>
                           setState(() => _selectedChannel = val),
+                      defaultValue: _selectedChannel,
                       options: ['Master', 'Stable', 'Beta', 'Dev'],
                     ),
                     warningWidget(
@@ -173,7 +171,7 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
         }
         channelIsUpdating = false;
         bgActivities.remove(element);
-        await Navigator.pushNamed(context, StatusCheck.id);
+        Navigator.pop(context);
       }
     }
 

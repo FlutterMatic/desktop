@@ -36,6 +36,8 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
+
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +53,7 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: RoundContainer(
-                color: kDarkColor,
+                color: customTheme.focusColor,
                 child: const Text(
                   'There are currently no background activities running. Check back later.',
                 ),

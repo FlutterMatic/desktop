@@ -3,7 +3,6 @@ import 'package:flutter_installer/components/dialog_templates/other/bg_activity.
 import 'package:flutter_installer/components/dialog_templates/flutter/run_command.dart';
 import 'package:flutter_installer/components/dialog_templates/other/status.dart';
 import 'package:flutter_installer/components/dialog_templates/settings/settings.dart';
-import 'package:flutter_installer/components/widgets/ui/round_container.dart';
 import 'package:flutter_installer/components/widgets/buttons/square_button.dart';
 import 'package:flutter_installer/screens/elements/projects.dart';
 import 'package:flutter_installer/utils/constants.dart';
@@ -106,38 +105,21 @@ class _HomeScreenState extends State<HomeScreen> {
     ThemeData customTheme = Theme.of(context);
     return Align(
       alignment: Alignment.bottomLeft,
-      child: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: SquareButton(
-              color: customTheme.primaryColorLight,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => BgActivityDialog(),
-                );
-              },
-              icon: Icon(
-                Icons.sync_alt_rounded,
-                color: customTheme.textTheme.bodyText1!.color,
-              ),
-            ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: SquareButton(
+          color: customTheme.primaryColorLight,
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => BgActivityDialog(),
+            );
+          },
+          icon: Icon(
+            Icons.sync_alt_rounded,
+            color: customTheme.textTheme.bodyText1!.color,
           ),
-          bgActivities.isNotEmpty
-              ? Align(
-                  alignment: Alignment.topRight,
-                  child: RoundContainer(
-                    height: 15,
-                    width: 15,
-                    color: Colors.blueGrey,
-                    radius: 100,
-                    padding: EdgeInsets.zero,
-                    child: const SizedBox.shrink(),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ],
+        ),
       ),
     );
   }
