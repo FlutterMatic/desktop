@@ -1,0 +1,65 @@
+{
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "tabnine.experimentalAutoImports": true,
+    "explorer.confirmDelete": false,
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "log.error",
+                "settings": {
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "log.warning",
+                "settings": {
+                    "fontStyle": "bold"
+                }
+            },
+            {
+                "scope": "log.info",
+                "settings": {
+                    "fontStyle": "bold"
+                }
+            }
+        ]
+    },
+    "logFileHighlighter.customPatterns": [
+        {
+            "pattern": "WARNING",
+            "foreground": "#ff9100"
+        },
+        {
+            "pattern": "ERROR",
+            "foreground": "#ff0000"
+        },
+        {
+            "pattern": "INFO\\w+",
+            "foreground": "#4be772"
+        },
+        {
+            "pattern": "\\[.*\\]",
+            "foreground": "#ffffff"
+        }
+    ],
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.selectionHighlight": false,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "onlySnippets",
+        "editor.wordBasedSuggestions": true
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnType": true,
+    "powershell.codeFormatting.autoCorrectAliases": true,
+    "editor.formatOnSave": true
+}
