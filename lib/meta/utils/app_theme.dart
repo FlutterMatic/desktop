@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart'
-    show Color, Colors, IconThemeData, TextStyle, TextTheme, ThemeData;
+import 'package:flutter/material.dart';
 
 class AppTheme {
   AppTheme._();

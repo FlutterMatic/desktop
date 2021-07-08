@@ -1,5 +1,8 @@
-enum CheckType {
+enum ApplicationCheckType {
   JAVA_CHECK,
   FLUTTER_CHECK,
   ADB_CHECK,
+  VSC_CHECK,
+  ANDROID_STUDIO_CHECK,
+  GIT_CHECK,
 }

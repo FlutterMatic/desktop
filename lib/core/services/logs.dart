@@ -1,9 +1,7 @@
-import 'package:path_provider/path_provider.dart'
-    show getApplicationSupportDirectory;
+import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as console;
-import 'package:intl/intl.dart' show DateFormat;
-import 'dart:io'
-    show Directory, File, FileMode, FileSystemException, OSError, Platform;
+import 'package:intl/intl.dart';
+import 'dart:io';
 
 enum LogTypeTag { INFO, WARNING, ERROR }
 

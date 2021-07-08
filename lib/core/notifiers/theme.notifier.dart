@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show ChangeNotifier;
+import 'package:flutter/material.dart';
 import 'package:manager/core/services/logs.dart';
 
 class ThemeChangeNotifier with ChangeNotifier {

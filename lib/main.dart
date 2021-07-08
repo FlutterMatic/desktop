@@ -1,38 +1,32 @@
-import 'package:bitsdojo_window_platform_interface/window.dart'
-    show DesktopWindow;
-import 'package:flutter/material.dart'
-    show
-        Alignment,
-        BuildContext,
-        MaterialApp,
-        Size,
-        StatelessWidget,
-        ThemeMode,
-        Widget,
-        WidgetsFlutterBinding,
-        runApp;
-import 'package:bitsdojo_window/bitsdojo_window.dart'
-    show appWindow, doWhenWindowReady;
-import 'package:flutter/src/widgets/basic.dart' show Alignment, Size;
-import 'package:manager/core/notifiers/theme.notifier.dart'
-    show ThemeChangeNotifier;
-import 'package:manager/core/services/checks/flutter.check.dart';
-import 'package:manager/meta/utils/app_theme.dart' show AppTheme;
-import 'package:manager/meta/views/startup.dart' show Startup;
-import 'package:provider/provider.dart'
-    show ChangeNotifierProvider, Consumer, MultiProvider;
-import 'package:provider/single_child_widget.dart' show SingleChildWidget;
+import 'package:bitsdojo_window_platform_interface/window.dart';
+import 'package:flutter/material.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/src/widgets/basic.dart';
+import 'package:manager/core/notifiers/change.notifier.dart';
+import 'package:manager/core/notifiers/flutter.notifier.dart';
+import 'package:manager/core/notifiers/java.notifier.dart';
+import 'package:manager/core/notifiers/theme.notifier.dart';
+import 'package:manager/meta/utils/app_theme.dart';
+import 'package:manager/meta/views/startup.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: <SingleChildWidget>[
-        ChangeNotifierProvider<ThemeChangeNotifier>(
-          create: (_) => ThemeChangeNotifier(),
+        ChangeNotifierProvider<MainChecksNotifier>(
+          create: (BuildContext context) => MainChecksNotifier(),
         ),
-        ChangeNotifierProvider<FlutterCheck>(
-          create: (_) => FlutterCheck(),
+        ChangeNotifierProvider<FlutterChangeNotifier>(
+          create: (BuildContext context) => FlutterChangeNotifier(),
+        ),
+        ChangeNotifierProvider<JavaChangeNotifier>(
+          create: (BuildContext context) => JavaChangeNotifier(),
+        ),
+        ChangeNotifierProvider<ThemeChangeNotifier>(
+          create: (BuildContext context) => ThemeChangeNotifier(),
         ),
       ],
       child: MyApp(),

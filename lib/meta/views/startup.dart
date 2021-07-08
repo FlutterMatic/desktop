@@ -1,27 +1,10 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart' show appWindow;
-import 'package:flutter/material.dart'
-    show
-        BuildContext,
-        Center,
-        CircularProgressIndicator,
-        Colors,
-        Column,
-        DragStartDetails,
-        FontWeight,
-        GestureDetector,
-        HitTestBehavior,
-        Key,
-        MainAxisAlignment,
-        Scaffold,
-        SizedBox,
-        State,
-        StatefulWidget,
-        Text,
-        TextStyle,
-        Widget;
-import 'package:manager/core/notifiers/theme.notifier.dart'
-    show ThemeChangeNotifier;
-import 'package:manager/core/services/checks/flutter.check.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/material.dart';
+import 'package:manager/app/constants/enum.dart';
+import 'package:manager/core/notifiers/change.notifier.dart';
+import 'package:manager/core/notifiers/flutter.notifier.dart';
+import 'package:manager/core/notifiers/java.notifier.dart';
+import 'package:manager/core/notifiers/theme.notifier.dart';
 import 'package:provider/provider.dart';
 
 class Startup extends StatefulWidget {
@@ -39,9 +22,24 @@ class _StartupState extends State<Startup> {
   bool reverse = false;
   int easterEggThemeCount = 0;
   @override
-  void initState() {
-    Future<bool>.microtask(() => context.read<FlutterCheck>().checkFlutter());
-    super.initState();
+  void didChangeDependencies() {
+    context.read<MainChecksNotifier>().startChecking(context);
+    super.didChangeDependencies();
+  }
+
+  SelectableText get _text {
+    {
+      return SelectableText(
+        context.watch<MainChecksNotifier>().value ==
+                ApplicationCheckType.FLUTTER_CHECK
+            ? context.watch<FlutterChangeNotifier>().value
+            : context.watch<JavaChangeNotifier>().value,
+        style: const TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 20,
+        ),
+      );
+    }
   }
 
   @override
@@ -65,28 +63,33 @@ class _StartupState extends State<Startup> {
           }
         },
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: <Widget>[
-              CircularProgressIndicator(
-                color: widget.themeChangeNotifier.isDarkTheme
-                    ? Colors.lightBlueAccent.withOpacity(0.6)
-                    : Colors.lightBlueAccent,
-                strokeWidth: 3,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Consumer<FlutterCheck>(builder:
-                  (BuildContext context, FlutterCheck flutterCheck, Widget? _) {
-                return Text(
-                  flutterCheck.checkStatus,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    color: widget.themeChangeNotifier.isDarkTheme
+                        ? Colors.lightBlueAccent.withOpacity(0.6)
+                        : Colors.lightBlueAccent,
+                    strokeWidth: 3,
                   ),
-                );
-              }),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  _text,
+                ],
+              ),
+              const Positioned(
+                bottom: 10,
+                right: 0,
+                left: 0,
+                child: Center(
+                  child: SelectableText(
+                    'Made with 💙',
+                  ),
+                ),
+              ),
             ],
           ),
         ),
