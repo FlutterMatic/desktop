@@ -30,32 +30,36 @@ class Logger {
     return File('$path/fluttermatic-${Platform.operatingSystem}-$date.log');
   }
 
-  Future<void> file(LogTypeTag? tag, String? message) async {
+  Future<void> file(LogTypeTag tag, String? message,
+      {StackTrace? stackTraces}) async {
     File file = await _localFile;
     DateTime _now = DateTime.now();
     try {
-      if (tag == LogTypeTag.INFO) {
-        console.log(
-            'INFORMATION [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
-        await file.writeAsString(
-          '''INFORMATION [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${StackTrace.fromString(StackTrace.current.toString())}\n''',
-          mode: FileMode.writeOnlyAppend,
-        );
-      }
-      if (tag == LogTypeTag.WARNING) {
-        console.log(
-            'WARNING [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
-        await file.writeAsString(
-          '''WARNING [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${StackTrace.empty}\n''',
-          mode: FileMode.writeOnlyAppend,
-        );
-      } else if (tag == LogTypeTag.ERROR) {
-        console.log(
-            'ERROR [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
-        await file.writeAsString(
-          '''ERROR [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${StackTrace.empty}\n''',
-          mode: FileMode.writeOnlyAppend,
-        );
+      switch (tag) {
+        case LogTypeTag.INFO:
+          console.log(
+              'INFORMATION [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
+          await file.writeAsString(
+            '''INFORMATION [${_now.hour}:${_now.minute}:${_now.second}] - $message\n''',
+            mode: FileMode.writeOnlyAppend,
+          );
+          break;
+        case LogTypeTag.WARNING:
+          console.log(
+              'WARNING [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
+          await file.writeAsString(
+            '''WARNING [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
+            mode: FileMode.writeOnlyAppend,
+          );
+          break;
+        case LogTypeTag.ERROR:
+          console.log(
+              'ERROR [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
+          await file.writeAsString(
+            '''ERROR [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
+            mode: FileMode.writeOnlyAppend,
+          );
+          break;
       }
     } on FileSystemException catch (fileSystemException) {
       console.log(fileSystemException.message);

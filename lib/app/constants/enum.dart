@@ -1,8 +1,14 @@
 enum ApplicationCheckType {
-  JAVA_CHECK,
-  FLUTTER_CHECK,
   ADB_CHECK,
-  VSC_CHECK,
   ANDROID_STUDIO_CHECK,
+  FLUTTER_CHECK,
   GIT_CHECK,
+  JAVA_CHECK,
+  VSC_CHECK,
+}
+
+enum ProgressType {
+  CHECKING,
+  DOWNLOADING,
+  EXTRACTING,
 }

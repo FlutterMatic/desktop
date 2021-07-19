@@ -1,6 +1,11 @@
+Versions versions = Versions();
+
 class Versions {
   String? flutter;
   String? channel;
   String? java;
-  String? code;
+  String? adb;
+  String? vsCode;
+  String? git;
+  String? studio;
 }

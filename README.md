@@ -1,6 +1,6 @@
 # manager
 
-Flutter App Manager.
+Flutter App Manager
 
 ## Getting Started
 

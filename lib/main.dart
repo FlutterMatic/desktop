@@ -2,34 +2,18 @@ import 'package:bitsdojo_window_platform_interface/window.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/src/widgets/basic.dart';
-import 'package:manager/core/notifiers/change.notifier.dart';
-import 'package:manager/core/notifiers/flutter.notifier.dart';
-import 'package:manager/core/notifiers/java.notifier.dart';
-import 'package:manager/core/notifiers/theme.notifier.dart';
+import 'package:manager/app/providers/multi_ptoviders.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 import 'package:manager/meta/views/startup.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SharedPref.init();
   runApp(
-    MultiProvider(
-      providers: <SingleChildWidget>[
-        ChangeNotifierProvider<MainChecksNotifier>(
-          create: (BuildContext context) => MainChecksNotifier(),
-        ),
-        ChangeNotifierProvider<FlutterChangeNotifier>(
-          create: (BuildContext context) => FlutterChangeNotifier(),
-        ),
-        ChangeNotifierProvider<JavaChangeNotifier>(
-          create: (BuildContext context) => JavaChangeNotifier(),
-        ),
-        ChangeNotifierProvider<ThemeChangeNotifier>(
-          create: (BuildContext context) => ThemeChangeNotifier(),
-        ),
-      ],
-      child: MyApp(),
+    MultiProviders(
+      MyApp(),
     ),
   );
 
@@ -52,6 +36,7 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
           Widget? child) {
         return MaterialApp(
+          
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeChangeNotifier.isDarkTheme

@@ -6,9 +6,14 @@
     "configurations": [
         {
             "name": "FlutterMatic-Desktop",
-            "request": "launch",
             "type": "dart",
-            "flutterMode": "debug"
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "windows"
+            ]
         }
     ]
 }
