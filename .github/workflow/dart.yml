@@ -2,7 +2,7 @@ name: Analyzing Code
 
 on:
   push:
-    branches: [ master ]
+    branches: [ redesign ]
 
 jobs:
   flutter_analyze:
