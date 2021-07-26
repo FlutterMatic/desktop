@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:manager/core/services/logs.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:process_run/src/shell.dart';
 
@@ -19,8 +21,17 @@ abstract class AndroidStudioBinInfo {
   /// First line is sufficient
   static AndroidStudioBinInfo? parseVersionOutput(String resultOutput) {
     Version? studioVersion;
-
-    return null;
+    try {
+      studioVersion = Version.parse('$resultOutput.0');
+      return AndroidStudioBinInfoImpl(version: studioVersion);
+    } on FormatException catch (formatException) {
+      logger.file(
+          LogTypeTag.ERROR, 'Format Exception : ${formatException.toString()}');
+      return null;
+    } catch (e) {
+      logger.file(LogTypeTag.ERROR, e.toString());
+      return null;
+    }
   }
 }
 
@@ -31,13 +42,22 @@ class AndroidStudioBinInfoImpl extends AndroidStudioBinInfo {
   AndroidStudioBinInfoImpl({this.version});
 }
 
-/// Get java info.
+/// Get Android studio info.
 /// Returns null if java cannot be found in the path
 Future<AndroidStudioBinInfo?> _getAndroidStudioBinInfo() async {
-  /// `java -version` command information will be stored in
-  /// [resultOutput].
   String? resultOutput;
   try {
+    String supportPath =
+        (await getTemporaryDirectory()).path.replaceAll('Temp', 'Google');
+    await Directory(supportPath)
+        .list(recursive: false)
+        .forEach((FileSystemEntity f) {
+      if (f.path.contains('AndroidStudio')) {
+        resultOutput =
+            f.path.split('\\').last.replaceAll(RegExp('[^\\d.]'), '');
+      }
+    });
+
     /// returning the data.
     return AndroidStudioBinInfo.parseVersionOutput(resultOutput!);
   }

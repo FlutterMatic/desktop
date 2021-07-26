@@ -11,11 +11,11 @@ import 'package:process_run/shell.dart';
 /// ```dart
 /// bool addedEnvPath = await setPath(
 ///       'C:\\fluttermatic\\flutter\\bin\\',
-///       appDir: applicationDirectory,
+///       applicationDirectory,
 ///   );
 /// ```
 /// This function will return [Future] `true` or `false`.
-Future<bool> setPath(String? path, {String? appDir}) async {
+Future<bool> setPath(String? path, [String? appDir]) async {
   /// Appending script link.
   String? appenderLink;
 
@@ -25,6 +25,12 @@ Future<bool> setPath(String? path, {String? appDir}) async {
       /// Check the platform.
       /// Windows
       if (Platform.isWindows) {
+        List<ProcessResult> envPATH = await shell.run('echo %PATH%');
+        if (envPATH.contains(path)) {
+          await logger.file(
+              LogTypeTag.INFO, '$path already exists in env PATH variable.');
+          return false;
+        }
         appenderLink = apiData!.data!['path_appender']['windows'];
         await path_download(appenderLink, 'win32.vbs', appDir: appDir);
         await shell.run('$appDir\\path\\win32.vbs "$path"');
@@ -74,6 +80,7 @@ Future<bool> setPath(String? path, {String? appDir}) async {
   }
 }
 
+/// [path_download] is a function to download tha path appened script.
 Future<void> path_download(String? scriptLink, String? script,
     {String? appDir}) async {
   try {

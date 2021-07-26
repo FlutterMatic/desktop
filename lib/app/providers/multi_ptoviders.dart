@@ -16,8 +16,14 @@ class MultiProviders extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: <SingleChildWidget>[
+        ChangeNotifierProvider<ConnectionNotifier>(
+          create: (BuildContext context) => ConnectionNotifier(),
+        ),
         ChangeNotifierProvider<DownloadNotifier>(
           create: (BuildContext context) => DownloadNotifier(),
+        ),
+        ChangeNotifierProvider<VSCodeAPINotifier>(
+          create: (BuildContext context) => VSCodeAPINotifier(),
         ),
         ChangeNotifierProvider<FlutterMaticAPINotifier>(
           create: (BuildContext context) => FlutterMaticAPINotifier(),

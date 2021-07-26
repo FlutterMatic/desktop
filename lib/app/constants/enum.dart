@@ -5,6 +5,7 @@ enum ApplicationCheckType {
   GIT_CHECK,
   JAVA_CHECK,
   VSC_CHECK,
+  DONE,
 }
 
 enum ProgressType {

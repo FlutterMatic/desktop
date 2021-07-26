@@ -45,7 +45,7 @@ class FlutterNotifier extends ValueNotifier<String> {
         bool tmpDir = await checkDir(dir.path, subDirName: 'tmp');
 
         /// If tmpDir is false, then create a temporary directory.
-        if (tmpDir == false) {
+        if (!tmpDir) {
           await Directory('${dir.path}\\tmp').create();
           await logger.file(
               LogTypeTag.INFO, 'Created tmp directory while checking Flutter');
@@ -59,21 +59,25 @@ class FlutterNotifier extends ValueNotifier<String> {
               progressBarColor: Colors.lightBlueAccent,
             );
 
+        value = 'Extracting Flutter-SDK';
+
         /// Extraction
         bool extracted = await unzip(
           dir.path + '\\tmp\\' + 'flutter.$archiveType',
           'C:\\fluttermatic\\',
-          value: 'Extracting Flutter-SDK',
         );
-        extracted
-            ? await logger.file(
-                LogTypeTag.INFO, 'Flutter-SDK extraction was successfull')
-            : await logger.file(
-                LogTypeTag.ERROR, 'Flutter-SDK extraction failed.');
+        if (extracted) {
+          value = 'Extracted Flutter-SDK';
+          await logger.file(
+              LogTypeTag.INFO, 'Flutter-SDK extraction was successfull');
+        } else {
+          value = 'Extracting Flutter-SDK failed';
+          await logger.file(LogTypeTag.ERROR, 'Flutter-SDK extraction failed.');
+        }
 
         /// Appending path to env
         bool isPathSet =
-            await setPath('C:\\fluttermatic\\flutter\\bin\\', appDir: dir.path);
+            await setPath('C:\\fluttermatic\\flutter\\bin\\', dir.path);
         if (isPathSet) {
           value = 'Flutter-SDK set to path';
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');

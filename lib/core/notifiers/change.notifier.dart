@@ -1,3 +1,4 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/models/flutter_sdk.model.dart';
@@ -23,8 +24,14 @@ class MainChecksNotifier extends ValueNotifier<ApplicationCheckType> {
     value = ApplicationCheckType.ADB_CHECK;
     await context.read<ADBChangeNotifier>().checkADB(context, api);
     value = ApplicationCheckType.ANDROID_STUDIO_CHECK;
-    await context.read<AndroidStudioChangeNotifier>().checkAStudio(context, api);
+    await context
+        .read<AndroidStudioChangeNotifier>()
+        .checkAStudio(context, api);
     value = ApplicationCheckType.VSC_CHECK;
     await context.read<VSCodeChangeNotifier>().checkVSCode(context, api);
+    value = ApplicationCheckType.DONE;
+    appWindow.minSize = const Size(600, 700);
+    appWindow.size = const Size(600, 700);
+    appWindow.maximize();
   }
 }

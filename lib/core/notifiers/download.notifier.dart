@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/services/logs.dart';
 
 class DownloadNotifier extends ChangeNotifier {
@@ -11,6 +12,15 @@ class DownloadNotifier extends ChangeNotifier {
   Color get progressColor => _progressColor!;
   Future<void> downloadFile(String uri, String? fileName, String dir,
       {String? value, Color? progressBarColor}) async {
+    /// Check for temporary Directory to download files
+    bool tmpDir = await Directory(dir).exists();
+
+    /// If tmpDir is false, then create a temporary directory.
+    if (!tmpDir) {
+      await Directory(dir).create();
+      await logger.file(
+          LogTypeTag.INFO, 'Created tmp directory while checking Java');
+    }
     HttpClient httpClient = HttpClient();
     try {
       HttpClientRequest request = await httpClient.getUrl(
@@ -36,7 +46,6 @@ class DownloadNotifier extends ChangeNotifier {
         notifyListeners();
         await logger.file(LogTypeTag.INFO, '$fileName has been downloaded.');
         notifyListeners();
-        value = 'Flutter download done';
       } else {
         value = 'Error downloading';
         await logger.file(LogTypeTag.ERROR,

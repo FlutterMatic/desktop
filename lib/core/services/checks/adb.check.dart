@@ -1,6 +1,7 @@
 import 'dart:developer' as console;
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/services.dart';
@@ -17,13 +18,6 @@ class ADBNotifier extends ValueNotifier<String> {
 
   /// [adbVersion] value holds ADB version information
   Version? adbVersion;
-
-  /// Get the platform
-  String? platform = Platform.isWindows
-      ? 'windows'
-      : Platform.isMacOS
-          ? 'mac'
-          : 'linux';
 
   Future<void> checkADB(BuildContext context, FluttermaticAPI? api) async {
     /// Application supporting Directory
@@ -43,7 +37,7 @@ class ADBNotifier extends ValueNotifier<String> {
         bool tmpDir = await checkDir(dir.path, subDirName: 'tmp');
 
         /// If tmpDir is false, then create a temporary directory.
-        if (tmpDir == false) {
+        if (!tmpDir) {
           await Directory('${dir.path}\\tmp').create();
           await logger.file(
               LogTypeTag.INFO, 'Created tmp directory while checking ADB');
@@ -57,20 +51,24 @@ class ADBNotifier extends ValueNotifier<String> {
               progressBarColor: const Color(0xFFA4CA39),
             );
 
+        value = 'Extracting ADB';
+
         /// Extract java from compressed file.
         bool adbExtracted = await unzip(
           dir.path + '\\tmp\\' + 'adb.zip',
           'C:\\fluttermatic\\',
-          value: 'Extracting ADB',
         );
-        adbExtracted
-            ? await logger.file(
-                LogTypeTag.INFO, 'ADB extraction was successfull')
-            : await logger.file(LogTypeTag.ERROR, 'ADB extraction failed.');
+        if (adbExtracted) {
+          value = 'Extracted ADB';
+          await logger.file(LogTypeTag.INFO, 'ADB extraction was successfull');
+        } else {
+          value = 'Extracting ADB failed';
+          await logger.file(LogTypeTag.ERROR, 'ADB extraction failed.');
+        }
 
         /// Appending path to env
-        bool isADBPathSet = await setPath('C:\\fluttermatic\\platform-tools\\',
-            appDir: dir.path);
+        bool isADBPathSet =
+            await setPath('C:\\fluttermatic\\platform-tools\\', dir.path);
         if (isADBPathSet) {
           value = 'Flutter-SDK set to path';
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');

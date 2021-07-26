@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/models/flutter_sdk.model.dart';
 import 'package:http/http.dart' as http;
 import 'package:manager/core/models/fluttermatic.model.dart';
@@ -12,7 +13,7 @@ class FlutterSDKNotifier with ChangeNotifier {
   String? get sdk => _sdk;
   Future<void> fetchSDKData(FluttermaticAPI? api) async {
     http.Response response = await http.get(Uri.parse(
-        api!.data!['flutter']['base_url'] + api.data!['flutter']['windows']));
+        api!.data!['flutter']['base_url'] + api.data!['flutter'][platform]));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       _sdkMap = FlutterSDK.fromJson(

@@ -1,6 +1,7 @@
 import 'dart:developer' as console;
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/models.dart';
@@ -27,13 +28,6 @@ class JavaNotifier extends ValueNotifier<String> {
       /// The comppressed archive type.
       String? archiveType = Platform.isLinux ? 'tar.gz' : 'zip';
 
-      /// Get the platform
-      String? platform = Platform.isWindows
-          ? 'windows'
-          : Platform.isMacOS
-              ? 'mac'
-              : 'linux';
-
       /// Checking for Java path,
       /// returns path to java or null if it doesn't exist.
       String? javaPath = await which('java');
@@ -49,16 +43,6 @@ class JavaNotifier extends ValueNotifier<String> {
         value = 'Downloading Java';
         await logger.file(LogTypeTag.INFO, 'Downloading Java');
 
-        /// Check for temporary Directory to download files
-        bool tmpDir = await checkDir(dir.path, subDirName: 'tmp');
-
-        /// If tmpDir is false, then create a temporary directory.
-        if (tmpDir == false) {
-          await Directory('${dir.path}\\tmp').create();
-          await logger.file(
-              LogTypeTag.INFO, 'Created tmp directory while checking Java');
-        }
-
         /// Downloading JDK.
         await context.read<DownloadNotifier>().downloadFile(
               api!.data!['java']['JDK'][platform],
@@ -68,57 +52,67 @@ class JavaNotifier extends ValueNotifier<String> {
               value: 'Downloading JDK',
             );
 
+        value = 'Extracting JDK';
+
         /// Extract java from compressed file.
         bool jdkExtracted = await unzip(
           dir.path + '\\tmp\\' + 'jdk.$archiveType',
           'C:\\fluttermatic\\',
-          value: 'Extracting JDK',
         );
-        jdkExtracted
-            ? await logger.file(
-                LogTypeTag.INFO, 'Java-DK extraction was successfull')
-            : await logger.file(LogTypeTag.ERROR, 'Java-DK extraction failed.');
+        if (jdkExtracted) {
+          value = 'Extracted JDK';
+          await logger.file(
+              LogTypeTag.INFO, 'Java-DK extraction was successfull');
+        } else {
+          value = 'Extracting JDK failed';
+          await logger.file(LogTypeTag.ERROR, 'Java-DK extraction failed.');
+        }
 
         /// Appending path to env
         bool isJDKPathSet =
-            await setPath('C:\\fluttermatic\\java\\bin\\', appDir: dir.path);
+            await setPath('C:\\fluttermatic\\java\\bin\\', dir.path);
         if (isJDKPathSet) {
-          value = 'Flutter-SDK set to path';
-          await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
+          value = 'Java-DK set to path';
+          await logger.file(LogTypeTag.INFO, 'Java-DK set to path');
         } else {
-          value = 'Flutter-SDK set to path failed';
-          await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
+          value = 'Java-DK set to path failed';
+          await logger.file(LogTypeTag.ERROR, 'Java-DK set to path failed');
         }
 
         /// Downloading JRE
         await context.read<DownloadNotifier>().downloadFile(
-              api.data!['java']['JRE']['windows'],
+              api.data!['java']['JRE'][platform],
               'jre.$archiveType',
               dir.path + '\\tmp',
-              progressBarColor: const Color(0xFFF8981D),
+              progressBarColor: const Color(0xFF1565C0),
               value: 'Downloading JRE',
             );
+
+        value = 'Extracting JRE';
 
         /// Extract java from compressed file.
         bool jreExtracted = await unzip(
           dir.path + '\\tmp\\' + 'jre.$archiveType',
           'C:\\fluttermatic\\',
-          value: 'Extracting JRE',
         );
-        jreExtracted
-            ? await logger.file(
-                LogTypeTag.INFO, 'Java-DK extraction was successfull')
-            : await logger.file(LogTypeTag.ERROR, 'Java-DK extraction failed.');
+        if (jreExtracted) {
+          value = 'Extracted JRE';
+          await logger.file(
+              LogTypeTag.INFO, 'Java-DK extraction was successfull');
+        } else {
+          value = 'Extracting JRE failed';
+          await logger.file(LogTypeTag.ERROR, 'Java-DK extraction failed.');
+        }
 
         /// Appending path to env
         bool isJREPathSet =
-            await setPath('C:\\fluttermatic\\java\\bin\\', appDir: dir.path);
+            await setPath('C:\\fluttermatic\\java\\bin\\', dir.path);
         if (isJREPathSet) {
-          value = 'Flutter-SDK set to path';
-          await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
+          value = 'Java-RE set to path';
+          await logger.file(LogTypeTag.INFO, 'Java-RE set to path');
         } else {
-          value = 'Flutter-SDK set to path failed';
-          await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
+          value = 'Java-RE set to path failed';
+          await logger.file(LogTypeTag.ERROR, 'Java-RE set to path failed');
         }
       }
 

@@ -15,6 +15,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
     CreateAndAttachConsole();
   }
+  // Hide the attached console.
 // START Fix from: https://github.com/flutter/flutter/issues/47891#issuecomment-708850435
   else {
   STARTUPINFO si = { 0 };
@@ -34,6 +35,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
       } while (ERROR_INVALID_HANDLE == GetLastError());
       ::CloseHandle(pi.hProcess);
       ::CloseHandle(pi.hThread);
+      ::TerminateProcess(pi.hProcess, 0);
     }
   }
   // END Fix

@@ -62,14 +62,14 @@ class GitNotifier extends ValueNotifier<String> {
           bool gitDir = await checkDir('C:\\fluttermatic', subDirName: 'git');
 
           /// If [tmpDir] is false, then create a temporary directory.
-          if (tmpDir == false) {
+          if (!tmpDir) {
             await Directory('${dir.path}\\tmp').create();
             await logger.file(
                 LogTypeTag.INFO, 'Created tmp directory while checking git');
           }
 
           /// If [gitDir] is false, then create a temporary directory.
-          if (gitDir == false) {
+          if (!gitDir) {
             await Directory('C:\\fluttermatic\\git').create();
             await logger.file(LogTypeTag.INFO, 'Created git directory.');
           }
@@ -83,20 +83,25 @@ class GitNotifier extends ValueNotifier<String> {
                 value: 'Downloading Git',
               );
 
+          value = 'Extracting Git';
+
           /// Extract java from compressed file.
           bool gitExtracted = await unzip(
             dir.path + '\\tmp\\' + 'git.tar.bz2',
             'C:\\fluttermatic\\git',
-            value: 'Extracting Git',
           );
-          gitExtracted
-              ? await logger.file(
-                  LogTypeTag.INFO, 'Git extraction was successfull')
-              : await logger.file(LogTypeTag.ERROR, 'Git extraction failed.');
+          if (gitExtracted) {
+            value = 'Extracted Git';
+            await logger.file(
+                LogTypeTag.INFO, 'Git extraction was successfull');
+          } else {
+            value = 'Extracting Git failed';
+            await logger.file(LogTypeTag.ERROR, 'Git extraction failed.');
+          }
 
           /// Appending path to env
           bool isGitPathSet =
-              await setPath('C:\\fluttermatic\\git\\bin\\', appDir: dir.path);
+              await setPath('C:\\fluttermatic\\git\\bin\\', dir.path);
           if (isGitPathSet) {
             value = 'Git set to path';
             await logger.file(LogTypeTag.INFO, 'Git set to path');
