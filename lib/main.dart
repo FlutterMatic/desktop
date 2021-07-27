@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/meta/views/welcome/welcome_view.dart';
 import 'package:manager/app/providers/multi_providers.dart';
 import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:manager/meta/views/startup.dart';
-import 'package:manager/meta/views/welcome/welcome_view.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'home';

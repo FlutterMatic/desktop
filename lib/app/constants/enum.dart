@@ -13,3 +13,18 @@ enum ProgressType {
   DOWNLOADING,
   EXTRACTING,
 }
+
+enum WelcomeTab {
+  Getting_Started,
+  Install_Flutter,
+  Install_Editor,
+  Install_Git,
+  Install_Java,
+  Restart,
+}
+
+enum EditorType {
+  VS_Code,
+  Android_Studio,
+  Both,
+}
