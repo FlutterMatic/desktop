@@ -1,15 +1,17 @@
-import 'dart:io';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:manager/core/libraries/services.dart';
+import 'dart:io';
 
 class ConnectionNotifier with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
 
   bool _isOnline = false;
   bool get isOnline => _isOnline;
+  
+  /// Will start monitoring the user network connection making
+  /// sure to notify any connection changes.
   Future<void> startMonitoring() async {
     await initConnectivity();
     _connectivity.onConnectivityChanged

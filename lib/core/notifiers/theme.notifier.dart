@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeChangeNotifier with ChangeNotifier {
   /// [_isDarkTheme] boolean value that indicates
   /// whether the app is currently in DarkTheme mode.
-  bool _isDarkTheme = false;
+  bool _isDarkTheme = true;
   ThemeChangeNotifier() {
     loadSharedPref();
   }
@@ -16,7 +16,7 @@ class ThemeChangeNotifier with ChangeNotifier {
     if (prefs.containsKey('DARK_THEME')) {
       darkTheme = prefs.getBool('DARK_THEME')!;
     } else {
-      darkTheme = false;
+      darkTheme = true;
     }
   }
 

@@ -1,8 +1,6 @@
-import 'dart:async';
-
-import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/api.dart';
@@ -11,6 +9,7 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/views/home.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
 
 class Startup extends StatefulWidget {
   final ThemeChangeNotifier themeChangeNotifier;
@@ -27,17 +26,20 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
   late bool reverse;
   int easterEggThemeCount = 0;
 
-  Future<void> exponentialBackoff(Function callback,
-      [int failDuration = 5]) async {
+  Future<void> _exponentialBackOff(Function callback,
+      [bool haveBackOff = false]) async {
     try {
+      if (haveBackOff) {
+        await Future<void>.delayed(const Duration(seconds: 5));
+      }
       await callback();
-    } catch (e) {
-      await exponentialBackoff(callback);
+    } catch (_) {
+      await _exponentialBackOff(callback, true);
     }
   }
 
-  Future<void> initCalls() async {
-    await exponentialBackoff(() async {
+  Future<void> _initCalls() async {
+    await _exponentialBackOff(() async {
       await context.read<FlutterMaticAPINotifier>().fetchAPIData();
     });
     apiData = context.read<FlutterMaticAPINotifier>().apiMap!;
@@ -55,7 +57,7 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
   @override
   void initState() {
     Provider.of<ConnectionNotifier>(context, listen: false).startMonitoring();
-    initCalls();
+    _initCalls();
     super.initState();
   }
 
@@ -84,26 +86,6 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
     }
   }
 
-  String? get _asset {
-    {
-      switch (context.watch<MainChecksNotifier>().value) {
-        case ApplicationCheckType.FLUTTER_CHECK:
-          return 'assets/images/icons/flutter.png';
-        case ApplicationCheckType.JAVA_CHECK:
-          return 'assets/images/icons/java.png';
-        case ApplicationCheckType.GIT_CHECK:
-          return 'assets/images/icons/git.png';
-        case ApplicationCheckType.ADB_CHECK:
-          return 'assets/images/icons/adb.png';
-        case ApplicationCheckType.ANDROID_STUDIO_CHECK:
-          return 'assets/images/icons/studio.png';
-        case ApplicationCheckType.VSC_CHECK:
-          return 'assets/images/icons/vscode.png';
-        default:
-      }
-    }
-  }
-
   Future<void> _onPointerDown(PointerDownEvent event) async {
     // Check if right mouse button clicked
     if (event.kind == PointerDeviceKind.mouse &&
@@ -114,9 +96,9 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
         context: context,
         items: <PopupMenuEntry<int>>[
           const PopupMenuItem<int>(
-              value: 1, height: 25, child: Text('minimize')),
+              value: 1, height: 25, child: Text('Minimize')),
           const PopupMenuItem<int>(
-              value: 2, height: 25, child: Text('Report issue')),
+              value: 2, height: 25, child: Text('Report Issue')),
           const PopupMenuItem<int>(
               value: 3, height: 25, child: Text('About App')),
         ],
@@ -134,7 +116,7 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
           appWindow.maximizeOrRestore();
           break;
         case 2:
-          await _launchURL();
+          await _launchReportIssue();
           break;
         case 3:
           showAboutDialog(context: context);
@@ -144,158 +126,119 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _launchURL() async => await canLaunch(reportIssueUrl)
+  Future<void> _launchReportIssue() async => await canLaunch(reportIssueUrl)
       ? await launch(reportIssueUrl)
       : throw 'Could not launch $reportIssueUrl';
+
   @override
   Widget build(BuildContext context) {
-    return context.watch<MainChecksNotifier>().value ==
-            ApplicationCheckType.DONE
-        ? const HomeScreen()
-        : Listener(
-            onPointerDown: _onPointerDown,
-            child: Scaffold(
-              body: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (DragStartDetails details) {
-                  appWindow.startDragging();
-                },
-                child: Center(
-                  child: Stack(
-                    children: <Widget>[
-                      Consumer<ConnectionNotifier>(builder:
-                          (BuildContext context, ConnectionNotifier connection,
-                              Widget? _) {
-                        return !connection.isOnline
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    'assets/images/no_internet.png',
-                                    height: 100,
-                                  ),
-                                  const SizedBox(
-                                    height: 30,
-                                  ),
-                                  const SelectableText(
-                                    'Sorry, No internet',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10.0,
-                                      vertical: 8.0,
-                                    ),
-                                    child: SelectableText(
-                                      'You haven\'t connected to internet it seems. Please do check your connection and come back. Mean while we will check the system.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    _asset!,
-                                    height: 100,
-                                  ),
-                                  const SizedBox(
-                                    height: 30,
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: SelectableText(
-                                        _text!,
-                                        style: const TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Consumer<DownloadNotifier>(
-                                    builder: (BuildContext context,
-                                        DownloadNotifier downloadNotifier, _) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 15.0,
-                                          horizontal: 100.0,
-                                        ),
-                                        child: downloadNotifier.progress == null
-                                            ? const SizedBox.shrink()
-                                            : ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(10)),
-                                                child: LinearProgressIndicator(
-                                                  value: downloadNotifier
-                                                          .progress! /
-                                                      100,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          downloadNotifier
-                                                              .progressColor),
-                                                  backgroundColor:
-                                                      downloadNotifier
-                                                          .progressColor
-                                                          .withOpacity(0.2),
-                                                  minHeight: 5,
-                                                ),
-                                              ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              );
-                      }),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: IconButton(
-                          onPressed: () => appWindow.minimize(),
-                          splashColor: Colors.transparent,
-                          splashRadius: 0.01,
-                          focusColor: Colors.grey,
-                          hoverColor: Colors.grey,
-                          highlightColor: Colors.grey,
-                          color: Colors.black,
-                          icon: const Icon(
-                            Icons.remove_rounded,
-                            size: 15,
-                          ),
-                        ),
-                      ),
-                      const Positioned(
-                        bottom: 10,
-                        right: 0,
-                        left: 0,
-                        child: Center(
-                          child: SelectableText(
-                            'Made with 💙',
+    if (context.watch<MainChecksNotifier>().value ==
+        ApplicationCheckType.DONE) {
+      return const HomeScreen();
+    } else {
+      return Listener(
+        onPointerDown: _onPointerDown,
+        child: Scaffold(
+          body: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanStart: (DragStartDetails details) => appWindow.startDragging(),
+            child: Center(
+              child: Stack(
+                children: <Widget>[
+                  Consumer<ConnectionNotifier>(builder: (BuildContext context,
+                      ConnectionNotifier connection, Widget? _) {
+                    if (!connection.isOnline) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const SelectableText(
+                            'Uh Oh. Couldn\'t find an internet connection. To continue setting up Flutter, you will need to have an internet connection.',
                             style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 24,
                             ),
                           ),
-                        ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                              vertical: 8.0,
+                            ),
+                            child: SelectableText(
+                              'You haven\'t connected to internet it seems. Please do check your connection and come back. Mean while we will check the system.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            width: double.infinity,
+                            child: Center(
+                              child: SelectableText(
+                                _text!,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          ),
+                          Consumer<DownloadNotifier>(
+                            builder: (BuildContext context,
+                                DownloadNotifier downloadNotifier, _) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15.0, horizontal: 100.0),
+                                child: downloadNotifier.progress == null
+                                    ? const SizedBox.shrink()
+                                    : ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                        child: LinearProgressIndicator(
+                                          value:
+                                              downloadNotifier.progress! / 100,
+                                          valueColor: AlwaysStoppedAnimation<
+                                                  Color>(
+                                              downloadNotifier.progressColor),
+                                          backgroundColor: downloadNotifier
+                                              .progressColor
+                                              .withOpacity(0.2),
+                                          minHeight: 5,
+                                        ),
+                                      ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    }
+                  }),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Tooltip(
+                      message: 'Minimize',
+                      child: IconButton(
+                        onPressed: () => appWindow.minimize(),
+                        splashColor: Colors.transparent,
+                        splashRadius: 10,
+                        focusColor: Colors.grey[400],
+                        hoverColor: Colors.grey[400],
+                        highlightColor: Colors.grey,
+                        color: Colors.black,
+                        icon: const Icon(Icons.remove_rounded, size: 15),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
-          );
+          ),
+        ),
+      );
+    }
   }
 }

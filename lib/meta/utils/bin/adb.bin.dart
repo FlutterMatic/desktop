@@ -1,9 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:manager/core/services/logs.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:process_run/src/shell.dart';
+import 'dart:convert';
+import 'dart:io';
 
 Future<Version?> getADBVersion() => getADBBinVersion();
 
@@ -63,7 +62,7 @@ Future<ADBBinInfo?> _getADBBinInfo() async {
   // adb version
   // Android Debug Bridge version 1.0.41
   // Version 31.0.2-7242960
-  // Installed as C:\Users\yaswa\AppData\Local\Android\Sdk\platform-tools\adb.exe
+  // Installed as C:\Users\${name}\AppData\Local\Android\Sdk\platform-tools\adb.exe
   try {
     List<ProcessResult> adbResults = await run('adb version', verbose: false);
 

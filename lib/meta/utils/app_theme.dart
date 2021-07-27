@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   AppTheme._();
-  static final Color darkBackgroundColor = const Color(0xFF121212);
+  static final Color darkBackgroundColor = const Color(0xFF212939);
   static final Color lightBackgroundColor = const Color(0xFFFFFFFF);
   static const Color errorColor = Color(0xFFD73A49);
   static ThemeData get lightTheme => ThemeData(
+        fontFamily: 'NotoSans',
         primaryColor: lightBackgroundColor,
         backgroundColor: lightBackgroundColor,
         scaffoldBackgroundColor: lightBackgroundColor,
@@ -24,6 +25,7 @@ class AppTheme {
         ),
       );
   static ThemeData get darkTheme => ThemeData(
+        fontFamily: 'NotoSans',
         primaryColor: darkBackgroundColor,
         backgroundColor: darkBackgroundColor,
         scaffoldBackgroundColor: darkBackgroundColor,
@@ -37,10 +39,10 @@ class AppTheme {
         iconTheme: const IconThemeData(color: Colors.white),
         dividerColor: Colors.white,
         textTheme: const TextTheme(
-          headline1: TextStyle(color: Colors.white),
-          headline2: TextStyle(color: Colors.white),
-          bodyText1: TextStyle(color: Colors.white),
-          bodyText2: TextStyle(color: Colors.white),
+          headline1: TextStyle(color: Color(0xffCDD4DD)),
+          headline2: TextStyle(color: Color(0xffCDD4DD)),
+          bodyText1: TextStyle(color: Color(0xffCDD4DD)),
+          bodyText2: TextStyle(color: Color(0xffCDD4DD)),
         ),
       );
 }

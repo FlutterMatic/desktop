@@ -8,7 +8,7 @@ import 'package:manager/core/libraries/services.dart';
 /// ```dart
 /// bool imgExists = await checkFile(
 ///   'C:\\Users\\user\\Pictures',
-///   'image1.png',
+///   'image1.jpeg',
 /// );
 /// ```
 /// This function will return `true` or `false`.

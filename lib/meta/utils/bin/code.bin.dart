@@ -1,8 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:manager/core/services/logs.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:process_run/src/shell.dart';
+import 'dart:convert';
+import 'dart:io';
 
 Future<Version?> getVSCVersion() => getVSCBinVersion();
 

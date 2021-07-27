@@ -10,6 +10,7 @@ class MultiProviders extends StatelessWidget {
     this.child, {
     Key? key,
   }) : super(key: key);
+  
   final Widget? child;
 
   @override
