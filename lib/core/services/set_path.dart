@@ -26,7 +26,7 @@ Future<bool> setPath(String? path, [String? appDir]) async {
       /// Windows
       if (Platform.isWindows) {
         List<ProcessResult> envPATH = await shell.run('echo %PATH%');
-        if (envPATH.contains(path)) {
+        if (envPATH.outText.contains(path)) {
           await logger.file(
               LogTypeTag.INFO, '$path already exists in env PATH variable.');
           return false;

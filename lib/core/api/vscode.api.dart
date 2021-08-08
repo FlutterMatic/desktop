@@ -6,11 +6,11 @@ import 'package:manager/core/libraries/models.dart';
 
 class VSCodeAPINotifier with ChangeNotifier {
   VSCodeAPI? _vscMap;
-  String? _tag_name, _sha;
+  String? _tagName, _sha;
   VSCodeAPI? get vscMap => _vscMap;
-  String? get tag_name => _tag_name;
+  String? get tag_name => _tagName;
   String? get sha => _sha;
-  Future<void> fetchAPIData() async {
+  Future<void> fetchVSCAPIData() async {
     http.Response response = await http.get(Uri.parse(
         'https://api.github.com/repos/microsoft/vscode/releases/latest'));
     if (response.statusCode == 200) {
@@ -20,10 +20,10 @@ class VSCodeAPINotifier with ChangeNotifier {
           response.body,
         ),
       );
-      _tag_name = _vscMap!.data!['tag_name'];
+      _tagName = _vscMap!.data!['tag_name'];
       notifyListeners();
       http.Response gitResponse = await http.get(Uri.parse(
-          'https://api.github.com/repos/microsoft/vscode/git/refs/tags/$_tag_name'));
+          'https://api.github.com/repos/microsoft/vscode/git/refs/tags/$_tagName'));
       if (gitResponse.statusCode == 200) {
         // If the server did return a 200 OK response,
         VSCodeAPI _gitvscMap = VSCodeAPI.fromJson(

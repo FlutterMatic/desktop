@@ -1,6 +1,7 @@
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/services/logs.dart';
+import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:process_run/src/shell.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -68,7 +69,7 @@ Future<JavaBinInfo?> _getJavaBinInfo() async {
   // Java HotSpot(TM) 64-Bit Server VM (build 25.291-b10, mixed mode)
   try {
     List<ProcessResult> javaResults =
-        await run('java -version', verbose: false);
+        await shell.run('java -version');
 
     /// `java -version` outputs to stderr, so we need to check the first line.
     resultOutput = javaResults.first.stderr.toString().trim();

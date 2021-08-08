@@ -8,6 +8,7 @@ import 'package:manager/meta/utils/bin/studio.bin.dart';
 import 'package:process_run/shell.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [AndroidStudioNotifier] class is a [ValueNotifier]
@@ -28,7 +29,7 @@ class AndroidStudioNotifier extends ValueNotifier<String> {
       Directory applicationDir = await getApplicationSupportDirectory();
       Directory? jetbrainsDir =
           Directory(tempDir.path.replaceAll('Temp', 'JetBrains'));
-      Directory? programFilesDir = Directory('C:\\Program\ Files\\Android');
+      Directory? programFilesDir = Directory('C:\\Program Files\\Android');
 
       /// Check if studio path is null.
       if (studioPath == null) {
@@ -45,9 +46,9 @@ class AndroidStudioNotifier extends ValueNotifier<String> {
               if (!checkJB) {
                 /// Check for git Directory to extract Git files
                 bool studioDir = await checkDir('C:\\fluttermatic\\',
-                    subDirName: 'Android\ Studio');
+                    subDirName: 'Android Studio');
                 if (!studioDir) {
-                  await Directory('C:\\fluttermatic\\Android\ Studio').create();
+                  await Directory('C:\\fluttermatic\\Android Studio').create();
                   await logger.file(LogTypeTag.INFO,
                       'Created Android studio directory in fluttermatic folder.');
                   await installAndroidStudio(
@@ -66,9 +67,9 @@ class AndroidStudioNotifier extends ValueNotifier<String> {
           if (!checkJB) {
             /// Check for git Directory to extract Git files
             bool studioDir = await checkDir('C:\\fluttermatic\\',
-                subDirName: 'Android\ Studio');
+                subDirName: 'Android Studio');
             if (!studioDir) {
-              await Directory('C:\\fluttermatic\\Android\ Studio').create();
+              await Directory('C:\\fluttermatic\\Android Studio').create();
               await logger.file(LogTypeTag.INFO,
                   'Created Android studio directory in fluttermatic folder.');
             }
@@ -83,9 +84,9 @@ class AndroidStudioNotifier extends ValueNotifier<String> {
 
           /// Check for git Directory to extract Git files
           bool studioDir = await checkDir('C:\\fluttermatic\\',
-              subDirName: 'Android\ Studio');
+              subDirName: 'Android Studio');
           if (!studioDir) {
-            await Directory('C:\\fluttermatic\\Android\ Studio').create();
+            await Directory('C:\\fluttermatic\\Android Studio').create();
             await logger.file(LogTypeTag.INFO,
                 'Created Android studio directory in fluttermatic folder.');
           }
@@ -118,13 +119,13 @@ class AndroidStudioChangeNotifier extends AndroidStudioNotifier {
 /// is installed in the Program Files directory.
 Future<bool> checkProgramFiles({String? value}) async {
   await logger.file(LogTypeTag.INFO, 'Checking Program Files');
-  Directory? programFilesDir = Directory('C:\\Program\ Files\\Android');
+  Directory? programFilesDir = Directory('C:\\Program Files\\Android');
   if (await programFilesDir.exists()) {
     await logger.file(LogTypeTag.INFO, 'Program Files Directory Exists');
     await logger.file(
         LogTypeTag.INFO, 'Checking in Program Files for Android studio');
     String? studio64PFPath =
-        await getFilePath('C:\\Program\ Files\\Android\\', 'studio64.exe');
+        await getFilePath('C:\\Program Files\\Android\\', 'studio64.exe');
     if (studio64PFPath != null) {
       await logger.file(LogTypeTag.INFO, 'Studio64.exe found in Program Files');
       await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -202,7 +203,7 @@ Future<void> installAndroidStudio(BuildContext context,
 
   /// Appending path to env
   bool isASPathSet =
-      await setPath('C:\\fluttermatic\\Android\ Studio\\bin\\', appDir);
+      await setPath('C:\\fluttermatic\\Android Studio\\bin\\', appDir);
   if (isASPathSet) {
     await Future<dynamic>.delayed(const Duration(seconds: 1));
     value = 'Android studio set to path';

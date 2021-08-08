@@ -2,12 +2,16 @@ import 'dart:developer' as console;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:manager/core/api/flutter_sdk.api.dart';
+import 'package:manager/core/libraries/api.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
+// ignore: implementation_imports
+// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [FlutterNotifier] is a [ValueNotifier].
@@ -90,6 +94,9 @@ class FlutterNotifier extends ValueNotifier<String> {
       /// Else we need to get version, channel information.
       else {
         await Future<dynamic>.delayed(const Duration(seconds: 1));
+        if (SharedPref().prefs.getString('flutter path') == null) {
+          await SharedPref().prefs.setString('flutter path', flutterPath);
+        }
         value = 'Flutter-SDK found';
         await logger.file(
             LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');

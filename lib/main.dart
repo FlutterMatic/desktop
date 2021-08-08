@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/basic.dart';
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/meta/views/welcome/welcome_view.dart';
+import 'package:manager/meta/views/welcome/components/custom_window.dart';
+import 'package:manager/meta/views/screens/welcome_view.dart';
 import 'package:manager/app/providers/multi_providers.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -23,7 +23,7 @@ Future<void> main(List<String> args) async {
   }
   runApp(MultiProviders(MyApp()));
   doWhenWindowReady(() {
-    appWindow.minSize = const Size(300, 380);
+    appWindow.minSize = const Size(750, 680);
     appWindow.maximize();
     appWindow.alignment = Alignment.center;
     appWindow.title = 'Flutter Manager';
@@ -34,6 +34,8 @@ Future<void> main(List<String> args) async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    /// TODO: When we click on System requirement, the whole screen is rebuilding.
+    /// TODO: Even the window controls too. Please make sure of fixing it if you have any idea.
     return Consumer<ThemeChangeNotifier>(
       builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
           Widget? child) {
@@ -44,9 +46,10 @@ class MyApp extends StatelessWidget {
               ? ThemeMode.dark
               : ThemeMode.light,
           debugShowCheckedModeBanner: false,
-          home: const WelcomePage(),
-          // Startup(themeChangeNotifier),
-          // home: const ThemeToggle(),
+          home: CustomWindow(
+            child: const WelcomePage(),
+            // child: Startup(themeChangeNotifier),
+          ),
         );
       },
     );

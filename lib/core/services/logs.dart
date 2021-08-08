@@ -3,7 +3,11 @@ import 'dart:developer' as console;
 import 'package:intl/intl.dart';
 import 'dart:io';
 
-enum LogTypeTag { INFO, WARNING, ERROR }
+enum LogTypeTag {
+  INFO,
+  WARNING,
+  ERROR,
+}
 
 Logger logger = Logger();
 

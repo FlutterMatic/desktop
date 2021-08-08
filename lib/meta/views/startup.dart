@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/api.dart';
@@ -46,8 +47,8 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
     reverse = context.read<ThemeChangeNotifier>().isDarkTheme;
     await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
     sdkData = context.read<FlutterSDKNotifier>().sdkMap!;
-    await context.read<VSCodeAPINotifier>().fetchAPIData();
-    tag_name = context.read<VSCodeAPINotifier>().tag_name!;
+    await context.read<VSCodeAPINotifier>().fetchVSCAPIData();
+    tagName = context.read<VSCodeAPINotifier>().tag_name!;
     sha = context.read<VSCodeAPINotifier>().sha!;
     await context
         .read<MainChecksNotifier>()
@@ -64,6 +65,26 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  String? get _asset {
+    {
+      switch (context.watch<MainChecksNotifier>().value) {
+        case ApplicationCheckType.FLUTTER_CHECK:
+          return 'assets/images/logos/flutter.svg';
+        case ApplicationCheckType.JAVA_CHECK:
+          return 'assets/images/logos/java.svg';
+        case ApplicationCheckType.GIT_CHECK:
+          return 'assets/images/logos/git.svg';
+        case ApplicationCheckType.ADB_CHECK:
+          return 'assets/images/logos/adb.svg';
+        case ApplicationCheckType.ANDROID_STUDIO_CHECK:
+          return 'assets/images/logos/android_studio.svg';
+        case ApplicationCheckType.VSC_CHECK:
+          return 'assets/images/logos/vs_code.svg';
+        default:
+      }
+    }
   }
 
   String? get _text {
@@ -95,8 +116,10 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
       int? menuItem = await showMenu<int>(
         context: context,
         items: <PopupMenuEntry<int>>[
-          const PopupMenuItem<int>(
-              value: 1, height: 25, child: Text('Minimize')),
+          PopupMenuItem<int>(
+              value: 1,
+              height: 25,
+              child: Text(appWindow.isMaximized ? 'Minimize' : 'Maximize')),
           const PopupMenuItem<int>(
               value: 2, height: 25, child: Text('Report Issue')),
           const PopupMenuItem<int>(
@@ -177,6 +200,10 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          SvgPicture.asset(_asset!, height: 100),
+                          const SizedBox(
+                            height: 30,
+                          ),
                           Container(
                             width: double.infinity,
                             child: Center(

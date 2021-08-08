@@ -17,6 +17,7 @@ class ThemeChangeNotifier with ChangeNotifier {
       darkTheme = prefs.getBool('DARK_THEME')!;
     } else {
       darkTheme = true;
+      await prefs.setBool('DARK_THEME', true);
     }
   }
 

@@ -9,6 +9,7 @@ import 'package:manager/meta/utils/bin/java.bin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
+// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [JavaNotifier] class is a [ValueNotifier]
@@ -25,7 +26,7 @@ class JavaNotifier extends ValueNotifier<String> {
       /// Make a fake delay of 1 second such that UI looks cool.
       await Future<dynamic>.delayed(const Duration(seconds: 1));
 
-      /// The comppressed archive type.
+      /// The compressed archive type.
       String? archiveType = Platform.isLinux ? 'tar.gz' : 'zip';
 
       /// Checking for Java path,
@@ -62,7 +63,7 @@ class JavaNotifier extends ValueNotifier<String> {
         if (jdkExtracted) {
           value = 'Extracted JDK';
           await logger.file(
-              LogTypeTag.INFO, 'Java-DK extraction was successfull');
+              LogTypeTag.INFO, 'Java-DK extraction was successful');
         } else {
           value = 'Extracting JDK failed';
           await logger.file(LogTypeTag.ERROR, 'Java-DK extraction failed.');
@@ -98,7 +99,7 @@ class JavaNotifier extends ValueNotifier<String> {
         if (jreExtracted) {
           value = 'Extracted JRE';
           await logger.file(
-              LogTypeTag.INFO, 'Java-DK extraction was successfull');
+              LogTypeTag.INFO, 'Java-DK extraction was successful');
         } else {
           value = 'Extracting JRE failed';
           await logger.file(LogTypeTag.ERROR, 'Java-DK extraction failed.');

@@ -9,6 +9,7 @@ import 'package:manager/meta/utils/bin/code.bin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
+// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [VSCodeNotifier] class is a [ValueNotifier]
@@ -55,7 +56,7 @@ class VSCodeNotifier extends ValueNotifier<String> {
         /// Downloading JDK.
         await context.read<DownloadNotifier>().downloadFile(
               platform == 'windows'
-                  ? 'https://az764295.vo.msecnd.net/stable/$sha/VSCode-win32-x64-$tag_name.zip'
+                  ? 'https://az764295.vo.msecnd.net/stable/$sha/VSCode-win32-x64-$tagName.zip'
                   : platform == 'mac'
                       ? api!.data!['vscode'][platform]['universal']
                       : api!.data!['vscode'][platform]['TarGZ'],

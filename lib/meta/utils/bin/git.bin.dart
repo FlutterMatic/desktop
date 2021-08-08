@@ -1,6 +1,7 @@
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/services/logs.dart';
+import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:process_run/src/shell.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -65,7 +66,7 @@ Future<GitBinInfo?> _getGitBinInfo() async {
   // git --version
   // git version 2.32.0.windows.1
   try {
-    List<ProcessResult> gitResults = await run('git --version', verbose: false);
+    List<ProcessResult> gitResults = await shell.run('git --version');
 
     /// `git --version` outputs to stderr, so we need to check the first line.
     resultOutput = gitResults.first.stderr.toString().trim();

@@ -15,16 +15,16 @@ enum ProgressType {
 }
 
 enum WelcomeTab {
-  Getting_Started,
-  Install_Flutter,
-  Install_Editor,
-  Install_Git,
-  Install_Java,
-  Restart,
+  GETTING_STARTED,
+  INSTALL_FLUTTER,
+  INSTALL_EDITOR,
+  INSTALL_GIT,
+  INSTALL_JAVA,
+  RESTART,
 }
 
 enum EditorType {
-  VS_Code,
-  Android_Studio,
-  Both,
+  VSCODE,
+  ANDROID_STUDIO,
+  BOTH,
 }

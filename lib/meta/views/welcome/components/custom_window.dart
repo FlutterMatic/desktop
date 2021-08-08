@@ -1,29 +1,25 @@
-import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/material.dart';
 import 'package:manager/meta/views/welcome/components/windows_controls.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const String id = 'home';
+class CustomWindow extends StatelessWidget {
+  final Widget child;
+  final PreferredSizeWidget? appBar;
+  CustomWindow({
+    required this.child,
+    this.appBar,
+    Key? key,
+  }) : super(key: key);
 
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: appBar,
       body: Stack(
         children: <Widget>[
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Wait till we complete developing...'),
-              ],
-            ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, appWindow.titleBarHeight, 0, 0),
+            child: child,
           ),
           Positioned(
             top: 0,
@@ -32,7 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: WindowTitleBarBox(
               child: Row(
                 children: <Widget>[
-                  Expanded(child: MoveWindow()),
+                  Expanded(
+                    child: MoveWindow(),
+                  ),
                   const WindowControls()
                 ],
               ),
@@ -43,4 +41,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:provider/provider.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
 
 Widget installGit(
-  Function onInstall, {
+  BuildContext context,
+  Function()? onInstall, {
   required bool isInstalling,
   required bool doneInstalling,
-  required double completedSize,
-  required double totalInstalled,
 }) {
   return Column(
-    children: [
+    children: <Widget>[
       welcomeHeaderTitle(
-        'assets/images/logos/git.svg',
-        'Install Git',
-        'Flutter relies on Git to get and install dependencies and other tools.',
+        Assets.git,
+        Install.git,
+        InstallContent.git,
       ),
       const SizedBox(height: 30),
       if (!doneInstalling)
         installProgressIndicator(
           disabled: !isInstalling,
-          totalInstalled: totalInstalled,
-          totalSize: completedSize,
+          // totalInstalled: totalInstalled,
+          // totalSize: completedSize,
           objectSize: '3.2 GB',
         )
       else
@@ -30,22 +32,25 @@ Widget installGit(
           padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: const Color(0xff363D4D),
+            color: context.read<ThemeChangeNotifier>().isDarkTheme
+                ? const Color(0xff1B2529)
+                : const Color(0xffF4F8FA),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.check_rounded, color: Color(0xff07C2A3)),
+            children: <Widget>[
+              const Icon(Icons.check_rounded, color: Color(0xff40CAFF)),
               const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Git Installed', style: TextStyle(fontSize: 16)),
+                  children: <Widget>[
+                    const Text(Installed.git, style: TextStyle(fontSize: 16)),
                     const SizedBox(height: 8),
                     const Text(
-                        'You have successfully installed Git. Click next to continue.',
-                        style: TextStyle(fontSize: 13)),
+                      'You have successfully installed Git. Click next to continue.',
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ],
                 ),
               ),
@@ -53,7 +58,7 @@ Widget installGit(
           ),
         ),
       const SizedBox(height: 30),
-      welcomeButton(doneInstalling ? 'Next' : 'Install', onInstall,
+      WelcomeButton(doneInstalling ? 'Next' : 'Install', onInstall,
           disabled: isInstalling),
     ],
   );

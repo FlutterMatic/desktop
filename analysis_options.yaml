@@ -1,4 +1,4 @@
-include: package:pedantic/analysis_options.yaml
+include: package:lints/recommended.yaml
 
 analyzer:
   errors:
@@ -8,16 +8,18 @@ analyzer:
     annotate_overrides: error
     always_specify_types: error
     dead_code: warning
-    todo: ignore
+    todo: info
 
 linter:
   rules:
     hash_and_equals: true
     prefer_is_not_empty: true
-    always_specify_types: false
+    always_specify_types: true
     avoid_print: true
+    constant_identifier_names: false
+    non_constant_identifier_names: false
     avoid_type_to_string: true
-    camel_case_types: true
+    camel_case_types: false
     empty_constructor_bodies: true
     prefer_const_constructors: true
     sort_constructors_first: false
@@ -34,6 +36,9 @@ linter:
     avoid_returning_null_for_void: true
     avoid_returning_this: true
     avoid_void_async: true
+    unawaited_futures: true
+    await_only_futures: true
+    unnecessary_lambdas: true
     unnecessary_await_in_return: true
     unnecessary_final: true
     sort_pub_dependencies: false

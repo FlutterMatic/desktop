@@ -1,6 +1,7 @@
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/services/logs.dart';
+import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:process_run/src/shell.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -64,7 +65,7 @@ Future<ADBBinInfo?> _getADBBinInfo() async {
   // Version 31.0.2-7242960
   // Installed as C:\Users\${name}\AppData\Local\Android\Sdk\platform-tools\adb.exe
   try {
-    List<ProcessResult> adbResults = await run('adb version', verbose: false);
+    List<ProcessResult> adbResults = await shell.run('adb version');
 
     /// `adb version` outputs to stderr, so we need to check the first line.
     resultOutput = adbResults.first.stderr.toString().trim();

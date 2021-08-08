@@ -22,7 +22,7 @@ Future<bool> unzip(String source, String destination, {String? sw}) async {
 
     /// If tmpDir is false, then create a temporary directory.
     if (!destinationDir) {
-      await Directory('$destination').create();
+      await Directory(destination).create();
       await logger.file(LogTypeTag.INFO, 'Created $destination directory.');
     } else {
       if (destination.split('\\').length > 2) {
