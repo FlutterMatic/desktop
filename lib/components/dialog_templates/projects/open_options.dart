@@ -21,7 +21,7 @@ class OpenOptionsDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DialogHeader(title: 'Project Options'),
+          const DialogHeader(title: 'Project Options'),
           const SizedBox(height: 20),
           // Row 1
           Row(
@@ -73,7 +73,7 @@ class OpenOptionsDialog extends StatelessWidget {
                       builder: (_) => DialogTemplate(
                         child: Column(
                           children: <Widget>[
-                            DialogHeader(title: 'Couldn\'t Open'),
+                            const DialogHeader(title: 'Couldn\'t Open'),
                             const SizedBox(height: 20),
                             Text(
                               'Sorry, for some reason, we couldn\'t open $fileName. Please make sure that this project exists. If this issue continues to happen, then please raise an issue on GitHub.',
@@ -182,7 +182,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DialogHeader(title: 'Confirm Delete'),
+          const DialogHeader(title: 'Confirm Delete'),
           const SizedBox(height: 20),
           RichText(
             text: TextSpan(
@@ -268,7 +268,7 @@ class OpenWithOptionsDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          DialogHeader(title: 'Open Options'),
+          const DialogHeader(title: 'Open Options'),
           const SizedBox(height: 20),
           // TODO: Show open options.
         ],

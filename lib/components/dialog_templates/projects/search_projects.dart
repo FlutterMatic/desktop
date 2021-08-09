@@ -67,7 +67,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DialogHeader(title: 'Search Projects'),
+          const DialogHeader(title: 'Search Projects'),
           const SizedBox(height: 20),
           if (!_loading && projs.isNotEmpty)
             CustomTextField(
@@ -115,7 +115,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                       Navigator.pop(context);
                       showDialog(
                         context: context,
-                        builder: (_) => SettingDialog(goToPage: 'Projects'),
+                        builder: (_) => const SettingDialog(goToPage: 'Projects'),
                       );
                     },
                     child: Text(

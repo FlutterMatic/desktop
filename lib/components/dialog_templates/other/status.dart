@@ -11,7 +11,7 @@ class StatusDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          DialogHeader(title: 'Status'),
+          const DialogHeader(title: 'Status'),
           const SizedBox(height: 25),
           // TODO: Show the Flutter installed status.
           // installationStatus(

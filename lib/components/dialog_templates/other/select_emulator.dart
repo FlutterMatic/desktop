@@ -8,7 +8,7 @@ class SelectEmulatorDialog extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          DialogHeader(title: 'Select Emulator'),
+          const DialogHeader(title: 'Select Emulator'),
           const SizedBox(height: 20),
         ],
       ),

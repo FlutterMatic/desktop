@@ -18,7 +18,7 @@ class InstallFlutterDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DialogHeader(title: 'Install Flutter'),
+          const DialogHeader(title: 'Install Flutter'),
           const SizedBox(height: 20),
           if (Platform.isWindows)
             _windowsTemplate()

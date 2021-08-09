@@ -36,7 +36,7 @@ class _SettingDialogState extends State<SettingDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DialogHeader(title: 'Settings'),
+          const DialogHeader(title: 'Settings'),
           const SizedBox(height: 20),
           TabViewWidget(
             defaultPage: widget.goToPage,

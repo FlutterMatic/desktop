@@ -96,7 +96,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          DialogHeader(title: 'Run Flutter Command'),
+          const DialogHeader(title: 'Run Flutter Command'),
           const SizedBox(height: 20),
           CustomTextField(
             hintText: 'Type Command',

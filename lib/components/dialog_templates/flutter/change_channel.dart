@@ -55,7 +55,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    DialogHeader(title: 'Change Channel'),
+                    const DialogHeader(title: 'Change Channel'),
                     const SizedBox(height: 15),
                     const Text(
                       'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommend staying on the stable channel.',
@@ -96,7 +96,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                             if (_selectedChannel == null) {
                               Navigator.pop(context);
                             }
-                            // TODO: Show the AlreadChannelDialog if the user selected a channel that they are alreay currently in.
+                            // TODO: Show the AlreadyChannelDialog if the user selected a channel that they are already currently in.
                             // showDialog(
                             //   context: context,
                             //   builder: (_) => AlreadyChannelDialog(),
@@ -132,7 +132,7 @@ class AlreadyChannelDialog extends StatelessWidget {
       outerTapExit: false,
       child: Column(
         children: <Widget>[
-          DialogHeader(title: 'Same Channel', canClose: false),
+          const DialogHeader(title: 'Same Channel', canClose: false),
           const SizedBox(height: 15),
           const Text(
             // TODO: Show the channel name.
@@ -216,7 +216,7 @@ Widget _updatingChannels(BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return Column(
     children: <Widget>[
-      DialogHeader(title: 'In Progress'),
+      const DialogHeader(title: 'In Progress'),
       const SizedBox(height: 15),
       const Text(
         'We are currently updating your Flutter channel. Please check back later once we are finished updating your Flutter channel.',
