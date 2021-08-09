@@ -17,42 +17,44 @@ Widget installFlutter(
         'You will need to install Flutter in your machine to start using Flutter.',
       ),
       const SizedBox(height: 50),
-      if (!doneInstalling)
-        installProgressIndicator(
-          objectSize: '1.8 GB',
-          disabled: !isInstalling,
-        )
-      else
-        Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color(0xffF4F8FA),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Icon(Icons.check_rounded, color: Color(0xff40CAFF)),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      'Flutter Installed',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Flutter was installed successfully on your machine. Continue to the next step.',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
-                ),
+      // TODO(@ZiyadF296) : Don't use opacity, instead shrink the space and when
+      // user click install show them the checks happening and if the flutter sdk
+      // not found then show the download progress.
+      !doneInstalling
+          ? installProgressIndicator(
+              objectSize: '1.8 GB',
+              disabled: !isInstalling,
+            )
+          : Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color(0xffF4F8FA),
               ),
-            ],
-          ),
-        ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Icon(Icons.check_rounded, color: Color(0xff40CAFF)),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text(
+                          'Flutter Installed',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Flutter was installed successfully on your machine. Continue to the next step.',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
       const SizedBox(height: 50),
       WelcomeButton(doneInstalling ? 'Next' : 'Install', onInstall,
           disabled: isInstalling),

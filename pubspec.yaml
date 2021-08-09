@@ -25,6 +25,7 @@ dependencies:
   provider: ^5.0.0
   http: ^0.13.3
   intl: ^0.17.0
+  lottie: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +41,7 @@ flutter:
     - assets/font/
     - assets/images/logos/
     - assets/images/icons/
+    - assets/lottie/
 
   fonts:
     - family: NotoSans

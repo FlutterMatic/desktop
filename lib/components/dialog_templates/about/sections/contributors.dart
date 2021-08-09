@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/ui/spinner.dart';
+import 'package:manager/secret.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 
@@ -115,6 +116,7 @@ class _ContributorTileState extends State<ContributorTile> {
     Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
       'Accept': 'application/json',
+        'Authorization': oAuthToken,
     };
 
     http.Response _result = await http.get(

@@ -155,8 +155,8 @@ class _InstallEditorState extends State<InstallEditor> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
             side: BorderSide(
-              color: _selected ? kGreenColor : Colors.transparent,
-              width: _selected ? 2 : 0,
+              color: _selected ? Colors.lightBlueAccent : Colors.transparent,
+              width: _selected ? 3 : 0,
             ),
           ),
           child: Padding(

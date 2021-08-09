@@ -20,7 +20,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  WelcomeTab _tab = WelcomeTab.INSTALL_EDITOR;
+  WelcomeTab _tab = WelcomeTab.GETTING_STARTED;
 
   bool _installing = false;
   bool _completedInstall = false;

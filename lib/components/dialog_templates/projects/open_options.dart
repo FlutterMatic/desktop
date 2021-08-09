@@ -6,15 +6,11 @@ import 'package:manager/components/widgets/inputs/text_field.dart';
 import 'package:manager/components/widgets/ui/dialog_template.dart';
 import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:process_run/shell_run.dart';
 import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {
   OpenOptionsDialog(this.fileName);
   final String fileName;
-  final Shell _shell = Shell(
-    verbose: false,
-  );
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(

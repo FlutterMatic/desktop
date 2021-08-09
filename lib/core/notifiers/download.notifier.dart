@@ -6,9 +6,9 @@ import 'package:manager/core/services/logs.dart';
 
 class DownloadNotifier extends ChangeNotifier {
   int downloadedLength = 0;
-  int? _progress;
+  double? _progress;
   Color? _progressColor;
-  int? get progress => _progress;
+  double? get progress => _progress;
   Color get progressColor => _progressColor!;
   Future<void> downloadFile(String uri, String? fileName, String dir,
       {String? value, Color? progressBarColor}) async {
@@ -35,7 +35,7 @@ class DownloadNotifier extends ChangeNotifier {
         await for (List<int> buffer in response) {
           openFile.add(buffer);
           downloadedLength += buffer.length;
-          _progress = (downloadedLength / response.contentLength * 100).floor();
+          _progress = downloadedLength / response.contentLength * 100;
           notifyListeners();
         }
         await logger.file(LogTypeTag.INFO, 'Flushing the buffer...');

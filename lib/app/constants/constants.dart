@@ -56,6 +56,7 @@ class ButtonTexts {
 
 const String _imagesIconsBase = 'assets/images/icons/';
 const String _imagesLogosBase = 'assets/images/logos/';
+const String _lottieBase = 'assets/lottie/';
 
 /// Class for assets
 class Assets {
@@ -73,6 +74,7 @@ class Assets {
   static const String docs = '${_imagesIconsBase}docs.svg';
   static const String java = '${_imagesLogosBase}java.svg';
   static const String git = '${_imagesLogosBase}git.svg';
+  static const String extracting = '${_lottieBase}extraction.json';
 }
 
 /// Class for installed softwares

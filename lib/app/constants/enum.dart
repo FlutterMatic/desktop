@@ -28,3 +28,12 @@ enum EditorType {
   ANDROID_STUDIO,
   BOTH,
 }
+
+enum PROGRESS {
+  STARTED,
+  CHECKING,
+  DOWNLOADING,
+  EXTRACTING,
+  DONE,
+  FAILED,
+}

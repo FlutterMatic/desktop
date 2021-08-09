@@ -27,44 +27,63 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
     }
   }
 
-  Future<void> _initCalls() async {
-    await _exponentialBackOff(() async {
-      await context.read<FlutterMaticAPINotifier>().fetchAPIData();
-      apiData = context.read<FlutterMaticAPINotifier>().apiMap;
-    });
-    await _exponentialBackOff(() async {
-      await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
-      sdkData = context.read<FlutterSDKNotifier>().sdkMap;
-    });
-    await _exponentialBackOff(() async {
-      await context.read<VSCodeAPINotifier>().fetchVscAPIData();
-      tagName = context.read<VSCodeAPINotifier>().tag_name;
-      sha = context.read<VSCodeAPINotifier>().sha;
-    });
-  }
-
-  @override
-  void initState() {
-    _initCalls();
-    super.initState();
+  /// TODO(@ZiyadF296): BIG BUG - This function was being called like 4-5 times IDK why!
+  /// This reduces the rate limit.
+  Future<bool> _initCalls() async {
+    try {
+      await _exponentialBackOff(() async {
+        if (apiData == null) {
+          await context.read<FlutterMaticAPINotifier>().fetchAPIData();
+          apiData = context.read<FlutterMaticAPINotifier>().apiMap;
+        }
+      });
+      await _exponentialBackOff(() async {
+        if (sdkData == null) {
+          await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
+          sdkData = context.read<FlutterSDKNotifier>().sdkMap;
+        }
+      });
+      await _exponentialBackOff(() async {
+        if (tagName == null || sha == null) {
+          await context.read<VSCodeAPINotifier>().fetchVscAPIData();
+          tagName = context.read<VSCodeAPINotifier>().tag_name;
+          sha = context.read<VSCodeAPINotifier>().sha;
+        }
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        welcomeHeaderTitle(
-          Assets.flutter,
-          Install.flutter,
-          InstallContent.welcome,
-          iconHeight: 50,
-        ),
-        const SizedBox(height: 20),
-        infoWidget(
-            'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
-        const SizedBox(height: 30),
-        WelcomeButton('Continue', widget.onContinue),
-      ],
-    );
+    /// TODO(@ZiyadF296) : See if you can fix this UI part like this.
+    return FutureBuilder<bool>(
+        future: _initCalls(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return Column(
+            children: <Widget>[
+              welcomeHeaderTitle(
+                Assets.flutter,
+                Install.flutter,
+                InstallContent.welcome,
+                iconHeight: 50,
+              ),
+              const SizedBox(height: 20),
+              !snapshot.hasData
+                  ? Column(
+                      children: const <Widget>[
+                        CircularProgressIndicator(),
+                        Text('Fetching some initial data...'),
+                      ],
+                    )
+                  : infoWidget(
+                      'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
+              const SizedBox(height: 30),
+              WelcomeButton('Continue', widget.onContinue),
+            ],
+          );
+        });
   }
 }
