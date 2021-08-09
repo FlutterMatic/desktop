@@ -9,10 +9,7 @@ Widget welcomeHeaderTitle(String iconPath, String title, String description,
       const SizedBox(height: 20),
       Text(
         title,
-        style: const TextStyle(
-          fontSize: 21,
-          fontWeight: FontWeight.w900,
-        ),
+        style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w900),
       ),
       const SizedBox(height: 25),
       Text(

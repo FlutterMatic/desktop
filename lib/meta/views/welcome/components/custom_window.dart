@@ -28,9 +28,7 @@ class CustomWindow extends StatelessWidget {
             child: WindowTitleBarBox(
               child: Row(
                 children: <Widget>[
-                  Expanded(
-                    child: MoveWindow(),
-                  ),
+                  Expanded(child: MoveWindow()),
                   const WindowControls()
                 ],
               ),

@@ -1,5 +1,5 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 class WindowControls extends StatelessWidget {
   final bool disabled;
@@ -22,38 +22,32 @@ class WindowControls extends StatelessWidget {
               IconButton(
                 onPressed: () => appWindow.minimize(),
                 splashColor: Colors.transparent,
-                splashRadius: 0.01,
-                focusColor: Colors.grey,
-                hoverColor: Colors.grey,
-                highlightColor: Colors.grey,
+                splashRadius: 12,
+                focusColor: Colors.black12,
+                hoverColor: Colors.black12,
+                highlightColor: Colors.black12,
                 color: Colors.grey,
                 icon: const Icon(Icons.remove_rounded, size: 15),
               ),
               IconButton(
                 onPressed: () => appWindow.maximizeOrRestore(),
                 splashColor: Colors.transparent,
-                splashRadius: 0.01,
-                focusColor: Colors.grey,
-                hoverColor: Colors.grey,
-                highlightColor: Colors.grey,
+                splashRadius: 12,
+                focusColor: Colors.black12,
+                hoverColor: Colors.black12,
+                highlightColor: Colors.black12,
                 color: Colors.grey,
-                icon: const Icon(
-                  Icons.crop_square_rounded,
-                  size: 15,
-                ),
+                icon: const Icon(Icons.crop_square_rounded, size: 15),
               ),
               IconButton(
                 onPressed: () => appWindow.close(),
                 splashColor: Colors.transparent,
-                splashRadius: 0.01,
-                focusColor: Colors.red,
-                hoverColor: Colors.red,
-                highlightColor: Colors.red,
-                color: Colors.red,
-                icon: const Icon(
-                  Icons.close_rounded,
-                  size: 15  ,
-                ),
+                splashRadius: 12,
+                focusColor: Colors.red[500],
+                hoverColor: Colors.red[500],
+                highlightColor: Colors.red[500],
+                color: Colors.grey,
+                icon: const Icon(Icons.close_rounded, size: 15),
               ),
             ],
           ),

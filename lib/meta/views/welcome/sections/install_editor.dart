@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
@@ -9,19 +9,20 @@ import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
 import 'package:provider/provider.dart';
 
 class InstallEditor extends StatefulWidget {
-  const InstallEditor(
-      {required this.selectedType,
-      required this.onInstall,
-      required this.onEditorTypeChanged,
-      required this.isInstalling,
-      required this.doneInstalling,
-      Key? key})
-      : super(key: key);
   final EditorType selectedType;
   final VoidCallback onInstall;
   final Function(EditorType) onEditorTypeChanged;
   final bool isInstalling;
   final bool doneInstalling;
+
+  const InstallEditor({
+    Key? key,
+    required this.selectedType,
+    required this.onInstall,
+    required this.onEditorTypeChanged,
+    required this.isInstalling,
+    required this.doneInstalling,
+  }) : super(key: key);
 
   @override
   _InstallEditorState createState() => _InstallEditorState();
@@ -30,50 +31,6 @@ class InstallEditor extends StatefulWidget {
 class _InstallEditorState extends State<InstallEditor> {
   @override
   Widget build(BuildContext context) {
-    Widget _selectEditor(BuildContext context,
-        {required String name,
-        required EditorType type,
-        required Widget icon}) {
-      bool _selected = widget.selectedType == type;
-      return Expanded(
-        child: SizedBox(
-          height: 120,
-          width: 120,
-          child: MaterialButton(
-            color: context.read<ThemeChangeNotifier>().isDarkTheme
-                ? const Color(0xff1B2529)
-                : const Color(0xffF4F8FA),
-            onPressed: () => widget.onEditorTypeChanged(type),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: _selected ? const Color(0xff40CAFF) : Colors.transparent,
-                width: _selected ? 2 : 0,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              child: Column(
-                children: <Widget>[
-                  Expanded(child: icon),
-                  Text(
-                    name,
-                    style: TextStyle(
-                      color: context.read<ThemeChangeNotifier>().isDarkTheme
-                          ? Colors.white
-                          : const Color(
-                              0xff161E21,
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
     return Column(
       children: <Widget>[
         welcomeHeaderTitle(
@@ -126,8 +83,6 @@ class _InstallEditorState extends State<InstallEditor> {
         if (!widget.doneInstalling)
           installProgressIndicator(
             disabled: !widget.isInstalling,
-            // totalInstalled: totalInstalled,
-            // totalSize: completedSize,
             objectSize: '3.2 GB',
           )
         else
@@ -163,9 +118,57 @@ class _InstallEditorState extends State<InstallEditor> {
           ),
         const SizedBox(height: 30),
         WelcomeButton(
-            widget.doneInstalling ? 'Next' : 'Install', widget.onInstall,
-            disabled: widget.isInstalling),
+          widget.doneInstalling ? 'Next' : 'Install',
+          widget.onInstall,
+          disabled: widget.isInstalling,
+        ),
       ],
+    );
+  }
+
+  Widget _selectEditor(
+    BuildContext context, {
+    required String name,
+    required EditorType type,
+    required Widget icon,
+  }) {
+    bool _selected = widget.selectedType == type;
+    return Expanded(
+      child: SizedBox(
+        height: 120,
+        width: 120,
+        child: MaterialButton(
+          color: context.read<ThemeChangeNotifier>().isDarkTheme
+              ? const Color(0xff1B2529)
+              : const Color(0xffF4F8FA),
+          onPressed: () => widget.onEditorTypeChanged(type),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(
+              color: _selected ? kGreenColor : Colors.transparent,
+              width: _selected ? 2 : 0,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Column(
+              children: <Widget>[
+                Expanded(child: icon),
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? Colors.white
+                        : const Color(
+                            0xff161E21,
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

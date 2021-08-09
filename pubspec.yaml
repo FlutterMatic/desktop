@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
   bitsdojo_window: ^0.1.1+1
   connectivity_plus: ^1.0.6
   file_selector: ^0.8.2
@@ -16,18 +17,19 @@ dependencies:
   file_selector_macos: ^0.0.4
 
   file_selector_windows: ^0.0.2
+  shared_preferences: ^2.0.6
+  process_run: ^0.12.1+1
+  path_provider: ^2.0.2
+  url_launcher: ^6.0.9
   flutter_svg: ^0.22.0
+  provider: ^5.0.0
   http: ^0.13.3
   intl: ^0.17.0
-  path_provider: ^2.0.2
-  process_run: ^0.12.1+1
-  provider: ^5.0.0
-  shared_preferences: ^2.0.6
-  url_launcher: ^6.0.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
   build_runner: ^2.0.5
   lints: ^1.0.1
 

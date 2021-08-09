@@ -34,33 +34,37 @@ class Logger {
     return File('$path/fluttermatic-${Platform.operatingSystem}-$date.log');
   }
 
+  /// Logs to the log file for later to find any issues user my file on GitHub
+  /// and we ask them for this log file to help in finding the cause of the
+  /// issue.
   Future<void> file(LogTypeTag tag, String? message,
       {StackTrace? stackTraces}) async {
     File file = await _localFile;
     DateTime _now = DateTime.now();
+    String _baseData = '[${_now.hour}:${_now.minute}:${_now.second}] - $message\n';
     try {
       switch (tag) {
         case LogTypeTag.INFO:
           console.log(
-              'INFORMATION [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
+              'INFORMATION $_baseData');
           await file.writeAsString(
-            '''INFORMATION [${_now.hour}:${_now.minute}:${_now.second}] - $message\n''',
+            '''INFORMATION $_baseData''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.WARNING:
           console.log(
-              'WARNING [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
+              'WARNING $_baseData');
           await file.writeAsString(
-            '''WARNING [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
+            '''WARNING $_baseData[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.ERROR:
           console.log(
-              'ERROR [${_now.hour}:${_now.minute}:${_now.second}] - $message\n');
+              'ERROR $_baseData');
           await file.writeAsString(
-            '''ERROR [${_now.hour}:${_now.minute}:${_now.second}] - $message\n[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
+            '''ERROR $_baseData[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;

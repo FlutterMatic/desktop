@@ -19,8 +19,6 @@ Widget installFlutter(
       const SizedBox(height: 50),
       if (!doneInstalling)
         installProgressIndicator(
-          // totalInstalled: completedSize,
-          // totalSize: totalSize,
           objectSize: '1.8 GB',
           disabled: !isInstalling,
         )

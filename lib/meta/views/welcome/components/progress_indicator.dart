@@ -1,31 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 Widget installProgressIndicator({
   /// Whether or not to disable this component.
   required bool disabled,
 
-  /// The total that has been download so far from object.
-  // required double totalInstalled,
-  // required int progress,
-
-  /// The total size of the object that is going to be downloaded.
-  // required double totalSize,
-
   /// A string telling the user how much space it will take on the disk.
   required String objectSize,
 }) {
-  // if (totalInstalled > totalSize) {
-  //   throw Exception(
-  //       'Total downloaded size cannot be larger than the total object size.');
-  // }
-
   return Consumer<DownloadNotifier>(
       builder: (BuildContext context, DownloadNotifier downloadNotifier, _) {
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 250),
-      opacity: disabled ? 0 : 1,
+      opacity: disabled ? 0.2 : 1,
       child: SizedBox(
         width: 330,
         child: Column(
@@ -60,7 +50,9 @@ Widget installProgressIndicator({
                   height: 3,
                   width: 330,
                   decoration: BoxDecoration(
-                    color: const Color(0xffE0E7EC),
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? AppTheme.darkLightColor
+                        : Colors.black,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -72,7 +64,9 @@ Widget installProgressIndicator({
 
                   width: disabled ? 0 : (downloadNotifier.progress ?? 0) * 3.3,
                   decoration: BoxDecoration(
-                    color: const Color(0xff40CAFF),
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? kGreenColor
+                        : Colors.black,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),

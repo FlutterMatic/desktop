@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/api.dart';
 import 'package:provider/provider.dart';
+import 'package:manager/core/libraries/api.dart';
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
 
@@ -36,7 +37,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
       sdkData = context.read<FlutterSDKNotifier>().sdkMap;
     });
     await _exponentialBackOff(() async {
-      await context.read<VSCodeAPINotifier>().fetchVSCAPIData();
+      await context.read<VSCodeAPINotifier>().fetchVscAPIData();
       tagName = context.read<VSCodeAPINotifier>().tag_name;
       sha = context.read<VSCodeAPINotifier>().sha;
     });
@@ -58,7 +59,10 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
           InstallContent.welcome,
           iconHeight: 50,
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 20),
+        infoWidget(
+            'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
+        const SizedBox(height: 30),
         WelcomeButton('Continue', widget.onContinue),
       ],
     );

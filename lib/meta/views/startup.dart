@@ -47,7 +47,7 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
     reverse = context.read<ThemeChangeNotifier>().isDarkTheme;
     await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
     sdkData = context.read<FlutterSDKNotifier>().sdkMap!;
-    await context.read<VSCodeAPINotifier>().fetchVSCAPIData();
+    await context.read<VSCodeAPINotifier>().fetchVscAPIData();
     tagName = context.read<VSCodeAPINotifier>().tag_name!;
     sha = context.read<VSCodeAPINotifier>().sha!;
     await context
@@ -62,28 +62,22 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   String? get _asset {
-    {
-      switch (context.watch<MainChecksNotifier>().value) {
-        case ApplicationCheckType.FLUTTER_CHECK:
-          return 'assets/images/logos/flutter.svg';
-        case ApplicationCheckType.JAVA_CHECK:
-          return 'assets/images/logos/java.svg';
-        case ApplicationCheckType.GIT_CHECK:
-          return 'assets/images/logos/git.svg';
-        case ApplicationCheckType.ADB_CHECK:
-          return 'assets/images/logos/adb.svg';
-        case ApplicationCheckType.ANDROID_STUDIO_CHECK:
-          return 'assets/images/logos/android_studio.svg';
-        case ApplicationCheckType.VSC_CHECK:
-          return 'assets/images/logos/vs_code.svg';
-        default:
-      }
+    const String _basePath = 'assets/images/logos/';
+    switch (context.watch<MainChecksNotifier>().value) {
+      case ApplicationCheckType.FLUTTER_CHECK:
+        return '${_basePath}flutter.svg';
+      case ApplicationCheckType.JAVA_CHECK:
+        return '${_basePath}java.svg';
+      case ApplicationCheckType.GIT_CHECK:
+        return '${_basePath}git.svg';
+      case ApplicationCheckType.ADB_CHECK:
+        return '${_basePath}adb.svg';
+      case ApplicationCheckType.ANDROID_STUDIO_CHECK:
+        return '${_basePath}android_studio.svg';
+      case ApplicationCheckType.VSC_CHECK:
+        return '${_basePath}vs_code.svg';
+      default:
     }
   }
 
@@ -108,7 +102,6 @@ class _StartupState extends State<Startup> with WidgetsBindingObserver {
   }
 
   Future<void> _onPointerDown(PointerDownEvent event) async {
-    // Check if right mouse button clicked
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton) {
       RenderBox? overlay =

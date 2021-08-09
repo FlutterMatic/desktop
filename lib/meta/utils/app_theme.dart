@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   AppTheme._();
-  // static final Color darkBackgroundColor = const Color(0xFF212939);
   static final Color darkBackgroundColor = const Color(0xFF181C1E);
+  static final Color darkLightColor = const Color(0xFF0656D77);
   static final Color lightBackgroundColor = const Color(0xFFFFFFFF);
   static final Color lightComponentsColor = const Color(0xFF40CAFF);
   static const Color errorColor = Color(0xFFD73A49);
@@ -13,8 +13,8 @@ class AppTheme {
         backgroundColor: lightBackgroundColor,
         scaffoldBackgroundColor: lightBackgroundColor,
         primaryColorLight: const Color(0xFFF1F1F1),
-        buttonColor: const Color(0xFF40CAFF),
-        accentColor: const Color(0xFF40CAFF),
+        buttonColor: const Color(0xFF206BC4),
+        accentColor: const Color(0xFF79A6DC),
         splashColor: Colors.transparent,
         errorColor: errorColor,
         highlightColor: Colors.transparent,

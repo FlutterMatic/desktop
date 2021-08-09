@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:manager/meta/views/welcome/components/custom_window.dart';
 
 class SystemRequirementsScreen extends StatefulWidget {
+
   const SystemRequirementsScreen({Key? key}) : super(key: key);
 
   @override

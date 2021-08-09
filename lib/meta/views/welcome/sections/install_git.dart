@@ -23,8 +23,6 @@ Widget installGit(
       if (!doneInstalling)
         installProgressIndicator(
           disabled: !isInstalling,
-          // totalInstalled: totalInstalled,
-          // totalSize: completedSize,
           objectSize: '3.2 GB',
         )
       else

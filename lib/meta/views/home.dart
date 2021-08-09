@@ -3,7 +3,6 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/meta/views/welcome/components/windows_controls.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const String id = 'home';
 
   const HomeScreen({Key? key}) : super(key: key);
 

@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
-import 'package:manager/core/models/fluttermatic.model.dart';
 import 'package:http/http.dart' as http;
+import 'package:manager/core/models/fluttermatic.model.dart';
 
 class FlutterMaticAPINotifier with ChangeNotifier {
   FluttermaticAPI? _apiMap;
@@ -21,7 +20,7 @@ class FlutterMaticAPINotifier with ChangeNotifier {
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to Fetch data');
+      throw Exception('Failed to Fetch API data.');
     }
   }
 }

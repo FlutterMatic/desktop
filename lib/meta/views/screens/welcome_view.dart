@@ -1,12 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/sections.dart';
+import 'package:manager/core/libraries/services.dart';
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/meta/views/screens/system_requirements.dart';
 import 'package:manager/meta/views/welcome/sections/install_editor.dart';
-import 'package:provider/provider.dart';
 import 'package:manager/meta/views/welcome/components/header.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 
 class WelcomePage extends StatefulWidget {
@@ -41,33 +44,29 @@ class _WelcomePageState extends State<WelcomePage> {
             createWelcomeHeader(_currentTheme, _tab, context),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: SizedBox(
                   width: 415,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      newMethod(context, _currentTheme),
-                    ],
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: _getCurrentPage(context, _currentTheme),
+                    ),
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.only(bottom: 15, top: 5),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute<Widget>(
-                          builder: (BuildContext context) =>
-                              const SystemRequirementsScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<Widget>(
+                        builder: (_) => const SystemRequirementsScreen(),
+                      ),
+                    ),
                     // TODO: Create system requirements page.
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -100,14 +99,12 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  Widget newMethod(BuildContext context, ThemeData _currentTheme) {
+  Widget _getCurrentPage(BuildContext context, ThemeData _currentTheme) {
     /// TODO: Add ADB check.
     switch (_tab) {
       case WelcomeTab.GETTING_STARTED:
         return WelcomeGettingStarted(
-          () => setState(
-            () => _tab = WelcomeTab.INSTALL_FLUTTER,
-          ),
+          () => setState(() => _tab = WelcomeTab.INSTALL_FLUTTER),
         );
       case WelcomeTab.INSTALL_FLUTTER:
         return installFlutter(
@@ -234,9 +231,27 @@ class _WelcomePageState extends State<WelcomePage> {
         );
       case WelcomeTab.RESTART:
         return welcomeRestart(context, () async {
-          /// TODO(ziyad): show a promt saying that system is goint to restart in `timer`. Run the timer too...
-          /// Restart the system
-          await shell.run('shutdown /r /f -t 30');
+          int _restartSeconds = 5;
+          await logger.file(
+              LogTypeTag.INFO, 'Restarting device to continue Flutter setup');
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+              'Your device will restart in less than $_restartSeconds seconds.',
+              type: SnackBarType.warning));
+
+          await Future<void>.delayed(const Duration(seconds: 5));
+
+          /// Restart the system only if it's compiled for release. Prevent
+          /// restart on debugging.
+          if (kReleaseMode) {
+            await shell.run('shutdown /r /f');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(
+                  'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
+                  type: SnackBarType.error),
+            );
+          }
         });
     }
   }

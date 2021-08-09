@@ -6,11 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 class MultiProviders extends StatelessWidget {
-  MultiProviders(
-    this.child, {
-    Key? key,
-  }) : super(key: key);
-  
+  MultiProviders(this.child, {Key? key}) : super(key: key);
+
   final Widget? child;
 
   @override

@@ -1,15 +1,17 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/material.dart';
 import 'package:bitsdojo_window_platform_interface/window.dart';
-import 'package:flutter/services.dart';
+import 'package:manager/components/widgets/ui/activity_tile.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:process_run/shell.dart';
+import 'package:flutter/services.dart';
 
 /// Shell object.
 Shell shell = Shell(
-  verbose: false,
   commandVerbose: false,
   commentVerbose: false,
   runInShell: true,
+  verbose: false,
 );
 
 /// VSCode Git API data object.
@@ -43,23 +45,34 @@ DesktopWindow mainWin = appWindow;
 
 /// Class for buttons
 class ButtonTexts {
-  static const String install = 'Install';
   static const String uninstall = 'Uninstall';
-  static const String update = 'Update';
-  static const String next = 'Next';
-  static const String skip = 'Skip';
+  static const String install = 'Install';
   static const String restart = 'Restart';
+  static const String cancel = 'Cancel';
+  static const String update = 'Update';
+  static const String skip = 'Skip';
+  static const String next = 'Next';
 }
+
+const String _imagesIconsBase = 'assets/images/icons/';
+const String _imagesLogosBase = 'assets/images/logos/';
 
 /// Class for assets
 class Assets {
-  static const String confetti = 'assets/images/icons/confetti.svg';
-  static const String flutter = 'assets/images/logos/flutter.svg';
-  static const String editor = 'assets/images/icons/editor.svg';
-  static const String studio = 'assets/images/logos/android_studio.svg';
-  static const String vscode = 'assets/images/logos/vs_code.svg';
-  static const String git = 'assets/images/logos/git.svg';
-  static const String java = 'assets/images/logos/java.svg';
+  static const String xcode = '${_imagesLogosBase}xcode.png';
+  static const String studio = '${_imagesLogosBase}android_studio.svg';
+  static const String confetti = '${_imagesIconsBase}confetti.svg';
+  static const String flutter = '${_imagesLogosBase}flutter.svg';
+  static const String twitter = '${_imagesLogosBase}twitter.svg';
+  static const String vscode = '${_imagesLogosBase}vs_code.svg';
+  static const String editor = '${_imagesIconsBase}editor.svg';
+  static const String github = '${_imagesLogosBase}github.svg';
+  static const String error = '${_imagesIconsBase}error.svg';
+  static const String done = '${_imagesIconsBase}done.svg';
+  static const String warn = '${_imagesIconsBase}warn.svg';
+  static const String docs = '${_imagesIconsBase}docs.svg';
+  static const String java = '${_imagesLogosBase}java.svg';
+  static const String git = '${_imagesLogosBase}git.svg';
 }
 
 /// Class for installed softwares
@@ -83,10 +96,8 @@ class Install {
 
 /// class for install softwares content
 class InstallContent {
-  static const String welcome = '''Welcome to the Flutter App Manager. 
-      You will be guided through the steps necessary to 
-      setup and install Flutter in your computer. 
-      Please make sure of good internet connection.''';
+  static const String welcome =
+      'Welcome to the Flutter App Manager. You will be guided through the steps necessary to setup and install Flutter in your computer.';
   static const String git =
       'Flutter relies on Git to get and install dependencies and other tools.';
   static const String java =
@@ -118,4 +129,25 @@ class PlatformVersion {
     String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
+}
+
+//Lists
+/// List of Background activities.
+List<BgActivityTile> bgActivities = <BgActivityTile>[];
+
+/// List of Projects.
+List<String> projs = <String>[];
+
+/// List of Projects modified dates.
+List<String> projsModDate = <String>[];
+
+const Color kRedColor = Color(0xffE44516);
+const Color kYellowColor = Color(0xffF7C605);
+const Color kGreenColor = Color(0xff07C2A3);
+
+class ProgressEvent {
+  final int contentLength;
+  final int downloadedLength;
+
+  const ProgressEvent(this.contentLength, this.downloadedLength);
 }
