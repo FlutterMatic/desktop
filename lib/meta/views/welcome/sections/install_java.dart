@@ -82,7 +82,7 @@ Widget installJava(
                       Assets.warn,
                       kYellowColor,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 5),
                     infoWidget(
                         'You will still be able to install Java later if you change your mind.'),
                     const SizedBox(height: 20),

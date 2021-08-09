@@ -21,7 +21,7 @@ Widget welcomeRestart(BuildContext context, Function() onRestart) {
       RoundContainer(
         padding: const EdgeInsets.all(15),
         color: context.read<ThemeChangeNotifier>().isDarkTheme
-            ? AppTheme.darkTheme.bannerTheme.backgroundColor
+            ? null
             : const Color(0xffF4F8FA),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -9,26 +9,20 @@ Widget createWelcomeHeader(
   Widget _title(String title, WelcomeTab tileTab) {
     if (tab == tileTab) {
       return Expanded(
-        child: AnimatedOpacity(
-          duration: const Duration(seconds: 3),
-          opacity: tab == tileTab ? 1 : 0,
-          child: AnimatedContainer(
-            duration: const Duration(seconds: 5),
-            child: Column(
-              children: <Widget>[
-                Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.w500)),
-                const SizedBox(height: 20),
-                AnimatedContainer(
-                  duration: const Duration(seconds: 5),
-                  height: 3,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppTheme.lightComponentsColor,
-                  ),
+        child: AnimatedContainer(
+          duration: const Duration(seconds: 5),
+          child: Column(
+            children: <Widget>[
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+              const SizedBox(height: 20),
+              Container(
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppTheme.lightComponentsColor,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );

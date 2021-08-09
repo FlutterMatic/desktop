@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
@@ -38,54 +40,62 @@ class _InstallEditorState extends State<InstallEditor> {
           'Install Editor',
           'You will need to install the Flutter Editor to start using Flutter.',
         ),
-        const SizedBox(height: 30),
-        AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: widget.isInstalling ? 0.2 : 1,
-          child: IgnorePointer(
-            ignoring: widget.isInstalling || widget.doneInstalling,
-            child: Row(
-              children: <Widget>[
-                _selectEditor(
-                  context,
-                  icon: SvgPicture.asset(Assets.studio),
-                  name: 'Android Studio',
-                  type: EditorType.ANDROID_STUDIO,
+        const SizedBox(height: 10),
+        if (!widget.isInstalling && !widget.doneInstalling)
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 300),
+              opacity: widget.isInstalling ? 0.2 : 1,
+              child: IgnorePointer(
+                ignoring: widget.isInstalling || widget.doneInstalling,
+                child: Row(
+                  children: <Widget>[
+                    _selectEditor(
+                      context,
+                      icon: SvgPicture.asset(Assets.studio),
+                      name: 'Android Studio',
+                      type: EditorType.ANDROID_STUDIO,
+                    ),
+                    const SizedBox(width: 15),
+                    _selectEditor(
+                      context,
+                      icon: SvgPicture.asset(Assets.vscode),
+                      name: 'VS Code',
+                      type: EditorType.VSCODE,
+                    ),
+                    const SizedBox(width: 15),
+                    _selectEditor(
+                      context,
+                      icon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          SvgPicture.asset(Assets.studio, height: 30),
+                          const SizedBox(width: 10),
+                          Container(
+                              width: 1, height: 20, color: Colors.white10),
+                          const SizedBox(width: 10),
+                          SvgPicture.asset(Assets.vscode, height: 30),
+                        ],
+                      ),
+                      name: 'Both',
+                      type: EditorType.BOTH,
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 15),
-                _selectEditor(
-                  context,
-                  icon: SvgPicture.asset(Assets.vscode),
-                  name: 'VS Code',
-                  type: EditorType.VSCODE,
-                ),
-                const SizedBox(width: 15),
-                _selectEditor(
-                  context,
-                  icon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SvgPicture.asset(Assets.studio, height: 30),
-                      const SizedBox(width: 10),
-                      Container(width: 1, height: 20, color: Colors.white10),
-                      const SizedBox(width: 10),
-                      SvgPicture.asset(Assets.vscode, height: 30),
-                    ],
-                  ),
-                  name: 'Both',
-                  type: EditorType.BOTH,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 30),
-        if (!widget.doneInstalling)
+        const SizedBox(height: 15),
+        if (widget.doneInstalling || widget.isInstalling)
+          _showSelectedEditor(context, widget.selectedType),
+        const SizedBox(height: 15),
+        if (widget.isInstalling && !widget.doneInstalling)
           installProgressIndicator(
             disabled: !widget.isInstalling,
             objectSize: '3.2 GB',
           )
-        else
+        else if (widget.doneInstalling)
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -159,9 +169,7 @@ class _InstallEditorState extends State<InstallEditor> {
                   style: TextStyle(
                     color: context.read<ThemeChangeNotifier>().isDarkTheme
                         ? Colors.white
-                        : const Color(
-                            0xff161E21,
-                          ),
+                        : const Color(0xff161E21),
                   ),
                 ),
               ],
@@ -171,4 +179,48 @@ class _InstallEditorState extends State<InstallEditor> {
       ),
     );
   }
+}
+
+Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
+  return RoundContainer(
+    child: Row(
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text('Selected Option', style: TextStyle(fontSize: 14)),
+              const SizedBox(height: 5),
+              Text(
+                editorType == EditorType.BOTH
+                    ? 'Android Studio & Visual Studio Code'
+                    : editorType == EditorType.ANDROID_STUDIO
+                        ? 'Android Studio'
+                        : 'Visual Studio',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: context.read<ThemeChangeNotifier>().isDarkTheme
+                      ? AppTheme.darkLightColor
+                      : Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (editorType == EditorType.ANDROID_STUDIO)
+          SvgPicture.asset(Assets.studio),
+        if (editorType == EditorType.VSCODE) SvgPicture.asset(Assets.vscode),
+        if (editorType == EditorType.BOTH)
+          Row(
+            children: <Widget>[
+              SvgPicture.asset(Assets.studio, height: 25),
+              const SizedBox(width: 10),
+              Container(width: 1, height: 20, color: Colors.white10),
+              const SizedBox(width: 10),
+              SvgPicture.asset(Assets.vscode, height: 25),
+            ],
+          ),
+      ],
+    ),
+  );
 }

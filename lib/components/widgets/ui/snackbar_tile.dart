@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 
-SnackBar snackBarTile(String message, {SnackBarType? type}) {
+SnackBar snackBarTile(String message,
+    {SnackBarType? type, Duration? duration}) {
   return SnackBar(
+    duration: duration ?? const Duration(seconds: 5),
     behavior: SnackBarBehavior.floating,
     width: 600,
     elevation: 0,

@@ -20,7 +20,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  WelcomeTab _tab = WelcomeTab.GETTING_STARTED;
+  WelcomeTab _tab = WelcomeTab.INSTALL_EDITOR;
 
   bool _installing = false;
   bool _completedInstall = false;
@@ -248,8 +248,10 @@ class _WelcomePageState extends State<WelcomePage> {
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               snackBarTile(
-                  'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
-                  type: SnackBarType.error),
+                'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
+                type: SnackBarType.error,
+                duration: const Duration(seconds: 15),
+              ),
             );
           }
         });
