@@ -16,15 +16,11 @@ class AboutUsDialog extends StatelessWidget {
         children: <Widget>[
           const DialogHeader(title: 'About'),
           const SizedBox(height: 10),
-          TabViewWidget(
-            tabNames: const <String>['About', 'Contributors', 'Changelog'],
-            tabItems: <Widget>[
-              // About
-              AboutSection(),
-              // Contributors
-              ContributorsAboutSection(),
-              // Changelog
-              ChangelogAboutSection(),
+          const TabViewWidget(
+            tabs: <TabViewObject>[
+              TabViewObject('About', AboutSection()),
+              TabViewObject('Contributors', ContributorsAboutSection()),
+              TabViewObject('Changelog', ChangelogAboutSection()),
             ],
           ),
         ],

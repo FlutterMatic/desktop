@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 
 class ChangelogAboutSection extends StatelessWidget {
+  const ChangelogAboutSection({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(

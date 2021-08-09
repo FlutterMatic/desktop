@@ -6,14 +6,12 @@ class MultipleChoice extends StatefulWidget {
   final Function(String) onChanged;
   final String? defaultChoiceValue;
 
-  MultipleChoice({
+  const MultipleChoice({
     Key? key,
     required this.options,
     required this.onChanged,
     this.defaultChoiceValue,
-  })  : assert(options.isNotEmpty && options.length >= 2,
-            'Options cannot be empty and options needs to be 2 or more.'),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   _MultipleChoiceState createState() => _MultipleChoiceState();

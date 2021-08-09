@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/buttons/tab_item.dart';
+import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 
 class TabViewWidget extends StatefulWidget {
   final String? defaultPage;
-  final List<String> tabNames;
-  final List<Widget> tabItems;
+  final List<TabViewObject> tabs;
 
-  TabViewWidget({
-    required this.tabNames,
-    required this.tabItems,
+  const TabViewWidget({
+    Key? key,
+    required this.tabs,
     this.defaultPage,
-  })  : assert(tabNames.length == tabItems.length,
-            'Both item lengths must be the same'),
-        assert(tabNames.isNotEmpty && tabItems.isNotEmpty,
-            'Item list cannot be empty');
+  }) : super(key: key);
 
   @override
   _TabViewWidgetState createState() => _TabViewWidgetState();
@@ -21,35 +17,43 @@ class TabViewWidget extends StatefulWidget {
 
 class _TabViewWidgetState extends State<TabViewWidget> {
   int _index = 0;
-  final List<Widget> _itemsHeader = <Widget>[];
 
   @override
   void initState() {
-    if (widget.defaultPage != null &&
-        widget.tabNames.contains(
-            widget.defaultPage!.toLowerCase().substring(0, 1).toUpperCase() +
-                widget.defaultPage!.substring(1))) {
-      setState(() => _index = widget.tabNames.indexOf(widget.defaultPage!));
+    if (widget.defaultPage != null) {
+      setState(() {
+        widget.tabs.where((TabViewObject e) {
+          if (e.name == widget.defaultPage) {
+            _index = widget.tabs.indexOf(e);
+            return true;
+          } else {
+            return false;
+          }
+        });
+      });
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _itemsHeader.clear();
-    for (int i = 0; i < widget.tabNames.length; i++) {
-      _itemsHeader.add(
-        tabItemWidget(widget.tabNames[i], () => setState(() => _index = i),
-            _index == i, context, i == _index),
-      );
-    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _itemsHeader),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widget.tabs.map(
+            (TabViewObject e) {
+              return tabItemWidget(
+                e.name,
+                () => setState(() => _index = widget.tabs.indexOf(e)),
+                _index == widget.tabs.indexOf(e),
+                context,
+              );
+            },
+          ).toList(),
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Container(
@@ -57,7 +61,11 @@ class _TabViewWidgetState extends State<TabViewWidget> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 15),
-                child: widget.tabItems[_index],
+                child: IndexedStack(
+                  children:
+                      widget.tabs.map((TabViewObject e) => e.widget).toList(),
+                  index: _index,
+                ),
               ),
             ),
           ),
@@ -65,4 +73,35 @@ class _TabViewWidgetState extends State<TabViewWidget> {
       ],
     );
   }
+}
+
+class TabViewObject {
+  final String name;
+  final Widget widget;
+
+  const TabViewObject(this.name, this.widget);
+}
+
+Widget tabItemWidget(
+    String name, Function() onPressed, bool selected, BuildContext context) {
+  ThemeData customTheme = Theme.of(context);
+  return RectangleButton(
+    width: 130,
+    hoverColor: Colors.transparent,
+    focusColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+    color: selected ? null : Colors.transparent,
+    padding: const EdgeInsets.all(10),
+    onPressed: onPressed,
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        name,
+        style: TextStyle(
+            color: customTheme.textTheme.bodyText1!.color!
+                .withOpacity(selected ? 1 : .4)),
+      ),
+    ),
+  );
 }

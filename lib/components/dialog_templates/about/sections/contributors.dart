@@ -8,13 +8,16 @@ import 'dart:convert';
 
 bool _failedRequest = false;
 
+final List<ContributorTile> _contributors = <ContributorTile>[
+  const ContributorTile('56755783'), // Ziyad Farhan
+  const ContributorTile('35523357'), // Minnu
+];
+
 class ContributorsAboutSection extends StatelessWidget {
+  const ContributorsAboutSection({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    List<ContributorTile> _contributors = <ContributorTile>[
-      const ContributorTile('56755783'), // Ziyad Farhan
-      const ContributorTile('35523357'), // Minnu
-    ];
     ThemeData customTheme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

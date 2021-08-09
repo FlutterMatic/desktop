@@ -3,8 +3,9 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/components/widgets/ui/warning_widget.dart';
 
-
 class AboutSection extends StatelessWidget {
+  const AboutSection({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(

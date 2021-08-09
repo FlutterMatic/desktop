@@ -216,7 +216,7 @@ class ProjectCreatedDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          DialogHeader(title: 'Project Created'),
+          const DialogHeader(title: 'Project Created'),
           const SizedBox(height: 20),
           const Text(
               'Your new project has successfully been created. You should be able to open your project and run it!',

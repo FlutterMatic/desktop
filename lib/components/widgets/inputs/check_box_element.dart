@@ -7,12 +7,13 @@ class CheckBoxElement extends StatelessWidget {
   final Function(bool?) onChanged;
   final String? text;
 
-  CheckBoxElement({
+  const CheckBoxElement({
+    Key? key,
     required this.onChanged,
     this.disable = false,
     this.text,
     required this.value,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

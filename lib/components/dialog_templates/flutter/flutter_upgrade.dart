@@ -16,7 +16,7 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
   /// TODO: Upgrade Flutter when is requested. Ignore the request and say that Flutter is already up to date if current version is equal to the latest version.
   Future<void> _upgradeFlutter() async {
     Navigator.pop(context);
-    BgActivityTile _activityElement = BgActivityTile(
+    BgActivityTile _activityElement = const BgActivityTile(
       title: 'Upgrading your Flutter version',
       activityId: 'upgrading_flutter_version',
     );

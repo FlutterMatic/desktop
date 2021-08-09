@@ -40,27 +40,13 @@ class _SettingDialogState extends State<SettingDialog> {
           const SizedBox(height: 20),
           TabViewWidget(
             defaultPage: widget.goToPage,
-            tabNames: <String>[
-              'Theme',
-              'Projects',
-              'Editors',
-              'GitHub',
-              'Troubleshoot',
-              'Discover',
-            ],
-            tabItems: <Widget>[
-              //Themes
-              ThemeSettingsSection(),
-              //Projects
-              ProjectsSettingsSection(),
-              //Editors
-              EditorsSettingsSection(),
-              //GitHub
-              GitHubSettingsSection(),
-              //Troubleshoot
-              TroubleShootSettingsSection(),
-              //Discover
-              DiscoverSettingsSection(),
+            tabs: <TabViewObject>[
+              TabViewObject('Theme', ThemeSettingsSection()),
+              TabViewObject('Projects', ProjectsSettingsSection()),
+              TabViewObject('Editors', EditorsSettingsSection()),
+              TabViewObject('GitHub', GitHubSettingsSection()),
+              TabViewObject('Troubleshoot', TroubleShootSettingsSection()),
+              TabViewObject('Discover', DiscoverSettingsSection()),
             ],
           ),
           RectangleButton(

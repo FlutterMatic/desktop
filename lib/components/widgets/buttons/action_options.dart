@@ -2,34 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 
 class ActionOptions extends StatelessWidget {
-  final List<String> buttonTitles;
-  final List<Function> buttonOnPressed;
+  final List<ActionOptionsObject> actions;
 
   const ActionOptions({
-    required this.buttonTitles,
-    required this.buttonOnPressed,
-  }) : assert(buttonOnPressed.length == buttonTitles.length,
-            'Item lengths must be the same');
+    Key? key,
+    required this.actions,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
     return Column(
-      children: buttonTitles.map((String e) {
+      children: actions.map((ActionOptionsObject e) {
         return _buttonListTile(
-            buttonOnPressed[buttonTitles.indexOf(e)],
-            e,
-            customTheme.buttonColor,
-            buttonTitles.indexOf(e),
-            buttonTitles.length,
-            context);
+          color: customTheme.buttonColor,
+          onPressed: e.onPressed,
+          title: e.title,
+          length: actions.length,
+          context: context,
+          index: actions.indexOf(e),
+        );
       }).toList(),
     );
   }
 }
 
-Widget _buttonListTile(Function onPressed, String title, Color color, int index,
-    int length, BuildContext context) {
+class ActionOptionsObject {
+  final String title;
+  final Function onPressed;
+
+  const ActionOptionsObject(this.title, this.onPressed);
+}
+
+Widget _buttonListTile({
+  required String title,
+  required Function onPressed,
+  required Color color,
+  required int index,
+  required int length,
+  required BuildContext context,
+}) {
   Radius _curveValue = const Radius.circular(5);
   Radius _curveEmpty = Radius.zero;
   Radius _endExpression = (length == 1 ? _curveValue : _curveEmpty);

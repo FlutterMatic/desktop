@@ -4,7 +4,7 @@ import 'package:manager/components/widgets/buttons/square_button.dart';
 class CustomCloseButton extends StatelessWidget {
   final Function? onClose;
 
-  CustomCloseButton({this.onClose});
+  const CustomCloseButton({Key? key, this.onClose}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
