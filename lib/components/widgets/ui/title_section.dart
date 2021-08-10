@@ -25,7 +25,7 @@ Widget titleSection(String title, BuildContext context,
 
 Widget installationStatus(
     InstallationStatus status, String title, String description,
-    {String? tooltip, Function()? onDownload, required BuildContext context}) {
+    {String? tooltip, VoidCallback? onDownload, required BuildContext context}) {
   ThemeData customTheme = Theme.of(context);
   return Padding(
     padding: const EdgeInsets.only(left: 5),

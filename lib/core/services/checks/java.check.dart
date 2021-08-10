@@ -50,7 +50,6 @@ class JavaNotifier extends ValueNotifier<String> {
               'jdk.$archiveType',
               dir.path + '\\tmp',
               progressBarColor: const Color(0xFFF8981D),
-              value: 'Downloading JDK',
             );
 
         value = 'Extracting JDK';
@@ -86,7 +85,6 @@ class JavaNotifier extends ValueNotifier<String> {
               'jre.$archiveType',
               dir.path + '\\tmp',
               progressBarColor: const Color(0xFF1565C0),
-              value: 'Downloading JRE',
             );
 
         value = 'Extracting JRE';

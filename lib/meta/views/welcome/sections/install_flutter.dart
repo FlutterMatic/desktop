@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/app/constants/enum.dart';
+import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
 
 Widget installFlutter(
   Function() onInstall, {
-  required bool doneInstalling,
-  required bool isInstalling,
+  required Function() onCancel,
+  // required bool doneInstalling,
+  // required bool isInstalling,
+  required PROGRESS progress,
 }) {
   return Column(
     children: <Widget>[
@@ -20,17 +24,15 @@ Widget installFlutter(
       // TODO(@ZiyadF296) : Don't use opacity, instead shrink the space and when
       // user click install show them the checks happening and if the flutter sdk
       // not found then show the download progress.
-      !doneInstalling
+      progress == PROGRESS.DOWNLOADING
           ? installProgressIndicator(
               objectSize: '1.8 GB',
-              disabled: !isInstalling,
+              disabled: (progress != PROGRESS.CHECKING &&
+                  progress != PROGRESS.DOWNLOADING &&
+                  progress != PROGRESS.STARTED),
             )
-          : Container(
+          : RoundContainer(
               padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xffF4F8FA),
-              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -56,8 +58,23 @@ Widget installFlutter(
               ),
             ),
       const SizedBox(height: 50),
-      WelcomeButton(doneInstalling ? 'Next' : 'Install', onInstall,
-          disabled: isInstalling),
+      WelcomeButton(
+        progress == PROGRESS.DONE
+            ? 'Next'
+            : (progress != PROGRESS.DONE)
+                ? 'Cancel'
+                : 'Install',
+        (progress != PROGRESS.DOWNLOADING &&
+                progress != PROGRESS.EXTRACTING &&
+                progress != PROGRESS.STARTED)
+            ? onInstall
+            : (progress != PROGRESS.DONE)
+                ? onCancel
+                : null,
+        disabled: (progress != PROGRESS.CHECKING &&
+            progress != PROGRESS.DOWNLOADING &&
+            progress != PROGRESS.STARTED),
+      ),
     ],
   );
 }

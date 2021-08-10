@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 Widget installProgressIndicator({
@@ -23,6 +24,9 @@ Widget installProgressIndicator({
                 width: 415,
                 height: 90,
                 child: RoundContainer(
+                  color: !context.read<ThemeChangeNotifier>().isDarkTheme
+                      ? Colors.blueGrey.withOpacity(0.2)
+                      : AppTheme.lightTheme.primaryColorLight,
                   radius: 0,
                   padding: const EdgeInsets.only(top: 20),
                   child: Column(
@@ -35,7 +39,7 @@ Widget installProgressIndicator({
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  '''${downloadNotifier.progress!.floor()}%''',
+                                  '${downloadNotifier.progress!.floor()}%',
                                   style: const TextStyle(fontSize: 25),
                                 ),
                               ),

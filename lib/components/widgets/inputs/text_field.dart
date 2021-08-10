@@ -15,7 +15,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final Color? color;
-  final Function? onEditCompleted;
+  final VoidCallback? onEditCompleted;
   final TextEditingController? controller;
   final bool? autofocus;
   final double? width;
@@ -58,7 +58,7 @@ class CustomTextField extends StatelessWidget {
       textInputAction: textInputAction,
       textCapitalization: textCapitalization ?? TextCapitalization.none,
       readOnly: readOnly,
-      onEditingComplete: onEditCompleted as void Function()?,
+      onEditingComplete: onEditCompleted,
       autofocus: autofocus ?? false,
       keyboardType: keyboardType ?? TextInputType.text,
       obscureText: obscureText,

@@ -4,7 +4,7 @@ import 'package:manager/components/widgets/ui/spinner.dart';
 class SquareButton extends StatelessWidget {
   final double size;
   final Widget icon;
-  final Function()? onPressed;
+  final VoidCallback? onPressed;
   final Color? color, hoverColor;
   final bool loading;
   final String? tooltip;

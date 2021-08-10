@@ -26,6 +26,7 @@ dependencies:
   http: ^0.13.3
   intl: ^0.17.0
   lottie: ^1.1.0
+  retry: ^3.1.0
 
 dev_dependencies:
   flutter_test:

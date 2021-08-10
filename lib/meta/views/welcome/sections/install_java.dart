@@ -26,6 +26,7 @@ Widget installJava(
         Assets.java,
         Install.java,
         InstallContent.java,
+        iconHeight: 40,
       ),
       const SizedBox(height: 50),
       if (!doneInstalling)

@@ -31,7 +31,12 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
     } catch (_) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTile('Unable to load projects', type: SnackBarType.error));
+        snackBarTile(
+          context,
+          'Unable to load projects',
+          type: SnackBarType.error,
+        ),
+      );
     }
     setState(() => _loading = false);
   }
@@ -115,7 +120,8 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                       Navigator.pop(context);
                       showDialog(
                         context: context,
-                        builder: (_) => const SettingDialog(goToPage: 'Projects'),
+                        builder: (_) =>
+                            const SettingDialog(goToPage: 'Projects'),
                       );
                     },
                     child: Text(

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:provider/provider.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
-SnackBar snackBarTile(String message,
+SnackBar snackBarTile(BuildContext context, String message,
     {SnackBarType? type, Duration? duration}) {
   return SnackBar(
     duration: duration ?? const Duration(seconds: 5),
     behavior: SnackBarBehavior.floating,
     width: 600,
     elevation: 0,
-    backgroundColor: const Color(0xFF373E47),
+    backgroundColor: context.read<ThemeChangeNotifier>().isDarkTheme
+        ? Colors.blueGrey.withOpacity(0.2)
+        : AppTheme.lightTheme.primaryColorLight,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     content: Row(
       children: <Widget>[
@@ -26,7 +31,14 @@ SnackBar snackBarTile(String message,
                       : Assets.error),
             ),
           ),
-        Flexible(child: Text(message)),
+        Flexible(
+          child: Text(
+            message,
+            style: context.read<ThemeChangeNotifier>().isDarkTheme
+                ? AppTheme.darkTheme.textTheme.bodyText1
+                : AppTheme.lightTheme.textTheme.bodyText1,
+          ),
+        ),
       ],
     ),
   );

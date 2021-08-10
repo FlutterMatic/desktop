@@ -20,7 +20,7 @@ class RectangleButton extends StatelessWidget {
 
   final Widget child;
 
-  final Function? onPressed;
+  final VoidCallback? onPressed;
 
   const RectangleButton({
     Key? key,
@@ -49,7 +49,7 @@ class RectangleButton extends StatelessWidget {
       highlightColor: highlightColor,
       splashColor: splashColor,
       hoverColor: hoverColor,
-      onPressed: (disable || loading) ? null : onPressed as void Function()?,
+      onPressed: (disable || loading) ? null : onPressed,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),

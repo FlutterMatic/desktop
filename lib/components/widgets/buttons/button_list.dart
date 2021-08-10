@@ -69,7 +69,7 @@ class _SelectTileState extends State<SelectTile> {
   }
 }
 
-Widget _selectTile(dynamic leading, Function onPressed, bool selected,
+Widget _selectTile(dynamic leading, VoidCallback? onPressed, bool selected,
     bool disable, Color color, Color hoverColor, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(

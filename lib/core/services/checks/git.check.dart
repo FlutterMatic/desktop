@@ -81,7 +81,6 @@ class GitNotifier extends ValueNotifier<String> {
                 'git.tar.bz2',
                 dir.path + '\\tmp\\',
                 progressBarColor: Colors.black,
-                value: 'Downloading Git',
               );
 
           value = 'Extracting Git';

@@ -11,7 +11,7 @@ class DownloadNotifier extends ChangeNotifier {
   double? get progress => _progress;
   Color get progressColor => _progressColor!;
   Future<void> downloadFile(String uri, String? fileName, String dir,
-      {String? value, Color? progressBarColor}) async {
+      {Color? progressBarColor}) async {
     /// Check for temporary Directory to download files
     bool tmpDir = await Directory(dir).exists();
 
@@ -47,7 +47,6 @@ class DownloadNotifier extends ChangeNotifier {
         await logger.file(LogTypeTag.INFO, '$fileName has been downloaded.');
         notifyListeners();
       } else {
-        value = 'Error downloading';
         await logger.file(LogTypeTag.ERROR,
             'Error code while downloading $fileName - ${response.statusCode}');
       }

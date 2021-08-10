@@ -127,8 +127,10 @@ class _WelcomePageState extends State<WelcomePage> {
               });
             }
           },
-          isInstalling: _installing,
-          doneInstalling: _completedInstall,
+          progress: PROGRESS.CHECKING,
+
+          /// TODO(@ZiyadF296): Implement oncancel
+          onCancel: () {},
         );
       case WelcomeTab.INSTALL_EDITOR:
         return InstallEditor(
@@ -235,7 +237,7 @@ class _WelcomePageState extends State<WelcomePage> {
           await logger.file(
               LogTypeTag.INFO, 'Restarting device to continue Flutter setup');
 
-          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
               'Your device will restart in less than $_restartSeconds seconds.',
               type: SnackBarType.warning));
 
@@ -248,6 +250,7 @@ class _WelcomePageState extends State<WelcomePage> {
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               snackBarTile(
+                context,
                 'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
                 type: SnackBarType.error,
                 duration: const Duration(seconds: 15),

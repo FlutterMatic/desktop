@@ -8,7 +8,7 @@ import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
 
 Widget installGit(
   BuildContext context,
-  Function()? onInstall, {
+  VoidCallback? onInstall, {
   required bool isInstalling,
   required bool doneInstalling,
 }) {

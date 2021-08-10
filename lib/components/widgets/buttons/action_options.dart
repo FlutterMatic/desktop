@@ -29,14 +29,14 @@ class ActionOptions extends StatelessWidget {
 
 class ActionOptionsObject {
   final String title;
-  final Function onPressed;
+  final VoidCallback? onPressed;
 
   const ActionOptionsObject(this.title, this.onPressed);
 }
 
 Widget _buttonListTile({
   required String title,
-  required Function onPressed,
+  required VoidCallback? onPressed,
   required Color color,
   required int index,
   required int length,

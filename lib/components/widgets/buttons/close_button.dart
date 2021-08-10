@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager/components/widgets/buttons/square_button.dart';
 
 class CustomCloseButton extends StatelessWidget {
-  final Function? onClose;
+  final VoidCallback? onClose;
 
   const CustomCloseButton({Key? key, this.onClose}) : super(key: key);
 
@@ -14,9 +14,7 @@ class CustomCloseButton extends StatelessWidget {
           color: customTheme.textTheme.bodyText1!.color),
       color: customTheme.buttonColor,
       hoverColor: customTheme.errorColor,
-      onPressed: onClose == null
-          ? () => Navigator.pop(context)
-          : (onClose as Function()?),
+      onPressed: onClose ?? () => Navigator.pop(context),
     );
   }
 }

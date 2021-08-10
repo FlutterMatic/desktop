@@ -88,9 +88,13 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             builder: (_) => ProjectCreatedDialog(projectName: _projectName!),
           );
         } catch (_) {
-          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
               'Failed to create project. Please file an issue.',
-              type: SnackBarType.error));
+              type: SnackBarType.error,
+            ),
+          );
           Navigator.pop(context);
         }
       }

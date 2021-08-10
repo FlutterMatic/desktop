@@ -4,7 +4,7 @@ import 'package:manager/meta/utils/app_theme.dart';
 
 class WelcomeButton extends StatefulWidget {
   final String title;
-  final Function()? onPressed;
+  final VoidCallback? onPressed;
   final bool disabled;
 
   const WelcomeButton(

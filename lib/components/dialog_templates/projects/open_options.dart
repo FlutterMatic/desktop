@@ -123,7 +123,7 @@ Widget _projectOptionTile({
   required String title,
   required IconData icon,
   required HoverType hoverType,
-  required Function onPressed,
+  required VoidCallback? onPressed,
 }) {
   ThemeData customTheme = Theme.of(context);
   return Expanded(
@@ -238,9 +238,13 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
               //   );
               // } else {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
                   'Failed to delete "${widget.fName}". Project doesn\'t exist.',
-                  type: SnackBarType.error));
+                  type: SnackBarType.error,
+                ),
+              );
               // }
             },
             child: const Text(

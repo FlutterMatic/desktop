@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/meta/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class RoundContainer extends StatelessWidget {
   final Widget child;
@@ -23,13 +26,15 @@ class RoundContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return Container(
       height: height,
       width: width,
       padding: padding,
       decoration: BoxDecoration(
-        color: color ?? customTheme.primaryColorLight,
+        color: color ??
+            (context.read<ThemeChangeNotifier>().isDarkTheme
+                ? const Color(0xFF262F34)
+                : AppTheme.lightTheme.primaryColorLight),
         border: Border.all(color: borderColor!, width: borderWith),
         borderRadius: BorderRadius.circular(radius ?? 5),
       ),

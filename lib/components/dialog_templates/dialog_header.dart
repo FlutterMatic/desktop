@@ -4,7 +4,7 @@ import 'package:manager/components/widgets/buttons/close_button.dart';
 class DialogHeader extends StatelessWidget {
   final String title;
   final bool canClose;
-  final Function? onClose;
+  final VoidCallback? onClose;
   final Widget? leading;
 
   const DialogHeader({
