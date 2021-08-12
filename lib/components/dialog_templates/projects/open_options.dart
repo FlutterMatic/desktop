@@ -206,7 +206,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
             onChanged: (String val) => setState(() => _confirmInput = val),
             hintText: 'Confirm Delete',
           ),
-          infoWidget(
+          infoWidget(context,
               'Your input is case-sensitive. Please make sure you type in exactly your project name.'),
           const SizedBox(height: 10),
           RectangleButton(

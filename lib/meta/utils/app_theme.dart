@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
   static final Color darkBackgroundColor = const Color(0xFF181C1E);
-  static final Color darkLightColor = const Color(0xFF0656D77);
+  static final Color darkLightColor = const Color(0xFF656D77);
   static final Color lightBackgroundColor = const Color(0xFFFFFFFF);
   static final Color lightComponentsColor = const Color(0xFF40CAFF);
+  static final Color lightCardColor = const Color(0xFFF4F8FA);
   static const Color errorColor = Color(0xFFD73A49);
   static ThemeData get lightTheme => ThemeData(
         fontFamily: 'NotoSans',

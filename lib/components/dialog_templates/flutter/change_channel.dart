@@ -187,7 +187,7 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
             'You will still be able to continue using the IDE with Flutter while we change channels. Please be aware that changing channels will take time.',
             textAlign: TextAlign.center,
           ),
-          infoWidget(
+          infoWidget(context,
               'This process may take some time. You will still be able to use Flutter in your IDE. Once switching channels, we recommend restarting any open editors.'),
           const SizedBox(height: 15),
           RectangleButton(

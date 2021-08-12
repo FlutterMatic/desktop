@@ -84,7 +84,7 @@ Widget installJava(
                       kYellowColor,
                     ),
                     const SizedBox(height: 5),
-                    infoWidget(
+                    infoWidget(context,
                         'You will still be able to install Java later if you change your mind.'),
                     const SizedBox(height: 20),
                     const Text('Tool Skipping:'),

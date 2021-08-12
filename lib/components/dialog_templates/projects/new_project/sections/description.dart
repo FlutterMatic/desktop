@@ -39,7 +39,7 @@ class _ProjectDescriptionSectionState extends State<ProjectDescriptionSection> {
             widget.onChanged(_projectDescription);
           },
         ),
-        infoWidget(
+        infoWidget(context,
           'The description will be added as description in the pubspec.yaml file of your new project.',
         ),
       ],

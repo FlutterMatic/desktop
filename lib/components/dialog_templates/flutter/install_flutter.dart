@@ -48,7 +48,7 @@ class InstallFlutterDialog extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 10),
-          infoWidget(
+          infoWidget(context,
               'Please be aware that all necessary components will be installed with Flutter such as git if you don\'t already have it installed.'),
           const SizedBox(height: 10),
           RectangleButton(

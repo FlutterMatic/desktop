@@ -74,7 +74,7 @@ class GitHubSettingsSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        infoWidget(
+        infoWidget(context,
             'We are open-source! We would love to see you make some pull requests to this app!'),
       ],
     );

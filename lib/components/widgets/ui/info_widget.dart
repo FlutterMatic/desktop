@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:manager/meta/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
+import 'package:manager/core/notifiers/theme.notifier.dart';
 
-Widget infoWidget(String text) {
+Widget infoWidget(BuildContext context, String text) {
   return Padding(
     padding: const EdgeInsets.only(top: 10),
     child: RoundContainer(
-      color: Colors.blueGrey.withOpacity(0.2),
+      color: context.read<ThemeChangeNotifier>().isDarkTheme
+          ? Colors.blueGrey.withOpacity(0.2)
+          : AppTheme.lightCardColor,
       radius: 5,
       child: Row(
         children: <Widget>[

@@ -29,7 +29,7 @@ enum EditorType {
   BOTH,
 }
 
-enum PROGRESS {
+enum Progress {
   STARTED,
   CHECKING,
   DOWNLOADING,

@@ -78,7 +78,7 @@ class _ProjectOrgNameSectionState extends State<ProjectOrgNameSection> {
             Assets.error,
             kRedColor,
           ),
-        infoWidget(
+        infoWidget(context,
             'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),
       ],
     );

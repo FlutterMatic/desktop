@@ -108,6 +108,7 @@ class _WelcomePageState extends State<WelcomePage> {
         );
       case WelcomeTab.INSTALL_FLUTTER:
         return installFlutter(
+          context,
           () async {
             if (_completedInstall) {
               setState(() {
@@ -127,7 +128,9 @@ class _WelcomePageState extends State<WelcomePage> {
               });
             }
           },
-          progress: PROGRESS.CHECKING,
+          progress: _tab == WelcomeTab.INSTALL_EDITOR
+              ? Progress.DONE
+              : Progress.CHECKING,
 
           /// TODO(@ZiyadF296): Implement oncancel
           onCancel: () {},

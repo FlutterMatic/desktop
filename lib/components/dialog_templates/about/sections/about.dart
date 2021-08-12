@@ -23,7 +23,7 @@ class AboutSection extends StatelessWidget {
           false,
         ),
         const SizedBox(height: 5),
-        infoWidget(
+        infoWidget(context,
           'This project is completely open-source and can be found on GitHub.',
         ),
       ],

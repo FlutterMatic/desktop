@@ -83,7 +83,7 @@ class StatusDialog extends StatelessWidget {
           // else
           Padding(
             padding: const EdgeInsets.only(bottom: 15),
-            child: infoWidget(
+            child: infoWidget(context,
                 'Everything seems to be setup correctly! If there are any issues you find with this app, please report it. Go to Settings > GitHub > Create Issue.'),
           ),
           RectangleButton(

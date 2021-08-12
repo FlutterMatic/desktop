@@ -37,7 +37,7 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
-          infoWidget(
+          infoWidget(context,
               'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete.'),
           const SizedBox(height: 10),
           RectangleButton(

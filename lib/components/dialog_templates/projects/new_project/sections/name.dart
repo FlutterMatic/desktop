@@ -82,7 +82,7 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
             Assets.done,
             kGreenColor,
           ),
-        infoWidget(
+        infoWidget(context,
             'Your project name can only include lower-case English letters (a-z) and underscores (_).')
       ],
     );
