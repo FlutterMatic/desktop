@@ -12,10 +12,9 @@ import 'package:http/http.dart' as http;
 // ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
-/// [GitNotifier] class is a [ValueNotifier]
+/// [GitNotifier] class is a [ChangeNotifier]
 /// for Git checks.
-class GitNotifier extends ValueNotifier<String> {
-  GitNotifier([String value = 'Checking git']) : super(value);
+class GitNotifier extends ChangeNotifier {
 
   /// [gitVersion] value holds git version information
   Version? gitVersion;
@@ -31,10 +30,8 @@ class GitNotifier extends ValueNotifier<String> {
       String? gitPath = await which('git');
       Directory dir = await getApplicationSupportDirectory();
       if (gitPath == null) {
-        value = 'Git not installed';
         await logger.file(
             LogTypeTag.WARNING, 'Git not installed in the system.');
-        value = 'Downloading Git';
         await logger.file(LogTypeTag.INFO, 'Downloading Git');
         if (Platform.isWindows) {
           /// Application supporting Directory
@@ -83,19 +80,15 @@ class GitNotifier extends ValueNotifier<String> {
                 progressBarColor: Colors.black,
               );
 
-          value = 'Extracting Git';
-
           /// Extract java from compressed file.
           bool gitExtracted = await unzip(
             dir.path + '\\tmp\\' + 'git.tar.bz2',
             'C:\\fluttermatic\\git',
           );
           if (gitExtracted) {
-            value = 'Extracted Git';
             await logger.file(
                 LogTypeTag.INFO, 'Git extraction was successfull');
           } else {
-            value = 'Extracting Git failed';
             await logger.file(LogTypeTag.ERROR, 'Git extraction failed.');
           }
 
@@ -103,10 +96,8 @@ class GitNotifier extends ValueNotifier<String> {
           bool isGitPathSet =
               await setPath('C:\\fluttermatic\\git\\bin\\', dir.path);
           if (isGitPathSet) {
-            value = 'Git set to path';
             await logger.file(LogTypeTag.INFO, 'Git set to path');
           } else {
-            value = 'Git set to path failed';
             await logger.file(LogTypeTag.ERROR, 'Git set to path failed');
           }
         }
@@ -126,12 +117,10 @@ class GitNotifier extends ValueNotifier<String> {
       else {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        value = 'Git found';
         await logger.file(LogTypeTag.INFO, 'Git found at - $gitPath');
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        value = 'Fetching Git version';
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
         await logger.file(LogTypeTag.INFO, 'Git version : ${versions.git}');
@@ -142,8 +131,4 @@ class GitNotifier extends ValueNotifier<String> {
       await logger.file(LogTypeTag.ERROR, err.toString());
     }
   }
-}
-
-class GitChangeNotifier extends GitNotifier {
-  GitChangeNotifier() : super('Checking Git');
 }

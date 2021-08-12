@@ -142,7 +142,7 @@ class _WelcomePageState extends State<WelcomePage> {
             } else {
               setState(() => _installing = true);
               await context
-                  .read<FlutterChangeNotifier>()
+                  .read<FlutterNotifier>()
                   .checkFlutter(context, sdkData);
               setState(() {
                 _installing = false;
@@ -154,10 +154,7 @@ class _WelcomePageState extends State<WelcomePage> {
           progress: _tab == WelcomeTab.INSTALL_EDITOR
               ? Progress.DONE
               : Progress.CHECKING,
-
-          onCancel: () {
-            
-          },
+          onCancel: () {},
         );
       case WelcomeTab.INSTALL_EDITOR:
         return InstallEditor(

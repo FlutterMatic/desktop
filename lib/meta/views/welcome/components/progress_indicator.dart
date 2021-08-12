@@ -14,7 +14,7 @@ Widget installProgressIndicator({
 }) {
   return Consumer<DownloadNotifier>(
       builder: (BuildContext context, DownloadNotifier downloadNotifier, _) {
-    return downloadNotifier.progress != null && downloadNotifier.progress! < 100
+    return downloadNotifier.downloadProgress != null && downloadNotifier.downloadProgress! < 100
         ? AnimatedOpacity(
             duration: const Duration(milliseconds: 250),
             opacity: disabled ? 0.2 : 1,
@@ -39,7 +39,7 @@ Widget installProgressIndicator({
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  '${downloadNotifier.progress!.floor()}%',
+                                  '${downloadNotifier.downloadProgress!.floor()}%',
                                   style: const TextStyle(fontSize: 25),
                                 ),
                               ),
@@ -81,7 +81,7 @@ Widget installProgressIndicator({
                         child: LinearProgressIndicator(
                           value: disabled
                               ? 0
-                              : (downloadNotifier.progress ?? 0) / 100,
+                              : (downloadNotifier.downloadProgress ?? 0) / 100,
                           valueColor: const AlwaysStoppedAnimation<Color>(
                             Colors.lightBlueAccent,
                           ),

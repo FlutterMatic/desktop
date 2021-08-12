@@ -11,12 +11,9 @@ import 'package:provider/provider.dart';
 // ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
-/// [AndroidStudioNotifier] class is a [ValueNotifier]
+/// [AndroidStudioNotifier] class is a [ChangeNotifier]
 /// for Android Studio checks.
-class AndroidStudioNotifier extends ValueNotifier<String> {
-  AndroidStudioNotifier([String value = 'Checking Android Studio'])
-      : super(value);
-
+class AndroidStudioNotifier extends ChangeNotifier {
   /// [studioVersion] value holds Android Studio version information
   Version? studioVersion;
   Directory? jetBrainStudioDir;
@@ -111,13 +108,9 @@ class AndroidStudioNotifier extends ValueNotifier<String> {
   }
 }
 
-class AndroidStudioChangeNotifier extends AndroidStudioNotifier {
-  AndroidStudioChangeNotifier() : super('Checking Android Studio');
-}
-
 /// This function will check if the Android Studio
 /// is installed in the Program Files directory.
-Future<bool> checkProgramFiles({String? value}) async {
+Future<bool> checkProgramFiles() async {
   await logger.file(LogTypeTag.INFO, 'Checking Program Files');
   Directory? programFilesDir = Directory('C:\\Program Files\\Android');
   if (await programFilesDir.exists()) {
@@ -129,7 +122,6 @@ Future<bool> checkProgramFiles({String? value}) async {
     if (studio64PFPath != null) {
       await logger.file(LogTypeTag.INFO, 'Studio64.exe found in Program Files');
       await Future<dynamic>.delayed(const Duration(seconds: 1));
-      value = value ?? 'Android studio found';
       await setPath(studio64PFPath);
       return true;
     } else {
@@ -144,8 +136,7 @@ Future<bool> checkProgramFiles({String? value}) async {
 
 /// This function will check if the Android Studio
 /// is installed in the Jetbrains directory.
-Future<bool> checkJetBrains(String? jetbrainsDir,
-    {String? value, String? appDir}) async {
+Future<bool> checkJetBrains(String? jetbrainsDir, {String? appDir}) async {
   await logger.file(LogTypeTag.INFO, 'Checking JetBrains');
   Directory? jetBrainsDir = Directory(jetbrainsDir!);
   if (await jetBrainsDir.exists()) {
@@ -156,7 +147,6 @@ Future<bool> checkJetBrains(String? jetbrainsDir,
     if (studio64JBPath != null) {
       await logger.file(LogTypeTag.INFO, 'Studio64.exe found in Jetbrains');
       await Future<dynamic>.delayed(const Duration(seconds: 1));
-      value = value ?? 'Android studio found';
       await setPath(studio64JBPath, appDir);
       return true;
     } else {

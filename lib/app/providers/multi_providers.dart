@@ -29,26 +29,23 @@ class MultiProviders extends StatelessWidget {
         ChangeNotifierProvider<FlutterSDKNotifier>(
           create: (BuildContext context) => FlutterSDKNotifier(),
         ),
-        ChangeNotifierProvider<MainChecksNotifier>(
-          create: (BuildContext context) => MainChecksNotifier(),
+        ChangeNotifierProvider<FlutterNotifier>(
+          create: (BuildContext context) => FlutterNotifier(),
         ),
-        ChangeNotifierProvider<FlutterChangeNotifier>(
-          create: (BuildContext context) => FlutterChangeNotifier(),
+        ChangeNotifierProvider<JavaNotifier>(
+          create: (BuildContext context) => JavaNotifier(),
         ),
-        ChangeNotifierProvider<JavaChangeNotifier>(
-          create: (BuildContext context) => JavaChangeNotifier(),
-        ),
-        ChangeNotifierProvider<ADBChangeNotifier>(
-          create: (BuildContext context) => ADBChangeNotifier(),
+        ChangeNotifierProvider<ADBNotifier>(
+          create: (BuildContext context) => ADBNotifier(),
         ),
         ChangeNotifierProvider<VSCodeChangeNotifier>(
           create: (BuildContext context) => VSCodeChangeNotifier(),
         ),
-        ChangeNotifierProvider<GitChangeNotifier>(
-          create: (BuildContext context) => GitChangeNotifier(),
+        ChangeNotifierProvider<GitNotifier>(
+          create: (BuildContext context) => GitNotifier(),
         ),
-        ChangeNotifierProvider<AndroidStudioChangeNotifier>(
-          create: (BuildContext context) => AndroidStudioChangeNotifier(),
+        ChangeNotifierProvider<AndroidStudioNotifier>(
+          create: (BuildContext context) => AndroidStudioNotifier(),
         ),
         ChangeNotifierProvider<ThemeChangeNotifier>(
           create: (BuildContext context) => ThemeChangeNotifier(),

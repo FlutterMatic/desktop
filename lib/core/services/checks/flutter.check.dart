@@ -14,9 +14,8 @@ import 'package:provider/provider.dart';
 // ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
-/// [FlutterNotifier] is a [ValueNotifier].
-class FlutterNotifier extends ValueNotifier<String> {
-  FlutterNotifier([String value = 'Checking flutter']) : super(value);
+// / [FlutterNotifier] is a [ValueNotifier].
+class FlutterNotifier extends ChangeNotifier {
 
   /// Get flutter version.
   Version? flutterVersion;
@@ -40,9 +39,9 @@ class FlutterNotifier extends ValueNotifier<String> {
       if (flutterPath == null) {
         /// Application supporting Directory
         Directory dir = await getApplicationSupportDirectory();
-        value = 'Flutter not found';
+        // value = 'Flutter not found';
         await logger.file(LogTypeTag.WARNING, 'Flutter-SDK not found');
-        value = 'Downloading flutter';
+        // value = 'Downloading flutter';
         await logger.file(LogTypeTag.INFO, 'Downloading Flutter-SDK');
 
         /// Check for temporary Directory to download files
@@ -63,7 +62,7 @@ class FlutterNotifier extends ValueNotifier<String> {
               progressBarColor: Colors.lightBlueAccent,
             );
 
-        value = 'Extracting Flutter-SDK';
+        // value = 'Extracting Flutter-SDK';
 
         /// Extraction
         bool extracted = await unzip(
@@ -71,11 +70,11 @@ class FlutterNotifier extends ValueNotifier<String> {
           'C:\\fluttermatic\\',
         );
         if (extracted) {
-          value = 'Extracted Flutter-SDK';
+          // value = 'Extracted Flutter-SDK';
           await logger.file(
               LogTypeTag.INFO, 'Flutter-SDK extraction was successfull');
         } else {
-          value = 'Extracting Flutter-SDK failed';
+          // value = 'Extracting Flutter-SDK failed';
           await logger.file(LogTypeTag.ERROR, 'Flutter-SDK extraction failed.');
         }
 
@@ -83,10 +82,10 @@ class FlutterNotifier extends ValueNotifier<String> {
         bool isPathSet =
             await setPath('C:\\fluttermatic\\flutter\\bin\\', dir.path);
         if (isPathSet) {
-          value = 'Flutter-SDK set to path';
+          // value = 'Flutter-SDK set to path';
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
         } else {
-          value = 'Flutter-SDK set to path failed';
+          // value = 'Flutter-SDK set to path failed';
           await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
         }
       }
@@ -97,7 +96,7 @@ class FlutterNotifier extends ValueNotifier<String> {
         if (SharedPref().prefs.getString('flutter path') == null) {
           await SharedPref().prefs.setString('flutter path', flutterPath);
         }
-        value = 'Flutter-SDK found';
+        // value = 'Flutter-SDK found';
         await logger.file(
             LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
 
@@ -108,12 +107,12 @@ class FlutterNotifier extends ValueNotifier<String> {
         /// Engine • revision fee001c93f
         /// Tools • Dart 2.4.0
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        value = 'Fetching flutter version';
+        // value = 'Fetching flutter version';
         flutterVersion = await getFlutterBinVersion();
         versions.flutter = flutterVersion.toString();
         await logger.file(
             LogTypeTag.INFO, 'Flutter version : ${versions.flutter}');
-        value = 'Fetching flutter channel';
+        // value = 'Fetching flutter channel';
         await Future<dynamic>.delayed(const Duration(seconds: 2));
         versions.channel = await getFlutterBinChannel();
         await logger.file(
@@ -129,6 +128,3 @@ class FlutterNotifier extends ValueNotifier<String> {
   }
 }
 
-class FlutterChangeNotifier extends FlutterNotifier {
-  FlutterChangeNotifier() : super('Checking Flutter');
-}

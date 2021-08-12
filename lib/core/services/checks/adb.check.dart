@@ -12,11 +12,9 @@ import 'package:process_run/shell.dart';
 // ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
-/// [ADBNotifier] class is a [ValueNotifier]
+/// [ADBNotifier] class is a [ChangeNotifier]
 /// for ADB checks.
-class ADBNotifier extends ValueNotifier<String> {
-  ADBNotifier([String value = 'Checking ADB files']) : super(value);
-
+class ADBNotifier extends ChangeNotifier {
   /// [adbVersion] value holds ADB version information
   Version? adbVersion;
 
@@ -28,10 +26,8 @@ class ADBNotifier extends ValueNotifier<String> {
       await Future<dynamic>.delayed(const Duration(seconds: 1));
       String? adbPath = await which('adb');
       if (adbPath == null) {
-        value = 'ADB not installed';
         await logger.file(
             LogTypeTag.WARNING, 'ADB not installed in the system.');
-        value = 'Downloading Platform-tools';
         await logger.file(LogTypeTag.INFO, 'Downloading Platform-tools');
 
         /// Check for temporary Directory to download files
@@ -52,18 +48,14 @@ class ADBNotifier extends ValueNotifier<String> {
               progressBarColor: const Color(0xFFA4CA39),
             );
 
-        value = 'Extracting ADB';
-
         /// Extract java from compressed file.
         bool adbExtracted = await unzip(
           dir.path + '\\tmp\\' + 'adb.zip',
           'C:\\fluttermatic\\',
         );
         if (adbExtracted) {
-          value = 'Extracted ADB';
           await logger.file(LogTypeTag.INFO, 'ADB extraction was successfull');
         } else {
-          value = 'Extracting ADB failed';
           await logger.file(LogTypeTag.ERROR, 'ADB extraction failed.');
         }
 
@@ -71,21 +63,17 @@ class ADBNotifier extends ValueNotifier<String> {
         bool isADBPathSet =
             await setPath('C:\\fluttermatic\\platform-tools\\', dir.path);
         if (isADBPathSet) {
-          value = 'Flutter-SDK set to path';
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
         } else {
-          value = 'Flutter-SDK set to path failed';
           await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
         }
       } else {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        value = 'ADB found';
         await logger.file(LogTypeTag.INFO, 'ADB found at - $adbPath');
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        value = 'Fetching ADB version';
         adbVersion = await getADBBinVersion();
         versions.adb = adbVersion.toString();
         await logger.file(LogTypeTag.INFO, 'ADB version : ${versions.adb}');
@@ -98,8 +86,4 @@ class ADBNotifier extends ValueNotifier<String> {
       await logger.file(LogTypeTag.ERROR, err.toString());
     }
   }
-}
-
-class ADBChangeNotifier extends ADBNotifier {
-  ADBChangeNotifier() : super('Checking ADB files');
 }
