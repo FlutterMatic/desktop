@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
@@ -116,7 +118,7 @@ class _ContributorTileState extends State<ContributorTile> {
     Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
       'Accept': 'application/json',
-        'Authorization': oAuthToken,
+      HttpHeaders.authorizationHeader: 'token ' + PAT,
     };
 
     http.Response _result = await http.get(

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
   static final Color darkBackgroundColor = const Color(0xFF181C1E);
+  static final Color darkCardColor = const Color(0xFF262F34);
   static final Color darkLightColor = const Color(0xFF656D77);
   static final Color lightBackgroundColor = const Color(0xFFFFFFFF);
   static final Color lightComponentsColor = const Color(0xFF40CAFF);
   static final Color lightCardColor = const Color(0xFFF4F8FA);
+  static final Color primaryColor = const Color(0xFF206BC4);
   static const Color errorColor = Color(0xFFD73A49);
   static ThemeData get lightTheme => ThemeData(
         fontFamily: 'NotoSans',
@@ -14,7 +16,7 @@ class AppTheme {
         backgroundColor: lightBackgroundColor,
         scaffoldBackgroundColor: lightBackgroundColor,
         primaryColorLight: const Color(0xFFF1F1F1),
-        buttonColor: const Color(0xFF206BC4),
+        buttonColor: primaryColor,
         accentColor: const Color(0xFF79A6DC),
         splashColor: Colors.transparent,
         errorColor: errorColor,

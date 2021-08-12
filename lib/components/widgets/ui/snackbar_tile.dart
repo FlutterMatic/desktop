@@ -13,7 +13,7 @@ SnackBar snackBarTile(BuildContext context, String message,
     width: 600,
     elevation: 0,
     backgroundColor: context.read<ThemeChangeNotifier>().isDarkTheme
-        ? Colors.blueGrey.withOpacity(0.2)
+        ? AppTheme.darkCardColor
         : AppTheme.lightTheme.primaryColorLight,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     content: Row(

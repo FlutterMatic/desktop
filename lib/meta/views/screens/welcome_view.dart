@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/checks.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
@@ -20,7 +22,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  WelcomeTab _tab = WelcomeTab.GETTING_STARTED;
+  WelcomeTab _tab = WelcomeTab.INSTALL_FLUTTER;
 
   bool _installing = false;
   bool _completedInstall = false;
@@ -37,64 +39,85 @@ class _WelcomePageState extends State<WelcomePage> {
 
     /// TODO: Fix animation for header. Like make it smooth sliding while changing the tab.
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Column(
-          children: <Widget>[
-            createWelcomeHeader(_currentTheme, _tab, context),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: SizedBox(
-                  width: 415,
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: _getCurrentPage(context, _currentTheme),
+      body: Stack(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+              children: <Widget>[
+                createWelcomeHeader(_currentTheme, _tab, context),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: SizedBox(
+                      width: 415,
+                      child: Center(
+                        child: SingleChildScrollView(
+                          child: _getCurrentPage(context, _currentTheme),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 15, top: 5),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<Widget>(
-                        builder: (_) => const SystemRequirementsScreen(),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15, top: 5),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const SystemRequirementsDialog(),
+                          );
+                        },
+                        // TODO: Create system requirements page.
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            'System Requirements',
+                            style: _currentTheme.textTheme.bodyText2!
+                                .copyWith(fontSize: 12),
+                          ),
+                        ),
                       ),
-                    ),
-                    // TODO: Create system requirements page.
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        'System Requirements',
-                        style: _currentTheme.textTheme.bodyText2!
-                            .copyWith(fontSize: 12),
+                      const SizedBox(width: 5),
+                      TextButton(
+                        onPressed: () {},
+                        // TODO: Create docs & tutorials page.
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            'Docs & Tutorials',
+                            style: _currentTheme.textTheme.bodyText2!
+                                .copyWith(fontSize: 12),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 5),
-                  TextButton(
-                    onPressed: () {},
-                    // TODO: Create docs & tutorials page.
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        'Docs & Tutorials',
-                        style: _currentTheme.textTheme.bodyText2!
-                            .copyWith(fontSize: 12),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: IconButton(
+              splashRadius: 1,
+              icon: Icon(
+                context.read<ThemeChangeNotifier>().isDarkTheme
+                    ? Icons.light_mode_outlined
+                    : Icons.dark_mode_outlined,
+              ),
+              onPressed: () {
+                context.read<ThemeChangeNotifier>().updateTheme(
+                      !context.read<ThemeChangeNotifier>().isDarkTheme,
+                    );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -132,8 +155,9 @@ class _WelcomePageState extends State<WelcomePage> {
               ? Progress.DONE
               : Progress.CHECKING,
 
-          /// TODO(@ZiyadF296): Implement oncancel
-          onCancel: () {},
+          onCancel: () {
+            
+          },
         );
       case WelcomeTab.INSTALL_EDITOR:
         return InstallEditor(
@@ -235,32 +259,35 @@ class _WelcomePageState extends State<WelcomePage> {
           doneInstalling: _completedInstall,
         );
       case WelcomeTab.RESTART:
-        return welcomeRestart(context, () async {
-          int _restartSeconds = 5;
-          await logger.file(
-              LogTypeTag.INFO, 'Restarting device to continue Flutter setup');
+        return welcomeRestart(
+          context,
+          () async {
+            int _restartSeconds = 5;
 
-          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
-              'Your device will restart in less than $_restartSeconds seconds.',
-              type: SnackBarType.warning));
+            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
+                'Your device will restart in less than $_restartSeconds seconds.',
+                type: SnackBarType.warning));
 
-          await Future<void>.delayed(const Duration(seconds: 5));
+            await Future<void>.delayed(Duration(seconds: _restartSeconds));
 
-          /// Restart the system only if it's compiled for release. Prevent
-          /// restart on debugging.
-          if (kReleaseMode) {
-            await shell.run('shutdown /r /f');
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              snackBarTile(
-                context,
-                'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
-                type: SnackBarType.error,
-                duration: const Duration(seconds: 15),
-              ),
-            );
-          }
-        });
+            /// Restart the system only if it's compiled for release. Prevent
+            /// restart on debugging.
+            if (kReleaseMode) {
+              await logger.file(LogTypeTag.INFO,
+                  'Restarting device to continue Flutter setup');
+              await shell.run('shutdown /r /f');
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
+                  'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
+                  type: SnackBarType.error,
+                  duration: const Duration(seconds: 15),
+                ),
+              );
+            }
+          },
+        );
     }
   }
 }

@@ -9,21 +9,18 @@ Widget createWelcomeHeader(
   Widget _title(String title, WelcomeTab tileTab) {
     if (tab == tileTab) {
       return Expanded(
-        child: AnimatedContainer(
-          duration: const Duration(seconds: 5),
-          child: Column(
-            children: <Widget>[
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 20),
-              Container(
-                height: 3,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: AppTheme.lightComponentsColor,
-                ),
+        child: Column(
+          children: <Widget>[
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+            const SizedBox(height: 20),
+            Container(
+              height: 3,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: AppTheme.lightTheme.buttonColor,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     } else {
@@ -39,7 +36,7 @@ Widget createWelcomeHeader(
         child: Stack(
           alignment: Alignment.bottomLeft,
           children: <Widget>[
-            AnimatedContainer(
+            Container(
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -47,7 +44,6 @@ Widget createWelcomeHeader(
                     ? const Color(0xff1B2529)
                     : const Color(0xFFF4F8FA),
               ),
-              duration: const Duration(seconds: 1),
             ),
             Row(
               children: <Widget>[

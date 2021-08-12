@@ -1,25 +1,27 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/meta/views/welcome/components/custom_window.dart';
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/dialog_templates/dialog_header.dart';
+import 'package:manager/components/widgets/ui/bullet_point.dart';
+import 'package:manager/components/widgets/ui/dialog_template.dart';
 
-class SystemRequirementsScreen extends StatefulWidget {
-
-  const SystemRequirementsScreen({Key? key}) : super(key: key);
+class SystemRequirementsDialog extends StatefulWidget {
+  const SystemRequirementsDialog({Key? key}) : super(key: key);
 
   @override
-  _SystemRequirementsScreenState createState() =>
-      _SystemRequirementsScreenState();
+  _SystemRequirementsDialogState createState() =>
+      _SystemRequirementsDialogState();
 }
 
-class _SystemRequirementsScreenState extends State<SystemRequirementsScreen> {
+class _SystemRequirementsDialogState extends State<SystemRequirementsDialog> {
   @override
   Widget build(BuildContext context) {
-    return CustomWindow(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: const Center(
-          child: Text('System requirements.'),
-        ),
+    return DialogTemplate(
+      child: Column(
+        children: <Widget>[
+          const DialogHeader(title: 'System Requirements'),
+          VSeparators.normal(),
+          BulletPoint('4 GB Ram'),
+        ],
       ),
     );
   }

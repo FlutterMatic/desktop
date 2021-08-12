@@ -60,21 +60,21 @@ const String _lottieBase = 'assets/lottie/';
 
 /// Class for assets
 class Assets {
-  static const String xcode = '${_imagesLogosBase}xcode.png';
   static const String studio = '${_imagesLogosBase}android_studio.svg';
+  static const String extracting = '${_lottieBase}extraction.json';
   static const String confetti = '${_imagesIconsBase}confetti.svg';
   static const String flutter = '${_imagesLogosBase}flutter.svg';
   static const String twitter = '${_imagesLogosBase}twitter.svg';
   static const String vscode = '${_imagesLogosBase}vs_code.svg';
   static const String editor = '${_imagesIconsBase}editor.svg';
   static const String github = '${_imagesLogosBase}github.svg';
+  static const String xcode = '${_imagesLogosBase}xcode.png';
   static const String error = '${_imagesIconsBase}error.svg';
   static const String done = '${_imagesIconsBase}done.svg';
   static const String warn = '${_imagesIconsBase}warn.svg';
   static const String docs = '${_imagesIconsBase}docs.svg';
   static const String java = '${_imagesLogosBase}java.svg';
   static const String git = '${_imagesLogosBase}git.svg';
-  static const String extracting = '${_lottieBase}extraction.json';
 }
 
 /// Class for installed softwares
@@ -152,4 +152,42 @@ class ProgressEvent {
   final int downloadedLength;
 
   const ProgressEvent(this.contentLength, this.downloadedLength);
+}
+
+/// ### SEPARATORS
+/// The following are size boxes used across the app. Try to use these
+/// as much as possible as it helps simplify the code and makes it easier
+/// for changes in the future. If the size you are looking for doesn't
+/// exist, try to use multiple separators that will result in the closest
+/// result possible.
+
+/// ### VSeparators
+///
+///  - xSmall = 5
+///  - small = 10
+///  - normal = 15
+///  - large = 20
+///  - xLarge = 30
+class VSeparators {
+  static SizedBox xSmall() => const SizedBox(height: 5);
+  static SizedBox small() => const SizedBox(height: 10);
+  static SizedBox normal() => const SizedBox(height: 15);
+  static SizedBox large() => const SizedBox(height: 20);
+  static SizedBox xLarge() => const SizedBox(height: 30);
+}
+
+/// ### HSeparators
+///
+///  - xSmall = 5
+///  - small = 10
+///  - normal = 15
+///  - large = 20
+///  - xLarge = 30
+
+class HSeparators {
+  static SizedBox xSmall() => const SizedBox(width: 5);
+  static SizedBox small() => const SizedBox(width: 10);
+  static SizedBox normal() => const SizedBox(width: 15);
+  static SizedBox large() => const SizedBox(width: 20);
+  static SizedBox xLarge() => const SizedBox(width: 30);
 }

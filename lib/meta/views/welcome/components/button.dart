@@ -1,45 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/enum.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
-class WelcomeButton extends StatefulWidget {
-  final String title;
-  final VoidCallback? onPressed;
-  final bool disabled;
+class WelcomeButton extends StatelessWidget {
+  final String toolName;
+  final Progress progress;
+  final VoidCallback? onCancel;
+  final VoidCallback? onContinue;
+  final VoidCallback? onInstall;
+  final String? buttonText;
 
-  const WelcomeButton(
-    this.title,
-    this.onPressed, {
-    this.disabled = false,
+  const WelcomeButton({
+    required this.toolName,
+    required this.progress,
+    required this.onInstall,
+    required this.onCancel,
+    required this.onContinue,
+    this.buttonText,
     Key? key,
   }) : super(key: key);
 
   @override
-  _WelcomeButtonState createState() => _WelcomeButtonState();
-}
-
-class _WelcomeButtonState extends State<WelcomeButton> {
-  @override
   Widget build(BuildContext context) {
+    bool _disabled = progress == Progress.EXTRACTING ||
+        progress == Progress.CHECKING ||
+        progress == Progress.STARTED;
     return SizedBox(
       width: 210,
       height: 50,
       child: IgnorePointer(
-        ignoring: widget.disabled,
+        ignoring: _disabled,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
-          opacity: widget.disabled ? 0.5 : 1,
+          opacity: _disabled ? 0.5 : 1,
           child: RectangleButton(
-            onPressed: widget.onPressed,
+            onPressed: progress == Progress.NONE
+                ? onInstall
+                : progress == Progress.DOWNLOADING
+                    ? onCancel
+                    : onContinue,
             color: AppTheme.lightTheme.buttonColor,
-            hoverColor: AppTheme.lightTheme.accentColor,
+            hoverColor: progress == Progress.DOWNLOADING
+                ? AppTheme.errorColor
+                : AppTheme.lightTheme.accentColor,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  widget.title,
+                  buttonText ??
+                      (progress == Progress.NONE
+                          ? 'Install'
+                          : progress == Progress.DOWNLOADING
+                              ? 'Cancel'
+                              : 'Continue'),
                   style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w700),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(width: 6),
                 const Icon(Icons.arrow_forward_rounded,

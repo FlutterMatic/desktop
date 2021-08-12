@@ -1,14 +1,15 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/api.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
+import 'package:manager/meta/views/welcome/components/loading_indicator.dart';
 import 'package:retry/retry.dart';
+import 'dart:io';
+import 'dart:async';
 
 class WelcomeGettingStarted extends StatefulWidget {
   const WelcomeGettingStarted(this.onContinue, {Key? key}) : super(key: key);
@@ -21,9 +22,15 @@ class WelcomeGettingStarted extends StatefulWidget {
 class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
   RetryOptions r = const RetryOptions(maxAttempts: 8);
 
-  /// TODO(@ZiyadF296): BIG BUG - This function was being called like 4-5 times IDK why!
-  /// This reduces the rate limit.
   Future<bool> _initCalls() async {
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   snackBarTile(
+    //     context,
+    //     'Failed start installing example...',
+    //     type: SnackBarType.done,
+    //     duration: const Duration(minutes: 5),
+    //   ),
+    // );
     try {
       await r.retry(
         () async {
@@ -54,39 +61,44 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         retryIf: (Exception e) => e is SocketException || e is TimeoutException,
       );
       return true;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    /// TODO(@ZiyadF296) : See if you can fix this UI part like this.
     return FutureBuilder<bool>(
-        future: _initCalls(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return Column(
-            children: <Widget>[
-              welcomeHeaderTitle(
-                Assets.flutter,
-                Install.flutter,
-                InstallContent.welcome,
-                iconHeight: 50,
-              ),
-              const SizedBox(height: 20),
-              !snapshot.hasData
-                  ? Column(
-                      children: const <Widget>[
-                        CircularProgressIndicator(),
-                        Text('Fetching some initial data...'),
-                      ],
-                    )
-                  : infoWidget(context,
-                      'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
-              const SizedBox(height: 30),
-              WelcomeButton('Continue', widget.onContinue),
-            ],
-          );
-        });
+      // future: _initCalls(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return Column(
+          children: <Widget>[
+            welcomeHeaderTitle(
+              Assets.flutter,
+              Install.flutter,
+              InstallContent.welcome,
+              iconHeight: 50,
+            ),
+            const SizedBox(height: 20),
+            if (!snapshot.hasData)
+              welcomeLoadingIndicator(
+                context: context,
+                message: 'Preparing your system to start installing Flutter',
+              )
+            else
+              infoWidget(context,
+                  'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
+            const SizedBox(height: 20),
+            WelcomeButton(
+              onCancel: () {},
+              onInstall: () {},
+              onContinue: widget.onContinue,
+              progress: Progress.DONE,
+              toolName: 'Getting Started',
+            ),
+          ],
+        );
+      },
+    );
   }
 }

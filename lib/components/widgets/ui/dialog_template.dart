@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 class DialogTemplate extends StatelessWidget {
   final Widget child;

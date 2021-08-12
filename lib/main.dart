@@ -39,16 +39,18 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeChangeNotifier>(
       builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
           Widget? child) {
-        return MaterialApp(
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeChangeNotifier.isDarkTheme
-              ? ThemeMode.dark
-              : ThemeMode.light,
-          debugShowCheckedModeBanner: false,
-          home: CustomWindow(
-            child: const WelcomePage(),
-            // child: Startup(themeChangeNotifier),
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: CustomWindow(
+            child: MaterialApp(
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeChangeNotifier.isDarkTheme
+                  ? ThemeMode.dark
+                  : ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              home: const WelcomePage(),
+            ),
           ),
         );
       },

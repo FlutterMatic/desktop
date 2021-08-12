@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:provider/provider.dart';
 
 class WindowControls extends StatelessWidget {
   final bool disabled;
@@ -19,35 +21,18 @@ class WindowControls extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              IconButton(
+              _Control(
+                icon: Icons.remove_rounded,
                 onPressed: () => appWindow.minimize(),
-                splashColor: Colors.transparent,
-                splashRadius: 12,
-                focusColor: Colors.black12,
-                hoverColor: Colors.black12,
-                highlightColor: Colors.black12,
-                color: Colors.grey,
-                icon: const Icon(Icons.remove_rounded, size: 15),
               ),
-              IconButton(
+              _Control(
+                icon: Icons.crop_square_rounded,
                 onPressed: () => appWindow.maximizeOrRestore(),
-                splashColor: Colors.transparent,
-                splashRadius: 12,
-                focusColor: Colors.black12,
-                hoverColor: Colors.black12,
-                highlightColor: Colors.black12,
-                color: Colors.grey,
-                icon: const Icon(Icons.crop_square_rounded, size: 15),
               ),
-              IconButton(
+              _Control(
+                icon: Icons.close_rounded,
                 onPressed: () => appWindow.close(),
-                splashColor: Colors.transparent,
-                splashRadius: 12,
-                focusColor: Colors.red[500],
-                hoverColor: Colors.red[500],
-                highlightColor: Colors.red[500],
-                color: Colors.grey,
-                icon: const Icon(Icons.close_rounded, size: 15),
+                hoverType: _HoverType.red,
               ),
             ],
           ),
@@ -56,3 +41,39 @@ class WindowControls extends StatelessWidget {
     );
   }
 }
+
+class _Control extends StatelessWidget {
+  final IconData icon;
+  final Function() onPressed;
+  final _HoverType hoverType;
+
+  const _Control({
+    Key? key,
+    required this.icon,
+    required this.onPressed,
+    this.hoverType = _HoverType.normal,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 40,
+      child: MaterialButton(
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        hoverColor: hoverType == _HoverType.normal
+            ? Colors.white.withOpacity(0.2)
+            : Colors.red[500],
+        onPressed: onPressed,
+        child: Icon(
+          icon,
+          size: 15,
+          color: context.read<ThemeChangeNotifier>().isDarkTheme
+              ? Colors.white
+              : Colors.black,
+        ),
+      ),
+    );
+  }
+}
+
+enum _HoverType { red, normal }

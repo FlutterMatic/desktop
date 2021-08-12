@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 Widget welcomeHeaderTitle(String iconPath, String title, String description,
-    {double iconHeight = 30}) {
+    {Color? color, double iconHeight = 30}) {
   return Column(
     children: <Widget>[
-      SvgPicture.asset(iconPath, height: iconHeight),
+      SvgPicture.asset(iconPath, height: iconHeight, color: color),
       const SizedBox(height: 20),
       Text(
         title,

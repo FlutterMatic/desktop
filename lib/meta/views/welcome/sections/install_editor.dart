@@ -8,6 +8,7 @@ import 'package:manager/meta/utils/app_theme.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
+import 'package:manager/meta/views/welcome/components/tool_installed.dart';
 import 'package:provider/provider.dart';
 
 class InstallEditor extends StatefulWidget {
@@ -96,41 +97,20 @@ class _InstallEditorState extends State<InstallEditor> {
             objectSize: '3.2 GB',
           )
         else if (widget.doneInstalling)
-          Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: context.read<ThemeChangeNotifier>().isDarkTheme
-                  ? const Color(0xff1B2529)
-                  : const Color(0xffF4F8FA),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Icon(Icons.check_rounded, color: Color(0xff40CAFF)),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                          'Editor${widget.selectedType == EditorType.BOTH ? 's' : ''} Installed',
-                          style: const TextStyle(fontSize: 16)),
-                      const SizedBox(height: 8),
-                      Text(
-                          'You have successfully installed ${widget.selectedType == EditorType.ANDROID_STUDIO ? 'Android Studio' : widget.selectedType == EditorType.VSCODE ? 'Visual Studio Code' : 'Android Studio & Visual Studio Code'}.',
-                          style: const TextStyle(fontSize: 13)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          welcomeToolInstalled(
+            context,
+            title:
+                'Editor${widget.selectedType == EditorType.BOTH ? 's' : ''} Installed',
+            message:
+                'You have successfully installed ${widget.selectedType == EditorType.ANDROID_STUDIO ? 'Android Studio' : widget.selectedType == EditorType.VSCODE ? 'Visual Studio Code' : 'Android Studio & Visual Studio Code'}.',
           ),
         const SizedBox(height: 30),
         WelcomeButton(
-          widget.doneInstalling ? 'Next' : 'Install',
-          widget.onInstall,
-          disabled: widget.isInstalling,
+          onCancel: () {},
+          onContinue: () {},
+          onInstall: () {},
+          progress: Progress.NONE,
+          toolName: 'Editor',
         ),
       ],
     );

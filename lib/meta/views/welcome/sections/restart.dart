@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/enum.dart';
 import 'package:provider/provider.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
@@ -15,13 +16,13 @@ Widget welcomeRestart(BuildContext context, Function() onRestart) {
         Assets.confetti,
         Installed.congos,
         InstalledContent.allDone,
+        color: context.read<ThemeChangeNotifier>().isDarkTheme
+            ? null
+            : Colors.black,
       ),
       const SizedBox(height: 30),
       RoundContainer(
         padding: const EdgeInsets.all(15),
-        color: context.read<ThemeChangeNotifier>().isDarkTheme
-            ? null
-            : const Color(0xffF4F8FA),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -31,20 +32,16 @@ Widget welcomeRestart(BuildContext context, Function() onRestart) {
               children: <Widget>[
                 Expanded(
                   child: RectangleButton(
-                    child: const Text(
-                      'Flutter Documentation',
-                      style: TextStyle(color: Colors.lightBlueAccent),
-                    ),
+                    child: const Text('Flutter Documentation',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () {},
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: RectangleButton(
-                    child: const Text(
-                      'Our Documentation',
-                      style: TextStyle(color: Colors.lightBlueAccent),
-                    ),
+                    child: const Text('Our Documentation',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () {},
                   ),
                 ),
@@ -55,12 +52,19 @@ Widget welcomeRestart(BuildContext context, Function() onRestart) {
       ),
       const SizedBox(height: 10),
       warningWidget(
-        'You will need to restart your computer to fully complete this setup.',
+        'You will need to restart your computer to fully complete this setup. Make sure to save all your work before restarting.',
         Assets.warn,
         kYellowColor,
       ),
       const SizedBox(height: 20),
-      WelcomeButton(ButtonTexts.restart, onRestart),
+      WelcomeButton(
+        onCancel: () {},
+        onContinue: () {},
+        onInstall: () {},
+        progress: Progress.NONE,
+        toolName: 'Flutter',
+        buttonText: 'Restart',
+      ),
     ],
   );
 }
