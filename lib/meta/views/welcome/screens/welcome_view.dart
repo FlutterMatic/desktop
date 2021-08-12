@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
@@ -8,7 +7,7 @@ import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/meta/views/screens/system_requirements.dart';
+import 'package:manager/meta/views/welcome/screens/system_requirements.dart';
 import 'package:manager/meta/views/welcome/sections/install_editor.dart';
 import 'package:manager/meta/views/welcome/components/header.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +21,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  WelcomeTab _tab = WelcomeTab.INSTALL_FLUTTER;
+  WelcomeTab _tab = WelcomeTab.GETTING_STARTED;
 
   bool _installing = false;
   bool _completedInstall = false;
@@ -154,10 +153,7 @@ class _WelcomePageState extends State<WelcomePage> {
           progress: _tab == WelcomeTab.INSTALL_EDITOR
               ? Progress.DONE
               : Progress.CHECKING,
-
-          onCancel: () {
-            
-          },
+          onCancel: () {},
         );
       case WelcomeTab.INSTALL_EDITOR:
         return InstallEditor(

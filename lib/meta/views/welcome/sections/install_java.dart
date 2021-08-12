@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/widgets/ui/info_widget.dart';
+import 'package:manager/components/widgets/ui/bullet_point.dart';
+import 'package:manager/components/widgets/ui/warning_widget.dart';
+import 'package:manager/meta/views/welcome/components/button.dart';
+import 'package:manager/components/widgets/ui/dialog_template.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/bullet_point.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/tool_installed.dart';
-import 'package:provider/provider.dart';
-import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
+import 'package:manager/meta/views/welcome/components/header_title.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 Widget installJava(
   BuildContext context,
@@ -35,6 +33,9 @@ Widget installJava(
         installProgressIndicator(
           disabled: !isInstalling,
           objectSize: '3.2 GB',
+          progress: Progress.FAILED,
+          onCancel: () {},
+          toolName: 'Java',
         )
       else
         welcomeToolInstalled(
@@ -43,8 +44,7 @@ Widget installJava(
           message: InstalledContent.java,
         ),
       const SizedBox(height: 50),
-    WelcomeButton(
-        onCancel: () {},
+      WelcomeButton(
         onContinue: () {},
         onInstall: () {},
         progress: Progress.NONE,
@@ -62,10 +62,8 @@ Widget installJava(
                   children: <Widget>[
                     const DialogHeader(title: 'Are you sure?'),
                     const SizedBox(height: 10),
-                    warningWidget(
+                    informationWidget(
                       'We recommend that you installed Java. This will help eliminate some issues you might face in the future with Flutter.',
-                      Assets.warn,
-                      kYellowColor,
                     ),
                     const SizedBox(height: 5),
                     infoWidget(context,

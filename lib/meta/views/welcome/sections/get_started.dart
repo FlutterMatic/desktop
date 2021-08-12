@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:manager/app/constants/enum.dart';
@@ -69,7 +70,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      // future: _initCalls(),
+      future: kReleaseMode ? _initCalls() : null,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return Column(
           children: <Widget>[
@@ -90,7 +91,6 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
                   'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
             const SizedBox(height: 20),
             WelcomeButton(
-              onCancel: () {},
               onInstall: () {},
               onContinue: widget.onContinue,
               progress: Progress.DONE,

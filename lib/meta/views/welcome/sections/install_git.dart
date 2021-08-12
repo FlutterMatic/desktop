@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/meta/views/welcome/components/tool_installed.dart';
-import 'package:provider/provider.dart';
 import 'package:manager/meta/views/welcome/components/button.dart';
 import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
@@ -26,6 +24,9 @@ Widget installGit(
         installProgressIndicator(
           disabled: !isInstalling,
           objectSize: '3.2 GB',
+          progress: Progress.FAILED,
+          onCancel: () {},
+          toolName: 'Git',
         )
       else
         welcomeToolInstalled(
@@ -36,7 +37,6 @@ Widget installGit(
         ),
       const SizedBox(height: 30),
       WelcomeButton(
-        onCancel: () {},
         onContinue: () {},
         onInstall: () {},
         progress: Progress.NONE,

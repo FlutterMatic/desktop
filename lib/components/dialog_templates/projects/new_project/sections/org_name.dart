@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/inputs/text_field.dart';
 import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/components/widgets/ui/warning_widget.dart';
@@ -57,26 +56,23 @@ class _ProjectOrgNameSectionState extends State<ProjectOrgNameSection> {
             !_projectOrg!.endsWith('.') &&
             !_projectOrg!.endsWith('_') &&
             '.'.allMatches(_projectOrg!).length < 3)
-          warningWidget(
+          informationWidget(
             '"${'.'.allMatches(_projectOrg ?? '').length == 1 ? '$_projectOrg.${widget.projName}' : _projectOrg}" will be your organization name. You can change it later.',
-            Assets.done,
-            kGreenColor,
+            type: InformationType.GREEN,
           ),
         if (_projectOrg != null &&
             (_projectOrg!.endsWith('_') ||
                 _projectOrg!.endsWith('.') ||
                 !_projectOrg!.contains('.')) &&
             '.'.allMatches(_projectOrg!).length < 3)
-          warningWidget(
+          informationWidget(
             'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app"',
-            Assets.error,
-            kRedColor,
+            type: InformationType.WARNING,
           ),
         if (_projectOrg != null && '.'.allMatches(_projectOrg!).length > 2)
-          warningWidget(
+          informationWidget(
             'Please check your organization name. This doesn\'t seem to be a proper one. Try something like com.${widget.projName}.app',
-            Assets.error,
-            kRedColor,
+            type: InformationType.ERROR,
           ),
         infoWidget(context,
             'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),

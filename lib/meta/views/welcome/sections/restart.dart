@@ -51,14 +51,11 @@ Widget welcomeRestart(BuildContext context, Function() onRestart) {
         ),
       ),
       const SizedBox(height: 10),
-      warningWidget(
+      informationWidget(
         'You will need to restart your computer to fully complete this setup. Make sure to save all your work before restarting.',
-        Assets.warn,
-        kYellowColor,
       ),
       const SizedBox(height: 20),
       WelcomeButton(
-        onCancel: () {},
         onContinue: () {},
         onInstall: () {},
         progress: Progress.NONE,

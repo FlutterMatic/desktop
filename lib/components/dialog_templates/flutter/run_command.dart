@@ -105,8 +105,10 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
           ),
           if (_commandResult != null) const SizedBox(height: 15),
           if (_showTypeRequest)
-            warningWidget(
-                'Please type in a flutter command.', Assets.error, kRedColor),
+            informationWidget(
+              'Please type in a flutter command.',
+              type: InformationType.ERROR,
+            ),
           if (_commandResult != null)
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 350),

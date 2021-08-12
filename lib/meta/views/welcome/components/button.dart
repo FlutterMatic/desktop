@@ -6,7 +6,6 @@ import 'package:manager/meta/utils/app_theme.dart';
 class WelcomeButton extends StatelessWidget {
   final String toolName;
   final Progress progress;
-  final VoidCallback? onCancel;
   final VoidCallback? onContinue;
   final VoidCallback? onInstall;
   final String? buttonText;
@@ -15,7 +14,6 @@ class WelcomeButton extends StatelessWidget {
     required this.toolName,
     required this.progress,
     required this.onInstall,
-    required this.onCancel,
     required this.onContinue,
     this.buttonText,
     Key? key,
@@ -24,6 +22,7 @@ class WelcomeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool _disabled = progress == Progress.EXTRACTING ||
+        progress == Progress.DOWNLOADING ||
         progress == Progress.CHECKING ||
         progress == Progress.STARTED;
     return SizedBox(
@@ -35,25 +34,17 @@ class WelcomeButton extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           opacity: _disabled ? 0.5 : 1,
           child: RectangleButton(
-            onPressed: progress == Progress.NONE
-                ? onInstall
-                : progress == Progress.DOWNLOADING
-                    ? onCancel
-                    : onContinue,
+            onPressed: progress == Progress.DONE
+                ? onContinue
+                : onInstall,
             color: AppTheme.lightTheme.buttonColor,
-            hoverColor: progress == Progress.DOWNLOADING
-                ? AppTheme.errorColor
-                : AppTheme.lightTheme.accentColor,
+            hoverColor: AppTheme.lightTheme.accentColor,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
                   buttonText ??
-                      (progress == Progress.NONE
-                          ? 'Install'
-                          : progress == Progress.DOWNLOADING
-                              ? 'Cancel'
-                              : 'Continue'),
+                      (progress == Progress.DONE ? 'Continue' : 'Install'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
