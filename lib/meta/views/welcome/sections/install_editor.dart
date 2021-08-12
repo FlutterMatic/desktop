@@ -95,6 +95,9 @@ class _InstallEditorState extends State<InstallEditor> {
           installProgressIndicator(
             disabled: !widget.isInstalling,
             objectSize: '3.2 GB',
+            progress: Progress.FAILED,
+            onCancel: () {},
+            toolName: 'Editor(s)',
           )
         else if (widget.doneInstalling)
           welcomeToolInstalled(
@@ -106,7 +109,6 @@ class _InstallEditorState extends State<InstallEditor> {
           ),
         const SizedBox(height: 30),
         WelcomeButton(
-          onCancel: () {},
           onContinue: () {},
           onInstall: () {},
           progress: Progress.NONE,

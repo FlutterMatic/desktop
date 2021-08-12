@@ -13,7 +13,8 @@ class RoundContainer extends StatelessWidget {
   final Color? borderColor;
   final EdgeInsets? padding;
 
-  RoundContainer({
+  const RoundContainer({
+    Key? key,
     required this.child,
     this.color,
     this.borderWith = 1,
@@ -22,7 +23,7 @@ class RoundContainer extends StatelessWidget {
     this.radius,
     this.borderColor = Colors.transparent,
     this.padding = const EdgeInsets.all(10),
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class RoundContainer extends StatelessWidget {
         color: color ??
             (context.read<ThemeChangeNotifier>().isDarkTheme
                 ? AppTheme.darkCardColor
-                : AppTheme.lightTheme.primaryColorLight),
+                : AppTheme.lightCardColor),
         border: Border.all(color: borderColor!, width: borderWith),
         borderRadius: BorderRadius.circular(radius ?? 5),
       ),

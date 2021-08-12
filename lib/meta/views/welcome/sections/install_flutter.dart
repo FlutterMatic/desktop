@@ -7,9 +7,10 @@ import 'package:manager/meta/views/welcome/components/header_title.dart';
 import 'package:manager/meta/views/welcome/components/progress_indicator.dart';
 
 Widget installFlutter(
-  BuildContext context,
-  Function() onInstall, {
-  required Function() onCancel,
+  BuildContext context, {
+  required VoidCallback onInstall,
+  required VoidCallback onCancel,
+  VoidCallback? onContinue,
   required Progress progress,
 }) {
   return Column(
@@ -20,29 +21,29 @@ Widget installFlutter(
         'You will need to install Flutter in your machine to start using Flutter.',
       ),
       const SizedBox(height: 50),
-      // TODO(@ZiyadF296) : Don't use opacity, instead shrink the space and when
-      // user click install show them the checks happening and if the flutter sdk
-      // not found then show the download progress.
-      (progress == Progress.DOWNLOADING ||
-              progress == Progress.EXTRACTING ||
-              progress == Progress.STARTED)
-          ? installProgressIndicator(
-              objectSize: '1.8 GB',
-              disabled: (progress != Progress.CHECKING &&
-                  progress != Progress.DOWNLOADING &&
-                  progress != Progress.STARTED),
-            )
-          : welcomeToolInstalled(
-              context,
-              title: 'Flutter Installed',
-              message:
-                  'Flutter was installed successfully on your machine. Continue to the next step.',
-            ),
+      // (progress == Progress.DOWNLOADING ||
+      //         progress == Progress.EXTRACTING ||
+      //         progress == Progress.STARTED)
+      //     ?
+      installProgressIndicator(
+        objectSize: '1.8 GB',
+        disabled: (progress != Progress.CHECKING &&
+            progress != Progress.DOWNLOADING &&
+            progress != Progress.STARTED),
+        progress: Progress.NONE,
+        toolName: 'Flutter',
+        onCancel: onCancel,
+      ),
+      // : welcomeToolInstalled(
+      //     context,
+      //     title: 'Flutter Installed',
+      //     message:
+      //         'Flutter was installed successfully on your machine. Continue to the next step.',
+      //   ),
       const SizedBox(height: 50),
       WelcomeButton(
-        onCancel: () {},
-        onContinue: () {},
-        onInstall: () {},
+        onContinue: onContinue,
+        onInstall: onInstall,
         progress: Progress.NONE,
         toolName: 'Flutter',
       ),
