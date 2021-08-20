@@ -7,6 +7,7 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/meta/utils/bin/java.bin.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
@@ -75,9 +76,8 @@ class JavaNotifier extends ChangeNotifier {
 
         if (jdkExtracted) {
           await logger.file(LogTypeTag.INFO, 'JDK extraction was successful');
-          await Directory('C:\\fluttermatic\\Java\\')
-              .list()
-              .forEach((FileSystemEntity e) async {
+          await for (FileSystemEntity e
+              in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
             print(e.path);
             if (e.path.split('\\')[3].startsWith('openlogic') &&
                 e.path.contains('openjdk-8u2')) {
@@ -95,7 +95,7 @@ class JavaNotifier extends ChangeNotifier {
                     LogTypeTag.ERROR, 'Extracted folder rename failed');
               }
             }
-          });
+          }
         } else {
           _progress = Progress.FAILED;
           notifyListeners();
@@ -136,9 +136,8 @@ class JavaNotifier extends ChangeNotifier {
         );
         if (jreExtracted) {
           await logger.file(LogTypeTag.INFO, 'JDK extraction was successful');
-          await Directory('C:\\fluttermatic\\Java\\')
-              .list()
-              .forEach((FileSystemEntity e) async {
+          await for (FileSystemEntity e
+              in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
             if (e.path.split('\\')[3].startsWith('openlogic') &&
                 e.path.contains('openjdk-jre-8u2')) {
               try {
@@ -155,7 +154,7 @@ class JavaNotifier extends ChangeNotifier {
                     LogTypeTag.ERROR, 'Extracted folder rename failed');
               }
             }
-          });
+          }
         } else {
           _progress = Progress.FAILED;
           notifyListeners();
@@ -177,15 +176,27 @@ class JavaNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version information.
-      else {
+      else if (!SharedPref().prefs.containsKey('Java path') ||
+          !SharedPref().prefs.containsKey('Java version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.INFO, 'Java found at - $javaPath');
+        await SharedPref().prefs.setString('Java path', javaPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         javaVersion = await getJavaBinVersion();
         versions.java = javaVersion.toString();
+        await logger.file(LogTypeTag.INFO, 'Java version : ${versions.java}');
+        await SharedPref().prefs.setString('Java version', versions.java!);
+        _progress = Progress.DONE;
+        notifyListeners();
+      } else {
+        await logger.file(
+            LogTypeTag.INFO, 'Loading Java details from shared preferences');
+        javaPath = SharedPref().prefs.getString('Java path');
+        await logger.file(LogTypeTag.INFO, 'Java found at - $javaPath');
+        versions.java = SharedPref().prefs.getString('Java Version');
         await logger.file(LogTypeTag.INFO, 'Java version : ${versions.java}');
         _progress = Progress.DONE;
         notifyListeners();

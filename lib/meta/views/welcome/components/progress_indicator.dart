@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/notifiers.dart';
@@ -114,6 +113,7 @@ Color _color({Progress progress = Progress.NONE}) {
   // }
 }
 
+// ignore: unused_element
 String _getActionName(Progress progress) {
   if (progress == Progress.DONE) {
     return 'Downloaded';
@@ -126,6 +126,7 @@ String _getActionName(Progress progress) {
   }
 }
 
+// ignore: unused_element
 Widget _actionButton(
   BuildContext context, {
   required String buttonName,

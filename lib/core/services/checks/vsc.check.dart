@@ -98,10 +98,12 @@ class VSCodeNotifier extends ChangeNotifier {
           _progress = Progress.FAILED;
           notifyListeners();
         }
-      } else {
+      } else if (!SharedPref().prefs.containsKey('VSC path') ||
+          !SharedPref().prefs.containsKey('VSC version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.INFO, 'VS Code found at - $vscPath');
+        await SharedPref().prefs.setString('VSC path', vscPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -109,9 +111,18 @@ class VSCodeNotifier extends ChangeNotifier {
         versions.vsCode = vscVersion.toString();
         await logger.file(
             LogTypeTag.INFO, 'VS Code version : ${versions.vsCode}');
+        await SharedPref().prefs.setString('VSC version', versions.vsCode!);
         _progress = Progress.DONE;
         notifyListeners();
-        await SharedPref().prefs.setString('vsc version', versions.vsCode!);
+      } else {
+        await logger.file(
+            LogTypeTag.INFO, 'Loading VS Code details from shared preferences');
+        vscPath = SharedPref().prefs.getString('VSC path');
+        await logger.file(LogTypeTag.INFO, 'VS Code found at - $vscPath');
+        versions.vsCode = SharedPref().prefs.getString('VSC Version');
+        await logger.file(LogTypeTag.INFO, 'VS Code version : ${versions.git}');
+        _progress = Progress.DONE;
+        notifyListeners();
       }
     } on ShellException catch (shellException) {
       console.log(shellException.message);

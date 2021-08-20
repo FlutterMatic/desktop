@@ -15,7 +15,7 @@ import 'package:manager/core/services/logs.dart';
 Future<bool> checkDir(String dirPath, {required String subDirName}) async {
   Directory dir = Directory(dirPath);
   try {
-    await for (FileSystemEntity entity in dir.list()) {
+    await for (FileSystemEntity entity in dir.list(recursive: true)) {
       if (entity.path.endsWith(subDirName)) {
         await logger.file(
             LogTypeTag.INFO, '$subDirName directory found at ${entity.path}');

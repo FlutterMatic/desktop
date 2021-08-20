@@ -15,8 +15,7 @@ import 'package:manager/core/libraries/services.dart';
 Future<bool> checkFile(String dirPath, String fileName) async {
   Directory dir = Directory(dirPath);
   try {
-    await for (FileSystemEntity entity
-        in dir.list()) {
+    await for (FileSystemEntity entity in dir.list(recursive: true)) {
       if (entity.path.endsWith(fileName)) {
         await logger.file(LogTypeTag.INFO,
             '$fileName is at ${entity.path.replaceAll(fileName, '')}');
@@ -67,8 +66,7 @@ Future<bool> checkFile(String dirPath, String fileName) async {
 Future<String?> getFilePath(String dirPath, String fileName) async {
   Directory dir = Directory(dirPath);
   try {
-    await for (FileSystemEntity entity
-        in dir.list()) {
+    await for (FileSystemEntity entity in dir.list(recursive: true)) {
       if (entity.path.contains(fileName)) {
         await logger.file(LogTypeTag.INFO,
             '$fileName found at ${entity.path.replaceAll(fileName, '')}');

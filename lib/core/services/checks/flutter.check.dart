@@ -104,7 +104,7 @@ class FlutterNotifier extends ChangeNotifier {
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
           await SharedPref()
               .prefs
-              .setString('flutter path', 'C:\\fluttermatic\\flutter\\bin');
+              .setString('Flutter path', 'C:\\fluttermatic\\flutter\\bin');
         } else {
           await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
         }
@@ -113,9 +113,11 @@ class FlutterNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version, channel information.
-      else if (SharedPref().prefs.getString('flutter path') == null) {
+      else if (!SharedPref().prefs.containsKey('Flutter path') ||
+          !SharedPref().prefs.containsKey('Flutter version') ||
+          !SharedPref().prefs.containsKey('Flutter channel')) {
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await SharedPref().prefs.setString('flutter path', flutterPath);
+        await SharedPref().prefs.setString('Flutter path', flutterPath);
         // value = 'Flutter-SDK found';
         await logger.file(
             LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
@@ -145,13 +147,17 @@ class FlutterNotifier extends ChangeNotifier {
         _progress = Progress.DONE;
         notifyListeners();
       } else {
-        await SharedPref().prefs.setString('flutter path', flutterPath);
-        await SharedPref()
-            .prefs
-            .setString('Flutter Version', versions.flutter!);
-        await SharedPref()
-            .prefs
-            .setString('Flutter Channel', versions.channel!);
+        await logger.file(
+            LogTypeTag.INFO, 'Loading flutter details from shared preferences');
+        flutterPath = SharedPref().prefs.getString('Flutter path');
+        await logger.file(
+            LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
+        versions.flutter = SharedPref().prefs.getString('Flutter Version');
+        await logger.file(
+            LogTypeTag.INFO, 'Flutter version : ${versions.flutter}');
+        versions.channel = SharedPref().prefs.getString('Flutter Channel');
+        await logger.file(
+            LogTypeTag.INFO, 'Flutter channel : ${versions.channel}');
         _progress = Progress.DONE;
         notifyListeners();
       }

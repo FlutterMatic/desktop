@@ -7,8 +7,6 @@ import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/core/notifiers/space.notifier.dart';
-import 'package:manager/meta/views/dialogs/storage_full.dart';
 import 'package:manager/meta/views/welcome/screens/system_requirements.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:provider/provider.dart';

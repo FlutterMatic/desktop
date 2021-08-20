@@ -13,7 +13,7 @@ class ProjectsSettingsSection extends StatefulWidget {
 
 class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   late SharedPreferences _pref;
-  bool _dirPathError = false;
+  late bool _dirPathError;
 
   //User Inputs
   String? _dirPath;
@@ -33,6 +33,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
 
   @override
   void initState() {
+    _dirPathError = false;
     _getEditorOptions();
     _getProjectPath();
     super.initState();

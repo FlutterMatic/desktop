@@ -267,6 +267,7 @@ Widget _selectEditor(BuildContext context,
   );
 }
 
+// ignore: unused_element
 Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
   return RoundContainer(
     child: Row(

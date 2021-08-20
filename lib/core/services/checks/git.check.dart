@@ -6,6 +6,7 @@ import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/meta/utils/bin/git.bin.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
@@ -122,15 +123,27 @@ class GitNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version information.
-      else {
+      else if (!SharedPref().prefs.containsKey('git path') ||
+          !SharedPref().prefs.containsKey('git version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.INFO, 'Git found at - $gitPath');
+        await SharedPref().prefs.setString('Git path', gitPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
+        await logger.file(LogTypeTag.INFO, 'Git version : ${versions.git}');
+        await SharedPref().prefs.setString('Git version', versions.git!);
+        _progress = Progress.DONE;
+        notifyListeners();
+      } else {
+        await logger.file(
+            LogTypeTag.INFO, 'Loading git details from shared preferences');
+        gitPath = SharedPref().prefs.getString('Git path');
+        await logger.file(LogTypeTag.INFO, 'Git found at - $gitPath');
+        versions.git = SharedPref().prefs.getString('Git Version');
         await logger.file(LogTypeTag.INFO, 'Git version : ${versions.git}');
         _progress = Progress.DONE;
         notifyListeners();

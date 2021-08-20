@@ -11,10 +11,8 @@ class EditorsSettingsSection extends StatefulWidget {
 }
 
 class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
-  late SharedPreferences _pref;
-
   Future<void> _getDefaultEditor() async {
-    _pref = await SharedPreferences.getInstance();
+    await SharedPreferences.getInstance();
     // TODO: Get the user preferred editor from the shared preferences.
   }
 
