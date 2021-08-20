@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/inputs/text_field.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class ProjectNameSection extends StatefulWidget {
   final Function(String? val) onChanged;

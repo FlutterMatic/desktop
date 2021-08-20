@@ -3,8 +3,7 @@ import 'package:manager/components/dialog_templates/about/sections/about.dart';
 import 'package:manager/components/dialog_templates/about/sections/changelog.dart';
 import 'package:manager/components/dialog_templates/about/sections/contributors.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/tab_view.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class AboutUsDialog extends StatelessWidget {
   @override

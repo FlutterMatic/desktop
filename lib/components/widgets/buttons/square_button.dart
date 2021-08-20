@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class SquareButton extends StatelessWidget {
   final double size;

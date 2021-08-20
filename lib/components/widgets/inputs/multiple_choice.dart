@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class MultipleChoice extends StatefulWidget {
   final List<String> options;

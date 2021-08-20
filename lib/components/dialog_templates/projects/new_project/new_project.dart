@@ -5,12 +5,7 @@ import 'package:manager/components/dialog_templates/projects/new_project/section
 import 'package:manager/components/dialog_templates/projects/new_project/sections/name.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/org_name.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/platforms.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/buttons/square_button.dart';
-import 'package:manager/components/widgets/ui/activity_tile.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'dart:developer';
 
 class NewProjectDialog extends StatefulWidget {

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/activity_tile.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 import '../dialog_header.dart';
 

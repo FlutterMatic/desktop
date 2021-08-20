@@ -3,7 +3,7 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/meta/views/welcome/components/windows_controls.dart';
+import 'package:manager/core/libraries/components.dart';
 
 class CustomWindow extends StatelessWidget {
   final Widget child;
@@ -25,7 +25,7 @@ class CustomWindow extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Expanded(child: MoveWindow()),
-                const WindowControls()
+                windowControls(context)
               ],
             ),
           ),

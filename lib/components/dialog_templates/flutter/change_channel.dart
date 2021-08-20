@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/button_list.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/activity_tile.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'dart:developer';
-
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
 import 'package:manager/meta/views/home.dart';
 
 class ChangeChannelDialog extends StatefulWidget {

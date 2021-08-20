@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
@@ -15,20 +16,26 @@ import 'package:pub_semver/src/version.dart';
 /// [GitNotifier] class is a [ChangeNotifier]
 /// for Git checks.
 class GitNotifier extends ChangeNotifier {
-
   /// [gitVersion] value holds git version information
   Version? gitVersion;
 
   /// [gitDownloadLink] value holds git latest download link.
   String? gitDownloadLink;
+  Progress _progress = Progress.NONE;
+  Progress get progress => _progress;
 
   /// Check git exists in the system or not.
   Future<void> checkGit(BuildContext context, FluttermaticAPI? api) async {
     try {
+      _progress = Progress.STARTED;
+      notifyListeners();
+
       /// Make a fake delay of 1 second such that UI looks cool.
       await Future<dynamic>.delayed(const Duration(seconds: 1));
-      String? gitPath = await which('git');
       Directory dir = await getApplicationSupportDirectory();
+      _progress = Progress.CHECKING;
+      notifyListeners();
+      String? gitPath = await which('git');
       if (gitPath == null) {
         await logger.file(
             LogTypeTag.WARNING, 'Git not installed in the system.');
@@ -53,32 +60,25 @@ class GitNotifier extends ChangeNotifier {
             throw Exception('Failed to Fetch data - ${response.statusCode}');
           }
 
-          /// Check for temporary Directory to download files
-          bool tmpDir = await checkDir(dir.path, subDirName: 'tmp');
-
           /// Check for git Directory to extract Git files
           bool gitDir = await checkDir('C:\\fluttermatic', subDirName: 'git');
 
-          /// If [tmpDir] is false, then create a temporary directory.
-          if (!tmpDir) {
-            await Directory('${dir.path}\\tmp').create();
-            await logger.file(
-                LogTypeTag.INFO, 'Created tmp directory while checking git');
-          }
-
           /// If [gitDir] is false, then create a temporary directory.
           if (!gitDir) {
-            await Directory('C:\\fluttermatic\\git').create();
+            await Directory('C:\\fluttermatic\\git').create(recursive: true);
             await logger.file(LogTypeTag.INFO, 'Created git directory.');
           }
+          _progress = Progress.DOWNLOADING;
+          notifyListeners();
 
           /// Downloading Git.
           await context.read<DownloadNotifier>().downloadFile(
                 gitDownloadLink!,
                 'git.tar.bz2',
                 dir.path + '\\tmp\\',
-                progressBarColor: Colors.black,
               );
+          _progress = Progress.EXTRACTING;
+          notifyListeners();
 
           /// Extract java from compressed file.
           bool gitExtracted = await unzip(
@@ -94,21 +94,29 @@ class GitNotifier extends ChangeNotifier {
 
           /// Appending path to env
           bool isGitPathSet =
-              await setPath('C:\\fluttermatic\\git\\bin\\', dir.path);
+              await setPath('C:\\fluttermatic\\git\\bin', dir.path);
           if (isGitPathSet) {
+            _progress = Progress.DONE;
+            notifyListeners();
             await logger.file(LogTypeTag.INFO, 'Git set to path');
           } else {
+            _progress = Progress.FAILED;
+            notifyListeners();
             await logger.file(LogTypeTag.ERROR, 'Git set to path failed');
           }
         }
 
         /// MacOS platform
         else if (Platform.isMacOS) {
+          _progress = Progress.DOWNLOADING;
+          notifyListeners();
           await run('brew install git', verbose: false);
         }
 
         /// Linux distros
         else {
+          _progress = Progress.DOWNLOADING;
+          notifyListeners();
           await run('sudo apt-get install git', verbose: false);
         }
       }
@@ -124,10 +132,16 @@ class GitNotifier extends ChangeNotifier {
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
         await logger.file(LogTypeTag.INFO, 'Git version : ${versions.git}');
+        _progress = Progress.DONE;
+        notifyListeners();
       }
     } on ShellException catch (shellException) {
+      _progress = Progress.FAILED;
+      notifyListeners();
       await logger.file(LogTypeTag.ERROR, shellException.message);
     } catch (err) {
+      _progress = Progress.FAILED;
+      notifyListeners();
       await logger.file(LogTypeTag.ERROR, err.toString());
     }
   }

@@ -7,9 +7,10 @@ import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
+import 'package:manager/core/notifiers/space.notifier.dart';
+import 'package:manager/meta/views/dialogs/storage_full.dart';
 import 'package:manager/meta/views/welcome/screens/system_requirements.dart';
-import 'package:manager/meta/views/welcome/sections/install_editor.dart';
-import 'package:manager/meta/views/welcome/components/header.dart';
+import 'package:manager/core/libraries/components.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -22,12 +23,10 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   WelcomeTab _tab = WelcomeTab.GETTING_STARTED;
+  Progress progress = Progress.NONE;
 
   bool _installing = false;
   bool _completedInstall = false;
-
-  double _totalInstalled = 0;
-  final double _totalInstallSize = 1600000000;
 
   // Editors
   EditorType _editor = EditorType.BOTH;
@@ -36,7 +35,6 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     ThemeData _currentTheme = Theme.of(context);
 
-    /// TODO: Fix animation for header. Like make it smooth sliding while changing the tab.
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -70,7 +68,6 @@ class _WelcomePageState extends State<WelcomePage> {
                             builder: (_) => const SystemRequirementsDialog(),
                           );
                         },
-                        // TODO: Create system requirements page.
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
@@ -83,7 +80,6 @@ class _WelcomePageState extends State<WelcomePage> {
                       const SizedBox(width: 5),
                       TextButton(
                         onPressed: () {},
-                        // TODO: Create docs & tutorials page.
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
@@ -100,8 +96,19 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           Positioned(
-            bottom: 20,
+            bottom: 29,
             right: 20,
+            child: Tooltip(
+              padding: const EdgeInsets.all(5),
+              message: 'Alpha 0.0.1\n$osName - $osVersion',
+              child: const Icon(
+                Icons.info_outline_rounded,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            right: 60,
             child: IconButton(
               splashRadius: 1,
               icon: Icon(
@@ -132,132 +139,158 @@ class _WelcomePageState extends State<WelcomePage> {
         return installFlutter(
           context,
           onInstall: () async {
+            // if (context.read<SpaceCheck>().lowDriveSpace &&
+            //     context.read<SpaceCheck>().drive == 'C') {
+            //   await showDialog(
+            //     context: context,
+            //     barrierDismissible: false,
+            //     builder: (_) => const LowDriveSpaceDialog(),
+            //   );
+            // }
             if (_completedInstall) {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                _tab = WelcomeTab.INSTALL_EDITOR;
+                progress = Progress.DONE;
               });
             } else {
-              setState(() => _installing = true);
+              setState(() {
+                _installing = true;
+                progress = Progress.STARTED;
+              });
               await context
                   .read<FlutterNotifier>()
                   .checkFlutter(context, sdkData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                _tab = WelcomeTab.INSTALL_EDITOR;
+                progress = Progress.DONE;
               });
             }
           },
-          progress: _tab == WelcomeTab.INSTALL_EDITOR
-              ? Progress.DONE
-              : Progress.CHECKING,
+          // progress: _tab == WelcomeTab.INSTALL_EDITOR
+          //     ? progress
+          //     : context.read<DownloadNotifier>().progress,
           onCancel: () {},
+          onContinue: () {
+            setState(() {
+              _tab = WelcomeTab.INSTALL_EDITOR;
+            });
+          },
         );
       case WelcomeTab.INSTALL_EDITOR:
-        return InstallEditor(
-          onInstall: () {
+        return installEditor(
+          context,
+          onInstall: () async {
             if (_completedInstall) {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                _tab = WelcomeTab.INSTALL_GIT;
+                progress = Progress.DONE;
               });
             } else {
-              setState(() => _installing = true);
-              Timer.periodic(const Duration(microseconds: 2), (Timer timer) {
-                if (_totalInstalled < _totalInstallSize) {
-                  setState(() => _totalInstalled += 10000);
-                } else {
-                  timer.cancel();
-                  setState(() {
-                    _totalInstalled = 0;
-                    _completedInstall = true;
-                    _installing = false;
-                  });
-                }
+              setState(() {
+                _installing = true;
+                progress = Progress.STARTED;
               });
+              switch (_editor.index) {
+                case 0:
+                  await context
+                      .read<VSCodeNotifier>()
+                      .checkVSCode(context, apiData);
+                  break;
+                case 1:
+                  await context
+                      .read<AndroidStudioNotifier>()
+                      .checkAStudio(context, apiData);
+                  break;
+                default:
+                  await context
+                      .read<VSCodeNotifier>()
+                      .checkVSCode(context, apiData);
+                  await context
+                      .read<AndroidStudioNotifier>()
+                      .checkAStudio(context, apiData);
+              }
             }
+            setState(() {
+              _installing = false;
+              _completedInstall = false;
+              progress = Progress.DONE;
+            });
           },
+          onCancel: () {},
           selectedType: _editor,
           onEditorTypeChanged: (EditorType val) =>
               setState(() => _editor = val),
           isInstalling: _installing,
           doneInstalling: _completedInstall,
+          onContinue: () => setState(() => _tab = WelcomeTab.INSTALL_GIT),
         );
       case WelcomeTab.INSTALL_GIT:
         return installGit(
           context,
-          () {
+          onInstall: () async {
             if (_completedInstall) {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                _tab = WelcomeTab.INSTALL_JAVA;
+                progress = Progress.DONE;
               });
             } else {
-              setState(() => _installing = true);
-              Timer.periodic(
-                const Duration(microseconds: 2),
-                (Timer timer) {
-                  if (_totalInstalled < _totalInstallSize) {
-                    setState(() => _totalInstalled += 10000);
-                  } else {
-                    timer.cancel();
-                    setState(
-                      () {
-                        _totalInstalled = 0;
-                        _completedInstall = true;
-                        _installing = false;
-                      },
-                    );
-                  }
-                },
-              );
+              setState(() {
+                _installing = true;
+                progress = Progress.STARTED;
+              });
+              await context.read<GitNotifier>().checkGit(context, apiData);
+              setState(() {
+                _installing = false;
+                _completedInstall = false;
+                progress = Progress.DONE;
+              });
             }
           },
+          onCancel: () {},
           isInstalling: _installing,
           doneInstalling: _completedInstall,
+          onContinue: () => setState(() => _tab = WelcomeTab.INSTALL_JAVA),
         );
       case WelcomeTab.INSTALL_JAVA:
         return installJava(
           context,
-          () {
+          onInstall: () async {
             if (_completedInstall) {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                _tab = WelcomeTab.RESTART;
+                progress = Progress.DONE;
               });
             } else {
-              setState(() => _installing = true);
-              Timer.periodic(const Duration(microseconds: 2), (Timer timer) {
-                if (_totalInstalled < _totalInstallSize) {
-                  setState(() => _totalInstalled += 10000);
-                } else {
-                  timer.cancel();
-                  setState(() {
-                    _totalInstalled = 0;
-                    _completedInstall = true;
-                    _installing = false;
-                  });
-                }
+              setState(() {
+                _installing = true;
+                progress = Progress.STARTED;
+              });
+              await context.read<JavaNotifier>().checkJava(context, apiData);
+              setState(() {
+                _installing = false;
+                _completedInstall = false;
+                progress = Progress.DONE;
               });
             }
           },
-          () => setState(() {
+          onSkip: () => setState(() {
             _installing = false;
             _completedInstall = false;
             _tab = WelcomeTab.RESTART;
           }),
+          onContinue: () => setState(() => _tab = WelcomeTab.RESTART),
           isInstalling: _installing,
           doneInstalling: _completedInstall,
         );
       case WelcomeTab.RESTART:
         return welcomeRestart(
           context,
-          () async {
+          onRestart: () async {
             int _restartSeconds = 5;
 
             ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,

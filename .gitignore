@@ -1,7 +1,16 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
 
-# Created by https://www.toptal.com/developers/gitignore/api/flutter,dart,linux,macos,windows
-# Edit at https://www.toptal.com/developers/gitignore?templates=flutter,dart,linux,macos,windows
+# Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,flutter,dart,certificates
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,flutter,dart,certificates
+
+### certificates ###
+*.pem
+*.key
+*.crt
+*.cer
+*.priv
+*.pfx
+*.csr
 
 ### Dart ###
 # See https://www.dartlang.org/guides/libraries/private-files
@@ -161,7 +170,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/flutter,dart,linux,macos,windows
+# End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,flutter,dart,certificates
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 

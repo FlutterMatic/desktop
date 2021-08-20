@@ -16,7 +16,7 @@ Future<bool> checkFile(String dirPath, String fileName) async {
   Directory dir = Directory(dirPath);
   try {
     await for (FileSystemEntity entity
-        in dir.list(recursive: true, followLinks: false)) {
+        in dir.list()) {
       if (entity.path.endsWith(fileName)) {
         await logger.file(LogTypeTag.INFO,
             '$fileName is at ${entity.path.replaceAll(fileName, '')}');
@@ -68,7 +68,7 @@ Future<String?> getFilePath(String dirPath, String fileName) async {
   Directory dir = Directory(dirPath);
   try {
     await for (FileSystemEntity entity
-        in dir.list(recursive: true, followLinks: false)) {
+        in dir.list()) {
       if (entity.path.contains(fileName)) {
         await logger.file(LogTypeTag.INFO,
             '$fileName found at ${entity.path.replaceAll(fileName, '')}');

@@ -22,14 +22,14 @@ Future<bool> unzip(String source, String destination, {String? sw}) async {
 
     /// If tmpDir is false, then create a temporary directory.
     if (!destinationDir) {
-      await Directory(destination).create();
+      await Directory(destination).create(recursive: true);
       await logger.file(LogTypeTag.INFO, 'Created $destination directory.');
     } else {
       if (destination.split('\\').length > 2) {
         bool checkDestination = await checkDir('C:\\fluttermatic\\',
             subDirName: destination.split('\\').last);
         if (!checkDestination) {
-          await Directory(destination).create();
+          await Directory(destination).create(recursive: true);
           await logger.file(LogTypeTag.INFO,
               'Created ${destination.split('\\').last} directory.');
         }

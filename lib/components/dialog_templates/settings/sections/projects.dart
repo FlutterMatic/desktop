@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/inputs/multiple_choice.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/services/logs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

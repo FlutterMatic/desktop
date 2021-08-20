@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GitHubSettingsSection extends StatelessWidget {

@@ -6,9 +6,7 @@ import 'package:manager/components/dialog_templates/settings/sections/github.dar
 import 'package:manager/components/dialog_templates/settings/sections/projects.dart';
 import 'package:manager/components/dialog_templates/settings/sections/theme.dart';
 import 'package:manager/components/dialog_templates/settings/sections/troubleshoot.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/tab_view.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class SettingDialog extends StatefulWidget {
   final String? goToPage;

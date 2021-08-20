@@ -37,4 +37,10 @@ enum Progress {
   EXTRACTING,
   DONE,
   FAILED,
+  FOUND,
+}
+
+enum Java {
+  JDK,
+  JRE,
 }

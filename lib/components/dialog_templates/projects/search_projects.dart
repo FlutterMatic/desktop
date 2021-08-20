@@ -3,13 +3,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/dialog_templates/projects/open_options.dart';
 import 'package:manager/components/dialog_templates/settings/settings.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/inputs/text_field.dart';
-import 'package:manager/components/widgets/ui/current_directory.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/models/projects.model.dart';
 
 class SearchProjectsDialog extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
 class WelcomeButton extends StatelessWidget {
@@ -32,11 +32,13 @@ class WelcomeButton extends StatelessWidget {
         ignoring: _disabled,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
-          opacity: _disabled ? 0.5 : 1,
+          opacity: _disabled ? 0 : 1,
           child: RectangleButton(
-            onPressed: progress == Progress.DONE
-                ? onContinue
-                : onInstall,
+            onPressed: _disabled
+                ? null
+                : progress == Progress.DONE
+                    ? onContinue
+                    : onInstall,
             color: AppTheme.lightTheme.buttonColor,
             hoverColor: AppTheme.lightTheme.accentColor,
             child: Row(
@@ -44,7 +46,7 @@ class WelcomeButton extends StatelessWidget {
               children: <Widget>[
                 Text(
                   buttonText ??
-                      (progress == Progress.DONE ? 'Continue' : 'Install'),
+                      (progress == Progress.DONE ? 'Continue' : 'Check'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,

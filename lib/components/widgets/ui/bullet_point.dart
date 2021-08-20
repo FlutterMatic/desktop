@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class BulletPoint extends StatelessWidget {
   final String text;
-  final double? level;
+  final double level;
 
-  BulletPoint(this.text, [this.level = 0]);
+  BulletPoint(this.text, [this.level = 1]);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class BulletPoint extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(
-            left: (15 * level!),
+            left: (15 * (level + 1)),
           ),
           child: Container(
             height: 15,
@@ -20,7 +20,7 @@ class BulletPoint extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.blueGrey, width: 2),
-              color: level != 0 ? Colors.transparent : Colors.blueGrey,
+              color: level > 1 ? Colors.transparent : Colors.blueGrey,
             ),
           ),
         ),

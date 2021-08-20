@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/meta/views/welcome/components/windows_controls.dart';
+import 'package:manager/core/libraries/components.dart';
 
 class HomeScreen extends StatefulWidget {
-
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -32,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 children: <Widget>[
                   Expanded(child: MoveWindow()),
-                  const WindowControls()
+                  windowControls(context),
                 ],
               ),
             ),
@@ -42,4 +41,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

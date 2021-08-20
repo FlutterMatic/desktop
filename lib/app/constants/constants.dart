@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window_platform_interface/window.dart';
-import 'package:manager/components/widgets/ui/activity_tile.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:process_run/shell.dart';
@@ -31,9 +31,13 @@ String? sha;
 
 /// OS
 String? platform;
+String? osName;
+String? osVersion;
 
 /// Application path in Root(C:\\ in win32) directory.
-String applicationPath = 'C:\\fluttermatic\\flutter\\bin\\';
+// String applicationPath = 'C:\\fluttermatic\\flutter\\bin\\';
+String? appTemp;
+String? appMainDir;
 
 /// Report issue url
 String reportIssueUrl =
@@ -122,6 +126,8 @@ class InstalledContent {
       'You have successfully installed Android Studio. Click next to wrap up.';
   static const String allDone =
       'All set! You will need to restart your computer to start using Flutter.';
+  static const String restart =
+      'You will need to restart your computer to fully complete this setup. Make sure to save all your work before restarting.';
 }
 
 class PlatformVersion {
@@ -190,4 +196,17 @@ class HSeparators {
   static SizedBox normal() => const SizedBox(width: 15);
   static SizedBox large() => const SizedBox(width: 20);
   static SizedBox xLarge() => const SizedBox(width: 30);
+}
+
+class SystemRequirementsContent {
+  static const String winOS = 'Windows 7 SP1 or later (64-bit), x86-64 based';
+  static const String macOS = 'macOS';
+  static const String linuxOS = 'Linux (64 bit)';
+  static const String winSpace = '1.7 GB (Only Flutter SDK)';
+  static const String macSpace = '2.8 GB (Only Flutter SDK)';
+  static const String linuxSpace = '600 MB (Only Flutter SDK)';
+  static const String winTools = 'Git, PowerShell, Java (version: 1.8.***)';
+  static const String macTools = 'Git, CocoaPods, Java (version: 1.8.***)';
+  static const String linuxTools =
+      'bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils, zip, Java (version: 1.8.***)';
 }

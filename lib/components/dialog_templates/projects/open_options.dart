@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/inputs/text_field.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {

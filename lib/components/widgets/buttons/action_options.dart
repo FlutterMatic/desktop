@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;

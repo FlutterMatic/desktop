@@ -5,9 +5,7 @@ import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/api.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/meta/views/welcome/components/button.dart';
-import 'package:manager/meta/views/welcome/components/header_title.dart';
-import 'package:manager/meta/views/welcome/components/loading_indicator.dart';
+import 'package:manager/core/libraries/components.dart';
 import 'package:retry/retry.dart';
 import 'dart:io';
 import 'dart:async';
@@ -70,7 +68,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: kReleaseMode ? _initCalls() : null,
+      future: _initCalls(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return Column(
           children: <Widget>[
@@ -82,7 +80,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             ),
             const SizedBox(height: 20),
             if (!snapshot.hasData)
-              welcomeLoadingIndicator(
+              hLoadingIndicator(
                 context: context,
                 message: 'Preparing your system to start installing Flutter',
               )
@@ -93,7 +91,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             WelcomeButton(
               onInstall: () {},
               onContinue: widget.onContinue,
-              progress: Progress.DONE,
+              progress: snapshot.hasData ? Progress.DONE : Progress.DOWNLOADING,
               toolName: 'Getting Started',
             ),
           ],

@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/components/widgets/buttons/square_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class CustomCloseButton extends StatelessWidget {
   final VoidCallback? onClose;
+  final Color? iconColor;
+  final Color? onHoverColor;
 
-  const CustomCloseButton({Key? key, this.onClose}) : super(key: key);
+  const CustomCloseButton(
+      {Key? key, this.onClose, this.iconColor, this.onHoverColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SquareButton(
-      icon: Icon(Icons.close_rounded,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme
-              ? Colors.white
-              : Colors.black),
+      icon: Icon(
+        Icons.close_rounded,
+        color: iconColor ?? kRedColor,
+      ),
       color: Colors.transparent,
-      hoverColor: AppTheme.errorColor,
+      hoverColor: onHoverColor ?? AppTheme.errorColor,
       onPressed: onClose ?? () => Navigator.pop(context),
     );
   }

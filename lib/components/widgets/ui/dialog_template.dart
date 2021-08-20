@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:provider/provider.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 class DialogTemplate extends StatelessWidget {
   final Widget child;
@@ -36,6 +39,9 @@ class DialogTemplate extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {},
                   child: RoundContainer(
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? AppTheme.darkCardColor
+                        : Colors.white,
                     padding: childPadding ?? const EdgeInsets.all(10),
                     child: Center(child: child),
                   ),

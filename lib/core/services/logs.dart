@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as console;
 import 'package:intl/intl.dart';
@@ -31,7 +32,9 @@ class Logger {
   Future<File> get _localFile async {
     String path = await _localPath;
     String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    return File('$path/fluttermatic-${Platform.operatingSystem}-$date.log');
+    return (kDebugMode || kProfileMode)
+        ? File('$path/fluttermatic-${Platform.operatingSystem}-debug-$date.log')
+        : File('$path/fluttermatic-${Platform.operatingSystem}-$date.log');
   }
 
   /// Logs to the log file for later to find any issues user my file on GitHub
@@ -41,28 +44,26 @@ class Logger {
       {StackTrace? stackTraces}) async {
     File file = await _localFile;
     DateTime _now = DateTime.now();
-    String _baseData = '[${_now.hour}:${_now.minute}:${_now.second}] - $message\n';
+    String _baseData =
+        '[${_now.hour}:${_now.minute}:${_now.second}] - $message\n';
     try {
       switch (tag) {
         case LogTypeTag.INFO:
-          console.log(
-              'INFORMATION $_baseData');
+          if (kDebugMode || kProfileMode) console.log('INFORMATION $_baseData');
           await file.writeAsString(
             '''INFORMATION $_baseData''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.WARNING:
-          console.log(
-              'WARNING $_baseData');
+          if (kDebugMode || kProfileMode) console.log('WARNING $_baseData');
           await file.writeAsString(
             '''WARNING $_baseData[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.ERROR:
-          console.log(
-              'ERROR $_baseData');
+          if (kDebugMode || kProfileMode) console.log('ERROR $_baseData');
           await file.writeAsString(
             '''ERROR $_baseData[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
             mode: FileMode.writeOnlyAppend,

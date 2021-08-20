@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class AboutSection extends StatelessWidget {
   const AboutSection({Key? key}) : super(key: key);

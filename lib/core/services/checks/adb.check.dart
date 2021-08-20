@@ -30,22 +30,11 @@ class ADBNotifier extends ChangeNotifier {
             LogTypeTag.WARNING, 'ADB not installed in the system.');
         await logger.file(LogTypeTag.INFO, 'Downloading Platform-tools');
 
-        /// Check for temporary Directory to download files
-        bool tmpDir = await checkDir(dir.path, subDirName: 'tmp');
-
-        /// If tmpDir is false, then create a temporary directory.
-        if (!tmpDir) {
-          await Directory('${dir.path}\\tmp').create();
-          await logger.file(
-              LogTypeTag.INFO, 'Created tmp directory while checking ADB');
-        }
-
         /// Downloading ADB.
         await context.read<DownloadNotifier>().downloadFile(
               api!.data!['adb'][platform],
               'adb.zip',
               dir.path + '\\tmp',
-              progressBarColor: const Color(0xFFA4CA39),
             );
 
         /// Extract java from compressed file.
@@ -61,7 +50,7 @@ class ADBNotifier extends ChangeNotifier {
 
         /// Appending path to env
         bool isADBPathSet =
-            await setPath('C:\\fluttermatic\\platform-tools\\', dir.path);
+            await setPath('C:\\fluttermatic\\platform-tools', dir.path);
         if (isADBPathSet) {
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
         } else {

@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/new_project.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/inputs/check_box_element.dart';
-import 'package:manager/components/widgets/inputs/text_field.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 

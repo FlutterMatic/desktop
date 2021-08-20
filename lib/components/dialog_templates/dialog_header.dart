@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/buttons/close_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;
   final bool canClose;
   final VoidCallback? onClose;
   final Widget? leading;
+  final Color? closeIconColor;
+  final Color? onHoverButtonColor;
 
   const DialogHeader({
     Key? key,
     required this.title,
     this.canClose = true,
     this.onClose,
+    this.closeIconColor,
+    this.onHoverButtonColor,
     this.leading,
   }) : super(key: key);
 
@@ -24,13 +28,23 @@ class DialogHeader extends StatelessWidget {
         leading ?? const SizedBox(width: 40),
         Expanded(
           child: Center(
-            child: Text(title, style: const TextStyle(fontSize: 20)),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
         if (canClose)
           Align(
             alignment: Alignment.centerRight,
-            child: CustomCloseButton(onClose: onClose),
+            child: CustomCloseButton(
+              onClose: onClose,
+              iconColor: closeIconColor,
+              onHoverColor: onHoverButtonColor,
+            ),
           ),
       ],
     );

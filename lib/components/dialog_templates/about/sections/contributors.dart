@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/secret.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';

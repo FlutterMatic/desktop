@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/bullet_point.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'dart:io' show Platform;
-
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
 
 class InstallFlutterDialog extends StatelessWidget {
   @override

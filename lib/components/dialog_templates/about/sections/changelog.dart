@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class ChangelogAboutSection extends StatelessWidget {
   const ChangelogAboutSection({Key? key}) : super(key: key);

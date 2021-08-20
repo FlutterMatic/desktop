@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class StatusDialog extends StatelessWidget {
   @override

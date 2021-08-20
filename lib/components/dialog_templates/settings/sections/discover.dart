@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/about/about_us.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/buttons/square_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DiscoverSettingsSection extends StatelessWidget {

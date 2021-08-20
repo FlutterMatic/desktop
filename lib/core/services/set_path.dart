@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/services/logs.dart';
 import 'package:process_run/shell.dart';
 
@@ -18,6 +19,7 @@ import 'package:process_run/shell.dart';
 Future<bool> setPath(String? path, [String? appDir]) async {
   /// Appending script link.
   String? appenderLink;
+  String base_url = apiData!.data!['scripts']['base_url'];
 
   /// Check if given path is null.
   if (path != null) {
@@ -26,28 +28,35 @@ Future<bool> setPath(String? path, [String? appDir]) async {
       /// Windows
       if (Platform.isWindows) {
         List<ProcessResult> envPATH = await shell.run('echo %PATH%');
-        if (envPATH.outText.contains(path)) {
+        if (envPATH[0].stdout.contains(path)) {
           await logger.file(
               LogTypeTag.INFO, '$path already exists in env PATH variable.');
-          return false;
+          return true;
         }
-        appenderLink = apiData!.data!['path_appender']['windows'];
-        await path_download(appenderLink, 'win32.vbs', appDir: appDir);
-        await shell.run('$appDir\\path\\win32.vbs "$path"');
+        bool path_appender_exist =
+            await checkFile('$appDir\\scripts\\', 'win32.vbs');
+        if (!path_appender_exist) {
+          appenderLink =
+              base_url + apiData!.data!['scripts']['path_appender']['windows'];
+          await path_download(appenderLink, 'win32.vbs', appDir: appDir);
+        }
+        await shell.run('"$appDir\\scripts\\win32.vbs" "$path"');
       }
 
       /// MacOS
       else if (Platform.isMacOS) {
-        appenderLink = apiData!.data!['path_appender']['mac'];
+        appenderLink =
+            base_url + apiData!.data!['scripts']['path_appender']['mac'];
         await path_download(appenderLink, 'darwin.sh', appDir: appDir);
-        await shell.run('$appDir\\path\\darwin.sh "$path"');
+        await shell.run('"$appDir\\scripts\\darwin.sh" "$path"');
       }
 
       /// Linux
       else {
-        appenderLink = apiData!.data!['path_appender']['linux'];
+        appenderLink =
+            base_url + apiData!.data!['scripts']['path_appender']['linux'];
         await path_download(appenderLink, 'linux.sh', appDir: appDir);
-        await shell.run('$appDir\\path\\linux.sh "$path"');
+        await shell.run('"$appDir\\scripts\\linux.sh" "$path"');
       }
       await logger.file(LogTypeTag.INFO,
           '$path was set to ${Platform.operatingSystem}\'s env.');
@@ -84,11 +93,11 @@ Future<bool> setPath(String? path, [String? appDir]) async {
 Future<void> path_download(String? scriptLink, String? script,
     {String? appDir}) async {
   try {
-    Directory pathDir = await Directory('$appDir\\path').create();
+    Directory pathDir =
+        await Directory('$appDir\\scripts\\').create(recursive: true);
     await http.get(Uri.parse(scriptLink!)).then((http.Response response) async {
       if (response.statusCode == 200) {
-        await File(pathDir.path + '\\' + script!)
-            .writeAsBytes(response.bodyBytes);
+        await File(pathDir.path + script!).writeAsBytes(response.bodyBytes);
       } else {
         await logger.file(LogTypeTag.ERROR,
             'Response code is ${response.statusCode} for downloading script.');

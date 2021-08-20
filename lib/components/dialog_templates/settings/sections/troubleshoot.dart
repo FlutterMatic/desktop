@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/inputs/check_box_element.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
   @override

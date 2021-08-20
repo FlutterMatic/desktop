@@ -3,13 +3,10 @@ import 'package:manager/app/constants/enum.dart';
 import 'package:provider/provider.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/views/welcome/components/button.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/meta/views/welcome/components/header_title.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
-Widget welcomeRestart(BuildContext context, Function() onRestart) {
+Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
   return Column(
     children: <Widget>[
       welcomeHeaderTitle(
@@ -52,12 +49,12 @@ Widget welcomeRestart(BuildContext context, Function() onRestart) {
       ),
       const SizedBox(height: 10),
       informationWidget(
-        'You will need to restart your computer to fully complete this setup. Make sure to save all your work before restarting.',
+        InstalledContent.restart,
       ),
       const SizedBox(height: 20),
       WelcomeButton(
         onContinue: () {},
-        onInstall: () {},
+        onInstall: onRestart,
         progress: Progress.NONE,
         toolName: 'Flutter',
         buttonText: 'Restart',
