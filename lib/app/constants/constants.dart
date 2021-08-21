@@ -14,6 +14,8 @@ Shell shell = Shell(
   verbose: false,
 );
 
+bool? allChecked;
+
 /// VSCode Git API data object.
 VSCodeAPI? vscodeApi;
 

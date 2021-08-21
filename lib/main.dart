@@ -7,6 +7,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/app/providers/multi_providers.dart';
+import 'package:manager/meta/views/home.dart';
 import 'package:manager/meta/views/welcome/screens/welcome_view.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -19,12 +20,18 @@ Future<void> main(List<String> args) async {
 
   /// Application supporting Directory
   Directory dir = await getApplicationSupportDirectory();
+  // Platform.environment.forEach((String k, String v) {
+  //   if (k.toLowerCase() == 'path') {
+  //     logger.file(LogTypeTag.INFO, v);
+  //   }
+  // });
 
   /// Check for temporary Directory to download files
   bool tmpDir = await Directory('${dir.path}\\tmp').exists();
   bool appDir = await Directory('C:\\fluttermatic').exists();
 
   await SharedPref.init();
+  allChecked = SharedPref().prefs.getBool('All Checked');
   if (!SharedPref().prefs.containsKey('platform')) {
     List<ProcessResult?>? platformData = Platform.isWindows
         ? await shell
@@ -103,7 +110,7 @@ class MyApp extends StatelessWidget {
                   ? ThemeMode.dark
                   : ThemeMode.light,
               debugShowCheckedModeBanner: false,
-              home: const WelcomePage(),
+              home: !allChecked! ? const WelcomePage() : const HomeScreen(),
             ),
           ),
         );

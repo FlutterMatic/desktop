@@ -76,6 +76,8 @@ class AndroidStudioNotifier extends ChangeNotifier {
       } else if (!SharedPref().prefs.containsKey('Studio path') ||
           !SharedPref().prefs.containsKey('Studio version')) {
         await SharedPref().prefs.setString('Studio path', studioPath);
+        await logger.file(
+            LogTypeTag.INFO, 'Android Studio found at - $studioPath');
 
         /// Fetch the version of Android Studio.
         studioVersion = await getAStudioBinVersion();

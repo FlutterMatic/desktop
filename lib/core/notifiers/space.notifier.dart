@@ -10,10 +10,10 @@ class SpaceCheck extends ChangeNotifier {
   Future<void> checkSpace() async {
     List<UnixDiskSpaceOutput> disks = await diskSpace();
     for (UnixDiskSpaceOutput disk in disks) {
-      String diskLetter =
-          disk.mountpoint!.replaceAll('/', '').toUpperCase() == ''
-              ? 'C'
-              : disk.mountpoint!.replaceAll('/', '').toUpperCase();
+      // String diskLetter =
+      //     disk.mountpoint!.replaceAll('/', '').toUpperCase() == ''
+      //         ? 'C'
+      //         : disk.mountpoint!.replaceAll('/', '').toUpperCase();
 
       if (disk.available! / 1073241824 > 30 &&
           disk.mountpoint!.replaceAll('/', '').toUpperCase() == '') {
@@ -29,12 +29,12 @@ class SpaceCheck extends ChangeNotifier {
           notifyListeners();
         }
       }
-      print(diskLetter +
-          ' : ' +
-          (disk.available! / 1073741824).toStringAsFixed(2) +
-          '/' +
-          (disk.size! / 1073741824).toStringAsFixed(2) +
-          ' GB left');
+      // print(diskLetter +
+      //     ' : ' +
+      //     (disk.available! / 1073741824).toStringAsFixed(2) +
+      //     '/' +
+      //     (disk.size! / 1073741824).toStringAsFixed(2) +
+      //     ' GB left');
     }
   }
 }

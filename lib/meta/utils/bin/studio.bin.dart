@@ -22,7 +22,7 @@ abstract class AndroidStudioBinInfo {
   static AndroidStudioBinInfo? parseVersionOutput(String resultOutput) {
     Version? studioVersion;
     try {
-      studioVersion = Version.parse('$resultOutput.0');
+      studioVersion = Version.parse(resultOutput);
       return AndroidStudioBinInfoImpl(version: studioVersion);
     } on FormatException catch (formatException) {
       logger.file(
@@ -50,7 +50,7 @@ Future<AndroidStudioBinInfo?> _getAndroidStudioBinInfo() async {
     String supportPath =
         (await getTemporaryDirectory()).path.replaceAll('Temp', 'Google');
     await Directory(supportPath)
-        .list(recursive: true)
+        .list(recursive: false)
         .forEach((FileSystemEntity f) {
       if (f.path.contains('AndroidStudio')) {
         resultOutput =

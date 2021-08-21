@@ -8,14 +8,14 @@ analyzer:
     annotate_overrides: error
     always_specify_types: error
     dead_code: warning
-    todo: info
+    todo: ignore
 
 linter:
   rules:
     hash_and_equals: true
     prefer_is_not_empty: true
     always_specify_types: true
-    # avoid_print: true
+    avoid_print: true
     constant_identifier_names: false
     non_constant_identifier_names: false
     avoid_type_to_string: true

@@ -78,7 +78,6 @@ class JavaNotifier extends ChangeNotifier {
           await logger.file(LogTypeTag.INFO, 'JDK extraction was successful');
           await for (FileSystemEntity e
               in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
-            print(e.path);
             if (e.path.split('\\')[3].startsWith('openlogic') &&
                 e.path.contains('openjdk-8u2')) {
               try {

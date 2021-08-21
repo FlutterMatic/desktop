@@ -7,6 +7,7 @@ import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/meta/views/welcome/screens/system_requirements.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:provider/provider.dart';
@@ -304,6 +305,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   'Restarting device to continue Flutter setup');
               await shell.run('shutdown /r /f');
             } else {
+              await SharedPref().prefs.setBool('All Checked', true);
               ScaffoldMessenger.of(context).showSnackBar(
                 snackBarTile(
                   context,
