@@ -80,9 +80,14 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             ),
             const SizedBox(height: 20),
             if (!snapshot.hasData)
-              hLoadingIndicator(
-                context: context,
-                message: 'Preparing your system to start installing Flutter',
+              Column(
+                children: <Widget>[
+                  hLoadingIndicator(
+                    context: context,
+                  ),
+                  const Text(
+                      'Preparing your system to start installing Flutter'),
+                ],
               )
             else
               infoWidget(context,
@@ -91,7 +96,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             WelcomeButton(
               onInstall: () {},
               onContinue: widget.onContinue,
-              progress: snapshot.hasData ? Progress.DONE : Progress.DOWNLOADING,
+              progress: snapshot.hasData ? Progress.done : Progress.downloading,
               toolName: 'Getting Started',
             ),
           ],

@@ -47,12 +47,12 @@ Widget createWelcomeHeader(
             ),
             Row(
               children: <Widget>[
-                _title('Getting Started', WelcomeTab.GETTING_STARTED),
-                _title('Install Flutter', WelcomeTab.INSTALL_FLUTTER),
-                _title('Install Editor', WelcomeTab.INSTALL_EDITOR),
-                _title('Install Git', WelcomeTab.INSTALL_GIT),
-                _title('Install Java', WelcomeTab.INSTALL_JAVA),
-                _title('Restart', WelcomeTab.RESTART),
+                _title('Getting Started', WelcomeTab.gettingStarted),
+                _title('Install Flutter', WelcomeTab.installFlutter),
+                _title('Install Editor', WelcomeTab.installEditor),
+                _title('Install Git', WelcomeTab.installGit),
+                _title('Install Java', WelcomeTab.installJava),
+                _title('Restart', WelcomeTab.restart),
               ],
             )
           ],

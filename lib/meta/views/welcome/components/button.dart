@@ -9,22 +9,24 @@ class WelcomeButton extends StatelessWidget {
   final VoidCallback? onContinue;
   final VoidCallback? onInstall;
   final String? buttonText;
+  final bool ignoreOpacity;
 
   const WelcomeButton({
     required this.toolName,
     required this.progress,
     required this.onInstall,
     required this.onContinue,
+    this.ignoreOpacity = false,
     this.buttonText,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool _disabled = progress == Progress.EXTRACTING ||
-        progress == Progress.DOWNLOADING ||
-        progress == Progress.CHECKING ||
-        progress == Progress.STARTED;
+    bool _disabled = progress == Progress.extracting ||
+        progress == Progress.downloading ||
+        progress == Progress.checking ||
+        progress == Progress.started;
     return SizedBox(
       width: 210,
       height: 50,
@@ -32,13 +34,9 @@ class WelcomeButton extends StatelessWidget {
         ignoring: _disabled,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
-          opacity: _disabled ? 0 : 1,
+          opacity: _disabled ? 0.2 : 1,
           child: RectangleButton(
-            onPressed: _disabled
-                ? null
-                : progress == Progress.DONE
-                    ? onContinue
-                    : onInstall,
+            onPressed: progress == Progress.done ? onContinue : onInstall,
             color: AppTheme.lightTheme.buttonColor,
             hoverColor: AppTheme.lightTheme.accentColor,
             child: Row(
@@ -46,7 +44,7 @@ class WelcomeButton extends StatelessWidget {
               children: <Widget>[
                 Text(
                   buttonText ??
-                      (progress == Progress.DONE ? 'Continue' : 'Check'),
+                      (progress == Progress.done ? 'Continue' : 'Check'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,

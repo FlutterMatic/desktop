@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
@@ -8,7 +9,6 @@ import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:manager/meta/views/welcome/screens/system_requirements.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -21,14 +21,22 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  WelcomeTab _tab = WelcomeTab.GETTING_STARTED;
-  Progress progress = Progress.NONE;
+  WelcomeTab _tab = WelcomeTab.gettingStarted;
+  Progress progress = Progress.none;
 
   bool _installing = false;
   bool _completedInstall = false;
 
   // Editors
-  EditorType _editor = EditorType.BOTH;
+  EditorType _editor = EditorType.both;
+
+  @override
+  void initState() {
+    _tab = SharedPref().prefs.containsKey('Tab')
+        ? WelcomeTab.restart
+        : WelcomeTab.gettingStarted;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +69,11 @@ class _WelcomePageState extends State<WelcomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       TextButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => const SystemRequirementsDialog(),
-                          );
-                        },
+                        onPressed: () => showDialog(
+                          context: context,
+                          // builder: (_) => const SystemRequirementsDialog(),
+                          builder: (_) => InstallFlutterDialog(),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
@@ -99,7 +106,8 @@ class _WelcomePageState extends State<WelcomePage> {
             right: 20,
             child: Tooltip(
               padding: const EdgeInsets.all(5),
-              message: 'Alpha 0.0.1\n$osName - $osVersion',
+              message:
+                  'Version: ${SharedPref().prefs.getString('App_Version')} (${SharedPref().prefs.getString('App_Build')!.toUpperCase()})\n$osName - $osVersion',
               child: const Icon(Icons.info_outline_rounded),
             ),
           ),
@@ -128,11 +136,11 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget _getCurrentPage(BuildContext context, ThemeData _currentTheme) {
     /// TODO: Add ADB check.
     switch (_tab) {
-      case WelcomeTab.GETTING_STARTED:
+      case WelcomeTab.gettingStarted:
         return WelcomeGettingStarted(
-          () => setState(() => _tab = WelcomeTab.INSTALL_FLUTTER),
+          () => setState(() => _tab = WelcomeTab.installFlutter),
         );
-      case WelcomeTab.INSTALL_FLUTTER:
+      case WelcomeTab.installFlutter:
         return installFlutter(
           context,
           onInstall: () async {
@@ -148,12 +156,12 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.STARTED;
+                progress = Progress.started;
               });
               await context
                   .read<FlutterNotifier>()
@@ -161,21 +169,21 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             }
           },
-          // progress: _tab == WelcomeTab.INSTALL_EDITOR
+          // progress: _tab == WelcomeTab.installEditor
           //     ? progress
           //     : context.read<DownloadNotifier>().progress,
           onCancel: () {},
           onContinue: () {
             setState(() {
-              _tab = WelcomeTab.INSTALL_EDITOR;
+              _tab = WelcomeTab.installEditor;
             });
           },
         );
-      case WelcomeTab.INSTALL_EDITOR:
+      case WelcomeTab.installEditor:
         return installEditor(
           context,
           onInstall: () async {
@@ -183,12 +191,12 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.STARTED;
+                progress = Progress.started;
               });
               switch (_editor.index) {
                 case 0:
@@ -213,7 +221,7 @@ class _WelcomePageState extends State<WelcomePage> {
             setState(() {
               _installing = false;
               _completedInstall = false;
-              progress = Progress.DONE;
+              progress = Progress.done;
             });
           },
           onCancel: () {},
@@ -222,9 +230,9 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() => _editor = val),
           isInstalling: _installing,
           doneInstalling: _completedInstall,
-          onContinue: () => setState(() => _tab = WelcomeTab.INSTALL_GIT),
+          onContinue: () => setState(() => _tab = WelcomeTab.installGit),
         );
-      case WelcomeTab.INSTALL_GIT:
+      case WelcomeTab.installGit:
         return installGit(
           context,
           onInstall: () async {
@@ -232,27 +240,27 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.STARTED;
+                progress = Progress.started;
               });
               await context.read<GitNotifier>().checkGit(context, apiData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             }
           },
           onCancel: () {},
           isInstalling: _installing,
           doneInstalling: _completedInstall,
-          onContinue: () => setState(() => _tab = WelcomeTab.INSTALL_JAVA),
+          onContinue: () => setState(() => _tab = WelcomeTab.installJava),
         );
-      case WelcomeTab.INSTALL_JAVA:
+      case WelcomeTab.installJava:
         return installJava(
           context,
           onInstall: () async {
@@ -260,35 +268,38 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.STARTED;
+                progress = Progress.started;
               });
               await context.read<JavaNotifier>().checkJava(context, apiData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.DONE;
+                progress = Progress.done;
               });
             }
           },
           onSkip: () => setState(() {
             _installing = false;
             _completedInstall = false;
-            _tab = WelcomeTab.RESTART;
+            _tab = WelcomeTab.restart;
           }),
-          onContinue: () => setState(() => _tab = WelcomeTab.RESTART),
+          onContinue: () async {
+            await SharedPref().prefs.setString('Tab', 'restart');
+            setState(() => _tab = WelcomeTab.restart);
+          },
           isInstalling: _installing,
           doneInstalling: _completedInstall,
         );
-      case WelcomeTab.RESTART:
+      case WelcomeTab.restart:
         return welcomeRestart(
           context,
           onRestart: () async {
-            int _restartSeconds = 5;
+            int _restartSeconds = 15;
 
             ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
                 'Your device will restart in less than $_restartSeconds seconds.',
@@ -299,17 +310,20 @@ class _WelcomePageState extends State<WelcomePage> {
             /// Restart the system only if it's compiled for release. Prevent
             /// restart on debugging.
             if (kReleaseMode) {
+              await SharedPref().prefs.setBool('All_Checked', true);
+              await SharedPref().prefs.remove('Tab');
               await logger.file(LogTypeTag.INFO,
                   'Restarting device to continue Flutter setup');
-              await shell.run('shutdown /r /f');
+              await shell.run('shutdown /r /f /t $_restartSeconds');
             } else {
-              await SharedPref().prefs.setBool('All Checked', true);
+              await SharedPref().prefs.setBool('All_Checked', true);
+              await SharedPref().prefs.remove('Tab');
               ScaffoldMessenger.of(context).showSnackBar(
                 snackBarTile(
                   context,
                   'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
                   type: SnackBarType.error,
-                  duration: const Duration(seconds: 15),
+                  duration: Duration(seconds: _restartSeconds),
                 ),
               );
             }

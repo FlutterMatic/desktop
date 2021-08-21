@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/checks.dart';
@@ -27,51 +26,51 @@ Widget installGit(
         if (isInstalling && !doneInstalling)
           Padding(
             padding: const EdgeInsets.only(top: 20),
-            child: (gitNotifier.progress == Progress.STARTED ||
-                    gitNotifier.progress == Progress.CHECKING)
+            child: (gitNotifier.progress == Progress.started ||
+                    gitNotifier.progress == Progress.checking)
                 ? Column(
                     children: <Widget>[
                       hLoadingIndicator(
                         context: context,
-                        message: 'Checking for git',
                       ),
                       const Text('Checking for git'),
                     ],
                   )
-                : (gitNotifier.progress == Progress.DOWNLOADING)
+                : (gitNotifier.progress == Progress.downloading)
                     ? CustomProgressIndicator(
-                        disabled: (gitNotifier.progress != Progress.CHECKING &&
-                            gitNotifier.progress != Progress.DOWNLOADING &&
-                            gitNotifier.progress != Progress.STARTED),
+                        disabled: (gitNotifier.progress != Progress.checking &&
+                            gitNotifier.progress != Progress.downloading &&
+                            gitNotifier.progress != Progress.started),
                         progress: gitNotifier.progress,
                         toolName: 'Git',
                         onCancel: onCancel,
                         message: 'Downloading git',
                       )
-                    : gitNotifier.progress == Progress.EXTRACTING
-                        ? Tooltip(
-                          message: 'Extracting git',
-                          child: Lottie.asset(
-                              Assets.extracting,
-                              height: 100,
-                            ),
-                        )
-                        : gitNotifier.progress == Progress.DONE
+                    : gitNotifier.progress == Progress.extracting
+                        ? Column(
+                            children: <Widget>[
+                              hLoadingIndicator(
+                                context: context,
+                              ),
+                              const Text('Extracting git'),
+                            ],
+                          )
+                        : gitNotifier.progress == Progress.done
                             ? welcomeToolInstalled(
                                 context,
                                 title: 'Git Installed',
                                 message:
                                     'Git installed successfully on your machine. Continue to the next step.',
                               )
-                            : gitNotifier.progress == Progress.NONE
+                            : gitNotifier.progress == Progress.none
                                 ? const SizedBox.shrink()
                                 : CustomProgressIndicator(
                                     disabled: (gitNotifier.progress !=
-                                            Progress.CHECKING &&
+                                            Progress.checking &&
                                         gitNotifier.progress !=
-                                            Progress.DOWNLOADING &&
+                                            Progress.downloading &&
                                         gitNotifier.progress !=
-                                            Progress.STARTED),
+                                            Progress.started),
                                     progress: gitNotifier.progress,
                                     toolName: 'Git',
                                     onCancel: onCancel,
@@ -84,7 +83,7 @@ Widget installGit(
             title: 'Git Installed',
             message: 'You have successfully installed Git.',
           ),
-        if (gitNotifier.progress == Progress.DONE) const SizedBox(height: 30),
+        const SizedBox(height: 30),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,

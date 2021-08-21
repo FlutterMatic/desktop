@@ -5,7 +5,7 @@ import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
 Widget informationWidget(String text,
-    {InformationType type = InformationType.WARNING, bool showIcon = true}) {
+    {InformationType type = InformationType.warning, bool showIcon = true}) {
   return Padding(
     padding: const EdgeInsets.only(top: 10),
     child: RoundContainer(
@@ -18,12 +18,12 @@ Widget informationWidget(String text,
           if (showIcon)
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: type == InformationType.INFO
+              child: type == InformationType.info
                   ? const Icon(Icons.info_rounded)
                   : SvgPicture.asset(
-                      type == InformationType.WARNING
+                      type == InformationType.warning
                           ? Assets.warn
-                          : type == InformationType.ERROR
+                          : type == InformationType.error
                               ? Assets.error
                               : Assets.done,
                       height: 20),
@@ -36,11 +36,11 @@ Widget informationWidget(String text,
 }
 
 Color _getColor(InformationType type) {
-  if (type == InformationType.WARNING) {
+  if (type == InformationType.warning) {
     return kYellowColor;
-  } else if (type == InformationType.ERROR) {
+  } else if (type == InformationType.error) {
     return kRedColor;
-  } else if (type == InformationType.GREEN) {
+  } else if (type == InformationType.green) {
     return kGreenColor;
   } else {
     return AppTheme.darkLightColor;
@@ -48,8 +48,8 @@ Color _getColor(InformationType type) {
 }
 
 enum InformationType {
-  INFO,
-  WARNING,
-  ERROR,
-  GREEN,
+  info,
+  warning,
+  error,
+  green,
 }

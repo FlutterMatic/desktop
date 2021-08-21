@@ -101,7 +101,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
           if (_showTypeRequest)
             informationWidget(
               'Please type in a flutter command.',
-              type: InformationType.ERROR,
+              type: InformationType.error,
             ),
           if (_commandResult != null)
             ConstrainedBox(

@@ -87,7 +87,7 @@ class _ProjectPlatformsSectionState extends State<ProjectPlatformsSection> {
         ))
           informationWidget(
             'You will need to choose at least one platform. You will be able to change it later.',
-            type: InformationType.ERROR,
+            type: InformationType.error,
           ),
       ],
     );

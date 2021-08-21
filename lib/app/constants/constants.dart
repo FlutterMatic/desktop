@@ -4,7 +4,6 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:process_run/shell.dart';
-import 'package:flutter/services.dart';
 
 /// Shell object.
 Shell shell = Shell(
@@ -35,6 +34,8 @@ String? sha;
 String? platform;
 String? osName;
 String? osVersion;
+String? appVersion;
+String? appBuild;
 
 /// Application path in Root(C:\\ in win32) directory.
 // String applicationPath = 'C:\\fluttermatic\\flutter\\bin\\';
@@ -130,15 +131,6 @@ class InstalledContent {
       'All set! You will need to restart your computer to start using Flutter.';
   static const String restart =
       'You will need to restart your computer to fully complete this setup. Make sure to save all your work before restarting.';
-}
-
-class PlatformVersion {
-  static const MethodChannel _channel = MethodChannel('duh');
-
-  static Future<String?> get platformVersion async {
-    String? version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
 }
 
 //Lists

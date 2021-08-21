@@ -7,6 +7,7 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/notifiers/space.notifier.dart';
 import 'package:manager/app/providers/multi_providers.dart';
+import 'package:manager/meta/views/welcome/screens/pre_loading.dart';
 import 'package:manager/meta/views/welcome/screens/welcome_view.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,74 +17,6 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await SpaceCheck().checkSpace();
-
-  /// Application supporting Directory
-  Directory dir = await getApplicationSupportDirectory();
-  // Platform.environment.forEach((String k, String v) {
-  //   if (k.toLowerCase() == 'path') {
-  //     logger.file(LogTypeTag.INFO, v);
-  //   }
-  // });
-
-  /// Check for temporary Directory to download files
-  bool tmpDir = await Directory('${dir.path}\\tmp').exists();
-  bool appDir = await Directory('C:\\fluttermatic').exists();
-
-  await SharedPref.init();
-  allChecked = SharedPref().prefs.getBool('HAS_ALL_CHECKED') ?? false;
-  if (!SharedPref().prefs.containsKey('platform')) {
-    List<ProcessResult?>? platformData = Platform.isWindows
-        ? await shell
-            .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
-        : null;
-    await SharedPref()
-        .prefs
-        .setString('platform', Platform.operatingSystem)
-        .then((_) => platform = SharedPref().prefs.getString('platform'));
-    platform = SharedPref().prefs.getString('platform');
-    await SharedPref()
-        .prefs
-        .setString(
-            'OS Name',
-            platformData![0]!
-                .stdout
-                .split('\n')[0]
-                .replaceAll('  ', '')
-                .replaceAll('OS Name: ', '')
-                .replaceAll('\\r', '')
-                .trim())
-        .then((_) => osName = SharedPref().prefs.getString('OS Name'));
-    osName = SharedPref().prefs.getString('OS Name');
-    await SharedPref().prefs.setString(
-        'OS Version',
-        platformData[0]!
-            .stdout
-            .split('\n')[1]
-            .replaceAll('  ', '')
-            .replaceAll('OS Version', '')
-            .split('N/A')[0]
-            .trim());
-    osVersion = SharedPref().prefs.getString('OS Version');
-  } else {
-    platform = SharedPref().prefs.getString('platform');
-    osName = SharedPref().prefs.getString('OS Name');
-    osVersion = SharedPref().prefs.getString('OS Version');
-    appTemp = SharedPref().prefs.getString('App Temp Dir');
-    appMainDir = SharedPref().prefs.getString('App Main Dir');
-  }
-
-  /// If tmpDir is false, then create a temporary directory.
-  if (!tmpDir) {
-    await Directory('${dir.path}\\tmp').create();
-    await logger.file(LogTypeTag.INFO, 'Created tmp directory.');
-  }
-
-  /// If appDir is false, then create a app directory.
-  if (!appDir) {
-    await Directory('C:\\fluttermatic').create();
-    await logger.file(LogTypeTag.INFO, 'Created fluttermatic directory.');
-  }
   runApp(MultiProviders(MyApp()));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 680);
@@ -94,7 +27,107 @@ Future<void> main(List<String> args) async {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isChecking = true;
+  Future<void> initDataFetch() async {
+    await SpaceCheck().checkSpace();
+
+    /// Application supporting Directory
+    Directory dir = await getApplicationSupportDirectory();
+    // Platform.environment.forEach((String k, String v) {
+    //   if (k.toLowerCase() == 'path') {
+    //     logger.file(LogTypeTag.INFO, v);
+    //   }
+    // });
+
+    /// Check for temporary Directory to download files
+    bool tmpDir = await Directory('${dir.path}\\tmp').exists();
+    bool appDir = await Directory('C:\\fluttermatic').exists();
+
+    await SharedPref.init();
+
+    appVersion = const String.fromEnvironment('current-version');
+    await SharedPref().prefs.setString('App_Version', appVersion.toString());
+    appBuild = const String.fromEnvironment('release-type');
+    await SharedPref().prefs.setString('App_Build', appBuild.toString());
+    if (SharedPref().prefs.containsKey('All_Checked') &&
+        !SharedPref().prefs.containsKey('Tab')) {
+      allChecked = SharedPref().prefs.getBool('All_Checked');
+    } else {
+      await SharedPref().prefs.setBool('All_Checked', false);
+      allChecked = SharedPref().prefs.getBool('All_Checked');
+    }
+    if (!SharedPref().prefs.containsKey('platform')) {
+      List<ProcessResult?>? platformData = Platform.isWindows
+          ? await shell
+              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
+          : null;
+      await SharedPref()
+          .prefs
+          .setString('platform', Platform.operatingSystem)
+          .then((_) => platform = SharedPref().prefs.getString('platform'));
+      platform = SharedPref().prefs.getString('platform');
+      await SharedPref()
+          .prefs
+          .setString(
+              'OS_Name',
+              platformData![0]!
+                  .stdout
+                  .split('\n')[0]
+                  .replaceAll('  ', '')
+                  .replaceAll('OS Name: ', '')
+                  .replaceAll('\\r', '')
+                  .trim())
+          .then((_) => osName = SharedPref().prefs.getString('OS_Name'));
+      osName = SharedPref().prefs.getString('OS_Name');
+      await SharedPref().prefs.setString(
+          'OS_Version',
+          platformData[0]!
+              .stdout
+              .split('\n')[1]
+              .replaceAll('  ', '')
+              .replaceAll('OS Version', '')
+              .replaceAll(':', '')
+              .split('N/A')[0]
+              .trim());
+      osVersion = SharedPref().prefs.getString('OS_Version');
+    } else {
+      platform = SharedPref().prefs.getString('platform');
+      osName = SharedPref().prefs.getString('OS_Name');
+      osVersion = SharedPref().prefs.getString('OS_Version');
+      appTemp = SharedPref().prefs.getString('App_Temp_Dir');
+      appMainDir = SharedPref().prefs.getString('App_Main_Dir');
+      appVersion = SharedPref().prefs.getString('App_Version');
+      appBuild = SharedPref().prefs.getString('App_Build');
+    }
+
+    /// If tmpDir is false, then create a temporary directory.
+    if (!tmpDir) {
+      await Directory('${dir.path}\\tmp').create();
+      await logger.file(LogTypeTag.INFO, 'Created tmp directory.');
+    }
+
+    /// If appDir is false, then create a app directory.
+    if (!appDir) {
+      await Directory('C:\\fluttermatic').create();
+      await logger.file(LogTypeTag.INFO, 'Created fluttermatic directory.');
+    }
+    setState(() {
+      isChecking = false;
+    });
+  }
+
+  @override
+  void initState() {
+    initDataFetch();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
@@ -110,7 +143,11 @@ class MyApp extends StatelessWidget {
                   ? ThemeMode.dark
                   : ThemeMode.light,
               debugShowCheckedModeBanner: false,
-              home: !allChecked! ? const WelcomePage() : const HomeScreen(),
+              home: isChecking
+                  ? const PreLoading()
+                  : !allChecked!
+                      ? const WelcomePage()
+                      : const HomeScreen(),
             ),
           ),
         );

@@ -56,7 +56,7 @@ class _ProjectOrgNameSectionState extends State<ProjectOrgNameSection> {
             '.'.allMatches(_projectOrg!).length < 3)
           informationWidget(
             '"${'.'.allMatches(_projectOrg ?? '').length == 1 ? '$_projectOrg.${widget.projName}' : _projectOrg}" will be your organization name. You can change it later.',
-            type: InformationType.GREEN,
+            type: InformationType.green,
           ),
         if (_projectOrg != null &&
             (_projectOrg!.endsWith('_') ||
@@ -65,12 +65,12 @@ class _ProjectOrgNameSectionState extends State<ProjectOrgNameSection> {
             '.'.allMatches(_projectOrg!).length < 3)
           informationWidget(
             'Invalid organization name. Make sure it doesn\'t end with "." or "_" and that it matches something like "com.example.app"',
-            type: InformationType.WARNING,
+            type: InformationType.warning,
           ),
         if (_projectOrg != null && '.'.allMatches(_projectOrg!).length > 2)
           informationWidget(
             'Please check your organization name. This doesn\'t seem to be a proper one. Try something like com.${widget.projName}.app',
-            type: InformationType.ERROR,
+            type: InformationType.error,
           ),
         infoWidget(context,
             'The organization responsible for your new Flutter project, in reverse domain name notation. This string is used in Java package names and as prefix in the iOS bundle identifier.'),

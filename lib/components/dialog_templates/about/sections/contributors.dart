@@ -116,7 +116,7 @@ class _ContributorTileState extends State<ContributorTile> {
     Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      HttpHeaders.authorizationHeader: 'token ' + PAT,
+      HttpHeaders.authorizationHeader: 'token ' + personalAccessToken,
     };
 
     http.Response _result = await http.get(

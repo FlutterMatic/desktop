@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/checks.dart';
@@ -31,59 +30,59 @@ Widget installJava(
         if (isInstalling && !doneInstalling)
           Padding(
             padding: const EdgeInsets.only(top: 20),
-            child: (javaNotifier.progress == Progress.STARTED ||
-                    javaNotifier.progress == Progress.CHECKING)
+            child: (javaNotifier.progress == Progress.started ||
+                    javaNotifier.progress == Progress.checking)
                 ? Column(
                     children: <Widget>[
                       hLoadingIndicator(
                         context: context,
-                        message: 'Checking for java',
                       ),
                       const Text('Checking for java'),
                     ],
                   )
-                : (javaNotifier.progress == Progress.DOWNLOADING)
+                : (javaNotifier.progress == Progress.downloading)
                     ? CustomProgressIndicator(
-                        disabled: (javaNotifier.progress != Progress.CHECKING &&
-                            javaNotifier.progress != Progress.DOWNLOADING &&
-                            javaNotifier.progress != Progress.STARTED),
+                        disabled: (javaNotifier.progress != Progress.checking &&
+                            javaNotifier.progress != Progress.downloading &&
+                            javaNotifier.progress != Progress.started),
                         progress: javaNotifier.progress,
                         toolName: 'Java',
                         onCancel: () {},
-                        message: javaNotifier.sw == Java.JDK
+                        message: javaNotifier.sw == Java.jdk
                             ? 'Downloading JDK'
                             : 'Downloading JRE',
                       )
-                    : javaNotifier.progress == Progress.EXTRACTING
-                        ? Tooltip(
-                            message: javaNotifier.sw == Java.JDK
-                                ? 'Extracting JDK'
-                                : 'Extracting JRE',
-                            child: Lottie.asset(
-                              Assets.extracting,
-                              height: 100,
-                            ),
+                    : javaNotifier.progress == Progress.extracting
+                        ? Column(
+                            children: <Widget>[
+                              hLoadingIndicator(
+                                context: context,
+                                // message: javaNotifier.sw == Java.jdk
+                                //     ? 'Extracting JDK'
+                                //     : 'Extracting JRE',
+                              ),
+                            ],
                           )
-                        : javaNotifier.progress == Progress.DONE
+                        : javaNotifier.progress == Progress.done
                             ? welcomeToolInstalled(
                                 context,
                                 title: 'Java Installed',
                                 message:
                                     'Java installed successfully on your machine. Continue to the next step.',
                               )
-                            : javaNotifier.progress == Progress.NONE
+                            : javaNotifier.progress == Progress.none
                                 ? const SizedBox.shrink()
                                 : CustomProgressIndicator(
                                     disabled: (javaNotifier.progress !=
-                                            Progress.CHECKING &&
+                                            Progress.checking &&
                                         javaNotifier.progress !=
-                                            Progress.DOWNLOADING &&
+                                            Progress.downloading &&
                                         javaNotifier.progress !=
-                                            Progress.STARTED),
+                                            Progress.started),
                                     progress: javaNotifier.progress,
                                     toolName: 'Java',
                                     onCancel: () {},
-                                    message: javaNotifier.sw == Java.JDK
+                                    message: javaNotifier.sw == Java.jdk
                                         ? 'Downloading JDK'
                                         : 'Downloading JRE',
                                   ),
@@ -94,7 +93,7 @@ Widget installJava(
             title: Installed.java,
             message: InstalledContent.java,
           ),
-        if (javaNotifier.progress == Progress.DONE) const SizedBox(height: 30),
+        const SizedBox(height: 30),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,
@@ -102,7 +101,7 @@ Widget installJava(
           toolName: 'Java',
         ),
         const SizedBox(height: 20),
-        if (javaNotifier.progress == Progress.NONE)
+        if (javaNotifier.progress == Progress.none)
           TextButton(
             onPressed: () {
               showDialog(

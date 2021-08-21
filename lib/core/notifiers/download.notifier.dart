@@ -6,7 +6,7 @@ import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/services/logs.dart';
 
 class DownloadNotifier extends ChangeNotifier {
-  Duration perTime = const Duration(milliseconds: 1000);
+  Duration perTime = const Duration(milliseconds: 500);
   List<int>? buffer;
   int secsTime = 0,
       minsTime = 0,
@@ -15,14 +15,14 @@ class DownloadNotifier extends ChangeNotifier {
       downloadedLength = 0;
   String _remainingTime = 'calculating';
   double dProgress = 0;
-  Progress _progress = Progress.NONE;
+  Progress _progress = Progress.none;
   String get remainingTime => _remainingTime;
   Progress get progress => _progress;
   double get downloadProgress => dProgress;
 
   Future<void> downloadFile(String uri, String? fileName, String dir,
       {Color? progressBarColor}) async {
-    _progress = Progress.STARTED;
+    _progress = Progress.started;
     dProgress = 0;
     notifyListeners();
 
@@ -33,7 +33,7 @@ class DownloadNotifier extends ChangeNotifier {
       );
       HttpClientResponse response = await request.close();
       if (response.statusCode == 200) {
-        _progress = Progress.DOWNLOADING;
+        _progress = Progress.downloading;
         notifyListeners();
         await logger.file(LogTypeTag.INFO, 'Started downloading $fileName.');
         bool wtf = await checkFile(dir + '\\', fileName!);
@@ -67,13 +67,13 @@ class DownloadNotifier extends ChangeNotifier {
           await logger.file(LogTypeTag.INFO, '$fileName already exist.');
         }
       } else {
-        _progress = Progress.FAILED;
+        _progress = Progress.failed;
         notifyListeners();
         await logger.file(LogTypeTag.ERROR,
             'Error code while downloading $fileName - ${response.statusCode}');
       }
     } catch (e) {
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.ERROR, e.toString());
     }
@@ -82,7 +82,7 @@ class DownloadNotifier extends ChangeNotifier {
   Future<void> calculateSpeed(int downLength, int totalLength) async {
     secsTime = Duration(
             seconds:
-                (((perTime.inMilliseconds * totalLength) / downLength) - 100)
+                (((perTime.inMilliseconds * totalLength) / downLength) - 500)
                     .toInt())
         .inSeconds;
     minsTime = Duration(seconds: secsTime).inMinutes;

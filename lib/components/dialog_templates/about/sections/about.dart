@@ -16,10 +16,11 @@ class AboutSection extends StatelessWidget {
         const SizedBox(height: 5),
         informationWidget(
           'FlutterMatic entirely relies on people who contributed to this project. As a way of showing appreciation, we are listing the name of the most active contributors.',
-          type: InformationType.GREEN,
+          type: InformationType.green,
         ),
         const SizedBox(height: 5),
-        infoWidget(context,
+        infoWidget(
+          context,
           'This project is completely open-source and can be found on GitHub.',
         ),
       ],

@@ -11,7 +11,6 @@ import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
-// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [JavaNotifier] class is a [ValueNotifier]
@@ -19,15 +18,15 @@ import 'package:pub_semver/src/version.dart';
 class JavaNotifier extends ChangeNotifier {
   /// [javaVersion] value holds java version information
   Version? javaVersion;
-  Progress _progress = Progress.NONE;
+  Progress _progress = Progress.none;
   Progress get progress => _progress;
-  Java _sw = Java.JDK;
+  Java _sw = Java.jdk;
   Java get sw => _sw;
 
   /// Check java exists in the system or not.
   Future<void> checkJava(BuildContext context, FluttermaticAPI? api) async {
     try {
-      _progress = Progress.STARTED;
+      _progress = Progress.started;
       notifyListeners();
 
       /// Make a fake delay of 1 second such that UI looks cool.
@@ -35,7 +34,7 @@ class JavaNotifier extends ChangeNotifier {
 
       /// The compressed archive type.
       String? archiveType = Platform.isLinux ? 'tar.gz' : 'zip';
-      _progress = Progress.CHECKING;
+      _progress = Progress.checking;
       notifyListeners();
 
       /// Application supporting Directory
@@ -49,7 +48,7 @@ class JavaNotifier extends ChangeNotifier {
       if (javaPath == null) {
         await logger.file(
             LogTypeTag.WARNING, 'Java not installed in the system.');
-        _progress = Progress.DOWNLOADING;
+        _progress = Progress.downloading;
         notifyListeners();
         bool javaDir = await checkDir('C:\\fluttermatic\\', subDirName: 'Java');
         if (!javaDir) {
@@ -64,7 +63,7 @@ class JavaNotifier extends ChangeNotifier {
               dir.path + '\\tmp',
             );
 
-        _progress = Progress.EXTRACTING;
+        _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
         notifyListeners();
 
@@ -96,7 +95,7 @@ class JavaNotifier extends ChangeNotifier {
             }
           }
         } else {
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
           await logger.file(LogTypeTag.ERROR, 'JDK extraction failed.');
         }
@@ -107,13 +106,13 @@ class JavaNotifier extends ChangeNotifier {
         if (isJDKPathSet) {
           await logger.file(LogTypeTag.INFO, 'JDK set to path');
         } else {
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
           await logger.file(LogTypeTag.ERROR, 'JDK set to path failed');
         }
 
-        _sw = Java.JRE;
-        _progress = Progress.DOWNLOADING;
+        _sw = Java.jre;
+        _progress = Progress.downloading;
         context.read<DownloadNotifier>().dProgress = 0;
         notifyListeners();
 
@@ -124,7 +123,7 @@ class JavaNotifier extends ChangeNotifier {
               dir.path + '\\tmp',
             );
 
-        _progress = Progress.EXTRACTING;
+        _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
         notifyListeners();
 
@@ -155,7 +154,7 @@ class JavaNotifier extends ChangeNotifier {
             }
           }
         } else {
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
           await logger.file(LogTypeTag.ERROR, 'JDK extraction failed.');
         }
@@ -165,48 +164,48 @@ class JavaNotifier extends ChangeNotifier {
             await setPath('C:\\fluttermatic\\Java\\jre\\bin', dir.path);
         if (isJREPathSet) {
           await logger.file(LogTypeTag.INFO, 'JRE set to path');
-          _progress = Progress.DONE;
+          _progress = Progress.done;
           notifyListeners();
         } else {
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
           await logger.file(LogTypeTag.ERROR, 'JRE set to path failed');
         }
       }
 
       /// Else we need to get version information.
-      else if (!SharedPref().prefs.containsKey('Java path') ||
-          !SharedPref().prefs.containsKey('Java version')) {
+      else if (!SharedPref().prefs.containsKey('Java_path') ||
+          !SharedPref().prefs.containsKey('Java_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.INFO, 'Java found at - $javaPath');
-        await SharedPref().prefs.setString('Java path', javaPath);
+        await SharedPref().prefs.setString('Java_path', javaPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         javaVersion = await getJavaBinVersion();
         versions.java = javaVersion.toString();
         await logger.file(LogTypeTag.INFO, 'Java version : ${versions.java}');
-        await SharedPref().prefs.setString('Java version', versions.java!);
-        _progress = Progress.DONE;
+        await SharedPref().prefs.setString('Java_version', versions.java!);
+        _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.INFO, 'Loading Java details from shared preferences');
-        javaPath = SharedPref().prefs.getString('Java path');
+        javaPath = SharedPref().prefs.getString('Java_path');
         await logger.file(LogTypeTag.INFO, 'Java found at - $javaPath');
-        versions.java = SharedPref().prefs.getString('Java Version');
+        versions.java = SharedPref().prefs.getString('Java_version');
         await logger.file(LogTypeTag.INFO, 'Java version : ${versions.java}');
-        _progress = Progress.DONE;
+        _progress = Progress.done;
         notifyListeners();
       }
     } on ShellException catch (shellException) {
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       console.log(shellException.message);
       await logger.file(LogTypeTag.ERROR, shellException.message);
     } catch (err) {
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       console.log(err.toString());
       await logger.file(LogTypeTag.ERROR, err.toString());

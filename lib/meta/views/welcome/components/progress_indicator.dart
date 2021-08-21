@@ -55,8 +55,6 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
                   value: downloadNotifier.downloadProgress / 100,
                   valueColor: AlwaysStoppedAnimation<Color>(
                       _color(progress: widget.progress)),
-                  bgColor: _color(progress: widget.progress).withOpacity(0.1),
-                  message: widget.message,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,7 +71,6 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
         } else {
           return hLoadingIndicator(
             context: context,
-            message: 'Loading resources...',
           );
         }
       },
@@ -103,30 +100,28 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
 
 // }
 
-Color _color({Progress progress = Progress.NONE}) {
-  // if (progress == Progress.DONE) {
+Color _color({Progress progress = Progress.none}) {
+  // if (progress == Progress.done) {
   //   return kGreenColor;
-  // } else if (progress == Progress.FAILED) {
+  // } else if (progress == Progress.failed) {
   //   return AppTheme.errorColor;
   // } else {
   return AppTheme.primaryColor;
   // }
 }
 
-// ignore: unused_element
 String _getActionName(Progress progress) {
-  if (progress == Progress.DONE) {
+  if (progress == Progress.done) {
     return 'Downloaded';
-  } else if (progress == Progress.EXTRACTING) {
+  } else if (progress == Progress.extracting) {
     return 'Extracting';
-  } else if (progress == Progress.DOWNLOADING || progress == Progress.STARTED) {
+  } else if (progress == Progress.downloading || progress == Progress.started) {
     return 'Downloading';
   } else {
     return '';
   }
 }
 
-// ignore: unused_element
 Widget _actionButton(
   BuildContext context, {
   required String buttonName,

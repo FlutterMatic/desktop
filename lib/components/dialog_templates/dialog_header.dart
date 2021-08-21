@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;
@@ -30,7 +33,10 @@ class DialogHeader extends StatelessWidget {
           child: Center(
             child: Text(
               title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -39,7 +45,9 @@ class DialogHeader extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: CustomCloseButton(
               onClose: onClose,
-              iconColor: closeIconColor,
+              iconColor: context.read<ThemeChangeNotifier>().isDarkTheme
+                  ? AppTheme.darkTheme.iconTheme.color!
+                  : AppTheme.lightTheme.iconTheme.color!,
               onHoverColor: onHoverButtonColor,
             ),
           ),

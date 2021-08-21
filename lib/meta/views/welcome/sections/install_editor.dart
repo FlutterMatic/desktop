@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lottie/lottie.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
@@ -37,22 +36,22 @@ Widget installEditor(
               context,
               icon: SvgPicture.asset(Assets.vscode),
               name: 'VS Code',
-              type: EditorType.VSCODE,
+              type: EditorType.vscode,
               onEditorTypeChanged: onEditorTypeChanged,
               selectedType: selectedType,
-              installtion: vsCodeNotifier.progress != Progress.NONE ||
-                  androidStudioNotifier.progress != Progress.NONE,
+              installtion: vsCodeNotifier.progress != Progress.none ||
+                  androidStudioNotifier.progress != Progress.none,
             ),
             const SizedBox(width: 15),
             _selectEditor(
               context,
               icon: SvgPicture.asset(Assets.studio),
               name: 'Android Studio',
-              type: EditorType.ANDROID_STUDIO,
+              type: EditorType.androidStudio,
               onEditorTypeChanged: onEditorTypeChanged,
               selectedType: selectedType,
-              installtion: vsCodeNotifier.progress != Progress.NONE ||
-                  androidStudioNotifier.progress != Progress.NONE,
+              installtion: vsCodeNotifier.progress != Progress.none ||
+                  androidStudioNotifier.progress != Progress.none,
             ),
             const SizedBox(width: 15),
             _selectEditor(
@@ -68,11 +67,11 @@ Widget installEditor(
                 ],
               ),
               name: 'Both',
-              type: EditorType.BOTH,
+              type: EditorType.both,
               onEditorTypeChanged: onEditorTypeChanged,
               selectedType: selectedType,
-              installtion: vsCodeNotifier.progress != Progress.NONE ||
-                  androidStudioNotifier.progress != Progress.NONE,
+              installtion: vsCodeNotifier.progress != Progress.none ||
+                  androidStudioNotifier.progress != Progress.none,
             ),
           ],
         ),
@@ -80,36 +79,34 @@ Widget installEditor(
         if (isInstalling && !doneInstalling)
           Padding(
             padding: const EdgeInsets.only(top: 20),
-            child: (vsCodeNotifier.progress == Progress.STARTED ||
-                    vsCodeNotifier.progress == Progress.CHECKING ||
-                    androidStudioNotifier.progress == Progress.CHECKING ||
-                    androidStudioNotifier.progress == Progress.STARTED)
+            child: (vsCodeNotifier.progress == Progress.started ||
+                    vsCodeNotifier.progress == Progress.checking ||
+                    androidStudioNotifier.progress == Progress.checking ||
+                    androidStudioNotifier.progress == Progress.started)
                 ? Column(
                     children: <Widget>[
                       hLoadingIndicator(
                         context: context,
-                        message:
-                            'Checking for ${selectedType.index == 0 ? 'Visual Studio Code' : selectedType.index == 1 ? 'Android Studio' : 'Both'}',
                       ),
                       Text(
                           'Checking for ${selectedType.index == 0 ? 'Visual Studio Code' : selectedType.index == 1 ? 'Android Studio' : 'Both'}'),
                     ],
                   )
-                : (vsCodeNotifier.progress == Progress.DOWNLOADING ||
-                        androidStudioNotifier.progress == Progress.DOWNLOADING)
+                : (vsCodeNotifier.progress == Progress.downloading ||
+                        androidStudioNotifier.progress == Progress.downloading)
                     ? CustomProgressIndicator(
                         disabled: ((vsCodeNotifier.progress !=
-                                    Progress.CHECKING ||
+                                    Progress.checking ||
                                 androidStudioNotifier.progress !=
-                                    Progress.CHECKING) &&
-                            (vsCodeNotifier.progress != Progress.DOWNLOADING ||
+                                    Progress.checking) &&
+                            (vsCodeNotifier.progress != Progress.downloading ||
                                 androidStudioNotifier.progress !=
-                                    Progress.DOWNLOADING) &&
-                            (vsCodeNotifier.progress != Progress.STARTED ||
+                                    Progress.downloading) &&
+                            (vsCodeNotifier.progress != Progress.started ||
                                 androidStudioNotifier.progress !=
-                                    Progress.STARTED)),
+                                    Progress.started)),
                         progress:
-                            vsCodeNotifier.progress != Progress.DOWNLOADING
+                            vsCodeNotifier.progress != Progress.downloading
                                 ? androidStudioNotifier.progress
                                 : vsCodeNotifier.progress,
                         toolName: selectedType.index == 0
@@ -119,26 +116,23 @@ Widget installEditor(
                                 : 'Both',
                         onCancel: onCancel,
                         message:
-                            'Downloading  ${vsCodeNotifier.progress == Progress.DOWNLOADING ? 'Visual Studio Code' : androidStudioNotifier.progress == Progress.DOWNLOADING ? 'Android Studio' : 'Editors'}',
+                            'Downloading  ${vsCodeNotifier.progress == Progress.downloading ? 'Visual Studio Code' : androidStudioNotifier.progress == Progress.downloading ? 'Android Studio' : 'Editors'}',
                       )
-                    : (vsCodeNotifier.progress == Progress.EXTRACTING ||
+                    : (vsCodeNotifier.progress == Progress.extracting ||
                             androidStudioNotifier.progress ==
-                                Progress.EXTRACTING)
-                        ? Tooltip(
-                            message:
-                                vsCodeNotifier.progress == Progress.DOWNLOADING
-                                    ? 'Extracting Visual Studio Code'
-                                    : androidStudioNotifier.progress ==
-                                            Progress.DOWNLOADING
-                                        ? 'Extracting Android Studio'
-                                        : 'Extracting files',
-                            child: Lottie.asset(
-                              Assets.extracting,
-                              height: 100,
-                            ),
+                                Progress.extracting)
+                        ? Column(
+                            children: <Widget>[
+                              hLoadingIndicator(
+                                context: context,
+                              ),
+                              Text(
+                                'Extracting ${vsCodeNotifier.progress == Progress.downloading ? 'Visual Studio Code' : androidStudioNotifier.progress == Progress.downloading ? 'Android Studio' : 'Editors'}',
+                              ),
+                            ],
                           )
-                        : (vsCodeNotifier.progress == Progress.DONE ||
-                                androidStudioNotifier.progress == Progress.DONE)
+                        : (vsCodeNotifier.progress == Progress.done ||
+                                androidStudioNotifier.progress == Progress.done)
                             ? welcomeToolInstalled(
                                 context,
                                 title:
@@ -146,25 +140,25 @@ Widget installEditor(
                                 message:
                                     '${selectedType.index == 0 ? 'Visual Studio Code Editor was' : selectedType.index == 1 ? 'Android Studio IDE was' : 'Both Editors were'} installed successfully on your machine. Continue to the next step.',
                               )
-                            : (vsCodeNotifier.progress == Progress.NONE ||
+                            : (vsCodeNotifier.progress == Progress.none ||
                                     androidStudioNotifier.progress ==
-                                        Progress.NONE)
+                                        Progress.none)
                                 ? const SizedBox.shrink()
                                 : CustomProgressIndicator(
                                     disabled: ((vsCodeNotifier.progress !=
-                                                Progress.CHECKING ||
+                                                Progress.checking ||
                                             androidStudioNotifier.progress !=
-                                                Progress.CHECKING) &&
+                                                Progress.checking) &&
                                         (vsCodeNotifier.progress !=
-                                                Progress.DOWNLOADING ||
+                                                Progress.downloading ||
                                             androidStudioNotifier.progress !=
-                                                Progress.DOWNLOADING) &&
+                                                Progress.downloading) &&
                                         (vsCodeNotifier.progress !=
-                                                Progress.STARTED ||
+                                                Progress.started ||
                                             androidStudioNotifier.progress !=
-                                                Progress.STARTED)),
+                                                Progress.started)),
                                     progress:
-                                        vsCodeNotifier.progress == Progress.NONE
+                                        vsCodeNotifier.progress == Progress.none
                                             ? androidStudioNotifier.progress
                                             : vsCodeNotifier.progress,
                                     toolName: selectedType.index == 0
@@ -184,7 +178,7 @@ Widget installEditor(
         // if (isInstalling && !doneInstalling)
         //   CustomProgressIndicator(
         //     disabled: !isInstalling,
-        //     progress: androidStudioNotifier.progress == Progress.NONE
+        //     progress: androidStudioNotifier.progress == Progress.none
         //         ? vsCodeNotifier.progress
         //         : androidStudioNotifier.progress,
         //     onCancel: () {},
@@ -195,20 +189,20 @@ Widget installEditor(
           welcomeToolInstalled(
             context,
             title:
-                'Editor${selectedType == EditorType.BOTH ? 's' : ''} Installed',
+                'Editor${selectedType == EditorType.both ? 's' : ''} Installed',
             message:
-                'You have successfully installed ${selectedType == EditorType.ANDROID_STUDIO ? 'Android Studio' : selectedType == EditorType.VSCODE ? 'Visual Studio Code' : 'Android Studio & Visual Studio Code'}.',
+                'You have successfully installed ${selectedType == EditorType.androidStudio ? 'Android Studio' : selectedType == EditorType.vscode ? 'Visual Studio Code' : 'Android Studio & Visual Studio Code'}.',
           ),
         const SizedBox(height: 30),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,
-          progress: selectedType == EditorType.BOTH
-              ? (vsCodeNotifier.progress != Progress.NONE &&
-                      vsCodeNotifier.progress != Progress.DONE
+          progress: selectedType == EditorType.both
+              ? (vsCodeNotifier.progress != Progress.none &&
+                      vsCodeNotifier.progress != Progress.done
                   ? vsCodeNotifier.progress
                   : androidStudioNotifier.progress)
-              : selectedType == EditorType.VSCODE
+              : selectedType == EditorType.vscode
                   ? vsCodeNotifier.progress
                   : androidStudioNotifier.progress,
           toolName: 'Editor',
@@ -244,7 +238,7 @@ Widget _selectEditor(BuildContext context,
         ),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
-          opacity: _selected ? 1 : 0.2,
+          opacity: _selected ? 1 : 0.5,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: Column(
@@ -267,7 +261,6 @@ Widget _selectEditor(BuildContext context,
   );
 }
 
-// ignore: unused_element
 Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
   return RoundContainer(
     child: Row(
@@ -279,9 +272,9 @@ Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
               const Text('Selected Option', style: TextStyle(fontSize: 14)),
               const SizedBox(height: 5),
               Text(
-                editorType == EditorType.BOTH
+                editorType == EditorType.both
                     ? 'Android Studio & Visual Studio Code'
-                    : editorType == EditorType.ANDROID_STUDIO
+                    : editorType == EditorType.androidStudio
                         ? 'Android Studio'
                         : 'Visual Studio',
                 style: TextStyle(
@@ -294,10 +287,10 @@ Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
             ],
           ),
         ),
-        if (editorType == EditorType.ANDROID_STUDIO)
+        if (editorType == EditorType.androidStudio)
           SvgPicture.asset(Assets.studio),
-        if (editorType == EditorType.VSCODE) SvgPicture.asset(Assets.vscode),
-        if (editorType == EditorType.BOTH)
+        if (editorType == EditorType.vscode) SvgPicture.asset(Assets.vscode),
+        if (editorType == EditorType.both)
           Row(
             children: <Widget>[
               SvgPicture.asset(Assets.studio, height: 25),

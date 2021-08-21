@@ -5,11 +5,11 @@ import 'package:manager/core/libraries/widgets.dart';
 
 class CustomCloseButton extends StatelessWidget {
   final VoidCallback? onClose;
-  final Color? iconColor;
+  final Color iconColor;
   final Color? onHoverColor;
 
   const CustomCloseButton(
-      {Key? key, this.onClose, this.iconColor, this.onHoverColor})
+      {Key? key, this.onClose, this.iconColor = kRedColor, this.onHoverColor})
       : super(key: key);
 
   @override
@@ -17,7 +17,7 @@ class CustomCloseButton extends StatelessWidget {
     return SquareButton(
       icon: Icon(
         Icons.close_rounded,
-        color: iconColor ?? kRedColor,
+        color: iconColor,
       ),
       color: Colors.transparent,
       hoverColor: onHoverColor ?? AppTheme.errorColor,

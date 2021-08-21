@@ -53,19 +53,19 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
             !_projectName!.startsWith(RegExp('[a-zA-Z]')))
           informationWidget(
             'Your project name needs to start with a lower-case English character (a-z).',
-            type: InformationType.ERROR,
+            type: InformationType.error,
           ),
         //Checks if there are numbers included in the project name
         if (_projectName != null && _projectName!.contains(RegExp('[0-9]')))
           informationWidget(
             'You can\'t have any numbers in your project name. Try using characters such as English letters (a-z) and underscores (_).',
-            type: InformationType.ERROR,
+            type: InformationType.error,
           ),
         //Checks to see if there are any upper-case letters
         if (_projectName != null && _projectName!.contains(RegExp(r'[A-Z]')))
           informationWidget(
             'Any upper-case letters in the project name will be turned to a lower-case letter.',
-            type: InformationType.WARNING,
+            type: InformationType.warning,
           ),
         //Checks to see if lower-case letter is started with
         if (_projectName != null &&
@@ -73,7 +73,7 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
             !_projectName!.contains(RegExp('[0-9]')))
           informationWidget(
             'Your new project will be called "${_projectName!.trim().replaceAll(RegExp(r'-| '), '_').toLowerCase()}"',
-            type: InformationType.GREEN,
+            type: InformationType.green,
           ),
         infoWidget(context,
             'Your project name can only include lower-case English letters (a-z) and underscores (_).')

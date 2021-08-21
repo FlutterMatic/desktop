@@ -68,7 +68,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                     ),
                     informationWidget(
                       'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
-                      type: InformationType.WARNING,
+                      type: InformationType.warning,
                     ),
                     const SizedBox(height: 10),
                     Row(

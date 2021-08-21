@@ -28,7 +28,6 @@ class ThemeSettingsSection extends StatelessWidget {
   }
 }
 
-// ignore: unused_element
 Widget _themeTiles(BuildContext context, bool selected, String title,
     String description, Function() onPressed) {
   ThemeData customTheme = Theme.of(context);

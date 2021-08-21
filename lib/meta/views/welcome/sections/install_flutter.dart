@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/checks.dart';
@@ -25,57 +24,57 @@ Widget installFlutter(
         const SizedBox(height: 30),
         Padding(
           padding: const EdgeInsets.only(bottom: 15.0),
-          child: (flutterNotifier.progress == Progress.STARTED ||
-                  flutterNotifier.progress == Progress.CHECKING)
+          child: (flutterNotifier.progress == Progress.started ||
+                  flutterNotifier.progress == Progress.checking)
               ? Column(
                   children: <Widget>[
                     hLoadingIndicator(
                       context: context,
-                      message: 'Checking for flutter',
                     ),
                     const Text('Checking for flutter'),
                   ],
                 )
-              : (flutterNotifier.progress == Progress.DOWNLOADING ||
-                      flutterNotifier.progress == Progress.FAILED)
+              : (flutterNotifier.progress == Progress.downloading ||
+                      flutterNotifier.progress == Progress.failed)
                   ? CustomProgressIndicator(
                       disabled: (flutterNotifier.progress !=
-                              Progress.CHECKING &&
-                          flutterNotifier.progress != Progress.DOWNLOADING &&
-                          flutterNotifier.progress != Progress.STARTED),
+                              Progress.checking &&
+                          flutterNotifier.progress != Progress.downloading &&
+                          flutterNotifier.progress != Progress.started),
                       progress: flutterNotifier.progress,
                       toolName: 'Flutter',
                       onCancel: onCancel,
                       message: 'Downloading Flutter',
                     )
-                  : (flutterNotifier.progress == Progress.EXTRACTING)
+                  : (flutterNotifier.progress == Progress.extracting)
                       // ? CustomProgressIndicator(
                       //     disabled: true,
                       //     progress: flutterNotifier.progress,
                       //     toolName: 'Flutter',
                       //     onCancel: onCancel,
                       //   )
-                      ? Tooltip(message: 'Extracting flutter',
-                        child: Lottie.asset(
-                            Assets.extracting,
-                            height: 100,
-                          ),
-                      )
-                      : flutterNotifier.progress == Progress.DONE
+                      ? Column(
+                          children: <Widget>[
+                            hLoadingIndicator(
+                              context: context,
+                            ),
+                            const Text('Extracting Flutter'),
+                          ],
+                        )
+                      : flutterNotifier.progress == Progress.done
                           ? welcomeToolInstalled(
                               context,
                               title: 'Flutter Installed',
                               message:
                                   'Flutter was installed successfully on your machine. Continue to the next step.',
                             )
-                          : flutterNotifier.progress == Progress.NONE
+                          : flutterNotifier.progress == Progress.none
                               ? const SizedBox.shrink()
                               : hLoadingIndicator(
                                   context: context,
                                 ),
         ),
-        if (flutterNotifier.progress == Progress.DONE)
-          const SizedBox(height: 30),
+        const SizedBox(height: 30),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,

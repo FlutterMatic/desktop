@@ -16,7 +16,7 @@ linter:
     prefer_is_not_empty: true
     always_specify_types: true
     avoid_print: true
-    constant_identifier_names: false
+    constant_identifier_names: true
     non_constant_identifier_names: false
     avoid_type_to_string: true
     camel_case_types: false
@@ -35,6 +35,7 @@ linter:
     avoid_returning_null: true
     avoid_returning_null_for_void: true
     avoid_returning_this: true
+    implementation_imports: false
     avoid_void_async: true
     unawaited_futures: true
     await_only_futures: true

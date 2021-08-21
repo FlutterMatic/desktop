@@ -12,7 +12,11 @@
             "flutterMode": "debug",
             "args": [
                 "-d",
-                "windows"
+                "windows",
+                "--dart-define",
+                "release-type=ALPHA",
+                "--dart-define",
+                "current-version=0.0.1"
             ]
         }
     ]

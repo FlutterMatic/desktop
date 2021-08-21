@@ -14,21 +14,19 @@ import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
-// ignore: implementation_imports
-// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 // / [FlutterNotifier] is a [ValueNotifier].
 class FlutterNotifier extends ChangeNotifier {
   /// Get flutter version.
   Version? flutterVersion;
-  Progress _progress = Progress.NONE;
+  Progress _progress = Progress.none;
   Progress get progress => _progress;
 
   /// Function checks whether Flutter-SDK exists in the system or not.
   Future<void> checkFlutter(BuildContext context, FlutterSDK? sdk) async {
     try {
-      _progress = Progress.STARTED;
+      _progress = Progress.started;
       notifyListeners();
       await Future<dynamic>.delayed(const Duration(seconds: 1));
 
@@ -40,7 +38,7 @@ class FlutterNotifier extends ChangeNotifier {
 
       /// Checking for flutter path,
       /// returns path to flutter or null if it doesn't exist.
-      _progress = Progress.CHECKING;
+      _progress = Progress.checking;
       notifyListeners();
       String? flutterPath = await which('flutter');
 
@@ -61,7 +59,7 @@ class FlutterNotifier extends ChangeNotifier {
               .delete(recursive: true);
         }
 
-        _progress = Progress.DOWNLOADING;
+        _progress = Progress.downloading;
         notifyListeners();
 
         /// Downloading flutter
@@ -77,7 +75,7 @@ class FlutterNotifier extends ChangeNotifier {
                   dir.path + '\\tmp',
                 );
 
-        _progress = Progress.EXTRACTING;
+        _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
         notifyListeners();
 
@@ -92,7 +90,7 @@ class FlutterNotifier extends ChangeNotifier {
               LogTypeTag.INFO, 'Flutter-SDK extraction was successfull');
         } else {
           // value = 'Extracting Flutter-SDK failed';
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
           await logger.file(LogTypeTag.ERROR, 'Flutter-SDK extraction failed.');
         }
@@ -104,20 +102,20 @@ class FlutterNotifier extends ChangeNotifier {
           await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
           await SharedPref()
               .prefs
-              .setString('Flutter path', 'C:\\fluttermatic\\flutter\\bin');
+              .setString('Flutter_path', 'C:\\fluttermatic\\flutter\\bin');
         } else {
           await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
         }
-        _progress = Progress.DONE;
+        _progress = Progress.done;
         notifyListeners();
       }
 
       /// Else we need to get version, channel information.
-      else if (!SharedPref().prefs.containsKey('Flutter path') ||
-          !SharedPref().prefs.containsKey('Flutter version') ||
-          !SharedPref().prefs.containsKey('Flutter channel')) {
+      else if (!SharedPref().prefs.containsKey('Flutter_path') ||
+          !SharedPref().prefs.containsKey('Flutter_version') ||
+          !SharedPref().prefs.containsKey('Flutter_channel')) {
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await SharedPref().prefs.setString('Flutter path', flutterPath);
+        await SharedPref().prefs.setString('Flutter_path', flutterPath);
         // value = 'Flutter-SDK found';
         await logger.file(
             LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
@@ -136,39 +134,39 @@ class FlutterNotifier extends ChangeNotifier {
             LogTypeTag.INFO, 'Flutter version : ${versions.flutter}');
         await SharedPref()
             .prefs
-            .setString('Flutter Version', versions.flutter!);
+            .setString('Flutter_version', versions.flutter!);
         await Future<dynamic>.delayed(const Duration(seconds: 2));
         versions.channel = await getFlutterBinChannel();
         await logger.file(
             LogTypeTag.INFO, 'Flutter channel : ${versions.channel}');
         await SharedPref()
             .prefs
-            .setString('Flutter Channel', versions.channel!);
-        _progress = Progress.DONE;
+            .setString('Flutter_channel', versions.channel!);
+        _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.INFO, 'Loading flutter details from shared preferences');
-        flutterPath = SharedPref().prefs.getString('Flutter path');
+        flutterPath = SharedPref().prefs.getString('Flutter_path');
         await logger.file(
             LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
-        versions.flutter = SharedPref().prefs.getString('Flutter Version');
+        versions.flutter = SharedPref().prefs.getString('Flutter_version');
         await logger.file(
             LogTypeTag.INFO, 'Flutter version : ${versions.flutter}');
-        versions.channel = SharedPref().prefs.getString('Flutter Channel');
+        versions.channel = SharedPref().prefs.getString('Flutter_vhannel');
         await logger.file(
             LogTypeTag.INFO, 'Flutter channel : ${versions.channel}');
-        _progress = Progress.DONE;
+        _progress = Progress.done;
         notifyListeners();
       }
     } on ShellException catch (shellException) {
       console.log(shellException.message);
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.ERROR, shellException.message);
     } catch (err) {
       console.log(err.toString());
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.ERROR, err.toString());
     }

@@ -55,7 +55,7 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
       WelcomeButton(
         onContinue: () {},
         onInstall: onRestart,
-        progress: Progress.NONE,
+        progress: Progress.none,
         toolName: 'Flutter',
         buttonText: 'Restart',
       ),

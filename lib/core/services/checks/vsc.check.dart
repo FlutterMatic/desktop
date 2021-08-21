@@ -12,7 +12,6 @@ import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
-// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [VSCodeNotifier] class is a [ChangeNotifier]
@@ -20,18 +19,18 @@ import 'package:pub_semver/src/version.dart';
 class VSCodeNotifier extends ChangeNotifier {
   /// [vscVersion] value holds VS Code version information
   Version? vscVersion;
-  Progress _progress = Progress.NONE;
+  Progress _progress = Progress.none;
   Progress get progress => _progress;
   Future<void> checkVSCode(BuildContext context, FluttermaticAPI? api) async {
     Directory dir = await getApplicationSupportDirectory();
     String archiveType = platform == 'linux' ? 'tar.gz' : 'zip';
     try {
-      _progress = Progress.STARTED;
+      _progress = Progress.started;
       notifyListeners();
 
       /// Make a fake delay of 1 second such that UI looks cool.
       await Future<dynamic>.delayed(const Duration(seconds: 1));
-      _progress = Progress.CHECKING;
+      _progress = Progress.checking;
       notifyListeners();
       String? vscPath = await which('code');
       if (vscPath == null) {
@@ -49,11 +48,11 @@ class VSCodeNotifier extends ChangeNotifier {
               'Created code directory for extracting vscode files');
         }
 
-        _progress = Progress.DOWNLOADING;
+        _progress = Progress.downloading;
         notifyListeners();
 
         /// Downloading VSCode.
-        !kDebugMode || kProfileMode
+        kDebugMode || kProfileMode
             ? await context.read<DownloadNotifier>().downloadFile(
                   'https://sample-videos.com/zip/50mb.zip',
                   'code.$archiveType',
@@ -68,7 +67,7 @@ class VSCodeNotifier extends ChangeNotifier {
                   platform == 'linux' ? 'code.tar.gz' : 'code.zip',
                   dir.path + '\\tmp',
                 );
-        _progress = Progress.EXTRACTING;
+        _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
         notifyListeners();
 
@@ -82,7 +81,7 @@ class VSCodeNotifier extends ChangeNotifier {
               LogTypeTag.INFO, 'VSCode extraction was successfull');
         } else {
           await logger.file(LogTypeTag.ERROR, 'VSCode extraction failed.');
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
         }
 
@@ -90,20 +89,23 @@ class VSCodeNotifier extends ChangeNotifier {
         bool isVSCPathSet =
             await setPath('C:\\fluttermatic\\code\\bin', dir.path);
         if (isVSCPathSet) {
+          await SharedPref()
+              .prefs
+              .setString('VSC_path', 'C:\\fluttermatic\\code\\bin');
           await logger.file(LogTypeTag.INFO, 'VSCode set to path');
-          _progress = Progress.DONE;
+          _progress = Progress.done;
           notifyListeners();
         } else {
           await logger.file(LogTypeTag.ERROR, 'VSCode set to path failed');
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
         }
-      } else if (!SharedPref().prefs.containsKey('VSC path') ||
-          !SharedPref().prefs.containsKey('VSC version')) {
+      } else if (!SharedPref().prefs.containsKey('VSC_path') ||
+          !SharedPref().prefs.containsKey('VSC_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.INFO, 'VS Code found at - $vscPath');
-        await SharedPref().prefs.setString('VSC path', vscPath);
+        await SharedPref().prefs.setString('VSC_path', vscPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -111,28 +113,28 @@ class VSCodeNotifier extends ChangeNotifier {
         versions.vsCode = vscVersion.toString();
         await logger.file(
             LogTypeTag.INFO, 'VS Code version : ${versions.vsCode}');
-        await SharedPref().prefs.setString('VSC version', versions.vsCode!);
-        _progress = Progress.DONE;
+        await SharedPref().prefs.setString('VSC_version', versions.vsCode!);
+        _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.INFO, 'Loading VS Code details from shared preferences');
-        vscPath = SharedPref().prefs.getString('VSC path');
+        vscPath = SharedPref().prefs.getString('VSC_path');
         await logger.file(LogTypeTag.INFO, 'VS Code found at - $vscPath');
-        versions.vsCode = SharedPref().prefs.getString('VSC Version');
+        versions.vsCode = SharedPref().prefs.getString('VSC_version');
         await logger.file(LogTypeTag.INFO, 'VS Code version : ${versions.git}');
-        _progress = Progress.DONE;
+        _progress = Progress.done;
         notifyListeners();
       }
     } on ShellException catch (shellException) {
       console.log(shellException.message);
       await logger.file(LogTypeTag.ERROR, shellException.message);
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
     } catch (err) {
       console.log(err.toString());
       await logger.file(LogTypeTag.ERROR, err.toString());
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
     }
   }

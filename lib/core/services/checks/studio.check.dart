@@ -11,7 +11,6 @@ import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:process_run/shell.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-// ignore: implementation_imports
 import 'package:pub_semver/src/version.dart';
 
 /// [AndroidStudioNotifier] class is a [ChangeNotifier]
@@ -20,10 +19,10 @@ class AndroidStudioNotifier extends ChangeNotifier {
   /// [studioVersion] value holds Android Studio version information
   Version? studioVersion;
   Directory? jetBrainStudioDir;
-  Progress _progress = Progress.NONE;
+  Progress _progress = Progress.none;
   Progress get progress => _progress;
   Future<void> checkAStudio(BuildContext context, FluttermaticAPI? api) async {
-    _progress = Progress.STARTED;
+    _progress = Progress.started;
     notifyListeners();
 
     /// The comppressed archive type.
@@ -31,7 +30,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
     try {
       /// Make a fake delay of 1 second such that UI looks cool.
       await Future<dynamic>.delayed(const Duration(seconds: 1));
-      _progress = Progress.CHECKING;
+      _progress = Progress.checking;
       notifyListeners();
       String? studioPath = await which('studio');
       Directory tempDir = await getTemporaryDirectory();
@@ -61,7 +60,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
               await logger.file(LogTypeTag.INFO,
                   'Created Android studio directory in fluttermatic folder.');
             }
-            _progress = Progress.DOWNLOADING;
+            _progress = Progress.downloading;
             notifyListeners();
             await installAndroidStudio(
               context,
@@ -70,12 +69,12 @@ class AndroidStudioNotifier extends ChangeNotifier {
               archiveType: archiveType,
             );
           }
-          _progress = Progress.DONE;
+          _progress = Progress.done;
           notifyListeners();
         }
-      } else if (!SharedPref().prefs.containsKey('Studio path') ||
-          !SharedPref().prefs.containsKey('Studio version')) {
-        await SharedPref().prefs.setString('Studio path', studioPath);
+      } else if (!SharedPref().prefs.containsKey('Studio_path') ||
+          !SharedPref().prefs.containsKey('Studio_version')) {
+        await SharedPref().prefs.setString('Studio_path', studioPath);
         await logger.file(
             LogTypeTag.INFO, 'Android Studio found at - $studioPath');
 
@@ -84,27 +83,27 @@ class AndroidStudioNotifier extends ChangeNotifier {
         versions.studio = studioVersion.toString();
         await logger.file(
             LogTypeTag.INFO, 'Android Studio version : ${versions.studio}');
-        await SharedPref().prefs.setString('Studio version', versions.studio!);
-        _progress = Progress.DONE;
+        await SharedPref().prefs.setString('Studio_version', versions.studio!);
+        _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(LogTypeTag.INFO,
             'Loading Android Studio details from shared preferences');
-        studioPath = SharedPref().prefs.getString('Studio path');
+        studioPath = SharedPref().prefs.getString('Studio_path');
         await logger.file(
             LogTypeTag.INFO, 'Android Studio found at - $studioPath');
-        versions.studio = SharedPref().prefs.getString('studio Version');
+        versions.studio = SharedPref().prefs.getString('Studio_version');
         await logger.file(
             LogTypeTag.INFO, 'Studio version : ${versions.studio}');
-        _progress = Progress.DONE;
+        _progress = Progress.done;
         notifyListeners();
       }
     } on ShellException catch (shellException) {
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.ERROR, shellException.message);
     } catch (err) {
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.ERROR, err.toString());
     }
@@ -126,7 +125,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
           await logger.file(
               LogTypeTag.INFO, 'Studio64.exe found in Program Files');
           await Future<dynamic>.delayed(const Duration(seconds: 1));
-          await SharedPref().prefs.setString('Studio path', studio64PFPath);
+          await SharedPref().prefs.setString('Studio_path', studio64PFPath);
           await setPath(studio64PFPath);
           return true;
         } else {
@@ -164,7 +163,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
         await logger.file(LogTypeTag.INFO, 'Studio64.exe found in Jetbrains');
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await setPath(studio64JBPath, appDir);
-        await SharedPref().prefs.setString('Studio path', paths.studio!);
+        await SharedPref().prefs.setString('Studio_path', paths.studio!);
         return true;
       } else {
         await logger.file(
@@ -182,7 +181,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
       required String appDir,
       String? archiveType}) async {
     /// Downloading Android studio.
-    !kDebugMode || kProfileMode
+    kDebugMode || kProfileMode
         ? await context.read<DownloadNotifier>().downloadFile(
               'https://sample-videos.com/zip/50mb.zip',
               'studio.$archiveType',
@@ -196,7 +195,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
             );
     await Future<dynamic>.delayed(const Duration(seconds: 1));
 
-    _progress = Progress.EXTRACTING;
+    _progress = Progress.extracting;
     context.read<DownloadNotifier>().dProgress = 0;
     notifyListeners();
 
@@ -219,11 +218,11 @@ class AndroidStudioNotifier extends ChangeNotifier {
         if (isASPathSet) {
           await SharedPref()
               .prefs
-              .setString('Studio path', 'C:\\fluttermatic\\AndroidStudio\\bin');
+              .setString('Studio_path', 'C:\\fluttermatic\\AndroidStudio\\bin');
           await Future<dynamic>.delayed(const Duration(seconds: 1));
           await logger.file(LogTypeTag.INFO, 'Android studio set to path');
         } else {
-          _progress = Progress.FAILED;
+          _progress = Progress.failed;
           notifyListeners();
 
           await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -231,13 +230,13 @@ class AndroidStudioNotifier extends ChangeNotifier {
               LogTypeTag.INFO, 'Android studio set to path failed');
         }
       } else {
-        _progress = Progress.FAILED;
+        _progress = Progress.failed;
         notifyListeners();
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.ERROR, 'Android studio renaming failed.');
       }
     } else {
-      _progress = Progress.FAILED;
+      _progress = Progress.failed;
       notifyListeners();
       await Future<dynamic>.delayed(const Duration(seconds: 1));
       await logger.file(LogTypeTag.ERROR, 'Android studio extraction failed.');

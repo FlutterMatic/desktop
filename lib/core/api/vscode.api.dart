@@ -13,7 +13,7 @@ class VSCodeAPINotifier with ChangeNotifier {
   String? get sha => _sha;
   Future<void> fetchVscAPIData() async {
     Map<String, String> _header = <String, String>{
-      HttpHeaders.authorizationHeader: 'token ' + PAT,
+      HttpHeaders.authorizationHeader: 'token ' + personalAccessToken,
       'Content-type': 'application/json',
       'Accept': 'application/vnd.github.v3+json',
     };
