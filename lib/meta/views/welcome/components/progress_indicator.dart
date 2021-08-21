@@ -62,8 +62,8 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text('${downloadNotifier.downloadProgress.floor()}%'),
-                    Text(downloadNotifier.remainingTime == 'Estimating...'
-                        ? 'Estimating'
+                    Text(downloadNotifier.remainingTime == 'calculating'
+                        ? 'Calculating...'
                         : '${downloadNotifier.remainingTime} left'),
                   ],
                 ),

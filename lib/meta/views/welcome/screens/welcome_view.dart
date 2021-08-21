@@ -100,9 +100,7 @@ class _WelcomePageState extends State<WelcomePage> {
             child: Tooltip(
               padding: const EdgeInsets.all(5),
               message: 'Alpha 0.0.1\n$osName - $osVersion',
-              child: const Icon(
-                Icons.info_outline_rounded,
-              ),
+              child: const Icon(Icons.info_outline_rounded),
             ),
           ),
           Positioned(

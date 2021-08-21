@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/notifiers/space.notifier.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/notifiers/space.notifier.dart';
 import 'package:manager/app/providers/multi_providers.dart';
-import 'package:manager/meta/views/home.dart';
 import 'package:manager/meta/views/welcome/screens/welcome_view.dart';
+import 'package:manager/core/libraries/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:manager/meta/views/home.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-import 'package:manager/core/libraries/services.dart';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SpaceCheck().checkSpace();
+  // await SpaceCheck().checkSpace();
 
   /// Application supporting Directory
   Directory dir = await getApplicationSupportDirectory();
@@ -31,7 +31,7 @@ Future<void> main(List<String> args) async {
   bool appDir = await Directory('C:\\fluttermatic').exists();
 
   await SharedPref.init();
-  allChecked = SharedPref().prefs.getBool('All Checked');
+  allChecked = SharedPref().prefs.getBool('HAS_ALL_CHECKED') ?? false;
   if (!SharedPref().prefs.containsKey('platform')) {
     List<ProcessResult?>? platformData = Platform.isWindows
         ? await shell

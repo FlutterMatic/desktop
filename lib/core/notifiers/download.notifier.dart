@@ -13,7 +13,7 @@ class DownloadNotifier extends ChangeNotifier {
       hoursTime = 0,
       daysTime = 0,
       downloadedLength = 0;
-  String _remainingTime = 'Estimating...';
+  String _remainingTime = 'calculating';
   double dProgress = 0;
   Progress _progress = Progress.NONE;
   String get remainingTime => _remainingTime;

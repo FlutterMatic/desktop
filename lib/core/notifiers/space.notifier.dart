@@ -7,6 +7,7 @@ class SpaceCheck extends ChangeNotifier {
   String get drive => _drive;
   bool _lowDriveSpace = false;
   bool get lowDriveSpace => _lowDriveSpace;
+  
   Future<void> checkSpace() async {
     List<UnixDiskSpaceOutput> disks = await diskSpace();
     for (UnixDiskSpaceOutput disk in disks) {

@@ -9,10 +9,11 @@ class BulletPoint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(
-            left: (15 * (level + 1)),
+            left: (15 * level),
           ),
           child: Container(
             height: 15,

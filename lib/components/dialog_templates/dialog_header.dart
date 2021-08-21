@@ -30,10 +30,7 @@ class DialogHeader extends StatelessWidget {
           child: Center(
             child: Text(
               title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ),
         ),
