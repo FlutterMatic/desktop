@@ -30,7 +30,7 @@ Future<bool> setPath(String? path, [String? appDir]) async {
         List<ProcessResult> envPATH = await shell.run('echo %PATH%');
         if (envPATH[0].stdout.contains(path)) {
           await logger.file(
-              LogTypeTag.INFO, '$path already exists in env PATH variable.');
+              LogTypeTag.info, '$path already exists in env PATH variable.');
           return true;
         }
         bool path_appender_exist =
@@ -58,33 +58,33 @@ Future<bool> setPath(String? path, [String? appDir]) async {
         await path_download(appenderLink, 'linux.sh', appDir: appDir);
         await shell.run('"$appDir\\scripts\\linux.sh" "$path"');
       }
-      await logger.file(LogTypeTag.INFO,
+      await logger.file(LogTypeTag.info,
           '$path was set to ${Platform.operatingSystem}\'s env.');
       return true;
     } on OSError catch (osError) {
-      await logger.file(LogTypeTag.ERROR, 'Path appending failed - OS Error');
-      await logger.file(LogTypeTag.ERROR, osError.message.toString());
+      await logger.file(LogTypeTag.error, 'Path appending failed - OS Error');
+      await logger.file(LogTypeTag.error, osError.message.toString());
       return false;
     } on ShellException catch (shellException) {
       await logger.file(
-          LogTypeTag.ERROR, 'Path appending failed - Shell Exception');
-      await logger.file(LogTypeTag.ERROR, shellException.message.toString());
+          LogTypeTag.error, 'Path appending failed - Shell Exception');
+      await logger.file(LogTypeTag.error, shellException.message.toString());
       return false;
     } on FileSystemException catch (fileException) {
       await logger.file(
-          LogTypeTag.ERROR, 'Path appending failed - File System Exception');
-      await logger.file(LogTypeTag.ERROR, fileException.message.toString());
+          LogTypeTag.error, 'Path appending failed - File System Exception');
+      await logger.file(LogTypeTag.error, fileException.message.toString());
       return false;
     } catch (e) {
-      await logger.file(LogTypeTag.ERROR, 'Path appending failed - Exception');
-      await logger.file(LogTypeTag.ERROR, e.toString());
+      await logger.file(LogTypeTag.error, 'Path appending failed - Exception');
+      await logger.file(LogTypeTag.error, e.toString());
       return false;
     }
   }
 
   /// Else log a warning stating path was not provided.
   else {
-    await logger.file(LogTypeTag.WARNING, 'Path was not provided');
+    await logger.file(LogTypeTag.warning, 'Path was not provided');
     return false;
   }
 }
@@ -99,13 +99,13 @@ Future<void> path_download(String? scriptLink, String? script,
       if (response.statusCode == 200) {
         await File(pathDir.path + script!).writeAsBytes(response.bodyBytes);
       } else {
-        await logger.file(LogTypeTag.ERROR,
+        await logger.file(LogTypeTag.error,
             'Response code is ${response.statusCode} for downloading script.');
       }
     });
   } on FileSystemException catch (fileException) {
-    await logger.file(LogTypeTag.ERROR, fileException.message.toString());
+    await logger.file(LogTypeTag.error, fileException.message.toString());
   } catch (e) {
-    await logger.file(LogTypeTag.ERROR, 'Exception : ${e.toString()}');
+    await logger.file(LogTypeTag.error, 'Exception : ${e.toString()}');
   }
 }

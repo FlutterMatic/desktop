@@ -82,12 +82,12 @@ Future<ADBBinInfo?> _getADBBinInfo() async {
 
   /// On [ShellException], Catch the error data to the logs file.
   on ShellException catch (shellException) {
-    await logger.file(LogTypeTag.ERROR, shellException.message);
+    await logger.file(LogTypeTag.error, shellException.message);
   }
 
   /// On any other error, Catch the error data to the logs file.
   catch (err) {
-    await logger.file(LogTypeTag.ERROR, err.toString());
+    await logger.file(LogTypeTag.error, err.toString());
   }
   return null;
 }

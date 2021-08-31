@@ -37,9 +37,8 @@ class GitNotifier extends ChangeNotifier {
       notifyListeners();
       String? gitPath = await which('git');
       if (gitPath == null) {
-        await logger.file(
-            LogTypeTag.WARNING, 'Git not installed in the system.');
-        await logger.file(LogTypeTag.INFO, 'Downloading Git');
+        await logger.file(LogTypeTag.warning, 'Git not installed in the system.');
+        await logger.file(LogTypeTag.info, 'Downloading Git');
         if (Platform.isWindows) {
           /// Application supporting Directory
           http.Response response = await http.get(Uri.parse(api!.data!['git']));
@@ -51,8 +50,7 @@ class GitNotifier extends ChangeNotifier {
               ),
             );
             gitData.data!['assets'].forEach((dynamic asset) {
-              if (asset['content_type'] == 'application/x-bzip2' &&
-                  asset['name'].contains('64-bit.')) {
+              if (asset['content_type'] == 'application/x-bzip2' && asset['name'].contains('64-bit.')) {
                 gitDownloadLink = asset['browser_download_url'];
               }
             });
@@ -61,13 +59,13 @@ class GitNotifier extends ChangeNotifier {
           }
 
           /// Check for git Directory to extract Git files
-          bool gitDir = await checkDir('C:\\fluttermatic', subDirName: 'git');
+          // bool gitDir = await checkDir('C:\\fluttermatic', subDirName: 'git');
 
           /// If [gitDir] is false, then create a temporary directory.
-          if (!gitDir) {
-            await Directory('C:\\fluttermatic\\git').create(recursive: true);
-            await logger.file(LogTypeTag.INFO, 'Created git directory.');
-          }
+          // if (!gitDir) {
+          //   await Directory('C:\\fluttermatic\\git').create(recursive: true);
+          //   await logger.file(LogTypeTag.info, 'Created git directory.');
+          // }
           _progress = Progress.downloading;
           notifyListeners();
 
@@ -75,7 +73,7 @@ class GitNotifier extends ChangeNotifier {
           await context.read<DownloadNotifier>().downloadFile(
                 gitDownloadLink!,
                 'git.tar.bz2',
-                dir.path + '\\tmp\\',
+                dir.path + '\\tmp',
               );
           _progress = Progress.extracting;
           notifyListeners();
@@ -86,26 +84,22 @@ class GitNotifier extends ChangeNotifier {
             'C:\\fluttermatic\\git',
           );
           if (gitExtracted) {
-            await logger.file(
-                LogTypeTag.INFO, 'Git extraction was successfull');
+            await logger.file(LogTypeTag.info, 'Git extraction was successfull');
           } else {
-            await logger.file(LogTypeTag.ERROR, 'Git extraction failed.');
+            await logger.file(LogTypeTag.error, 'Git extraction failed.');
           }
 
           /// Appending path to env
-          bool isGitPathSet =
-              await setPath('C:\\fluttermatic\\git\\bin', dir.path);
+          bool isGitPathSet = await setPath('C:\\fluttermatic\\git\\bin', dir.path);
           if (isGitPathSet) {
-            await SharedPref()
-                .prefs
-                .setString('Git_path', 'C:\\fluttermatic\\git\\bin');
+            await SharedPref().prefs.setString('Git_path', 'C:\\fluttermatic\\git\\bin');
             _progress = Progress.done;
             notifyListeners();
-            await logger.file(LogTypeTag.INFO, 'Git set to path');
+            await logger.file(LogTypeTag.info, 'Git set to path');
           } else {
             _progress = Progress.failed;
             notifyListeners();
-            await logger.file(LogTypeTag.ERROR, 'Git set to path failed');
+            await logger.file(LogTypeTag.error, 'Git set to path failed');
           }
         }
 
@@ -125,39 +119,37 @@ class GitNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version information.
-      else if (!SharedPref().prefs.containsKey('Git_path') ||
-          !SharedPref().prefs.containsKey('Git_version')) {
+      else if (!SharedPref().prefs.containsKey('Git_path') || !SharedPref().prefs.containsKey('Git_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.INFO, 'Git found at - $gitPath');
+        await logger.file(LogTypeTag.info, 'Git found at - $gitPath');
         await SharedPref().prefs.setString('Git_path', gitPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
-        await logger.file(LogTypeTag.INFO, 'Git version : ${versions.git}');
+        await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
         await SharedPref().prefs.setString('Git_version', versions.git!);
         _progress = Progress.done;
         notifyListeners();
       } else {
-        await logger.file(
-            LogTypeTag.INFO, 'Loading git details from shared preferences');
+        await logger.file(LogTypeTag.info, 'Loading git details from shared preferences');
         gitPath = SharedPref().prefs.getString('Git_path');
-        await logger.file(LogTypeTag.INFO, 'Git found at - $gitPath');
+        await logger.file(LogTypeTag.info, 'Git found at - $gitPath');
         versions.git = SharedPref().prefs.getString('Git_version');
-        await logger.file(LogTypeTag.INFO, 'Git version : ${versions.git}');
+        await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
         _progress = Progress.done;
         notifyListeners();
       }
     } on ShellException catch (shellException) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.ERROR, shellException.message);
+      await logger.file(LogTypeTag.error, shellException.message);
     } catch (err) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.ERROR, err.toString());
+      await logger.file(LogTypeTag.error, err.toString());
     }
   }
 }

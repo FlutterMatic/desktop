@@ -35,7 +35,7 @@ class DownloadNotifier extends ChangeNotifier {
       if (response.statusCode == 200) {
         _progress = Progress.downloading;
         notifyListeners();
-        await logger.file(LogTypeTag.INFO, 'Started downloading $fileName.');
+        await logger.file(LogTypeTag.info, 'Started downloading $fileName.');
         bool wtf = await checkFile(dir + '\\', fileName!);
         if (!wtf) {
           IOSink openFile = File(dir + '\\' + fileName).openWrite();
@@ -56,26 +56,26 @@ class DownloadNotifier extends ChangeNotifier {
             notifyListeners();
             await calculateSpeed(downloadedLength, response.contentLength);
           }
-          await logger.file(LogTypeTag.INFO, 'Flushing the buffer...');
+          await logger.file(LogTypeTag.info, 'Flushing the buffer...');
           await openFile.flush();
-          await logger.file(LogTypeTag.INFO, 'Closing the buffer...');
+          await logger.file(LogTypeTag.info, 'Closing the buffer...');
           await openFile.close();
           dProgress = 0;
           notifyListeners();
-          await logger.file(LogTypeTag.INFO, '$fileName has been downloaded.');
+          await logger.file(LogTypeTag.info, '$fileName has been downloaded.');
         } else {
-          await logger.file(LogTypeTag.INFO, '$fileName already exist.');
+          await logger.file(LogTypeTag.info, '$fileName already exist.');
         }
       } else {
         _progress = Progress.failed;
         notifyListeners();
-        await logger.file(LogTypeTag.ERROR,
+        await logger.file(LogTypeTag.error,
             'Error code while downloading $fileName - ${response.statusCode}');
       }
     } catch (e) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.ERROR, e.toString());
+      await logger.file(LogTypeTag.error, e.toString());
     }
   }
 

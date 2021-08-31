@@ -47,14 +47,14 @@ class FlutterNotifier extends ChangeNotifier {
         /// Application supporting Directory
         Directory dir = await getApplicationSupportDirectory();
         // value = 'Flutter not found';
-        await logger.file(LogTypeTag.WARNING, 'Flutter-SDK not found');
+        await logger.file(LogTypeTag.warning, 'Flutter-SDK not found');
         // value = 'Downloading flutter';
-        await logger.file(LogTypeTag.INFO, 'Downloading Flutter-SDK');
+        await logger.file(LogTypeTag.info, 'Downloading Flutter-SDK');
 
         bool fZip = await checkFile(dir.path + '\\tmp', 'flutter.$archiveType');
         if (fZip) {
           await logger.file(
-              LogTypeTag.INFO, 'Deleting old Flutter-SDK archive.');
+              LogTypeTag.info, 'Deleting old Flutter-SDK archive.');
           await File(dir.path + '\\tmp\\flutter.$archiveType')
               .delete(recursive: true);
         }
@@ -87,24 +87,24 @@ class FlutterNotifier extends ChangeNotifier {
         if (extracted) {
           // value = 'Extracted Flutter-SDK';
           await logger.file(
-              LogTypeTag.INFO, 'Flutter-SDK extraction was successfull');
+              LogTypeTag.info, 'Flutter-SDK extraction was successfull');
         } else {
           // value = 'Extracting Flutter-SDK failed';
           _progress = Progress.failed;
           notifyListeners();
-          await logger.file(LogTypeTag.ERROR, 'Flutter-SDK extraction failed.');
+          await logger.file(LogTypeTag.error, 'Flutter-SDK extraction failed.');
         }
 
         /// Appending path to env
         bool isPathSet =
             await setPath('C:\\fluttermatic\\flutter\\bin', dir.path);
         if (isPathSet) {
-          await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
+          await logger.file(LogTypeTag.info, 'Flutter-SDK set to path');
           await SharedPref()
               .prefs
               .setString('Flutter_path', 'C:\\fluttermatic\\flutter\\bin');
         } else {
-          await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
+          await logger.file(LogTypeTag.error, 'Flutter-SDK set to path failed');
         }
         _progress = Progress.done;
         notifyListeners();
@@ -118,7 +118,7 @@ class FlutterNotifier extends ChangeNotifier {
         await SharedPref().prefs.setString('Flutter_path', flutterPath);
         // value = 'Flutter-SDK found';
         await logger.file(
-            LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
+            LogTypeTag.info, 'Flutter-SDK found at - $flutterPath');
 
         /// Sample output(for reference)
         /// $ flutter --version
@@ -131,14 +131,14 @@ class FlutterNotifier extends ChangeNotifier {
         flutterVersion = await getFlutterBinVersion();
         versions.flutter = flutterVersion.toString();
         await logger.file(
-            LogTypeTag.INFO, 'Flutter version : ${versions.flutter}');
+            LogTypeTag.info, 'Flutter version : ${versions.flutter}');
         await SharedPref()
             .prefs
             .setString('Flutter_version', versions.flutter!);
         await Future<dynamic>.delayed(const Duration(seconds: 2));
         versions.channel = await getFlutterBinChannel();
         await logger.file(
-            LogTypeTag.INFO, 'Flutter channel : ${versions.channel}');
+            LogTypeTag.info, 'Flutter channel : ${versions.channel}');
         await SharedPref()
             .prefs
             .setString('Flutter_channel', versions.channel!);
@@ -146,16 +146,16 @@ class FlutterNotifier extends ChangeNotifier {
         notifyListeners();
       } else {
         await logger.file(
-            LogTypeTag.INFO, 'Loading flutter details from shared preferences');
+            LogTypeTag.info, 'Loading flutter details from shared preferences');
         flutterPath = SharedPref().prefs.getString('Flutter_path');
         await logger.file(
-            LogTypeTag.INFO, 'Flutter-SDK found at - $flutterPath');
+            LogTypeTag.info, 'Flutter-SDK found at - $flutterPath');
         versions.flutter = SharedPref().prefs.getString('Flutter_version');
         await logger.file(
-            LogTypeTag.INFO, 'Flutter version : ${versions.flutter}');
+            LogTypeTag.info, 'Flutter version : ${versions.flutter}');
         versions.channel = SharedPref().prefs.getString('Flutter_vhannel');
         await logger.file(
-            LogTypeTag.INFO, 'Flutter channel : ${versions.channel}');
+            LogTypeTag.info, 'Flutter channel : ${versions.channel}');
         _progress = Progress.done;
         notifyListeners();
       }
@@ -163,12 +163,12 @@ class FlutterNotifier extends ChangeNotifier {
       console.log(shellException.message);
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.ERROR, shellException.message);
+      await logger.file(LogTypeTag.error, shellException.message);
     } catch (err) {
       console.log(err.toString());
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.ERROR, err.toString());
+      await logger.file(LogTypeTag.error, err.toString());
     }
   }
 }

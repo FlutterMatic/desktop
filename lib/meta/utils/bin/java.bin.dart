@@ -68,8 +68,7 @@ Future<JavaBinInfo?> _getJavaBinInfo() async {
   // Java(TM) SE Runtime Environment (build 1.8.0_291-b10)
   // Java HotSpot(TM) 64-Bit Server VM (build 25.291-b10, mixed mode)
   try {
-    List<ProcessResult> javaResults =
-        await shell.run('java -version');
+    List<ProcessResult> javaResults = await shell.run('java -version');
 
     /// `java -version` outputs to stderr, so we need to check the first line.
     resultOutput = javaResults.first.stderr.toString().trim();
@@ -86,12 +85,12 @@ Future<JavaBinInfo?> _getJavaBinInfo() async {
 
   /// On [ShellException], Catch the error data to the logs file.
   on ShellException catch (shellException) {
-    await logger.file(LogTypeTag.ERROR, shellException.message);
+    await logger.file(LogTypeTag.error, shellException.message);
   }
 
   /// On any other error, Catch the error data to the logs file.
   catch (err) {
-    await logger.file(LogTypeTag.ERROR, err.toString());
+    await logger.file(LogTypeTag.error, err.toString());
   }
   return null;
 }

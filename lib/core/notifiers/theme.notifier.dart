@@ -28,13 +28,13 @@ class ThemeChangeNotifier with ChangeNotifier {
   set darkTheme(bool value) {
     _isDarkTheme = value;
     notifyListeners();
-    logger.file(LogTypeTag.INFO, 'Dark theme setter set to $value.');
+    logger.file(LogTypeTag.info, 'Dark theme setter set to $value.');
   }
 
   Future<void> updateTheme(bool isDarkTheme) async {
     _isDarkTheme = isDarkTheme;
     notifyListeners();
-    await logger.file(LogTypeTag.INFO, 'Dark theme updated to $isDarkTheme.');
+    await logger.file(LogTypeTag.info, 'Dark theme updated to $isDarkTheme.');
     await SharedPref().prefs.setBool('DARK_THEME', isDarkTheme);
   }
 }

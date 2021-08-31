@@ -9,7 +9,7 @@ class ConnectionNotifier with ChangeNotifier {
 
   bool _isOnline = false;
   bool get isOnline => _isOnline;
-  
+
   /// Will start monitoring the user network connection making
   /// sure to notify any connection changes.
   Future<void> startMonitoring() async {
@@ -39,10 +39,10 @@ class ConnectionNotifier with ChangeNotifier {
         notifyListeners();
       }
     } on PlatformException catch (platformException) {
-      await logger.file(LogTypeTag.ERROR,
+      await logger.file(LogTypeTag.error,
           'PlatformException : ' + platformException.message.toString());
     } catch (e) {
-      await logger.file(LogTypeTag.ERROR, e.toString());
+      await logger.file(LogTypeTag.error, e.toString());
     }
   }
 
@@ -56,11 +56,11 @@ class ConnectionNotifier with ChangeNotifier {
         return false;
       }
     } on SocketException catch (socketException) {
-      await logger.file(LogTypeTag.ERROR,
+      await logger.file(LogTypeTag.error,
           'SocketException : ' + socketException.message.toString());
       return false;
     } catch (e) {
-      await logger.file(LogTypeTag.ERROR, e.toString());
+      await logger.file(LogTypeTag.error, e.toString());
       return false;
     }
   }

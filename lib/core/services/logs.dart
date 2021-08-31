@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 
 enum LogTypeTag {
-  INFO,
-  WARNING,
-  ERROR,
+  info,
+  warning,
+  error,
 }
 
 Logger logger = Logger();
@@ -48,21 +48,21 @@ class Logger {
         '[${_now.hour}:${_now.minute}:${_now.second}] - $message\n';
     try {
       switch (tag) {
-        case LogTypeTag.INFO:
+        case LogTypeTag.info:
           if (kDebugMode || kProfileMode) console.log('INFORMATION $_baseData');
           await file.writeAsString(
             '''INFORMATION $_baseData''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
-        case LogTypeTag.WARNING:
+        case LogTypeTag.warning:
           if (kDebugMode || kProfileMode) console.log('WARNING $_baseData');
           await file.writeAsString(
             '''WARNING $_baseData[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
-        case LogTypeTag.ERROR:
+        case LogTypeTag.error:
           if (kDebugMode || kProfileMode) console.log('ERROR $_baseData');
           await file.writeAsString(
             '''ERROR $_baseData[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',

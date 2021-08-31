@@ -82,7 +82,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                     await _pref.setString('projects_path', directoryPath);
                   } else {
                     await logger.file(
-                        LogTypeTag.WARNING, 'Path was not chosen');
+                        LogTypeTag.warning, 'Path was not chosen');
                   }
                 },
               ),

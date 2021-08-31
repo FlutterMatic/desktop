@@ -26,8 +26,8 @@ class ADBNotifier extends ChangeNotifier {
       String? adbPath = await which('adb');
       if (adbPath == null) {
         await logger.file(
-            LogTypeTag.WARNING, 'ADB not installed in the system.');
-        await logger.file(LogTypeTag.INFO, 'Downloading Platform-tools');
+            LogTypeTag.warning, 'ADB not installed in the system.');
+        await logger.file(LogTypeTag.info, 'Downloading Platform-tools');
 
         /// Downloading ADB.
         await context.read<DownloadNotifier>().downloadFile(
@@ -42,36 +42,36 @@ class ADBNotifier extends ChangeNotifier {
           'C:\\fluttermatic\\',
         );
         if (adbExtracted) {
-          await logger.file(LogTypeTag.INFO, 'ADB extraction was successfull');
+          await logger.file(LogTypeTag.info, 'ADB extraction was successfull');
         } else {
-          await logger.file(LogTypeTag.ERROR, 'ADB extraction failed.');
+          await logger.file(LogTypeTag.error, 'ADB extraction failed.');
         }
 
         /// Appending path to env
         bool isADBPathSet =
             await setPath('C:\\fluttermatic\\platform-tools', dir.path);
         if (isADBPathSet) {
-          await logger.file(LogTypeTag.INFO, 'Flutter-SDK set to path');
+          await logger.file(LogTypeTag.info, 'Flutter-SDK set to path');
         } else {
-          await logger.file(LogTypeTag.ERROR, 'Flutter-SDK set to path failed');
+          await logger.file(LogTypeTag.error, 'Flutter-SDK set to path failed');
         }
       } else {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.INFO, 'ADB found at - $adbPath');
+        await logger.file(LogTypeTag.info, 'ADB found at - $adbPath');
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         adbVersion = await getADBBinVersion();
         versions.adb = adbVersion.toString();
-        await logger.file(LogTypeTag.INFO, 'ADB version : ${versions.adb}');
+        await logger.file(LogTypeTag.info, 'ADB version : ${versions.adb}');
       }
     } on ShellException catch (shellException) {
       console.log(shellException.message);
-      await logger.file(LogTypeTag.ERROR, shellException.message);
+      await logger.file(LogTypeTag.error, shellException.message);
     } catch (err) {
       console.log(err.toString());
-      await logger.file(LogTypeTag.ERROR, err.toString());
+      await logger.file(LogTypeTag.error, err.toString());
     }
   }
 }

@@ -18,18 +18,18 @@ Future<bool> checkDir(String dirPath, {required String subDirName}) async {
     await for (FileSystemEntity entity in dir.list(recursive: true)) {
       if (entity.path.endsWith(subDirName)) {
         await logger.file(
-            LogTypeTag.INFO, '$subDirName directory found at ${entity.path}');
+            LogTypeTag.info, '$subDirName directory found at ${entity.path}');
         return true;
       }
     }
-    await logger.file(LogTypeTag.INFO, '$subDirName directory not found.');
+    await logger.file(LogTypeTag.info, '$subDirName directory not found.');
     return false;
   } on FileSystemException catch (fileException, s) {
-    await logger.file(LogTypeTag.ERROR, fileException.message.toString(),
+    await logger.file(LogTypeTag.error, fileException.message.toString(),
         stackTraces: s);
     return false;
   } catch (e, s) {
-    await logger.file(LogTypeTag.ERROR, e.toString(), stackTraces: s);
+    await logger.file(LogTypeTag.error, e.toString(), stackTraces: s);
     return false;
   }
 }

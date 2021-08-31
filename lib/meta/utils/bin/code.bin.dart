@@ -22,7 +22,7 @@ abstract class VSCBinInfo {
   /// First line is sufficient
   static Future<VSCBinInfo?> parseVersionOutput(String? resultOutput) async {
     if (resultOutput == null) {
-      await logger.file(LogTypeTag.ERROR, 'VSCode result : $resultOutput');
+      await logger.file(LogTypeTag.error, 'VSCode result : $resultOutput');
       return null;
     }
     Version? vscVersion;
@@ -68,12 +68,12 @@ Future<VSCBinInfo?> _getVSCBinInfo() async {
 
   /// On [ShellException], Catch the error data to the logs file.
   on ShellException catch (shellException) {
-    await logger.file(LogTypeTag.ERROR, shellException.message);
+    await logger.file(LogTypeTag.error, shellException.message);
   }
 
   /// On any other error, Catch the error data to the logs file.
   catch (err) {
-    await logger.file(LogTypeTag.ERROR, err.toString());
+    await logger.file(LogTypeTag.error, err.toString());
   }
   return null;
 }

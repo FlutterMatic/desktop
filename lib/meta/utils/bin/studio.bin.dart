@@ -26,10 +26,10 @@ abstract class AndroidStudioBinInfo {
       return AndroidStudioBinInfoImpl(version: studioVersion);
     } on FormatException catch (formatException) {
       logger.file(
-          LogTypeTag.ERROR, 'Format Exception : ${formatException.toString()}');
+          LogTypeTag.error, 'Format Exception : ${formatException.toString()}');
       return null;
     } catch (e) {
-      logger.file(LogTypeTag.ERROR, e.toString());
+      logger.file(LogTypeTag.error, e.toString());
       return null;
     }
   }
@@ -64,12 +64,12 @@ Future<AndroidStudioBinInfo?> _getAndroidStudioBinInfo() async {
 
   /// On [ShellException], Catch the error data to the logs file.
   on ShellException catch (shellException) {
-    await logger.file(LogTypeTag.ERROR, shellException.message);
+    await logger.file(LogTypeTag.error, shellException.message);
   }
 
   /// On any other error, Catch the error data to the logs file.
   catch (err) {
-    await logger.file(LogTypeTag.ERROR, err.toString());
+    await logger.file(LogTypeTag.error, err.toString());
   }
   return null;
 }

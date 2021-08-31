@@ -35,8 +35,8 @@ class VSCodeNotifier extends ChangeNotifier {
       String? vscPath = await which('code');
       if (vscPath == null) {
         await logger.file(
-            LogTypeTag.WARNING, 'VS Code not installed in the system.');
-        await logger.file(LogTypeTag.INFO, 'Downloading VS Code');
+            LogTypeTag.warning, 'VS Code not installed in the system.');
+        await logger.file(LogTypeTag.info, 'Downloading VS Code');
 
         /// Check for code Directory to extract files
         bool codeDir = await checkDir('C:\\fluttermatic\\', subDirName: 'code');
@@ -44,7 +44,7 @@ class VSCodeNotifier extends ChangeNotifier {
         /// If tmpDir is false, then create a temporary directory.
         if (!codeDir) {
           await Directory('C:\\fluttermatic\\code').create(recursive: true);
-          await logger.file(LogTypeTag.INFO,
+          await logger.file(LogTypeTag.info,
               'Created code directory for extracting vscode files');
         }
 
@@ -78,9 +78,9 @@ class VSCodeNotifier extends ChangeNotifier {
         );
         if (vscExtracted) {
           await logger.file(
-              LogTypeTag.INFO, 'VSCode extraction was successfull');
+              LogTypeTag.info, 'VSCode extraction was successfull');
         } else {
-          await logger.file(LogTypeTag.ERROR, 'VSCode extraction failed.');
+          await logger.file(LogTypeTag.error, 'VSCode extraction failed.');
           _progress = Progress.failed;
           notifyListeners();
         }
@@ -92,11 +92,11 @@ class VSCodeNotifier extends ChangeNotifier {
           await SharedPref()
               .prefs
               .setString('VSC_path', 'C:\\fluttermatic\\code\\bin');
-          await logger.file(LogTypeTag.INFO, 'VSCode set to path');
+          await logger.file(LogTypeTag.info, 'VSCode set to path');
           _progress = Progress.done;
           notifyListeners();
         } else {
-          await logger.file(LogTypeTag.ERROR, 'VSCode set to path failed');
+          await logger.file(LogTypeTag.error, 'VSCode set to path failed');
           _progress = Progress.failed;
           notifyListeners();
         }
@@ -104,7 +104,7 @@ class VSCodeNotifier extends ChangeNotifier {
           !SharedPref().prefs.containsKey('VSC_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.INFO, 'VS Code found at - $vscPath');
+        await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
         await SharedPref().prefs.setString('VSC_path', vscPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
@@ -112,28 +112,28 @@ class VSCodeNotifier extends ChangeNotifier {
         vscVersion = await getVSCBinVersion();
         versions.vsCode = vscVersion.toString();
         await logger.file(
-            LogTypeTag.INFO, 'VS Code version : ${versions.vsCode}');
+            LogTypeTag.info, 'VS Code version : ${versions.vsCode}');
         await SharedPref().prefs.setString('VSC_version', versions.vsCode!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
-            LogTypeTag.INFO, 'Loading VS Code details from shared preferences');
+            LogTypeTag.info, 'Loading VS Code details from shared preferences');
         vscPath = SharedPref().prefs.getString('VSC_path');
-        await logger.file(LogTypeTag.INFO, 'VS Code found at - $vscPath');
+        await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
         versions.vsCode = SharedPref().prefs.getString('VSC_version');
-        await logger.file(LogTypeTag.INFO, 'VS Code version : ${versions.git}');
+        await logger.file(LogTypeTag.info, 'VS Code version : ${versions.git}');
         _progress = Progress.done;
         notifyListeners();
       }
     } on ShellException catch (shellException) {
       console.log(shellException.message);
-      await logger.file(LogTypeTag.ERROR, shellException.message);
+      await logger.file(LogTypeTag.error, shellException.message);
       _progress = Progress.failed;
       notifyListeners();
     } catch (err) {
       console.log(err.toString());
-      await logger.file(LogTypeTag.ERROR, err.toString());
+      await logger.file(LogTypeTag.error, err.toString());
       _progress = Progress.failed;
       notifyListeners();
     }

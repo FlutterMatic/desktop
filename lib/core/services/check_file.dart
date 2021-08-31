@@ -17,18 +17,18 @@ Future<bool> checkFile(String dirPath, String fileName) async {
   try {
     await for (FileSystemEntity entity in dir.list(recursive: true)) {
       if (entity.path.endsWith(fileName)) {
-        await logger.file(LogTypeTag.INFO,
+        await logger.file(LogTypeTag.info,
             '$fileName is at ${entity.path.replaceAll(fileName, '')}');
         return true;
       }
     }
-    await logger.file(LogTypeTag.INFO, '$fileName file not found.');
+    await logger.file(LogTypeTag.info, '$fileName file not found.');
     return false;
   } on FileSystemException catch (fileException) {
-    await logger.file(LogTypeTag.ERROR, fileException.message.toString());
+    await logger.file(LogTypeTag.error, fileException.message.toString());
     return false;
   } catch (e) {
-    await logger.file(LogTypeTag.ERROR, e.toString());
+    await logger.file(LogTypeTag.error, e.toString());
     return false;
   }
 }
@@ -68,18 +68,18 @@ Future<String?> getFilePath(String dirPath, String fileName) async {
   try {
     await for (FileSystemEntity entity in dir.list(recursive: true)) {
       if (entity.path.contains(fileName)) {
-        await logger.file(LogTypeTag.INFO,
+        await logger.file(LogTypeTag.info,
             '$fileName found at ${entity.path.replaceAll(fileName, '')}');
         return entity.path.replaceAll(fileName, '');
       }
     }
-    await logger.file(LogTypeTag.INFO, '$fileName file not found.');
+    await logger.file(LogTypeTag.info, '$fileName file not found.');
     return null;
   } on FileSystemException catch (fileException) {
-    await logger.file(LogTypeTag.ERROR, fileException.message.toString());
+    await logger.file(LogTypeTag.error, fileException.message.toString());
     return null;
   } catch (e) {
-    await logger.file(LogTypeTag.ERROR, e.toString());
+    await logger.file(LogTypeTag.error, e.toString());
     return null;
   }
 }

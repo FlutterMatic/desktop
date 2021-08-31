@@ -11,7 +11,7 @@ class FlutterMaticAPINotifier with ChangeNotifier {
   Progress _progress = Progress.none;
   Progress get progress => _progress;
   Future<void> fetchAPIData() async {
-    await logger.file(LogTypeTag.INFO, 'Fetching Fluttermatic API data');
+    await logger.file(LogTypeTag.info, 'Fetching Fluttermatic API data');
     _progress = Progress.downloading;
     notifyListeners();
     http.Response response = await http

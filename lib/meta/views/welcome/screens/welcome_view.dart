@@ -312,7 +312,7 @@ class _WelcomePageState extends State<WelcomePage> {
             if (kReleaseMode) {
               await SharedPref().prefs.setBool('All_Checked', true);
               await SharedPref().prefs.remove('Tab');
-              await logger.file(LogTypeTag.INFO,
+              await logger.file(LogTypeTag.info,
                   'Restarting device to continue Flutter setup');
               await shell.run('shutdown /r /f /t $_restartSeconds');
             } else {

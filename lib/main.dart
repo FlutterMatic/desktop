@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
     Directory dir = await getApplicationSupportDirectory();
     // Platform.environment.forEach((String k, String v) {
     //   if (k.toLowerCase() == 'path') {
-    //     logger.file(LogTypeTag.INFO, v);
+    //     logger.file(LogTypeTag.info, v);
     //   }
     // });
 
@@ -109,13 +109,13 @@ class _MyAppState extends State<MyApp> {
     /// If tmpDir is false, then create a temporary directory.
     if (!tmpDir) {
       await Directory('${dir.path}\\tmp').create();
-      await logger.file(LogTypeTag.INFO, 'Created tmp directory.');
+      await logger.file(LogTypeTag.info, 'Created tmp directory.');
     }
 
     /// If appDir is false, then create a app directory.
     if (!appDir) {
       await Directory('C:\\fluttermatic').create();
-      await logger.file(LogTypeTag.INFO, 'Created fluttermatic directory.');
+      await logger.file(LogTypeTag.info, 'Created fluttermatic directory.');
     }
     setState(() {
       isChecking = false;
