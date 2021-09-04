@@ -67,7 +67,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Search Projects'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           if (!_loading && projs.isNotEmpty)
             CustomTextField(
               hintText: 'Search',
@@ -85,7 +85,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                 }
               },
             ),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           // Loading when finding initial projects
           if (_loading)
             Center(child: SizedBox(height: 80, width: 80, child: Spinner())),
@@ -98,7 +98,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                     'No Projects Found',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 10),
+                  VSeparators.small(),
                   SizedBox(
                     width: 400,
                     child: Text(
@@ -108,7 +108,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                           color: customTheme.textTheme.bodyText1!.color),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  VSeparators.normal(),
                   RectangleButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -125,9 +125,9 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  VSeparators.large(),
                   currentDirectoryTile(),
-                  const SizedBox(height: 10),
+                  VSeparators.small(),
                 ],
               ),
             )
@@ -137,12 +137,12 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
               child: Column(
                 children: <Widget>[
                   const Icon(Icons.search_rounded),
-                  const SizedBox(height: 15),
+                  VSeparators.normal(),
                   const Text(
                     'Type Search',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 10),
+                  VSeparators.small(),
                   SizedBox(
                     width: 400,
                     child: Text(
@@ -152,7 +152,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                           color: customTheme.textTheme.bodyText1!.color),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  VSeparators.small(),
                 ],
               ),
             ),
@@ -162,12 +162,12 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
               child: Column(
                 children: <Widget>[
                   const Icon(Icons.error),
-                  const SizedBox(height: 15),
+                  VSeparators.normal(),
                   const Text(
                     'No Matches',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 10),
+                  VSeparators.small(),
                   SizedBox(
                     width: 400,
                     child: Text(
@@ -177,9 +177,9 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
                           color: customTheme.textTheme.bodyText1!.color),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  VSeparators.large(),
                   currentDirectoryTile(),
-                  const SizedBox(height: 10),
+                  VSeparators.small(),
                 ],
               ),
             ),
@@ -230,7 +230,7 @@ Widget _searchItem(BuildContext context, String name, String? modDate) {
         child: Row(
           children: <Widget>[
             const Icon(Icons.folder_rounded, color: kGreenColor),
-            const SizedBox(width: 10),
+            HSeparators.small(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +257,7 @@ Widget _searchItem(BuildContext context, String name, String? modDate) {
                 ],
               ),
             ),
-            const SizedBox(width: 10),
+            HSeparators.small(),
             Icon(Icons.arrow_forward_ios_rounded,
                 size: 15, color: customTheme.iconTheme.color),
           ],

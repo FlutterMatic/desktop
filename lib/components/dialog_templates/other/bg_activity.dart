@@ -40,12 +40,12 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Background Activity'),
-          const SizedBox(height: 30),
+          VSeparators.xLarge(),
           const Text(
             'Activity',
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           if (_activities.isEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 5),
@@ -67,7 +67,7 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
                 ),
               ),
             ),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,

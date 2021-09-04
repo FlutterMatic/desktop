@@ -26,7 +26,8 @@ Widget installJava(
           InstallContent.java,
           iconHeight: 40,
         ),
-        const SizedBox(height: 50),
+        VSeparators.large(),
+        VSeparators.normal(),
         if (isInstalling && !doneInstalling)
           Padding(
             padding: const EdgeInsets.only(top: 20),
@@ -93,14 +94,14 @@ Widget installJava(
             title: Installed.java,
             message: InstalledContent.java,
           ),
-        const SizedBox(height: 30),
+        VSeparators.xLarge(),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,
           progress: javaNotifier.progress,
           toolName: 'Java',
         ),
-        const SizedBox(height: 20),
+        VSeparators.large(),
         if (javaNotifier.progress == Progress.none)
           TextButton(
             onPressed: () {
@@ -111,18 +112,18 @@ Widget installJava(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const DialogHeader(title: 'Are you sure?'),
-                      const SizedBox(height: 10),
+                      VSeparators.small(),
                       informationWidget(
                         'We recommend that you installed Java. This will help eliminate some issues you might face in the future with Flutter.',
                       ),
-                      const SizedBox(height: 5),
+                      VSeparators.xSmall(),
                       infoWidget(context,
                           'You will still be able to install Java later if you change your mind.'),
-                      const SizedBox(height: 20),
+                      VSeparators.large(),
                       const Text('Tool Skipping:'),
-                      const SizedBox(height: 15),
+                      VSeparators.normal(),
                       BulletPoint('Java 8 by Oracle', 2),
-                      const SizedBox(height: 20),
+                      VSeparators.large(),
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -136,7 +137,7 @@ Widget installJava(
                               },
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          HSeparators.small(),
                           Expanded(
                             child: RectangleButton(
                               child: const Text('Cancel',

@@ -42,7 +42,6 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initDataFetch() async {
     await SpaceCheck().checkSpace();
 
-
     /// Application supporting Directory
     Directory dir = await getApplicationSupportDirectory();
     // Platform.environment.forEach((String k, String v) {
@@ -56,7 +55,9 @@ class _MyAppState extends State<MyApp> {
     bool appDir = await Directory('C:\\fluttermatic').exists();
 
     await SharedPref.init();
-    
+
+    await SharedPref().prefs.clear();
+
     appVersion = const String.fromEnvironment('current-version');
     await SharedPref().prefs.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');

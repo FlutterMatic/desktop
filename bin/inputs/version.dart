@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:pub_semver/pub_semver.dart';
 import '../utils/app_data.dart';
 import '../outputs/prints.dart';
-import '../utils/spinner.dart';
 
 /// Function that returns an integer from the user input.
 /// This function is used for version management.

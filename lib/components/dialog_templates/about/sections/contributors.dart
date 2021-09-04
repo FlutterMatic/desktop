@@ -1,15 +1,16 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/secret.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:manager/secret.dart';
 import 'dart:convert';
 
 bool _failedRequest = false;
 
 final List<ContributorTile> _contributors = <ContributorTile>[
+  // TODO(@yahu1031): Fix caching problems.
   const ContributorTile('56755783'), // Ziyad Farhan
   const ContributorTile('35523357'), // Minnu
 ];
@@ -23,37 +24,34 @@ class ContributorsAboutSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text(
-          'Contributors',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 10),
+        const Text('Contributors'),
+        VSeparators.small(),
         if (_failedRequest)
           RoundContainer(
             color: customTheme.focusColor,
             width: double.infinity,
             child: Column(
               children: <Widget>[
-                const SizedBox(height: 5),
+                VSeparators.xSmall(),
                 const Icon(Icons.lock),
-                const SizedBox(height: 15),
+                VSeparators.normal(),
                 const Text(
                   'Reloaded Too Many Times',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 10),
+                VSeparators.small(),
                 const Text(
                   'It seems that you have reloaded this page way too many times. Try again in about an hour.',
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
+                VSeparators.small(),
               ],
             ),
           )
         else
           Column(
               children: _contributors.map((ContributorTile e) => (e)).toList()),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         RoundContainer(
           width: double.infinity,
           color: customTheme.focusColor,
@@ -67,13 +65,13 @@ class ContributorsAboutSection extends StatelessWidget {
                       'Want to contribute?',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    const SizedBox(height: 5),
+                    VSeparators.xSmall(),
                     const Text(
                         'We appreciate people like you to contribute to this project.'),
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
+              HSeparators.small(),
               RectangleButton(
                 hoverColor: customTheme.hoverColor,
                 width: 90,
@@ -165,7 +163,7 @@ class _ContributorTileState extends State<ContributorTile> {
               : Row(
                   children: <Widget>[
                     CircleAvatar(backgroundImage: NetworkImage(_profileURL)),
-                    const SizedBox(width: 10),
+                    HSeparators.small(),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +175,7 @@ class _ContributorTileState extends State<ContributorTile> {
                               color: customTheme.textTheme.bodyText1!.color,
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          VSeparators.xSmall(),
                           Text(
                             'GitHub: ' + _userId,
                             style: TextStyle(

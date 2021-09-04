@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
@@ -10,7 +11,7 @@ class StatusDialog extends StatelessWidget {
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Status'),
-          const SizedBox(height: 25),
+          VSeparators.normal(),
           // TODO: Show the Flutter installed status.
           // installationStatus(
           //   flutterInstalled
@@ -27,7 +28,7 @@ class StatusDialog extends StatelessWidget {
           //   tooltip: 'Flutter',
           //   context: context,
           // ),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           // TODO: Show the Java installed status.
           // installationStatus(
           //   javaInstalled ? InstallationStatus.done : InstallationStatus.error,
@@ -39,7 +40,7 @@ class StatusDialog extends StatelessWidget {
           //   tooltip: 'Java',
           //   context: context,
           // ),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           // TODO: Show the Visual Studio code installed.
           // installationStatus(
           //   vscInstalled ? InstallationStatus.done : InstallationStatus.error,
@@ -51,7 +52,7 @@ class StatusDialog extends StatelessWidget {
           //   tooltip: 'VS Code',
           //   context: context,
           // ),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           // TODO: Show the Android Studio installed status.
           // installationStatus(
           //   studioInstalled
@@ -67,8 +68,8 @@ class StatusDialog extends StatelessWidget {
           //   tooltip: 'Android Studio',
           //   context: context,
           // ),
-          const SizedBox(height: 15),
-// TODO: Show the below widget if one or more of the tools is not installed
+          VSeparators.normal(),
+          // TODO: Show the below widget if one or more of the tools is not installed
           // if (_missingInstalledTools)
           //   Padding(
           //     padding: const EdgeInsets.only(bottom: 15),

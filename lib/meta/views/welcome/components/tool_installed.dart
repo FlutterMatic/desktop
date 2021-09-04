@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
@@ -15,7 +16,7 @@ Widget welcomeToolInstalled(BuildContext context,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         const Icon(Icons.check_rounded, color: Color(0xff40CAFF)),
-        const SizedBox(width: 15),
+        HSeparators.normal(),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +25,7 @@ Widget welcomeToolInstalled(BuildContext context,
                 title,
                 style: const TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              VSeparators.xSmall(),
               Text(
                 message,
                 style: const TextStyle(fontSize: 13),

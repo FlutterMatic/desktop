@@ -16,7 +16,7 @@ class DiscoverSettingsSection extends StatelessWidget {
           'Discover',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         Row(
           children: <Widget>[
             // GitHub
@@ -37,7 +37,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            HSeparators.small(),
             // DartPad
             Expanded(
               child: RectangleButton(
@@ -61,7 +61,7 @@ class DiscoverSettingsSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         Row(
           children: <Widget>[
             // Twitter
@@ -81,7 +81,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            HSeparators.small(),
             // Docs
             Expanded(
               child: RectangleButton(
@@ -103,7 +103,7 @@ class DiscoverSettingsSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         Row(
           children: <Widget>[
             const Expanded(
@@ -111,7 +111,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 'Learn more about FlutterMatic and the people behind it.',
               ),
             ),
-            const SizedBox(width: 15),
+            HSeparators.normal(),
             SquareButton(
               icon: Icon(Icons.info,
                   size: 20, color: customTheme.textTheme.bodyText1!.color),

@@ -22,7 +22,7 @@ Widget installGit(
           Install.git,
           InstallContent.git,
         ),
-        const SizedBox(height: 30),
+        VSeparators.xLarge(),
         if (isInstalling && !doneInstalling)
           Padding(
             padding: const EdgeInsets.only(top: 20),
@@ -83,7 +83,7 @@ Widget installGit(
             title: 'Git Installed',
             message: 'You have successfully installed Git.',
           ),
-        const SizedBox(height: 30),
+        VSeparators.xLarge(),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,

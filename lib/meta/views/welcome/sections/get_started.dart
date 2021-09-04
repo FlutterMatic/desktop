@@ -78,7 +78,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
               InstallContent.welcome,
               iconHeight: 50,
             ),
-            const SizedBox(height: 20),
+            VSeparators.large(),
             if (!snapshot.hasData)
               Column(
                 children: <Widget>[
@@ -92,7 +92,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             else
               infoWidget(context,
                   'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),
-            const SizedBox(height: 20),
+            VSeparators.large(),
             WelcomeButton(
               onInstall: () {},
               onContinue: widget.onContinue,

@@ -117,7 +117,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 : null,
             title: 'Create New Project',
           ),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           Form(
             key: _createProjectFormKey,
             child: Column(
@@ -165,15 +165,15 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(height: 30),
+                VSeparators.xLarge(),
                 Center(child: Spinner(thickness: 3)),
-                const SizedBox(height: 30),
+                VSeparators.xLarge(),
                 const Text(
                   'Creating your new Flutter project. This may take a while.',
                 ),
               ],
             ),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           // Cancel & Next Buttons
           if (_index != 4)
             Row(
@@ -216,11 +216,11 @@ class ProjectCreatedDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const DialogHeader(title: 'Project Created'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           const Text(
               'Your new project has successfully been created. You should be able to open your project and run it!',
               textAlign: TextAlign.center),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,
@@ -234,7 +234,7 @@ class ProjectCreatedDialog extends StatelessWidget {
             },
             child: const Text('Open in Preferred Editor'),
           ),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,

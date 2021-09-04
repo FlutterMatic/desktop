@@ -49,7 +49,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
           'Project Path',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         RoundContainer(
           borderColor: _dirPathError ? kRedColor : Colors.transparent,
           borderWith: 2,
@@ -89,12 +89,12 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        VSeparators.large(),
         const Text(
           'Editor Options',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         MultipleChoice(
           options: <String>[
             'Always open projects in preferred editor',

@@ -28,15 +28,15 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const DialogHeader(title: 'Upgrade Flutter'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           const Text(
             'Keeping Flutter up-to-date is a good idea since it helps with many things including performance improvements, bug fixes and new features.',
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           infoWidget(context,
               'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete.'),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           RectangleButton(
             width: double.infinity,
             color: Colors.blueGrey,

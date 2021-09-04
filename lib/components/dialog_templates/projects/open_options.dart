@@ -14,7 +14,7 @@ class OpenOptionsDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Project Options'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           // Row 1
           Row(
             children: <Widget>[
@@ -28,7 +28,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   // TODO: Open the project in the default editor.
                 },
               ),
-              const SizedBox(width: 10),
+              HSeparators.small(),
               // Open With
               _projectOptionTile(
                 context: context,
@@ -44,7 +44,7 @@ class OpenOptionsDialog extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           // Row 2
           Row(
             children: <Widget>[
@@ -66,12 +66,12 @@ class OpenOptionsDialog extends StatelessWidget {
                         child: Column(
                           children: <Widget>[
                             const DialogHeader(title: 'Couldn\'t Open'),
-                            const SizedBox(height: 20),
+                            VSeparators.large(),
                             Text(
                               'Sorry, for some reason, we couldn\'t open $fileName. Please make sure that this project exists. If this issue continues to happen, then please raise an issue on GitHub.',
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 20),
+                            VSeparators.large(),
                             RectangleButton(
                               onPressed: () => Navigator.pop(context),
                               width: double.infinity,
@@ -89,7 +89,7 @@ class OpenOptionsDialog extends StatelessWidget {
                   }
                 },
               ),
-              const SizedBox(width: 10),
+              HSeparators.small(),
               // Delete Project
               _projectOptionTile(
                 context: context,
@@ -175,7 +175,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Confirm Delete'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           RichText(
             text: TextSpan(
               children: <TextSpan>[
@@ -193,10 +193,10 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           Text('Please type in below "${widget.fName}" to delete this project.',
               textAlign: TextAlign.center),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           CustomTextField(
             readOnly: _loading,
             onChanged: (String val) => setState(() => _confirmInput = val),
@@ -204,7 +204,7 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
           ),
           infoWidget(context,
               'Your input is case-sensitive. Please make sure you type in exactly your project name.'),
-          const SizedBox(height: 10),
+          VSeparators.small(),
           RectangleButton(
             width: double.infinity,
             color: customTheme.errorColor,
@@ -265,7 +265,7 @@ class OpenWithOptionsDialog extends StatelessWidget {
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Open Options'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           // TODO: Show open options.
         ],
       ),

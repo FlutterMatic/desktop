@@ -91,13 +91,13 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Run Flutter Command'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           CustomTextField(
             hintText: 'Type Command',
             readOnly: _loading,
             controller: _commandController,
           ),
-          if (_commandResult != null) const SizedBox(height: 15),
+          if (_commandResult != null) VSeparators.normal(),
           if (_showTypeRequest)
             informationWidget(
               'Please type in a flutter command.',
@@ -127,7 +127,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                 ),
               ),
             ),
-          const SizedBox(height: 15),
+          VSeparators.normal(),
           Row(
             children: <Widget>[
               if (_preferVerbose == null)
@@ -165,7 +165,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                       style: TextStyle(
                           color: customTheme.textTheme.bodyText1!.color!),
                     ),
-                    const SizedBox(width: 5),
+                    HSeparators.xSmall(),
                     const Icon(Icons.play_arrow_rounded, color: kGreenColor),
                   ],
                 ),

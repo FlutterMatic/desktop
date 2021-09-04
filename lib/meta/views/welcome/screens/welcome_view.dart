@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/dialog_templates/about/about_us.dart';
+import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
+import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
-import 'package:manager/meta/views/welcome/screens/client_version.dart';
 import 'package:provider/provider.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -79,7 +79,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 5),
+                      HSeparators.xSmall(),
                       TextButton(
                         onPressed: () {},
                         child: Padding(
@@ -109,8 +109,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         : Icons.dark_mode_outlined,
                   ),
                   onPressed: () {
-                    context.read<ThemeChangeNotifier>().updateTheme(
-                        !context.read<ThemeChangeNotifier>().isDarkTheme);
+                    context.read<ThemeChangeNotifier>().updateTheme(!context.read<ThemeChangeNotifier>().isDarkTheme);
                   },
                 ),
                 HSeparators.xSmall(),
@@ -120,7 +119,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => const ClientVersionDialog(),
+                      builder: (_) => const AboutUsDialog(),
                     );
                   },
                 ),
@@ -143,14 +142,6 @@ class _WelcomePageState extends State<WelcomePage> {
         return installFlutter(
           context,
           onInstall: () async {
-            // if (context.read<SpaceCheck>().lowDriveSpace &&
-            //     context.read<SpaceCheck>().drive == 'C') {
-            //   await showDialog(
-            //     context: context,
-            //     barrierDismissible: false,
-            //     builder: (_) => const LowDriveSpaceDialog(),
-            //   );
-            // }
             if (_completedInstall) {
               setState(() {
                 _installing = false;
@@ -289,8 +280,8 @@ class _WelcomePageState extends State<WelcomePage> {
           onRestart: () async {
             int _restartSeconds = 5;
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
-                'Your device will restart in $_restartSeconds seconds.',
+            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+                context, 'Your device will restart in $_restartSeconds seconds.',
                 type: SnackBarType.warning));
 
             await Future<void>.delayed(Duration(seconds: _restartSeconds));
@@ -301,8 +292,7 @@ class _WelcomePageState extends State<WelcomePage> {
             // Restart the system only if it's compiled for release. Prevent
             // restart otherwise.
             if (kReleaseMode) {
-              await logger.file(LogTypeTag.info,
-                  'Restarting device to continue Flutter setup');
+              await logger.file(LogTypeTag.info, 'Restarting device to continue Flutter setup');
               // Restart the device immediately. There is no need to schedule
               // the restart since we are already having a timer above.
               await shell.run('shutdown /r /f');

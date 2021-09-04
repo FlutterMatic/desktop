@@ -39,7 +39,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
         //     Assets.warn,
         //     kYellowColor,
         //   ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         Row(
           children: <Widget>[
             Expanded(
@@ -78,7 +78,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            HSeparators.small(),
             Expanded(
               child: RectangleButton(
                 height: 100,
@@ -115,7 +115,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                 ),
               ),
             ),
-            if (Platform.isMacOS) const SizedBox(width: 10),
+            if (Platform.isMacOS) HSeparators.small(),
             if (Platform.isMacOS)
               Expanded(
                 child: RectangleButton(
