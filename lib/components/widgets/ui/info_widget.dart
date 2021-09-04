@@ -16,7 +16,7 @@ Widget infoWidget(BuildContext context, String text) {
         children: <Widget>[
           const Icon(Icons.info),
           const SizedBox(width: 8),
-          Expanded(child: Text(text)),
+          Expanded(child: SelectableText(text)),
         ],
       ),
     ),

@@ -5,7 +5,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:process_run/shell.dart';
 
-/// Shell object.
+/// Shell global reference
 Shell shell = Shell(
   commandVerbose: false,
   commentVerbose: false,

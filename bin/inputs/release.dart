@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import '../utils/app_data.dart';
 import '../outputs/prints.dart';
 import '../utils/enum.dart';
@@ -24,7 +23,7 @@ String userReleaseInput(String? question) {
     stdout.write(question);
     String _release = stdin.readLineSync()!.toUpperCase();
     if (_release is int || !<String>['alpha', 'beta', 'stable'].contains(_release.toLowerCase().trim())) {
-      throw Exception('Release must be either ALPHA | BETA | STABLE');
+      throw Exception('Release must be either alpha, beta, or stable');
     } else {
       return _release.trim();
     }

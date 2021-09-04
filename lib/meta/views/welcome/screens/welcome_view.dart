@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
-import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
+import 'package:manager/core/libraries/services.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
-import 'package:manager/meta/views/welcome/screens/requirements.dart';
+import 'package:manager/meta/views/welcome/screens/client_version.dart';
 import 'package:provider/provider.dart';
-import 'dart:async';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -67,16 +67,10 @@ class _WelcomePageState extends State<WelcomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       TextButton(
-                        // onPressed: () => showDialog(
-                        //   context: context,
-                        //   // builder: (_) => const SystemRequirementsDialog(),
-                        //   builder: (_) => InstallFlutterDialog(),
-                        // ),
-                        onPressed: () async {
-                          await Navigator.of(context).push(MaterialPageRoute<void>(
-                            builder: (_) => const SystemRequirementsScreen(),
-                          ));
-                        },
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (_) => FlutterRequirementsDialog(),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
@@ -103,28 +97,34 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           Positioned(
-            bottom: 29,
-            right: 20,
-            child: Tooltip(
-              padding: const EdgeInsets.all(5),
-              message:
-                  'Version: ${SharedPref().prefs.getString('App_Version')} (${SharedPref().prefs.getString('App_Build')!.toUpperCase()})\n$osName - $osVersion',
-              child: const Icon(Icons.info_outline_rounded),
-            ),
-          ),
-          Positioned(
             bottom: 20,
-            right: 60,
-            child: IconButton(
-              splashRadius: 1,
-              icon: Icon(
-                context.read<ThemeChangeNotifier>().isDarkTheme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-              ),
-              onPressed: () {
-                context.read<ThemeChangeNotifier>().updateTheme(
-                      !context.read<ThemeChangeNotifier>().isDarkTheme,
+            right: 20,
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  splashRadius: 1,
+                  icon: Icon(
+                    context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                  ),
+                  onPressed: () {
+                    context.read<ThemeChangeNotifier>().updateTheme(
+                        !context.read<ThemeChangeNotifier>().isDarkTheme);
+                  },
+                ),
+                HSeparators.xSmall(),
+                IconButton(
+                  splashRadius: 1,
+                  icon: const Icon(Icons.info_outline_rounded),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const ClientVersionDialog(),
                     );
-              },
+                  },
+                ),
+              ],
             ),
           ),
         ],
@@ -287,24 +287,26 @@ class _WelcomePageState extends State<WelcomePage> {
         return welcomeRestart(
           context,
           onRestart: () async {
-            int _restartSeconds = 15;
+            int _restartSeconds = 5;
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-                context, 'Your device will restart in less than $_restartSeconds seconds.',
+            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
+                'Your device will restart in $_restartSeconds seconds.',
                 type: SnackBarType.warning));
 
             await Future<void>.delayed(Duration(seconds: _restartSeconds));
 
-            /// Restart the system only if it's compiled for release. Prevent
-            /// restart on debugging.
+            await SharedPref().prefs.setBool('All_Checked', true);
+            await SharedPref().prefs.remove('Tab');
+
+            // Restart the system only if it's compiled for release. Prevent
+            // restart otherwise.
             if (kReleaseMode) {
-              await SharedPref().prefs.setBool('All_Checked', true);
-              await SharedPref().prefs.remove('Tab');
-              await logger.file(LogTypeTag.info, 'Restarting device to continue Flutter setup');
-              await shell.run('shutdown /r /f /t $_restartSeconds');
+              await logger.file(LogTypeTag.info,
+                  'Restarting device to continue Flutter setup');
+              // Restart the device immediately. There is no need to schedule
+              // the restart since we are already having a timer above.
+              await shell.run('shutdown /r /f');
             } else {
-              await SharedPref().prefs.setBool('All_Checked', true);
-              await SharedPref().prefs.remove('Tab');
               ScaffoldMessenger.of(context).showSnackBar(
                 snackBarTile(
                   context,

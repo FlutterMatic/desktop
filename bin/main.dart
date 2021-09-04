@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'utils/flutter_build.dart';
 import 'inputs/build.dart';
 import 'inputs/release.dart';
