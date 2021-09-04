@@ -17,7 +17,11 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MultiProviders(MyApp()));
+  runApp(
+    MultiProviders(
+      MyApp(),
+    ),
+  );
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 680);
     appWindow.maximize();
@@ -55,18 +59,15 @@ class _MyAppState extends State<MyApp> {
     await SharedPref().prefs.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
     await SharedPref().prefs.setString('App_Build', appBuild.toString());
-    if (SharedPref().prefs.containsKey('All_Checked') &&
-        !SharedPref().prefs.containsKey('Tab')) {
+    if (SharedPref().prefs.containsKey('All_Checked') && !SharedPref().prefs.containsKey('Tab')) {
       allChecked = SharedPref().prefs.getBool('All_Checked');
     } else {
       await SharedPref().prefs.setBool('All_Checked', false);
       allChecked = SharedPref().prefs.getBool('All_Checked');
     }
     if (!SharedPref().prefs.containsKey('platform')) {
-      List<ProcessResult?>? platformData = Platform.isWindows
-          ? await shell
-              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
-          : null;
+      List<ProcessResult?>? platformData =
+          Platform.isWindows ? await shell.run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"') : null;
       await SharedPref()
           .prefs
           .setString('platform', Platform.operatingSystem)
@@ -131,17 +132,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
-          Widget? child) {
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier, Widget? child) {
         return Directionality(
           textDirection: TextDirection.ltr,
           child: CustomWindow(
             child: MaterialApp(
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
-              themeMode: themeChangeNotifier.isDarkTheme
-                  ? ThemeMode.dark
-                  : ThemeMode.light,
+              themeMode: themeChangeNotifier.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
               debugShowCheckedModeBanner: false,
               home: isChecking
                   ? const PreLoading()

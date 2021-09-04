@@ -24,6 +24,20 @@ class CustomWindow extends StatelessWidget {
           WindowTitleBarBox(
             child: Row(
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'Flutter App Manager',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: !context.read<ThemeChangeNotifier>().isDarkTheme
+                          ? AppTheme.darkBackgroundColor
+                          : AppTheme.lightBackgroundColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Roboto',
+                    ),
+                  ),
+                ),
                 Expanded(child: MoveWindow()),
                 windowControls(context)
               ],

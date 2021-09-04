@@ -53,7 +53,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         () async {
           if (tagName == null || sha == null) {
             await context.read<VSCodeAPINotifier>().fetchVscAPIData();
-            tagName = context.read<VSCodeAPINotifier>().tag_name;
+            tagName = context.read<VSCodeAPINotifier>().tagName;
             sha = context.read<VSCodeAPINotifier>().sha;
           }
         },

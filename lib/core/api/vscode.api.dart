@@ -9,7 +9,7 @@ class VSCodeAPINotifier with ChangeNotifier {
   VSCodeAPI? _vscMap;
   String? _tagName, _sha;
   VSCodeAPI? get vscMap => _vscMap;
-  String? get tag_name => _tagName;
+  String? get tagName => _tagName;
   String? get sha => _sha;
   Future<void> fetchVscAPIData() async {
     Map<String, String> _header = <String, String>{

@@ -1,7 +1,7 @@
 name: manager
 description: Flutter App Manager
 publish_to: none
-version: 0.0.1
+version: 2.0.1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -18,15 +18,19 @@ dependencies:
   file_selector_windows: ^0.0.2
   flutter:
     sdk: flutter
+  flutter_markdown: ^0.6.6
   flutter_svg: ^0.22.0
   http: ^0.13.3
   intl: ^0.17.0
   lottie: ^1.1.0
-  msix: ^2.1.3
   path_provider: ^2.0.2
   process_run: ^0.12.1+1
   provider: ^5.0.0
   retry: ^3.1.0
+  package_info_plus: ^1.0.6
+  package_info_plus_linux: ^1.0.3
+  package_info_plus_macos: ^1.1.1
+  package_info_plus_windows: ^1.0.3
   shared_preferences: ^2.0.6
   unix_disk_space:
     git:
@@ -36,16 +40,16 @@ dependencies:
 msix_config:
   display_name: Flutter Manager
   publisher_display_name: Fluttermatic
-  msix_version: 0.0.0.1
+  msix_version: 0.0.1
   certificate_path: ./CERTIFICATE.pfx
   certificate_password: fluttermatic
   identity_name: fluttermanager
-  publisher: CN=Fluttermatic, O=fluttermatic
+  publisher: CN=FLUTTERMATIC, O=Fluttermatic
   icons_background_color: transparent
   architecture: x64
-  vs_generated_images_folder_path: ./assets/vs-images
-  start_menu_icon_path: ./assets/vs-images/app_icon/flutter_manager.png
-  tile_icon_path: ./assets/vs-images/app_icon/flutter_manager.png
+  vs_generated_images_folder_path: ./assets/images
+  start_menu_icon_path: ./assets/images/flutter_manager.png
+  tile_icon_path: ./assets/images/flutter_manager.png
   capabilities: 'internetClient'
 
 dev_dependencies:
@@ -53,6 +57,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   lints: ^1.0.1
+  msix: ^2.1.3
 
 flutter:
   uses-material-design: true
@@ -62,6 +67,7 @@ flutter:
     - assets/images/logos/
     - assets/images/icons/
     - assets/lottie/
+    - assets/markdown/
 
   fonts:
     - family: NotoSans

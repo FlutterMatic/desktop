@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
@@ -10,6 +9,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
+import 'package:manager/meta/views/welcome/screens/requirements.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -32,9 +32,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   void initState() {
-    _tab = SharedPref().prefs.containsKey('Tab')
-        ? WelcomeTab.restart
-        : WelcomeTab.gettingStarted;
+    _tab = SharedPref().prefs.containsKey('Tab') ? WelcomeTab.restart : WelcomeTab.gettingStarted;
     super.initState();
   }
 
@@ -69,17 +67,21 @@ class _WelcomePageState extends State<WelcomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       TextButton(
-                        onPressed: () => showDialog(
-                          context: context,
-                          // builder: (_) => const SystemRequirementsDialog(),
-                          builder: (_) => InstallFlutterDialog(),
-                        ),
+                        // onPressed: () => showDialog(
+                        //   context: context,
+                        //   // builder: (_) => const SystemRequirementsDialog(),
+                        //   builder: (_) => InstallFlutterDialog(),
+                        // ),
+                        onPressed: () async {
+                          await Navigator.of(context).push(MaterialPageRoute<void>(
+                            builder: (_) => const SystemRequirementsScreen(),
+                          ));
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'System Requirements',
-                            style: _currentTheme.textTheme.bodyText2!
-                                .copyWith(fontSize: 12),
+                            style: _currentTheme.textTheme.bodyText2!.copyWith(fontSize: 12),
                           ),
                         ),
                       ),
@@ -90,8 +92,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'Docs & Tutorials',
-                            style: _currentTheme.textTheme.bodyText2!
-                                .copyWith(fontSize: 12),
+                            style: _currentTheme.textTheme.bodyText2!.copyWith(fontSize: 12),
                           ),
                         ),
                       ),
@@ -117,9 +118,7 @@ class _WelcomePageState extends State<WelcomePage> {
             child: IconButton(
               splashRadius: 1,
               icon: Icon(
-                context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
+                context.read<ThemeChangeNotifier>().isDarkTheme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
               ),
               onPressed: () {
                 context.read<ThemeChangeNotifier>().updateTheme(
@@ -163,9 +162,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 _installing = true;
                 progress = Progress.started;
               });
-              await context
-                  .read<FlutterNotifier>()
-                  .checkFlutter(context, sdkData);
+              await context.read<FlutterNotifier>().checkFlutter(context, sdkData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
@@ -200,22 +197,14 @@ class _WelcomePageState extends State<WelcomePage> {
               });
               switch (_editor.index) {
                 case 0:
-                  await context
-                      .read<VSCodeNotifier>()
-                      .checkVSCode(context, apiData);
+                  await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
                   break;
                 case 1:
-                  await context
-                      .read<AndroidStudioNotifier>()
-                      .checkAStudio(context, apiData);
+                  await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
                   break;
                 default:
-                  await context
-                      .read<VSCodeNotifier>()
-                      .checkVSCode(context, apiData);
-                  await context
-                      .read<AndroidStudioNotifier>()
-                      .checkAStudio(context, apiData);
+                  await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
+                  await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
               }
             }
             setState(() {
@@ -226,8 +215,7 @@ class _WelcomePageState extends State<WelcomePage> {
           },
           onCancel: () {},
           selectedType: _editor,
-          onEditorTypeChanged: (EditorType val) =>
-              setState(() => _editor = val),
+          onEditorTypeChanged: (EditorType val) => setState(() => _editor = val),
           isInstalling: _installing,
           doneInstalling: _completedInstall,
           onContinue: () => setState(() => _tab = WelcomeTab.installGit),
@@ -301,8 +289,8 @@ class _WelcomePageState extends State<WelcomePage> {
           onRestart: () async {
             int _restartSeconds = 15;
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
-                'Your device will restart in less than $_restartSeconds seconds.',
+            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+                context, 'Your device will restart in less than $_restartSeconds seconds.',
                 type: SnackBarType.warning));
 
             await Future<void>.delayed(Duration(seconds: _restartSeconds));
@@ -312,8 +300,7 @@ class _WelcomePageState extends State<WelcomePage> {
             if (kReleaseMode) {
               await SharedPref().prefs.setBool('All_Checked', true);
               await SharedPref().prefs.remove('Tab');
-              await logger.file(LogTypeTag.info,
-                  'Restarting device to continue Flutter setup');
+              await logger.file(LogTypeTag.info, 'Restarting device to continue Flutter setup');
               await shell.run('shutdown /r /f /t $_restartSeconds');
             } else {
               await SharedPref().prefs.setBool('All_Checked', true);

@@ -56,15 +56,9 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                     ),
                     const SizedBox(height: 15),
                     SelectTile(
-                      onPressed: (String val) =>
-                          setState(() => _selectedChannel = val),
+                      onPressed: (String val) => setState(() => _selectedChannel = val),
                       defaultValue: _selectedChannel,
-                      options: const <String>[
-                        'Master',
-                        'Stable',
-                        'Beta',
-                        'Dev'
-                      ],
+                      options: const <String>['Master', 'Stable', 'Beta', 'Dev'],
                     ),
                     informationWidget(
                       'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
@@ -76,8 +70,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
+                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                             child: Text('Cancel'),
                           ),
                         ),
@@ -97,15 +90,13 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                               Navigator.pop(context);
                               showDialog(
                                 context: context,
-                                builder: (_) => ConfirmChannelChangeDialog(
-                                    _selectedChannel!),
+                                builder: (_) => ConfirmChannelChangeDialog(_selectedChannel!),
                               );
                             }
                           },
                           child: Text(
                             'Continue',
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color),
+                            style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
                           ),
                         ),
                       ],
@@ -189,9 +180,9 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
             focusColor: Colors.blueGrey.withOpacity(0.5),
             hoverColor: Colors.grey.withOpacity(0.5),
             highlightColor: Colors.blueGrey.withOpacity(0.5),
-            onPressed: () {
-              _switchChannel();
-              Navigator.push(
+            onPressed: () async {
+              await _switchChannel();
+              await Navigator.push(
                 context,
                 MaterialPageRoute<Widget>(builder: (_) => const HomeScreen()),
               );

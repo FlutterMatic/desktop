@@ -69,7 +69,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
         }
       } else if (!SharedPref().prefs.containsKey('Studio_path') || !SharedPref().prefs.containsKey('Studio_version')) {
         await SharedPref().prefs.setString('Studio_path', studioPath);
-        await logger.file(LogTypeTag.info, 'Android Studio found at - ${studioPath.trim()}');
+        await logger.file(LogTypeTag.info, 'Android Studio found at - ${studioPath.trim()}'.trim());
 
         /// Fetch the version of Android Studio.
         studioVersion = await getAStudioBinVersion();
@@ -81,7 +81,8 @@ class AndroidStudioNotifier extends ChangeNotifier {
       } else {
         await logger.file(LogTypeTag.info, 'Loading Android Studio details from shared preferences');
         studioPath = SharedPref().prefs.getString('Studio_path');
-        await logger.file(LogTypeTag.info, 'Android Studio found at - $studioPath');
+        await logger.file(
+            LogTypeTag.info, 'Android Studio found at - ${studioPath!.trim()}'.trim().replaceAll('"', ''));
         versions.studio = SharedPref().prefs.getString('Studio_version');
         await logger.file(LogTypeTag.info, 'Studio version : ${versions.studio}');
         _progress = Progress.done;

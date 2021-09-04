@@ -32,3 +32,13 @@ void printInfo(String text) {
 void printInfoln(String text) {
   printInfo('$text\n');
 }
+
+/// Prints the given message to the console as ***`Information`***.
+void printSuccess(String text) {
+  print('\x1B[32m$text\x1B[0m');
+}
+
+/// Prints the given message to the console as ***`Information`*** with the new line.
+void printSuccessln(String text) {
+  printSuccess('$text\n');
+}

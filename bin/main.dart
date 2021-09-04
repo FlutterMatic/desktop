@@ -12,7 +12,8 @@ String dartDefine = '--dart-define';
 Future<void> main({List<String>? args}) async {
   try {
     appData.platform = Platform.operatingSystem;
-    versionCollection();
+    await versionCollection();
+    stopSpinner();
     buildCollection();
     releaseCollection();
     await runBuild();
@@ -24,13 +25,17 @@ Future<void> main({List<String>? args}) async {
 }
 
 Future<void> runBuild() async {
-  printInfo('⚒️  Started building application with the info...');
+  printInfo('⚒️  Started building application EXE file with the info...');
   printInfo('🖥️  Platform : ${appData.platform}');
-  printInfo('📝 Version : ${appData.version}');
-  printInfo('🏗️  Build : ${appData.buildMode}');
-  printInfo('🎥 Release : ${appData.releaseType}');
+  printInfo('📝  Version : ${appData.version}');
+  printInfo('🏗️  Build : ${appData.buildMode.toString().split('.')[1].toUpperCase()}');
+  printInfo('🎥  Release : ${appData.releaseType.toString().split('.')[1].toUpperCase()}');
   await startSpinner();
   await FlutterMaticBuild.build(appData.platform);
   stopSpinner();
-  printInfo('🏡  Finished building application.');
+  printInfo('⚒️  Started building MSIX file...');
+  await startSpinner();
+  await FlutterMaticBuild.buildMSIX();
+  stopSpinner();
+  printSuccess('🏡  Finished building application.');
 }

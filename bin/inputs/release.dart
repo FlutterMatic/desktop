@@ -2,8 +2,9 @@ import 'dart:io';
 
 import '../utils/app_data.dart';
 import '../outputs/prints.dart';
+import '../utils/enum.dart';
 
-/// Funtion that returns a String value from the user input.
+/// Function that returns a String value from the user input.
 /// This function is used for Application Release management.
 ///
 /// **EG:**
@@ -40,6 +41,23 @@ String userReleaseInput(String? question) {
 
 void releaseCollection() {
   String release = userReleaseInput('Type of the Application release ( ALPHA | BETA | STABLE ) : ');
-  appData.releaseType = release.toUpperCase();
-  printInfoln('App release type is : ${appData.releaseType}');
+  switch (release.toLowerCase()) {
+    case 'alpha':
+      appData.releaseType = ReleaseType.alpha;
+      break;
+    case 'beta':
+      appData.releaseType = ReleaseType.beta;
+      break;
+    case 'stable':
+      appData.releaseType = ReleaseType.stable;
+      break;
+    default:
+      printErrorln('❌ Release type must be either ALPHA | BETA | STABLE');
+      releaseCollection();
+  }
+  printInfoln('App release type is : ${appData.releaseType.toString().split('.')[1].toUpperCase()}');
+}
+
+void releaseFix(){
+  
 }

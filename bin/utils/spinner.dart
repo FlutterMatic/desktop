@@ -22,9 +22,9 @@ Future<void> _animate(void t) async {
 
 abstract class Spinner {
   dynamic frames;
-  int frame_period;
+  int framePeriod;
 
-  Spinner._(this.frames, this.frame_period);
+  Spinner._(this.frames, this.framePeriod);
 
   factory Spinner() {
     return Loader();
@@ -35,7 +35,7 @@ abstract class Spinner {
     while (true) {
       stdout.write(frames[frame]);
       frame = ((frame + 1) % frames.length).toInt();
-      sleep(Duration(milliseconds: frame_period));
+      sleep(Duration(milliseconds: framePeriod));
       stdout.write('\x1B[2K\x1B[1G'); // Clear line and put cursor at col 1.
     }
   }
@@ -43,7 +43,7 @@ abstract class Spinner {
 
 class Loader extends Spinner {
   static const List<String> _frames = <String>['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
-  static const int _framePeriod = 50;
+  static const int _framePeriod = 80;
 
   Loader() : super._(_frames, _framePeriod);
 }
