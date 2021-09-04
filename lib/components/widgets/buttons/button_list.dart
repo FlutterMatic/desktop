@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class SelectTile extends StatefulWidget {
@@ -81,7 +82,7 @@ Widget _selectTile(dynamic leading, VoidCallback? onPressed, bool selected,
     padding: EdgeInsets.zero,
     child: Row(
       children: <Widget>[
-        const SizedBox(width: 10),
+        HSeparators.small(),
         Container(
           height: 15,
           width: 15,
@@ -93,7 +94,7 @@ Widget _selectTile(dynamic leading, VoidCallback? onPressed, bool selected,
                 : customTheme.hoverColor,
           ),
         ),
-        const SizedBox(width: 10),
+        HSeparators.small(),
         Expanded(
           child: leading.runtimeType == String
               ? Text(leading,

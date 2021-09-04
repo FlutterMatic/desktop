@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/dialog_templates/settings/sections/discover.dart';
 import 'package:manager/components/dialog_templates/settings/sections/editors.dart';
@@ -35,7 +36,7 @@ class _SettingDialogState extends State<SettingDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Settings'),
-          const SizedBox(height: 20),
+          VSeparators.large(),
           TabViewWidget(
             defaultPage: widget.goToPage,
             tabs: <TabViewObject>[

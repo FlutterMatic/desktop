@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
@@ -12,7 +13,7 @@ Widget createWelcomeHeader(
         child: Column(
           children: <Widget>[
             Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 20),
+            VSeparators.large(),
             Container(
               height: 3,
               decoration: BoxDecoration(

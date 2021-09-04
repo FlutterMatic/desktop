@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 
 Widget currentDirectoryTile() {
@@ -13,7 +14,7 @@ Widget currentDirectoryTile() {
           'Current Directory',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         // TODO: Show the project directory in the current directory tile.
         const Text('projDir'),
       ],

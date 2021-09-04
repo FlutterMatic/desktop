@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +65,7 @@ Widget popUpTextTemplate(String title, String description) {
           title,
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         //Description
         SelectableText(
           description,

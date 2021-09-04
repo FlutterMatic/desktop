@@ -5,6 +5,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
   return Column(
@@ -17,29 +18,31 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
             ? null
             : Colors.black,
       ),
-      const SizedBox(height: 30),
+      VSeparators.xLarge(),
       RoundContainer(
         padding: const EdgeInsets.all(15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Text(InstallContent.docs, style: TextStyle(fontSize: 13)),
-            const SizedBox(height: 20),
+            VSeparators.large(),
             Row(
               children: <Widget>[
                 Expanded(
                   child: RectangleButton(
                     child: const Text('Flutter Documentation',
                         style: TextStyle(color: Colors.white)),
-                    onPressed: () {},
+                    onPressed: () => launch('https://flutter.dev/docs'),
                   ),
                 ),
-                const SizedBox(width: 10),
+                HSeparators.small(),
                 Expanded(
                   child: RectangleButton(
                     child: const Text('Our Documentation',
                         style: TextStyle(color: Colors.white)),
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO: Create our own documentation on our website.
+                    },
                   ),
                 ),
               ],
@@ -47,11 +50,11 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
           ],
         ),
       ),
-      const SizedBox(height: 10),
+      VSeparators.small(),
       informationWidget(
         InstalledContent.restart,
       ),
-      const SizedBox(height: 20),
+      VSeparators.large(),
       WelcomeButton(
         onContinue: () {},
         onInstall: onRestart,

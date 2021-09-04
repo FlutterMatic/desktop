@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,7 +14,7 @@ class GitHubSettingsSection extends StatelessWidget {
           'GitHub',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         Row(
           children: <Widget>[
             Expanded(
@@ -39,7 +40,7 @@ class GitHubSettingsSection extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            HSeparators.small(),
             Expanded(
               child: RectangleButton(
                 height: 100,
@@ -65,14 +66,14 @@ class GitHubSettingsSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         const Text(
           'Contributions',
           style: TextStyle(
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 5),
+        VSeparators.xSmall(),
         infoWidget(context,
             'We are open-source! We would love to see you make some pull requests to this app!'),
       ],

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/dialog_templates/about/about_us.dart';
+import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
-import 'package:manager/meta/views/welcome/screens/client_version.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -83,7 +83,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 5),
+                      HSeparators.xSmall(),
                       TextButton(
                         onPressed: () {},
                         child: Padding(
@@ -125,7 +125,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => const ClientVersionDialog(),
+                      builder: (_) => const AboutUsDialog(),
                     );
                   },
                 ),
@@ -148,14 +148,6 @@ class _WelcomePageState extends State<WelcomePage> {
         return installFlutter(
           context,
           onInstall: () async {
-            // if (context.read<SpaceCheck>().lowDriveSpace &&
-            //     context.read<SpaceCheck>().drive == 'C') {
-            //   await showDialog(
-            //     context: context,
-            //     barrierDismissible: false,
-            //     builder: (_) => const LowDriveSpaceDialog(),
-            //   );
-            // }
             if (_completedInstall) {
               setState(() {
                 _installing = false;

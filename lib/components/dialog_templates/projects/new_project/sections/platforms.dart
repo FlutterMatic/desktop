@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class ProjectPlatformsSection extends StatefulWidget {
@@ -28,7 +29,7 @@ class _ProjectPlatformsSectionState extends State<ProjectPlatformsSection> {
       children: <Widget>[
         const Text(
             'Choose which environments you want to enable for your new Flutter project.'),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         CheckBoxElement(
           onChanged: (bool? val) {
             setState(() => _ios = !_ios);

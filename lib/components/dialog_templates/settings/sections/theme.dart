@@ -13,12 +13,12 @@ class ThemeSettingsSection extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         // TODO: Show the theme selector.
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         // _themeTiles(context, !currentTheme.isDarkTheme, 'Light Mode',
         //     'Get a bright and shining desktop', () {
-          // if (currentTheme.isDarkTheme) currentTheme.toggleTheme();
+        // if (currentTheme.isDarkTheme) currentTheme.toggleTheme();
         // }),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         // _themeTiles(context, currentTheme.isDarkTheme, 'Dark Mode',
         //     'For dark and nighty appearance', () {
         //   if (!currentTheme.isDarkTheme) currentTheme.toggleTheme();
@@ -54,7 +54,7 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
                       color: customTheme.textTheme.bodyText1!.color,
                       fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 4),
+                VSeparators.xSmall(),
                 Text(
                   description,
                   maxLines: 1,

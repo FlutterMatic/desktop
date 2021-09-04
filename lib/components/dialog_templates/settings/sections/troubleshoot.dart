@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
@@ -48,7 +49,7 @@ class _TroubleShootSettingsSectionState
           'Troubleshooting',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         CheckBoxElement(
           onChanged: (bool? val) {
             setState(() => truShootFullApp = !truShootFullApp);

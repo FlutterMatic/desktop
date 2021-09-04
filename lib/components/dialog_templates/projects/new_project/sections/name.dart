@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class ProjectNameSection extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
                   : null,
           maxLength: 70,
         ),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         //Checks if name doesn't start with a lower-case letter
         if (_projectName != null &&
             !_projectName!.startsWith(RegExp('[a-zA-Z]')))

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/spinner.dart';
 
 class BgActivityTile extends StatelessWidget {
@@ -15,7 +16,7 @@ class BgActivityTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         Row(
           children: <Widget>[
             Expanded(child: Text(title)),
@@ -23,7 +24,7 @@ class BgActivityTile extends StatelessWidget {
             Spinner(thickness: 2, size: 15),
           ],
         ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         ColoredBox(
           color: Colors.blueGrey.withOpacity(0.5),
           child: const SizedBox(width: double.infinity, height: 2),

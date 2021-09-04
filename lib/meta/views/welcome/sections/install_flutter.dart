@@ -21,7 +21,7 @@ Widget installFlutter(
           'Install Flutter',
           'You will need to install Flutter in your machine to start using Flutter.',
         ),
-        const SizedBox(height: 30),
+        VSeparators.xLarge(),
         Padding(
           padding: const EdgeInsets.only(bottom: 15.0),
           child: (flutterNotifier.progress == Progress.started ||
@@ -74,7 +74,7 @@ Widget installFlutter(
                                   context: context,
                                 ),
         ),
-        const SizedBox(height: 30),
+        VSeparators.xLarge(),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,

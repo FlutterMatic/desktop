@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class MultipleChoice extends StatefulWidget {
@@ -73,7 +74,7 @@ class _MultipleChoiceState extends State<MultipleChoice> {
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          HSeparators.small(),
           Expanded(
             child: GestureDetector(
                 onTap: () => onPressed(message),

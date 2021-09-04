@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TabViewWidget extends StatefulWidget {
@@ -54,7 +55,7 @@ class _TabViewWidgetState extends State<TabViewWidget> {
             },
           ).toList(),
         ),
-        const SizedBox(width: 10),
+        HSeparators.small(),
         Expanded(
           child: Container(
             height: 310,

@@ -29,7 +29,7 @@ Widget installEditor(
           'Install Editor',
           'You will need to install the Flutter Editor to start using Flutter.',
         ),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         Row(
           children: <Widget>[
             _selectEditor(
@@ -39,10 +39,10 @@ Widget installEditor(
               type: EditorType.vscode,
               onEditorTypeChanged: onEditorTypeChanged,
               selectedType: selectedType,
-              installtion: vsCodeNotifier.progress != Progress.none ||
+              installation: vsCodeNotifier.progress != Progress.none ||
                   androidStudioNotifier.progress != Progress.none,
             ),
-            const SizedBox(width: 15),
+            HSeparators.normal(),
             _selectEditor(
               context,
               icon: SvgPicture.asset(Assets.studio),
@@ -50,19 +50,19 @@ Widget installEditor(
               type: EditorType.androidStudio,
               onEditorTypeChanged: onEditorTypeChanged,
               selectedType: selectedType,
-              installtion: vsCodeNotifier.progress != Progress.none ||
+              installation: vsCodeNotifier.progress != Progress.none ||
                   androidStudioNotifier.progress != Progress.none,
             ),
-            const SizedBox(width: 15),
+            HSeparators.normal(),
             _selectEditor(
               context,
               icon: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   SvgPicture.asset(Assets.studio, height: 30),
-                  const SizedBox(width: 10),
+                  HSeparators.small(),
                   Container(width: 1, height: 20, color: Colors.white10),
-                  const SizedBox(width: 10),
+                  HSeparators.small(),
                   SvgPicture.asset(Assets.vscode, height: 30),
                 ],
               ),
@@ -70,12 +70,12 @@ Widget installEditor(
               type: EditorType.both,
               onEditorTypeChanged: onEditorTypeChanged,
               selectedType: selectedType,
-              installtion: vsCodeNotifier.progress != Progress.none ||
+              installation: vsCodeNotifier.progress != Progress.none ||
                   androidStudioNotifier.progress != Progress.none,
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        VSeparators.small(),
         if (isInstalling && !doneInstalling)
           Padding(
             padding: const EdgeInsets.only(top: 20),
@@ -171,10 +171,10 @@ Widget installEditor(
                                         'Downloading ${selectedType.index == 0 ? 'Visual Studio Code' : selectedType.index == 1 ? 'Android Studio' : 'Editors'}',
                                   ),
           ),
-        const SizedBox(height: 15),
+        VSeparators.normal(),
         // if (doneInstalling || isInstalling)
         //   _showSelectedEditor(context, selectedType),
-        // const SizedBox(height: 15),
+        // VSeparators.normal(),
         // if (isInstalling && !doneInstalling)
         //   CustomProgressIndicator(
         //     disabled: !isInstalling,
@@ -193,7 +193,7 @@ Widget installEditor(
             message:
                 'You have successfully installed ${selectedType == EditorType.androidStudio ? 'Android Studio' : selectedType == EditorType.vscode ? 'Visual Studio Code' : 'Android Studio & Visual Studio Code'}.',
           ),
-        const SizedBox(height: 30),
+        VSeparators.xLarge(),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,
@@ -218,7 +218,7 @@ Widget _selectEditor(BuildContext context,
     required Widget icon,
     required Function(EditorType)? onEditorTypeChanged,
     required EditorType? selectedType,
-    required bool installtion}) {
+    required bool installation}) {
   bool _selected = selectedType == type;
   return Expanded(
     child: SizedBox(
@@ -228,7 +228,7 @@ Widget _selectEditor(BuildContext context,
         color: context.read<ThemeChangeNotifier>().isDarkTheme
             ? const Color(0xff1B2529)
             : const Color(0xffF4F8FA),
-        onPressed: installtion ? null : () => onEditorTypeChanged!(type),
+        onPressed: installation ? null : () => onEditorTypeChanged!(type),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
@@ -270,7 +270,7 @@ Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text('Selected Option', style: TextStyle(fontSize: 14)),
-              const SizedBox(height: 5),
+              VSeparators.xSmall(),
               Text(
                 editorType == EditorType.both
                     ? 'Android Studio & Visual Studio Code'
@@ -294,9 +294,9 @@ Widget _showSelectedEditor(BuildContext context, EditorType editorType) {
           Row(
             children: <Widget>[
               SvgPicture.asset(Assets.studio, height: 25),
-              const SizedBox(width: 10),
+              HSeparators.small(),
               Container(width: 1, height: 20, color: Colors.white10),
-              const SizedBox(width: 10),
+              HSeparators.small(),
               SvgPicture.asset(Assets.vscode, height: 25),
             ],
           ),
