@@ -3,7 +3,7 @@ import 'dart:io';
 import '../utils/app_data.dart';
 import '../outputs/prints.dart';
 
-/// Funtion that returns a String value from the user input.
+/// Function that returns a String value from the user input.
 /// This function is used for Application Build management.
 ///
 /// **EG:**

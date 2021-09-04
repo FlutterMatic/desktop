@@ -7,7 +7,7 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/notifiers/space.notifier.dart';
 import 'package:manager/app/providers/multi_providers.dart';
-import 'package:manager/meta/views/welcome/screens/pre_loading.dart';
+import 'package:manager/components/widgets/ui/spinner.dart';
 import 'package:manager/meta/views/welcome/screens/welcome_view.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -34,8 +34,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isChecking = true;
-  Future<void> initDataFetch() async {
+
+  Future<void> _initDataFetch() async {
     await SpaceCheck().checkSpace();
+
 
     /// Application supporting Directory
     Directory dir = await getApplicationSupportDirectory();
@@ -50,7 +52,7 @@ class _MyAppState extends State<MyApp> {
     bool appDir = await Directory('C:\\fluttermatic').exists();
 
     await SharedPref.init();
-
+    
     appVersion = const String.fromEnvironment('current-version');
     await SharedPref().prefs.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
@@ -117,14 +119,12 @@ class _MyAppState extends State<MyApp> {
       await Directory('C:\\fluttermatic').create();
       await logger.file(LogTypeTag.info, 'Created fluttermatic directory.');
     }
-    setState(() {
-      isChecking = false;
-    });
+    setState(() => isChecking = false);
   }
 
   @override
   void initState() {
-    initDataFetch();
+    _initDataFetch();
     super.initState();
   }
 
@@ -144,7 +144,7 @@ class _MyAppState extends State<MyApp> {
                   : ThemeMode.light,
               debugShowCheckedModeBanner: false,
               home: isChecking
-                  ? const PreLoading()
+                  ? const Scaffold(body: Center(child: Spinner()))
                   : !allChecked!
                       ? const WelcomePage()
                       : const HomeScreen(),

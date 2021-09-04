@@ -4,7 +4,7 @@ class Spinner extends StatelessWidget {
   final double thickness;
   final double size;
 
-  Spinner({this.thickness = 4, this.size = 30});
+  const Spinner({Key? key, this.thickness = 4, this.size = 30}): super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import '../utils/app_data.dart';
 import '../outputs/prints.dart';
 
-/// Funtion that returns a String value from the user input.
+/// Function that returns a String value from the user input.
 /// This function is used for Application Release management.
 ///
 /// **EG:**
@@ -23,7 +22,7 @@ String userReleaseInput(String? question) {
     stdout.write(question);
     String _release = stdin.readLineSync()!.toUpperCase();
     if (_release is int || !<String>['alpha', 'beta', 'stable'].contains(_release.toLowerCase().trim())) {
-      throw Exception('Release must be either ALPHA | BETA | STABLE');
+      throw Exception('Release must be either alpha, beta, or stable');
     } else {
       return _release.trim();
     }
@@ -39,7 +38,7 @@ String userReleaseInput(String? question) {
 }
 
 void releaseCollection() {
-  String release = userReleaseInput('Type of the Application release ( ALPHA | BETA | STABLE ) : ');
+  String release = userReleaseInput('Type of the Application release (alpha, beta, or stable) : ');
   appData.releaseType = release.toUpperCase();
   printInfoln('App release type is : ${appData.releaseType}');
 }

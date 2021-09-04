@@ -38,7 +38,7 @@ class SpaceCheck extends ChangeNotifier {
           _lowDriveSpace = false;
           notifyListeners();
           await logger.file(
-              LogTypeTag.info, 'Using $_drive drive for installtion.');
+              LogTypeTag.info, 'Using $_drive drive for installation.');
           return;
         }
       }

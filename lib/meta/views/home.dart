@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,10 +13,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Wait till we complete developing...'),
+        child: TabViewWidget(
+          tabs: <TabViewObject>[
+            TabViewObject('Home', Container()),
           ],
         ),
       ),
