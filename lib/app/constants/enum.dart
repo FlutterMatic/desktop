@@ -10,7 +10,7 @@ enum WelcomeTab {
 enum EditorType {
   vscode,
   androidStudio,
-  both,
+  none,
 }
 
 enum Progress {

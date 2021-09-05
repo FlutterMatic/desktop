@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/checks.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/meta/utils/app_theme.dart';
@@ -10,9 +11,9 @@ import 'package:provider/provider.dart';
 
 Widget installJava(
   BuildContext context, {
-  VoidCallback? onInstall,
-  VoidCallback? onContinue,
-  VoidCallback? onSkip,
+  required VoidCallback onInstall,
+  required VoidCallback onContinue,
+  required VoidCallback onSkip,
   required bool isInstalling,
   required bool doneInstalling,
 }) {
@@ -27,51 +28,27 @@ Widget installJava(
           iconHeight: 40,
         ),
         VSeparators.large(),
-        VSeparators.normal(),
-        if (isInstalling && !doneInstalling)
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: (javaNotifier.progress == Progress.started ||
-                    javaNotifier.progress == Progress.checking)
-                ? hLoadingIndicator(context: context)
-                : (javaNotifier.progress == Progress.downloading)
-                    ? CustomProgressIndicator(
-                        disabled: (javaNotifier.progress != Progress.checking &&
-                            javaNotifier.progress != Progress.downloading &&
-                            javaNotifier.progress != Progress.started),
-                        progress: javaNotifier.progress,
-                        toolName: 'Java',
-                        onCancel: () {},
-                        message: javaNotifier.sw == Java.jdk
-                            ? 'Downloading JDK'
-                            : 'Downloading JRE',
-                      )
-                    : javaNotifier.progress == Progress.extracting
-                        ? hLoadingIndicator(context: context)
-                        : javaNotifier.progress == Progress.done
-                            ? welcomeToolInstalled(
-                                context,
-                                title: 'Java Installed',
-                                message:
-                                    'Java installed successfully on your machine. Continue to the next step.',
-                              )
-                            : javaNotifier.progress == Progress.none
-                                ? const SizedBox.shrink()
-                                : CustomProgressIndicator(
-                                    disabled: (javaNotifier.progress !=
-                                            Progress.checking &&
-                                        javaNotifier.progress !=
-                                            Progress.downloading &&
-                                        javaNotifier.progress !=
-                                            Progress.started),
-                                    progress: javaNotifier.progress,
-                                    toolName: 'Java',
-                                    onCancel: () {},
-                                    message: javaNotifier.sw == Java.jdk
-                                        ? 'Downloading JDK'
-                                        : 'Downloading JRE',
-                                  ),
-          ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: (javaNotifier.progress == Progress.started ||
+                  javaNotifier.progress == Progress.checking)
+              ? hLoadingIndicator(context: context)
+              : (javaNotifier.progress == Progress.downloading)
+                  ? CustomProgressIndicator()
+                  : javaNotifier.progress == Progress.extracting
+                      ? hLoadingIndicator(context: context)
+                      : javaNotifier.progress == Progress.done
+                          ? welcomeToolInstalled(
+                              context,
+                              title: 'Java Installed',
+                              message:
+                                  'Java installed successfully on your device. Continue to the next step.',
+                            )
+                          : javaNotifier.progress == Progress.none
+                              ? infoWidget(context,
+                                  'Java can be essential for Android development. We recommend installing Java if you will be developing Android apps.')
+                              : CustomProgressIndicator(),
+        ),
         if (doneInstalling)
           welcomeToolInstalled(
             context,
@@ -83,7 +60,6 @@ Widget installJava(
           onContinue: onContinue,
           onInstall: onInstall,
           progress: javaNotifier.progress,
-          toolName: 'Java',
         ),
         VSeparators.large(),
         if (javaNotifier.progress == Progress.none)
@@ -99,7 +75,7 @@ Widget installJava(
                       informationWidget(
                         'We recommend that you installed Java. This will help eliminate some issues you might face in the future with Flutter.',
                       ),
-                      VSeparators.xSmall(),
+                      VSeparators.normal(),
                       infoWidget(context,
                           'You will still be able to install Java later if you change your mind.'),
                       VSeparators.large(),
@@ -111,20 +87,36 @@ Widget installJava(
                         children: <Widget>[
                           Expanded(
                             child: RectangleButton(
+                              child: Text(
+                                'Skip',
+                                style: TextStyle(
+                                    color: context
+                                            .read<ThemeChangeNotifier>()
+                                            .isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
                               hoverColor: AppTheme.errorColor,
-                              child: const Text('Skip',
-                                  style: TextStyle(color: Colors.white)),
+                              color: Colors.blueGrey.withOpacity(0.2),
                               onPressed: () {
                                 Navigator.pop(context);
-                                onSkip!();
+                                onSkip();
                               },
                             ),
                           ),
                           HSeparators.small(),
                           Expanded(
                             child: RectangleButton(
-                              child: const Text('Cancel',
-                                  style: TextStyle(color: Colors.white)),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                    color: context
+                                            .read<ThemeChangeNotifier>()
+                                            .isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                              color: Colors.blueGrey.withOpacity(0.2),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),

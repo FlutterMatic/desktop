@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,6 @@ Widget installGit(
   BuildContext context, {
   VoidCallback? onInstall,
   VoidCallback? onContinue,
-  VoidCallback? onCancel,
   required bool isInstalling,
   required bool doneInstalling,
 }) {
@@ -22,59 +22,38 @@ Widget installGit(
           Install.git,
           InstallContent.git,
         ),
-        VSeparators.xLarge(),
-        if (isInstalling && !doneInstalling)
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: (gitNotifier.progress == Progress.started ||
-                    gitNotifier.progress == Progress.checking)
-                ? hLoadingIndicator(context: context)
-                : (gitNotifier.progress == Progress.downloading)
-                    ? CustomProgressIndicator(
-                        disabled: (gitNotifier.progress != Progress.checking &&
-                            gitNotifier.progress != Progress.downloading &&
-                            gitNotifier.progress != Progress.started),
-                        progress: gitNotifier.progress,
-                        toolName: 'Git',
-                        onCancel: onCancel,
-                        message: 'Downloading git',
-                      )
-                    : gitNotifier.progress == Progress.extracting
-                        ? hLoadingIndicator(context: context)
-                        : gitNotifier.progress == Progress.done
-                            ? welcomeToolInstalled(
-                                context,
-                                title: 'Git Installed',
-                                message:
-                                    'Git installed successfully on your machine. Continue to the next step.',
-                              )
-                            : gitNotifier.progress == Progress.none
-                                ? const SizedBox.shrink()
-                                : CustomProgressIndicator(
-                                    disabled: (gitNotifier.progress !=
-                                            Progress.checking &&
-                                        gitNotifier.progress !=
-                                            Progress.downloading &&
-                                        gitNotifier.progress !=
-                                            Progress.started),
-                                    progress: gitNotifier.progress,
-                                    toolName: 'Git',
-                                    onCancel: onCancel,
-                                    message: 'Downloading git',
-                                  ),
-          ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: (gitNotifier.progress == Progress.started ||
+                  gitNotifier.progress == Progress.checking)
+              ? hLoadingIndicator(context: context)
+              : gitNotifier.progress == Progress.downloading
+                  ? CustomProgressIndicator()
+                  : gitNotifier.progress == Progress.extracting
+                      ? hLoadingIndicator(context: context)
+                      : gitNotifier.progress == Progress.done
+                          ? welcomeToolInstalled(
+                              context,
+                              title: 'Git Installed',
+                              message:
+                                  'Git installed successfully on your device. Continue to the next step.',
+                            )
+                          : gitNotifier.progress == Progress.none
+                              ? infoWidget(context,
+                                  'Git will be used to provide services such as Pub and other tools that Flutter & Dart uses.')
+                              : hLoadingIndicator(context: context),
+        ),
         if (doneInstalling)
           welcomeToolInstalled(
             context,
             title: 'Git Installed',
             message: 'You have successfully installed Git.',
           ),
-        VSeparators.xLarge(),
+        VSeparators.normal(),
         WelcomeButton(
           onContinue: onContinue,
           onInstall: onInstall,
           progress: gitNotifier.progress,
-          toolName: 'Git',
         ),
       ],
     );

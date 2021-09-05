@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/dialog_templates/settings/settings.dart';
+import 'package:manager/components/dialog_templates/about/about_us.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
+import 'package:manager/meta/views/home/home.dart';
+import 'package:manager/meta/views/welcome/screens/docs_tutorials.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
+import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/meta/views/welcome/screens/docs_tutorials.dart';
 import 'package:provider/provider.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -23,17 +24,23 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   WelcomeTab _tab = WelcomeTab.gettingStarted;
-  Progress progress = Progress.none;
 
   bool _installing = false;
   bool _completedInstall = false;
 
-  // Editors
-  EditorType _editor = EditorType.both;
+  // Editors to install
+  List<EditorType> _editor = <EditorType>[
+    EditorType.androidStudio,
+    EditorType.vscode,
+  ];
 
   @override
   void initState() {
-    _tab = SharedPref().pref.containsKey('Tab') ? WelcomeTab.restart : WelcomeTab.gettingStarted;
+    if (SharedPref().pref.containsKey('Tab')) {
+      _tab = WelcomeTab.restart;
+    } else {
+      _tab = WelcomeTab.gettingStarted;
+    }
     super.initState();
   }
 
@@ -125,14 +132,29 @@ class _WelcomePageState extends State<WelcomePage> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => const SettingDialog(),
-                      // AboutUsDialog(),
+                      builder: (_) => const AboutUsDialog(),
                     );
                   },
                 ),
               ],
             ),
           ),
+          if (kDebugMode)
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                splashRadius: 1,
+                icon: const Icon(Icons.skip_next),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute<Widget>(
+                        builder: (_) => const HomeScreen()),
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );
@@ -153,62 +175,62 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.started;
               });
               await context.read<FlutterNotifier>().checkFlutter(context, sdkData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             }
           },
-          onCancel: () {},
-          onContinue: () {
-            setState(() => _tab = WelcomeTab.installEditor);
-          },
+          onContinue: () => setState(() => _tab = WelcomeTab.installEditor),
         );
       case WelcomeTab.installEditor:
-        return installEditor(
-          context,
+        return WelcomeInstallEditor(
           onInstall: () async {
             if (_completedInstall) {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.started;
               });
-              switch (_editor.index) {
-                case 0:
-                  await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
-                  break;
-                case 1:
-                  await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
-                  break;
-                default:
-                  await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
-                  await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
+              if (_editor.contains(EditorType.none)) {
+                // None will be skipped and next page will be shown.
+                setState(() {
+                  _editor.clear();
+                  _tab = WelcomeTab.installGit;
+                });
               }
+              if (_editor.contains(EditorType.androidStudio)) {
+                // Installs Android Studio.
+                await context
+                    .read<AndroidStudioNotifier>()
+                    .checkAStudio(context, apiData);
+                _editor.remove(EditorType.androidStudio);
+              }
+              if (_editor.contains(EditorType.vscode)) {
+                // Installs VSCode.
+                await context
+                    .read<VSCodeNotifier>()
+                    .checkVSCode(context, apiData);
+                // After completing, we will remove the item from the list.
+                _editor.remove(EditorType.vscode);
+              }
+              setState(() {
+                _installing = false;
+                _completedInstall = true;
+              });
             }
-            setState(() {
-              _installing = false;
-              _completedInstall = false;
-              progress = Progress.done;
-            });
           },
-          onCancel: () {},
-          selectedType: _editor,
-          onEditorTypeChanged: (EditorType val) => setState(() => _editor = val),
+          onEditorTypeChanged: (List<EditorType> val) =>
+              setState(() => _editor = val),
           isInstalling: _installing,
           doneInstalling: _completedInstall,
           onContinue: () => setState(() => _tab = WelcomeTab.installGit),
@@ -221,22 +243,18 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.started;
               });
               await context.read<GitNotifier>().checkGit(context, apiData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             }
           },
-          onCancel: () {},
           isInstalling: _installing,
           doneInstalling: _completedInstall,
           onContinue: () => setState(() => _tab = WelcomeTab.installJava),
@@ -249,18 +267,15 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             } else {
               setState(() {
                 _installing = true;
-                progress = Progress.started;
               });
               await context.read<JavaNotifier>().checkJava(context, apiData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
-                progress = Progress.done;
               });
             }
           },

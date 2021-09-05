@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:provider/provider.dart';
 
 Widget installFlutter(
   BuildContext context, {
-  required VoidCallback onInstall,
-  required VoidCallback onCancel,
   VoidCallback? onContinue,
-  // required Progress progress,
+  required VoidCallback onInstall,
 }) {
   return Consumer<FlutterNotifier>(
       builder: (BuildContext context, FlutterNotifier flutterNotifier, _) {
@@ -19,7 +18,7 @@ Widget installFlutter(
         welcomeHeaderTitle(
           Assets.flutter,
           'Install Flutter',
-          'You will need to install Flutter in your machine to start using Flutter.',
+          'You will need to install Flutter in your device to start using Flutter.',
         ),
         VSeparators.xLarge(),
         Padding(
@@ -27,18 +26,8 @@ Widget installFlutter(
           child: (flutterNotifier.progress == Progress.started ||
                   flutterNotifier.progress == Progress.checking)
               ? hLoadingIndicator(context: context)
-              : (flutterNotifier.progress == Progress.downloading ||
-                      flutterNotifier.progress == Progress.failed)
-                  ? CustomProgressIndicator(
-                      disabled: (flutterNotifier.progress !=
-                              Progress.checking &&
-                          flutterNotifier.progress != Progress.downloading &&
-                          flutterNotifier.progress != Progress.started),
-                      progress: flutterNotifier.progress,
-                      toolName: 'Flutter',
-                      onCancel: onCancel,
-                      message: 'Downloading Flutter',
-                    )
+              : flutterNotifier.progress == Progress.downloading
+                  ? CustomProgressIndicator()
                   : (flutterNotifier.progress == Progress.extracting)
                       ? hLoadingIndicator(context: context)
                       : flutterNotifier.progress == Progress.done
@@ -46,18 +35,17 @@ Widget installFlutter(
                               context,
                               title: 'Flutter Installed',
                               message:
-                                  'Flutter was installed successfully on your machine. Continue to the next step.',
+                                  'Flutter was installed successfully on your device. Continue to the next step.',
                             )
                           : flutterNotifier.progress == Progress.none
-                              ? const SizedBox.shrink()
+                              ? infoWidget(context, 'We will check if you have Flutter installed or not and install it for you if you don\'t.')
                               : hLoadingIndicator(context: context),
         ),
-        VSeparators.xLarge(),
+        VSeparators.small(),
         WelcomeButton(
-          onContinue: onContinue,
           onInstall: onInstall,
+          onContinue: onContinue,
           progress: flutterNotifier.progress,
-          toolName: 'Flutter',
         ),
       ],
     );

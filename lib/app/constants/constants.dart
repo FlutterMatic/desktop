@@ -68,6 +68,7 @@ const String _lottieBase = 'assets/lottie/';
 /// Class for assets
 class Assets {
   static const String studio = '${_imagesLogosBase}android_studio.svg';
+  static const String settings = '${_imagesIconsBase}settings.svg';
   static const String extracting = '${_lottieBase}extraction.json';
   static const String confetti = '${_imagesIconsBase}confetti.svg';
   static const String flutter = '${_imagesLogosBase}flutter.svg';
@@ -82,7 +83,7 @@ class Assets {
   static const String done = '${_imagesIconsBase}done.svg';
   static const String warn = '${_imagesIconsBase}warn.svg';
   static const String java = '${_imagesLogosBase}java.svg';
-    static const String git = '${_imagesLogosBase}git.svg';
+  static const String git = '${_imagesLogosBase}git.svg';
 }
 
 /// Class for installed softwares

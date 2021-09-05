@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
@@ -30,6 +31,9 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
               children: <Widget>[
                 Expanded(
                   child: RectangleButton(
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? null
+                        : AppTheme.lightTheme.buttonColor,
                     child: const Text('Flutter Documentation',
                         style: TextStyle(color: Colors.white)),
                     onPressed: () => launch('https://flutter.dev/docs'),
@@ -38,11 +42,12 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
                 HSeparators.small(),
                 Expanded(
                   child: RectangleButton(
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? null
+                        : AppTheme.lightTheme.buttonColor,
                     child: const Text('Our Documentation',
                         style: TextStyle(color: Colors.white)),
-                    onPressed: () {
-                      // TODO: Create our own documentation on our website.
-                    },
+                    onPressed: () {},
                   ),
                 ),
               ],
@@ -51,15 +56,12 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
         ),
       ),
       VSeparators.small(),
-      informationWidget(
-        InstalledContent.restart,
-      ),
+      informationWidget(InstalledContent.restart),
       VSeparators.large(),
       WelcomeButton(
         onContinue: () {},
         onInstall: onRestart,
         progress: Progress.none,
-        toolName: 'Flutter',
         buttonText: 'Restart',
       ),
     ],

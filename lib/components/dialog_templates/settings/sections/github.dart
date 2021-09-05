@@ -16,9 +16,9 @@ class GitHubSettingsSection extends StatelessWidget {
               child: RectangleButton(
                 height: 100,
                 onPressed: () {
-                  // TODO: Launch the URL to file a new issue.
-                  launch('');
                   Navigator.pop(context);
+                  launch(
+                      'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new');
                 },
                 child: Column(
                   children: <Widget>[
@@ -40,9 +40,9 @@ class GitHubSettingsSection extends StatelessWidget {
               child: RectangleButton(
                 height: 100,
                 onPressed: () {
-                  // TODO: Launch the URL to make a new Pull Request.
-                  launch('');
                   Navigator.pop(context);
+                  launch(
+                      'https://github.com/FlutterMatic/FlutterMatic-desktop/pulls');
                 },
                 child: Column(
                   children: <Widget>[

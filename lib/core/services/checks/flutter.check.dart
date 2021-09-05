@@ -1,7 +1,6 @@
-import 'dart:async';
-
-import 'dart:developer' as console;
 import 'dart:io';
+import 'dart:async';
+import 'dart:developer' as console;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/enum.dart';
@@ -17,7 +16,7 @@ import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
 import 'package:pub_semver/src/version.dart';
 
-// / [FlutterNotifier] is a [ValueNotifier].
+/// [FlutterNotifier] is a [ValueNotifier].
 class FlutterNotifier extends ChangeNotifier {
   /// Get flutter version.
   Version? flutterVersion;
@@ -62,7 +61,7 @@ class FlutterNotifier extends ChangeNotifier {
         notifyListeners();
 
         /// Downloading flutter
-        !kDebugMode || kProfileMode
+        kDebugMode || kProfileMode
             ? await context.read<DownloadNotifier>().downloadFile(
                   'https://sample-videos.com/zip/50mb.zip',
                   'flutter.$archiveType',
