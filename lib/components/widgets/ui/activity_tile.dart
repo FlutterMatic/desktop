@@ -21,7 +21,7 @@ class BgActivityTile extends StatelessWidget {
           children: <Widget>[
             Expanded(child: Text(title)),
             const SizedBox(width: 8),
-            Spinner(thickness: 2, size: 15),
+            const Spinner(thickness: 2, size: 15),
           ],
         ),
         VSeparators.normal(),

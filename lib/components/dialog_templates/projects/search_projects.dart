@@ -88,7 +88,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
           VSeparators.small(),
           // Loading when finding initial projects
           if (_loading)
-            Center(child: SizedBox(height: 80, width: 80, child: Spinner())),
+            const Center(child: SizedBox(height: 80, width: 80, child: Spinner())),
           // No project(s) in provided path
           if (!_loading && projs.isEmpty)
             Center(

@@ -42,7 +42,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
     ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: _loading
-          ? SizedBox(height: 300, width: 300, child: Spinner())
+          ? const SizedBox(height: 300, width: 300, child: Spinner())
           : _loadingMaterials
               ? _updatingChannels(context)
               : Column(

@@ -166,7 +166,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 VSeparators.xLarge(),
-                Center(child: Spinner(thickness: 3)),
+                const Center(child: Spinner(thickness: 3)),
                 VSeparators.xLarge(),
                 const Text(
                   'Creating your new Flutter project. This may take a while.',

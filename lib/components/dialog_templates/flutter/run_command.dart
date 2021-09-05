@@ -134,7 +134,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                 Expanded(
                   child: Row(
                     children: <Widget>[
-                      SizedBox(
+                      const SizedBox(
                           height: 20, width: 20, child: Spinner(thickness: 2)),
                       const Spacer(),
                     ],

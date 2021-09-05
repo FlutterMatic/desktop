@@ -70,7 +70,7 @@ class RectangleButton extends StatelessWidget {
           padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
           child: Center(
             child: loading
-                ? SizedBox(height: 15, width: 15, child: Spinner(thickness: 2))
+                ? const SizedBox(height: 15, width: 15, child: Spinner(thickness: 2))
                 : child,
           ),
         ),

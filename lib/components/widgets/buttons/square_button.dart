@@ -52,7 +52,7 @@ class SquareButton extends StatelessWidget {
       height: size,
       child: Center(
         child: loading
-            ? Spinner(size: 20, thickness: 3)
+            ? const Spinner(size: 20, thickness: 3)
             : SizedBox(
                 height: size,
                 width: size,

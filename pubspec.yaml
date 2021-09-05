@@ -73,5 +73,10 @@ flutter:
   fonts:
     - family: NotoSans
       fonts:
-        - asset: assets/font/NotoSans-Regular.ttf
-        - asset: assets/font/NotoSans-Bold.ttf
+        - asset: assets/font/NotoSans/NotoSans-Regular.ttf
+        - asset: assets/font/NotoSans/NotoSans-Bold.ttf
+    - family: VictorMono
+      fonts:
+        - asset: assets/font/VictorMono/VictorMono-SemiBold.ttf
+        - asset: assets/font/VictorMono/VictorMono-SemiBoldItalic.ttf
+          style: italic

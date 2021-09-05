@@ -120,7 +120,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
-                  builder: (_) => AboutUsDialog(),
+                  builder: (_) => const AboutUsDialog(),
                 );
               },
             ),

@@ -11,6 +11,7 @@ import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
+import 'package:manager/meta/views/welcome/screens/requirements.dart';
 import 'package:provider/provider.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -81,7 +82,10 @@ class _WelcomePageState extends State<WelcomePage> {
                       ),
                       HSeparators.xSmall(),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await Navigator.push(
+                              context, MaterialPageRoute<Widget>(builder: (_) => const SystemRequirementsScreen()));
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(

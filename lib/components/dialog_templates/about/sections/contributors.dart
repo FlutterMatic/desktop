@@ -9,15 +9,14 @@ import 'dart:convert';
 
 bool _failedRequest = false;
 
-final List<ContributorTile> _contributors = <ContributorTile>[
-  // TODO(@yahu1031): Fix caching problems.
-  const ContributorTile('56755783'), // Ziyad Farhan
-  const ContributorTile('35523357'), // Minnu
-];
-
-class ContributorsAboutSection extends StatelessWidget {
+class ContributorsAboutSection extends StatefulWidget {
   const ContributorsAboutSection({Key? key}) : super(key: key);
 
+  @override
+  _ContributorsAboutSectionState createState() => _ContributorsAboutSectionState();
+}
+
+class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -49,8 +48,14 @@ class ContributorsAboutSection extends StatelessWidget {
             ),
           )
         else
+          // Column(children: _contributors.map((ContributorTile e) => (e)).toList()),
           Column(
-              children: _contributors.map((ContributorTile e) => (e)).toList()),
+            children: <Widget>[
+              const ContributorTile('35523357'),
+              const ContributorTile('56755783'),
+            ],
+            // children: _contributors,
+          ),
         VSeparators.small(),
         RoundContainer(
           width: double.infinity,
@@ -66,8 +71,7 @@ class ContributorsAboutSection extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     VSeparators.xSmall(),
-                    const Text(
-                        'We appreciate people like you to contribute to this project.'),
+                    const Text('We appreciate people like you to contribute to this project.'),
                   ],
                 ),
               ),
@@ -76,11 +80,10 @@ class ContributorsAboutSection extends StatelessWidget {
                 hoverColor: customTheme.hoverColor,
                 width: 90,
                 // TODO(yahu1031): Launch to the GitHub page for contributions.
-                onPressed: () => launch(''),
+                onPressed: () => launch('https://github.com/fluttermatic/'),
                 child: Text(
                   'Get Started',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
               ),
             ],
@@ -100,16 +103,15 @@ class ContributorTile extends StatefulWidget {
   _ContributorTileState createState() => _ContributorTileState();
 }
 
+class _ContributorTileState extends State<ContributorTile> {
 // Utils
-bool _loading = true;
-bool _failed = false;
+  bool _loading = true;
+  bool _failed = false;
 
 // Values
-late String _userId;
-late String _userName;
-late String _profileURL;
-
-class _ContributorTileState extends State<ContributorTile> {
+  late String _userId;
+  late String _userName;
+  late String _profileURL;
   Future<void> _loadProfile() async {
     Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
@@ -159,10 +161,15 @@ class _ContributorTileState extends State<ContributorTile> {
           height: 65,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: _loading
-              ? Spinner(size: 15, thickness: 2)
+              ? const Spinner(size: 15, thickness: 2)
               : Row(
                   children: <Widget>[
-                    CircleAvatar(backgroundImage: NetworkImage(_profileURL)),
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        _profileURL,
+                        scale: 5,
+                      ),
+                    ),
                     HSeparators.small(),
                     Expanded(
                       child: Column(
@@ -178,15 +185,12 @@ class _ContributorTileState extends State<ContributorTile> {
                           VSeparators.xSmall(),
                           Text(
                             'GitHub: ' + _userId,
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color!
-                                    .withOpacity(0.7)),
+                            style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.7)),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios_rounded,
-                        color: customTheme.indicatorColor, size: 18),
+                    Icon(Icons.arrow_forward_ios_rounded, color: customTheme.indicatorColor, size: 18),
                   ],
                 ),
         ),
