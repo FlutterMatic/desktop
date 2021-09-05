@@ -47,8 +47,8 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
                 color: customTheme.accentColor.withOpacity(0.2),
                 hoverColor: customTheme.hoverColor,
                 width: 90,
-                // TODO(yahu1031): Launch to the GitHub page for contributions.
-                onPressed: () => launch('https://github.com/fluttermatic/'),
+                onPressed: () => launch(
+                    'https://github.com/FlutterMatic/FlutterMatic-desktop'),
                 child: Text(
                   'Get Started',
                   style:
@@ -93,6 +93,8 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
   }
 }
 
+// Just trying to get the data from the github api.
+
 class ContributorTile extends StatefulWidget {
   final String gitHubId;
 
@@ -123,7 +125,7 @@ class _ContributorTileState extends State<ContributorTile> {
       Uri.parse('https://api.github.com/user/${widget.gitHubId}'),
       headers: _header,
     );
-    if (_result.statusCode == 200) {
+    if (_result.statusCode == 200 && mounted) {
       dynamic _responseJSON = json.decode(_result.body);
       setState(() {
         _userId = _responseJSON['login'];
@@ -132,7 +134,7 @@ class _ContributorTileState extends State<ContributorTile> {
         _failed = false;
         _loading = false;
       });
-    } else {
+    } else if (mounted) {
       setState(() {
         _failedRequest = true;
         _failed = true;
@@ -167,6 +169,7 @@ class _ContributorTileState extends State<ContributorTile> {
                   children: <Widget>[
                     CircleAvatar(
                       backgroundImage: NetworkImage(_profileURL, scale: 5),
+                      backgroundColor: Colors.blueGrey,
                     ),
                     HSeparators.small(),
                     Expanded(

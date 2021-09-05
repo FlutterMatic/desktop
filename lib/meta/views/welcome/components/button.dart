@@ -4,19 +4,15 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
 class WelcomeButton extends StatelessWidget {
-  final String toolName;
   final Progress progress;
   final VoidCallback? onContinue;
   final VoidCallback? onInstall;
   final String? buttonText;
-  final bool ignoreOpacity;
-
+  
   const WelcomeButton({
-    required this.toolName,
     required this.progress,
     required this.onInstall,
     required this.onContinue,
-    this.ignoreOpacity = false,
     this.buttonText,
     Key? key,
   }) : super(key: key);

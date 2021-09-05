@@ -5,7 +5,12 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:provider/provider.dart';
 
-class ThemeSettingsSection extends StatelessWidget {
+class ThemeSettingsSection extends StatefulWidget {
+  @override
+  _ThemeSettingsSectionState createState() => _ThemeSettingsSectionState();
+}
+
+class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   @override
   Widget build(BuildContext context) {
     return TabViewTabHeadline(

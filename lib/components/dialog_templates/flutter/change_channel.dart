@@ -3,7 +3,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'dart:developer';
-import 'package:manager/meta/views/home.dart';
+import 'package:manager/meta/views/home/home.dart';
 
 class ChangeChannelDialog extends StatefulWidget {
   @override
@@ -50,7 +50,7 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                   children: <Widget>[
                     const DialogHeader(title: 'Change Channel'),
                     const Text(
-                      'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommend staying on the stable channel.',
+                      'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your device. We recommend staying on the stable channel.',
                       style: TextStyle(fontSize: 13),
                     ),
                     VSeparators.normal(),

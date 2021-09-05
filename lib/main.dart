@@ -11,7 +11,7 @@ import 'package:manager/components/widgets/ui/spinner.dart';
 import 'package:manager/meta/views/welcome/screens/welcome_view.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:manager/meta/views/home.dart';
+import 'package:manager/meta/views/home/home.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 
@@ -40,11 +40,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
     /// Application supporting Directory
     Directory dir = await getApplicationSupportDirectory();
-    // Platform.environment.forEach((String k, String v) {
-    //   if (k.toLowerCase() == 'path') {
-    //     logger.file(LogTypeTag.info, v);
-    //   }
-    // });
 
     /// Check for temporary Directory to download files
     bool tmpDir = await Directory('${dir.path}\\tmp').exists();
@@ -136,7 +131,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
           Widget? child) {
         return Directionality(
           textDirection: TextDirection.ltr,
-          child: CustomWindow(
+          child: _CustomWindow(
             child: MaterialApp(
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
@@ -153,6 +148,48 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
           ),
         );
       },
+    );
+  }
+}
+
+class _CustomWindow extends StatelessWidget {
+  final Widget child;
+
+  _CustomWindow({Key? key, required this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: context.read<ThemeChangeNotifier>().isDarkTheme
+          ? AppTheme.darkBackgroundColor
+          : AppTheme.lightBackgroundColor,
+      child: Column(
+        children: <Widget>[
+          WindowTitleBarBox(
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'Flutter App Manager',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: !context.read<ThemeChangeNotifier>().isDarkTheme
+                          ? AppTheme.darkBackgroundColor
+                          : AppTheme.lightBackgroundColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Roboto',
+                    ),
+                  ),
+                ),
+                Expanded(child: MoveWindow()),
+                windowControls(context)
+              ],
+            ),
+          ),
+          Expanded(child: child),
+        ],
+      ),
     );
   }
 }

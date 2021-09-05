@@ -89,7 +89,6 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
               onInstall: () {},
               onContinue: widget.onContinue,
               progress: snapshot.hasData ? Progress.done : Progress.downloading,
-              toolName: 'Getting Started',
             ),
           ],
         );
