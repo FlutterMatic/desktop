@@ -90,7 +90,7 @@ class VSCodeNotifier extends ChangeNotifier {
             await setPath('C:\\fluttermatic\\code\\bin', dir.path);
         if (isVSCPathSet) {
           await SharedPref()
-              .prefs
+              .pref
               .setString('VSC_path', 'C:\\fluttermatic\\code\\bin');
           await logger.file(LogTypeTag.info, 'VSCode set to path');
           _progress = Progress.done;
@@ -100,12 +100,12 @@ class VSCodeNotifier extends ChangeNotifier {
           _progress = Progress.failed;
           notifyListeners();
         }
-      } else if (!SharedPref().prefs.containsKey('VSC_path') ||
-          !SharedPref().prefs.containsKey('VSC_version')) {
+      } else if (!SharedPref().pref.containsKey('VSC_path') ||
+          !SharedPref().pref.containsKey('VSC_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
-        await SharedPref().prefs.setString('VSC_path', vscPath);
+        await SharedPref().pref.setString('VSC_path', vscPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -113,15 +113,15 @@ class VSCodeNotifier extends ChangeNotifier {
         versions.vsCode = vscVersion.toString();
         await logger.file(
             LogTypeTag.info, 'VS Code version : ${versions.vsCode}');
-        await SharedPref().prefs.setString('VSC_version', versions.vsCode!);
+        await SharedPref().pref.setString('VSC_version', versions.vsCode!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.info, 'Loading VS Code details from shared preferences');
-        vscPath = SharedPref().prefs.getString('VSC_path');
+        vscPath = SharedPref().pref.getString('VSC_path');
         await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
-        versions.vsCode = SharedPref().prefs.getString('VSC_version');
+        versions.vsCode = SharedPref().pref.getString('VSC_version');
         await logger.file(LogTypeTag.info, 'VS Code version : ${versions.git}');
         _progress = Progress.done;
         notifyListeners();

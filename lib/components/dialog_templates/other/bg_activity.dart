@@ -40,7 +40,6 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Background Activity'),
-          VSeparators.xLarge(),
           const Text(
             'Activity',
             style: TextStyle(fontWeight: FontWeight.w600),

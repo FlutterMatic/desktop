@@ -13,21 +13,55 @@ class ContributorsAboutSection extends StatefulWidget {
   const ContributorsAboutSection({Key? key}) : super(key: key);
 
   @override
-  _ContributorsAboutSectionState createState() => _ContributorsAboutSectionState();
+  _ContributorsAboutSectionState createState() =>
+      _ContributorsAboutSectionState();
 }
 
 class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text('Contributors'),
-        VSeparators.small(),
+    return TabViewTabHeadline(
+      title: 'Contributors',
+      content: <Widget>[
+        RoundContainer(
+          width: double.infinity,
+          color: customTheme.accentColor.withOpacity(0.2),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text('Want to contribute?'),
+                    VSeparators.xSmall(),
+                    const Text(
+                      'We appreciate people like you to contribute to this project.',
+                      style: TextStyle(fontSize: 13.5),
+                    ),
+                  ],
+                ),
+              ),
+              HSeparators.small(),
+              RectangleButton(
+                color: customTheme.accentColor.withOpacity(0.2),
+                hoverColor: customTheme.hoverColor,
+                width: 90,
+                // TODO(yahu1031): Launch to the GitHub page for contributions.
+                onPressed: () => launch('https://github.com/fluttermatic/'),
+                child: Text(
+                  'Get Started',
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                ),
+              ),
+            ],
+          ),
+        ),
+        VSeparators.xSmall(),
         if (_failedRequest)
           RoundContainer(
-            color: customTheme.focusColor,
+            color: customTheme.accentColor.withOpacity(0.2),
             width: double.infinity,
             child: Column(
               children: <Widget>[
@@ -48,47 +82,12 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
             ),
           )
         else
-          // Column(children: _contributors.map((ContributorTile e) => (e)).toList()),
           Column(
             children: <Widget>[
-              const ContributorTile('35523357'),
-              const ContributorTile('56755783'),
-            ],
-            // children: _contributors,
-          ),
-        VSeparators.small(),
-        RoundContainer(
-          width: double.infinity,
-          color: customTheme.focusColor,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      'Want to contribute?',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    VSeparators.xSmall(),
-                    const Text('We appreciate people like you to contribute to this project.'),
-                  ],
-                ),
-              ),
-              HSeparators.small(),
-              RectangleButton(
-                hoverColor: customTheme.hoverColor,
-                width: 90,
-                // TODO(yahu1031): Launch to the GitHub page for contributions.
-                onPressed: () => launch('https://github.com/fluttermatic/'),
-                child: Text(
-                  'Get Started',
-                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-                ),
-              ),
+              const ContributorTile('35523357'), // Minnu
+              const ContributorTile('56755783'), // Ziyad
             ],
           ),
-        ),
       ],
     );
   }
@@ -104,14 +103,15 @@ class ContributorTile extends StatefulWidget {
 }
 
 class _ContributorTileState extends State<ContributorTile> {
-// Utils
+  // Utils
   bool _loading = true;
   bool _failed = false;
 
-// Values
+  // Values
   late String _userId;
   late String _userName;
   late String _profileURL;
+
   Future<void> _loadProfile() async {
     Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
@@ -156,19 +156,17 @@ class _ContributorTileState extends State<ContributorTile> {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: RectangleButton(
-          onPressed: () => launch('https://www.github.com/$_userId'),
-          width: double.infinity,
           height: 65,
+          width: double.infinity,
+          color: customTheme.accentColor.withOpacity(0.2),
           padding: const EdgeInsets.symmetric(horizontal: 10),
+          onPressed: () => launch('https://www.github.com/$_userId'),
           child: _loading
               ? const Spinner(size: 15, thickness: 2)
               : Row(
                   children: <Widget>[
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        _profileURL,
-                        scale: 5,
-                      ),
+                      backgroundImage: NetworkImage(_profileURL, scale: 5),
                     ),
                     HSeparators.small(),
                     Expanded(
@@ -185,12 +183,15 @@ class _ContributorTileState extends State<ContributorTile> {
                           VSeparators.xSmall(),
                           Text(
                             'GitHub: ' + _userId,
-                            style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.7)),
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color!
+                                    .withOpacity(0.7)),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios_rounded, color: customTheme.indicatorColor, size: 18),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        color: customTheme.indicatorColor, size: 18),
                   ],
                 ),
         ),

@@ -7,16 +7,14 @@ class AboutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text('About'),
-        VSeparators.xSmall(),
+    return TabViewTabHeadline(
+      title: 'About',
+      content: <Widget>[
         informationWidget(
           'FlutterMatic entirely relies on people who contributed to this project. As a way of showing appreciation, we are listing the name of the most active contributors.',
           type: InformationType.green,
         ),
-        VSeparators.xSmall(),
+        VSeparators.small(),
         infoWidget(
           context,
           'This project is completely open-source and can be found on GitHub.',

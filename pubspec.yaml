@@ -67,8 +67,9 @@ flutter:
     - assets/font/
     - assets/images/logos/
     - assets/images/icons/
-    - assets/lottie/
     - assets/markdown/
+    - assets/lottie/
+    - changelog.md
 
   fonts:
     - family: NotoSans

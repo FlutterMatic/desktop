@@ -15,24 +15,18 @@ Widget welcomeToolInstalled(BuildContext context,
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const Icon(Icons.check_rounded, color: Color(0xff40CAFF)),
-        HSeparators.normal(),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                title,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(title, style: const TextStyle(fontSize: 16)),
               VSeparators.xSmall(),
-              Text(
-                message,
-                style: const TextStyle(fontSize: 13),
-              ),
+              Text(message, style: const TextStyle(fontSize: 13)),
             ],
           ),
         ),
+        HSeparators.normal(),
+        const Icon(Icons.check_circle_outline_rounded, color: kGreenColor),
       ],
     ),
   );

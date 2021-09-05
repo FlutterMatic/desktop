@@ -67,23 +67,23 @@ class AndroidStudioNotifier extends ChangeNotifier {
           _progress = Progress.done;
           notifyListeners();
         }
-      } else if (!SharedPref().prefs.containsKey('Studio_path') || !SharedPref().prefs.containsKey('Studio_version')) {
-        await SharedPref().prefs.setString('Studio_path', studioPath);
+      } else if (!SharedPref().pref.containsKey('Studio_path') || !SharedPref().pref.containsKey('Studio_version')) {
+        await SharedPref().pref.setString('Studio_path', studioPath);
         await logger.file(LogTypeTag.info, 'Android Studio found at - ${studioPath.trim()}'.trim());
 
         /// Fetch the version of Android Studio.
         studioVersion = await getAStudioBinVersion();
         versions.studio = studioVersion.toString();
         await logger.file(LogTypeTag.info, 'Android Studio version : ${versions.studio}');
-        await SharedPref().prefs.setString('Studio_version', versions.studio!);
+        await SharedPref().pref.setString('Studio_version', versions.studio!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(LogTypeTag.info, 'Loading Android Studio details from shared preferences');
-        studioPath = SharedPref().prefs.getString('Studio_path');
+        studioPath = SharedPref().pref.getString('Studio_path');
         await logger.file(
             LogTypeTag.info, 'Android Studio found at - ${studioPath!.trim()}'.trim().replaceAll('"', ''));
-        versions.studio = SharedPref().prefs.getString('Studio_version');
+        versions.studio = SharedPref().pref.getString('Studio_version');
         await logger.file(LogTypeTag.info, 'Studio version : ${versions.studio}');
         _progress = Progress.done;
         notifyListeners();
@@ -112,7 +112,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
         if (studio64PFPath != null) {
           await logger.file(LogTypeTag.info, 'Studio64.exe found in Program Files');
           await Future<dynamic>.delayed(const Duration(seconds: 1));
-          await SharedPref().prefs.setString('Studio_path', studio64PFPath);
+          await SharedPref().pref.setString('Studio_path', studio64PFPath);
           await setPath(studio64PFPath);
           return true;
         } else {
@@ -146,7 +146,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
         await logger.file(LogTypeTag.info, 'Studio64.exe found in Jetbrains');
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await setPath(studio64JBPath, appDir);
-        await SharedPref().prefs.setString('Studio_path', paths.studio!);
+        await SharedPref().pref.setString('Studio_path', paths.studio!);
         return true;
       } else {
         await logger.file(LogTypeTag.info, 'Studio64.exe not found in Jetbrains folder');
@@ -192,7 +192,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
         /// Appending path to env
         bool isASPathSet = await setPath('C:\\fluttermatic\\AndroidStudio\\bin', appDir);
         if (isASPathSet) {
-          await SharedPref().prefs.setString('Studio_path', 'C:\\fluttermatic\\AndroidStudio\\bin');
+          await SharedPref().pref.setString('Studio_path', 'C:\\fluttermatic\\AndroidStudio\\bin');
           await Future<dynamic>.delayed(const Duration(seconds: 1));
           await logger.file(LogTypeTag.info, 'Android studio set to path');
         } else {

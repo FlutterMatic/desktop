@@ -17,7 +17,6 @@ class AboutUsDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'About'),
-          VSeparators.small(),
           const TabViewWidget(
             tabs: <TabViewObject>[
               TabViewObject('About', AboutSection()),

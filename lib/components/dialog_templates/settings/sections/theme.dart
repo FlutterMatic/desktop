@@ -1,28 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/dialog_templates/settings/settings.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:provider/provider.dart';
 
 class ThemeSettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text(
-          'Themes',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        // TODO: Show the theme selector.
-        VSeparators.normal(),
-        // _themeTiles(context, !currentTheme.isDarkTheme, 'Light Mode',
-        //     'Get a bright and shining desktop', () {
-        // if (currentTheme.isDarkTheme) currentTheme.toggleTheme();
-        // }),
+    return TabViewTabHeadline(
+      title: 'Themes',
+      content: <Widget>[
+        _themeTiles(context, !context.read<ThemeChangeNotifier>().isDarkTheme,
+            'Light Mode', 'Get a bright and shining desktop', () {
+          if (context.read<ThemeChangeNotifier>().isDarkTheme) {
+            context.read<ThemeChangeNotifier>().updateTheme(false);
+            // We will exit the settings page and re-open it to update the theme
+            // for the settings dialog. The user won't really see this happening.
+            Navigator.pop(context);
+            showDialog(context: context, builder: (_) => const SettingDialog());
+          }
+        }),
         VSeparators.small(),
-        // _themeTiles(context, currentTheme.isDarkTheme, 'Dark Mode',
-        //     'For dark and nighty appearance', () {
-        //   if (!currentTheme.isDarkTheme) currentTheme.toggleTheme();
-        // }),
+        _themeTiles(
+          context,
+          context.read<ThemeChangeNotifier>().isDarkTheme,
+          'Dark Mode',
+          'For dark and nighty appearance',
+          () {
+            if (!context.read<ThemeChangeNotifier>().isDarkTheme) {
+              context.read<ThemeChangeNotifier>().updateTheme(true);
+              // We will exit the settings page and re-open it to update the theme
+              // for the settings dialog. The user won't really see this happening.
+              Navigator.pop(context);
+              showDialog(
+                  context: context, builder: (_) => const SettingDialog());
+            }
+          },
+        ),
       ],
     );
   }
@@ -33,12 +48,12 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     height: 65,
+    onPressed: onPressed,
     width: double.infinity,
     hoverColor: Colors.transparent,
     focusColor: Colors.transparent,
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    onPressed: onPressed,
     padding: const EdgeInsets.all(10),
     child: Align(
       alignment: Alignment.centerLeft,
@@ -50,9 +65,8 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
               children: <Widget>[
                 Text(
                   title,
-                  style: TextStyle(
-                      color: customTheme.textTheme.bodyText1!.color,
-                      fontWeight: FontWeight.w600),
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
                 VSeparators.xSmall(),
                 Text(
@@ -66,9 +80,7 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
               ],
             ),
           ),
-          selected
-              ? const Icon(Icons.check_rounded, color: kGreenColor)
-              : const SizedBox.shrink()
+          if (selected) const Icon(Icons.check_rounded, color: kGreenColor),
         ],
       ),
     ),

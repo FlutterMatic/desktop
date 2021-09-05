@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class LowDriveSpaceDialog extends StatefulWidget {
@@ -15,7 +16,7 @@ class _LowDriveSpaceDialogState extends State<LowDriveSpaceDialog> {
       outerTapExit: false,
       child: Column(
         children: <Widget>[
-          const Text('Storage Full'),
+          const DialogHeader(title: 'No Space'),
         ],
       ),
     );

@@ -49,7 +49,6 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     const DialogHeader(title: 'Change Channel'),
-                    VSeparators.normal(),
                     const Text(
                       'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your machine. We recommend staying on the stable channel.',
                       style: TextStyle(fontSize: 13),
@@ -116,7 +115,6 @@ class AlreadyChannelDialog extends StatelessWidget {
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Same Channel', canClose: false),
-          VSeparators.normal(),
           const Text(
             // TODO: Show the channel name.
             'It looks like you are already in the // Channel //. You didn\'t mean to choose // Channel //? You can go back and pick another channel.',
@@ -165,7 +163,6 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
       child: Column(
         children: <Widget>[
           DialogHeader(title: 'Change to $channelName'),
-          VSeparators.normal(),
           const Text(
             'You will still be able to continue using the IDE with Flutter while we change channels. Please be aware that changing channels will take time.',
             textAlign: TextAlign.center,
@@ -200,7 +197,6 @@ Widget _updatingChannels(BuildContext context) {
   return Column(
     children: <Widget>[
       const DialogHeader(title: 'In Progress'),
-      VSeparators.normal(),
       const Text(
         'We are currently updating your Flutter channel. Please check back later once we are finished updating your Flutter channel.',
         textAlign: TextAlign.center,

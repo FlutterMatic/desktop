@@ -7,14 +7,9 @@ class GitHubSettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text(
-          'GitHub',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        VSeparators.normal(),
+    return TabViewTabHeadline(
+      title: 'GitHub',
+      content: <Widget>[
         Row(
           children: <Widget>[
             Expanded(
@@ -67,15 +62,10 @@ class GitHubSettingsSection extends StatelessWidget {
           ],
         ),
         VSeparators.normal(),
-        const Text(
-          'Contributions',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        VSeparators.xSmall(),
+        const Text('Contributions'),
+        VSeparators.small(),
         infoWidget(context,
-            'We are open-source! We would love to see you make some pull requests to this app!'),
+            'We are open-source! We would love to see you make some pull requests to this tool!'),
       ],
     );
   }

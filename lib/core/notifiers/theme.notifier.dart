@@ -35,6 +35,6 @@ class ThemeChangeNotifier with ChangeNotifier {
     _isDarkTheme = isDarkTheme;
     notifyListeners();
     await logger.file(LogTypeTag.info, 'Dark theme updated to $isDarkTheme.');
-    await SharedPref().prefs.setBool('DARK_THEME', isDarkTheme);
+    await SharedPref().pref.setBool('DARK_THEME', isDarkTheme);
   }
 }

@@ -17,13 +17,9 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    MultiProviders(
-      MyApp(),
-    ),
-  );
+  runApp(MultiProviders(FlutterMaticMain()));
   doWhenWindowReady(() {
-    appWindow.minSize = const Size(750, 680);
+    appWindow.minSize = const Size(750, 600);
     appWindow.maximize();
     appWindow.alignment = Alignment.center;
     appWindow.title = 'Flutter Manager';
@@ -31,12 +27,12 @@ Future<void> main(List<String> args) async {
   });
 }
 
-class MyApp extends StatefulWidget {
+class FlutterMaticMain extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _FlutterMaticMainState createState() => _FlutterMaticMainState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _FlutterMaticMainState extends State<FlutterMaticMain> {
   bool isChecking = true;
 
   Future<void> _initDataFetch() async {
@@ -56,28 +52,31 @@ class _MyAppState extends State<MyApp> {
 
     await SharedPref.init();
 
-    await SharedPref().prefs.clear();
+    await SharedPref().pref.clear();
 
     appVersion = const String.fromEnvironment('current-version');
-    await SharedPref().prefs.setString('App_Version', appVersion.toString());
+    await SharedPref().pref.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
-    await SharedPref().prefs.setString('App_Build', appBuild.toString());
-    if (SharedPref().prefs.containsKey('All_Checked') && !SharedPref().prefs.containsKey('Tab')) {
-      allChecked = SharedPref().prefs.getBool('All_Checked');
+    await SharedPref().pref.setString('App_Build', appBuild.toString());
+    if (SharedPref().pref.containsKey('All_Checked') &&
+        !SharedPref().pref.containsKey('Tab')) {
+      allChecked = SharedPref().pref.getBool('All_Checked');
     } else {
-      await SharedPref().prefs.setBool('All_Checked', false);
-      allChecked = SharedPref().prefs.getBool('All_Checked');
+      await SharedPref().pref.setBool('All_Checked', false);
+      allChecked = SharedPref().pref.getBool('All_Checked');
     }
-    if (!SharedPref().prefs.containsKey('platform')) {
-      List<ProcessResult?>? platformData =
-          Platform.isWindows ? await shell.run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"') : null;
+    if (!SharedPref().pref.containsKey('platform')) {
+      List<ProcessResult?>? platformData = Platform.isWindows
+          ? await shell
+              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
+          : null;
       await SharedPref()
-          .prefs
+          .pref
           .setString('platform', Platform.operatingSystem)
-          .then((_) => platform = SharedPref().prefs.getString('platform'));
-      platform = SharedPref().prefs.getString('platform');
+          .then((_) => platform = SharedPref().pref.getString('platform'));
+      platform = SharedPref().pref.getString('platform');
       await SharedPref()
-          .prefs
+          .pref
           .setString(
               'OS_Name',
               platformData![0]!
@@ -87,9 +86,9 @@ class _MyAppState extends State<MyApp> {
                   .replaceAll('OS Name: ', '')
                   .replaceAll('\\r', '')
                   .trim())
-          .then((_) => osName = SharedPref().prefs.getString('OS_Name'));
-      osName = SharedPref().prefs.getString('OS_Name');
-      await SharedPref().prefs.setString(
+          .then((_) => osName = SharedPref().pref.getString('OS_Name'));
+      osName = SharedPref().pref.getString('OS_Name');
+      await SharedPref().pref.setString(
           'OS_Version',
           platformData[0]!
               .stdout
@@ -99,15 +98,15 @@ class _MyAppState extends State<MyApp> {
               .replaceAll(':', '')
               .split('N/A')[0]
               .trim());
-      osVersion = SharedPref().prefs.getString('OS_Version');
+      osVersion = SharedPref().pref.getString('OS_Version');
     } else {
-      platform = SharedPref().prefs.getString('platform');
-      osName = SharedPref().prefs.getString('OS_Name');
-      osVersion = SharedPref().prefs.getString('OS_Version');
-      appTemp = SharedPref().prefs.getString('App_Temp_Dir');
-      appMainDir = SharedPref().prefs.getString('App_Main_Dir');
-      appVersion = SharedPref().prefs.getString('App_Version');
-      appBuild = SharedPref().prefs.getString('App_Build');
+      platform = SharedPref().pref.getString('platform');
+      osName = SharedPref().pref.getString('OS_Name');
+      osVersion = SharedPref().pref.getString('OS_Version');
+      appTemp = SharedPref().pref.getString('App_Temp_Dir');
+      appMainDir = SharedPref().pref.getString('App_Main_Dir');
+      appVersion = SharedPref().pref.getString('App_Version');
+      appBuild = SharedPref().pref.getString('App_Build');
     }
 
     /// If tmpDir is false, then create a temporary directory.
@@ -133,14 +132,17 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier, Widget? child) {
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
+          Widget? child) {
         return Directionality(
           textDirection: TextDirection.ltr,
           child: CustomWindow(
             child: MaterialApp(
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
-              themeMode: themeChangeNotifier.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+              themeMode: themeChangeNotifier.isDarkTheme
+                  ? ThemeMode.dark
+                  : ThemeMode.light,
               debugShowCheckedModeBanner: false,
               home: isChecking
                   ? const Scaffold(body: Center(child: Spinner()))

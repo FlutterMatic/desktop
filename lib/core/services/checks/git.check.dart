@@ -92,7 +92,7 @@ class GitNotifier extends ChangeNotifier {
           /// Appending path to env
           bool isGitPathSet = await setPath('C:\\fluttermatic\\git\\bin', dir.path);
           if (isGitPathSet) {
-            await SharedPref().prefs.setString('Git_path', 'C:\\fluttermatic\\git\\bin');
+            await SharedPref().pref.setString('Git_path', 'C:\\fluttermatic\\git\\bin');
             _progress = Progress.done;
             notifyListeners();
             await logger.file(LogTypeTag.info, 'Git set to path');
@@ -119,25 +119,25 @@ class GitNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version information.
-      else if (!SharedPref().prefs.containsKey('Git_path') || !SharedPref().prefs.containsKey('Git_version')) {
+      else if (!SharedPref().pref.containsKey('Git_path') || !SharedPref().pref.containsKey('Git_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'Git found at - $gitPath');
-        await SharedPref().prefs.setString('Git_path', gitPath);
+        await SharedPref().pref.setString('Git_path', gitPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
         await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
-        await SharedPref().prefs.setString('Git_version', versions.git!);
+        await SharedPref().pref.setString('Git_version', versions.git!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(LogTypeTag.info, 'Loading git details from shared preferences');
-        gitPath = SharedPref().prefs.getString('Git_path');
+        gitPath = SharedPref().pref.getString('Git_path');
         await logger.file(LogTypeTag.info, 'Git found at - $gitPath');
-        versions.git = SharedPref().prefs.getString('Git_version');
+        versions.git = SharedPref().pref.getString('Git_version');
         await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
         _progress = Progress.done;
         notifyListeners();

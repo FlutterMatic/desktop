@@ -19,15 +19,6 @@ class SettingDialog extends StatefulWidget {
 }
 
 class _SettingDialogState extends State<SettingDialog> {
-  //Utils
-  bool _loading = false;
-
-  @override
-  void dispose() {
-    _loading = false;
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
@@ -36,7 +27,6 @@ class _SettingDialogState extends State<SettingDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Settings'),
-          VSeparators.large(),
           TabViewWidget(
             defaultPage: widget.goToPage,
             tabs: <TabViewObject>[
@@ -47,17 +37,6 @@ class _SettingDialogState extends State<SettingDialog> {
               TabViewObject('Troubleshoot', TroubleShootSettingsSection()),
               TabViewObject('Discover', DiscoverSettingsSection()),
             ],
-          ),
-          RectangleButton(
-            loading: _loading,
-            onPressed: () => Navigator.pop(context),
-            width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
-            child: const Text('Save Settings'),
           ),
         ],
       ),

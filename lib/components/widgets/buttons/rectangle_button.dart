@@ -43,7 +43,6 @@ class RectangleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return MaterialButton(
       focusColor: focusColor,
       highlightColor: highlightColor,
@@ -54,7 +53,7 @@ class RectangleButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),
       ),
-      color: color ?? customTheme.buttonColor,
+      color: color ?? Colors.blueGrey.withOpacity(0.2),
       disabledColor: disableColor,
       elevation: 0,
       disabledElevation: 0,
@@ -70,7 +69,8 @@ class RectangleButton extends StatelessWidget {
           padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
           child: Center(
             child: loading
-                ? const SizedBox(height: 15, width: 15, child: Spinner(thickness: 2))
+                ? const SizedBox(
+                    height: 15, width: 15, child: Spinner(thickness: 2))
                 : child,
           ),
         ),
