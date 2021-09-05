@@ -77,11 +77,12 @@ class Assets {
   static const String github = '${_imagesLogosBase}github.svg';
   static const String xcode = '${_imagesLogosBase}xcode.png';
   static const String error = '${_imagesIconsBase}error.svg';
+  static const String doc = '${_imagesIconsBase}doc.svg';
+  static const String dart = '${_imagesLogosBase}dart.svg';
   static const String done = '${_imagesIconsBase}done.svg';
   static const String warn = '${_imagesIconsBase}warn.svg';
-  static const String docs = '${_imagesIconsBase}docs.svg';
   static const String java = '${_imagesLogosBase}java.svg';
-  static const String git = '${_imagesLogosBase}git.svg';
+    static const String git = '${_imagesLogosBase}git.svg';
 }
 
 /// Class for installed softwares
@@ -106,7 +107,7 @@ class Install {
 /// class for install softwares content
 class InstallContent {
   static const String welcome =
-      'Welcome to the Flutter App Manager. You will be guided through the steps necessary to setup and install Flutter in your computer.';
+      'Welcome to the Flutter App Manager. You will be guided through the steps necessary to setup and install Flutter in your device.';
   static const String git =
       'Flutter relies on Git to get and install dependencies and other tools.';
   static const String java =
@@ -128,9 +129,9 @@ class InstalledContent {
   static const String studio =
       'You have successfully installed Android Studio. Click next to wrap up.';
   static const String allDone =
-      'All set! You will need to restart your computer to start using Flutter.';
+      'All set! You will need to restart your device to start using Flutter.';
   static const String restart =
-      'You will need to restart your computer to fully complete this setup. Make sure to save all your work before restarting.';
+      'You will need to restart your device to fully complete this setup. Make sure to save all your work before restarting.';
 }
 
 //Lists

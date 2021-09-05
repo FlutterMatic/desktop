@@ -59,5 +59,8 @@
   "editor.defaultFormatter": "Dart-Code.dart-code",
   "editor.formatOnType": true,
   "powershell.codeFormatting.autoCorrectAliases": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cSpell.words": [
+    "grey"
+  ]
 }

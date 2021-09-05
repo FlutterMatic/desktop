@@ -14,7 +14,6 @@ class FlutterRequirementsDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const DialogHeader(title: 'Install Flutter'),
-          VSeparators.large(),
           if (Platform.isWindows)
             _windowsTemplate()
           else if (Platform.isMacOS)

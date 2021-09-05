@@ -174,27 +174,27 @@ class JavaNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version information.
-      else if (!SharedPref().prefs.containsKey('Java_path') ||
-          !SharedPref().prefs.containsKey('Java_version')) {
+      else if (!SharedPref().pref.containsKey('Java_path') ||
+          !SharedPref().pref.containsKey('Java_version')) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'Java found at - $javaPath');
-        await SharedPref().prefs.setString('Java_path', javaPath);
+        await SharedPref().pref.setString('Java_path', javaPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         javaVersion = await getJavaBinVersion();
         versions.java = javaVersion.toString();
         await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
-        await SharedPref().prefs.setString('Java_version', versions.java!);
+        await SharedPref().pref.setString('Java_version', versions.java!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.info, 'Loading Java details from shared preferences');
-        javaPath = SharedPref().prefs.getString('Java_path');
+        javaPath = SharedPref().pref.getString('Java_path');
         await logger.file(LogTypeTag.info, 'Java found at - $javaPath');
-        versions.java = SharedPref().prefs.getString('Java_version');
+        versions.java = SharedPref().pref.getString('Java_version');
         await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
         _progress = Progress.done;
         notifyListeners();

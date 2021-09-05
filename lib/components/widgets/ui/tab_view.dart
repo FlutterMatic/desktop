@@ -57,19 +57,7 @@ class _TabViewWidgetState extends State<TabViewWidget> {
         ),
         HSeparators.small(),
         Expanded(
-          child: Container(
-            height: 310,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: IndexedStack(
-                  children:
-                      widget.tabs.map((TabViewObject e) => e.widget).toList(),
-                  index: _index,
-                ),
-              ),
-            ),
-          ),
+          child: SizedBox(height: 330, child: widget.tabs[_index].widget),
         ),
       ],
     );
@@ -83,8 +71,7 @@ class TabViewObject {
   const TabViewObject(this.name, this.widget);
 }
 
-Widget tabItemWidget(
-    String name, Function() onPressed, bool selected, BuildContext context) {
+Widget tabItemWidget(String name, Function() onPressed, bool selected, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     width: 130,
@@ -92,17 +79,49 @@ Widget tabItemWidget(
     focusColor: Colors.transparent,
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    color: selected ? null : Colors.transparent,
+    color: selected ? customTheme.accentColor.withOpacity(0.2) : Colors.transparent,
     padding: const EdgeInsets.all(10),
     onPressed: onPressed,
     child: Align(
       alignment: Alignment.centerLeft,
       child: Text(
         name,
-        style: TextStyle(
-            color: customTheme.textTheme.bodyText1!.color!
-                .withOpacity(selected ? 1 : .4)),
+        style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(selected ? 1 : .4)),
       ),
     ),
   );
+}
+
+class TabViewTabHeadline extends StatelessWidget {
+  final String title;
+  final List<Widget> content;
+  final bool allowContentScroll;
+
+  const TabViewTabHeadline({Key? key, required this.title, required this.content, this.allowContentScroll = true})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(title),
+        VSeparators.xSmall(),
+        Expanded(
+          child: allowContentScroll ? SingleChildScrollView(child: _pageContent()) : _pageContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _pageContent() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Flex(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        direction: Axis.vertical,
+        children: content,
+      ),
+    );
+  }
 }

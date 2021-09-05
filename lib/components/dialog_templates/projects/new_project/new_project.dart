@@ -117,7 +117,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 : null,
             title: 'Create New Project',
           ),
-          VSeparators.large(),
           Form(
             key: _createProjectFormKey,
             child: Column(
@@ -216,7 +215,6 @@ class ProjectCreatedDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const DialogHeader(title: 'Project Created'),
-          VSeparators.large(),
           const Text(
               'Your new project has successfully been created. You should be able to open your project and run it!',
               textAlign: TextAlign.center),

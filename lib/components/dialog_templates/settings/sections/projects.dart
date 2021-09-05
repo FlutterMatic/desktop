@@ -42,14 +42,9 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text(
-          'Project Path',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        VSeparators.normal(),
+    return TabViewTabHeadline(
+      title: 'Projects',
+      content: <Widget>[
         RoundContainer(
           borderColor: _dirPathError ? kRedColor : Colors.transparent,
           borderWith: 2,
@@ -60,32 +55,39 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  _dirPath ?? 'Fetching your preferred project directory',
+                  _dirPath ??
+                      (_dirPathError
+                          ? 'Couldn\'t fetch your projects path. Try settings your path'
+                          : 'Fetching your preferred project directory'),
                   overflow: TextOverflow.fade,
                   softWrap: false,
                 ),
               ),
-              IconButton(
-                color: Colors.transparent,
-                icon: Icon(
-                  Icons.edit_outlined,
-                  color: customTheme.textTheme.bodyText1!.color,
+              if (_dirPath == null && !_dirPathError)
+                const Spinner(size: 15, thickness: 2)
+              else
+                IconButton(
+                  color: Colors.transparent,
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    color: customTheme.textTheme.bodyText1!.color,
+                  ),
+                  onPressed: () async {
+                    String? projectsDirectory;
+                    String? directoryPath =
+                        await file_selector.getDirectoryPath(
+                      initialDirectory: projectsDirectory,
+                      confirmButtonText: 'Choose this',
+                    );
+                    if (directoryPath != null) {
+                      setState(() => _dirPath = directoryPath);
+                      await _pref.setString('projects_path', directoryPath);
+                    } else {
+                      await logger.file(
+                          LogTypeTag.warning, 'Path was not chosen');
+                    }
+                  },
                 ),
-                onPressed: () async {
-                  String? projectsDirectory;
-                  String? directoryPath = await file_selector.getDirectoryPath(
-                    initialDirectory: projectsDirectory,
-                    confirmButtonText: 'Choose this',
-                  );
-                  if (directoryPath != null) {
-                    setState(() => _dirPath = directoryPath);
-                    await _pref.setString('projects_path', directoryPath);
-                  } else {
-                    await logger.file(
-                        LogTypeTag.warning, 'Path was not chosen');
-                  }
-                },
-              ),
             ],
           ),
         ),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/about/about_us.dart';
 import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
-import 'package:manager/meta/views/welcome/screens/requirements.dart';
+import 'package:manager/meta/views/welcome/screens/docs_tutorials.dart';
 import 'package:provider/provider.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -33,14 +33,12 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   void initState() {
-    _tab = SharedPref().prefs.containsKey('Tab') ? WelcomeTab.restart : WelcomeTab.gettingStarted;
+    _tab = SharedPref().pref.containsKey('Tab') ? WelcomeTab.restart : WelcomeTab.gettingStarted;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    ThemeData _currentTheme = Theme.of(context);
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -48,7 +46,7 @@ class _WelcomePageState extends State<WelcomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               children: <Widget>[
-                createWelcomeHeader(_currentTheme, _tab, context),
+                createWelcomeHeader(_tab, context),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -56,7 +54,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       width: 415,
                       child: Center(
                         child: SingleChildScrollView(
-                          child: _getCurrentPage(context, _currentTheme),
+                          child: _getCurrentPage(context),
                         ),
                       ),
                     ),
@@ -76,7 +74,9 @@ class _WelcomePageState extends State<WelcomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'System Requirements',
-                            style: _currentTheme.textTheme.bodyText2!.copyWith(fontSize: 12),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black),
                           ),
                         ),
                       ),
@@ -90,7 +90,9 @@ class _WelcomePageState extends State<WelcomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'Docs & Tutorials',
-                            style: _currentTheme.textTheme.bodyText2!.copyWith(fontSize: 12),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black),
                           ),
                         ),
                       ),
@@ -123,7 +125,8 @@ class _WelcomePageState extends State<WelcomePage> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => const AboutUsDialog(),
+                      builder: (_) => const SettingDialog(),
+                      // AboutUsDialog(),
                     );
                   },
                 ),
@@ -135,8 +138,8 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  Widget _getCurrentPage(BuildContext context, ThemeData _currentTheme) {
-    /// TODO: Add ADB check.
+  Widget _getCurrentPage(BuildContext context) {
+    /// TODO: Add ADB check. This is optional.
     switch (_tab) {
       case WelcomeTab.gettingStarted:
         return WelcomeGettingStarted(
@@ -165,14 +168,9 @@ class _WelcomePageState extends State<WelcomePage> {
               });
             }
           },
-          // progress: _tab == WelcomeTab.installEditor
-          //     ? progress
-          //     : context.read<DownloadNotifier>().progress,
           onCancel: () {},
           onContinue: () {
-            setState(() {
-              _tab = WelcomeTab.installEditor;
-            });
+            setState(() => _tab = WelcomeTab.installEditor);
           },
         );
       case WelcomeTab.installEditor:
@@ -272,7 +270,7 @@ class _WelcomePageState extends State<WelcomePage> {
             _tab = WelcomeTab.restart;
           }),
           onContinue: () async {
-            await SharedPref().prefs.setString('Tab', 'restart');
+            await SharedPref().pref.setString('Tab', 'restart');
             setState(() => _tab = WelcomeTab.restart);
           },
           isInstalling: _installing,
@@ -290,8 +288,8 @@ class _WelcomePageState extends State<WelcomePage> {
 
             await Future<void>.delayed(Duration(seconds: _restartSeconds));
 
-            await SharedPref().prefs.setBool('All_Checked', true);
-            await SharedPref().prefs.remove('Tab');
+            await SharedPref().pref.setBool('All_Checked', true);
+            await SharedPref().pref.remove('Tab');
 
             // Restart the system only if it's compiled for release. Prevent
             // restart otherwise.

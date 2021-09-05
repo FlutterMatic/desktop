@@ -6,7 +6,7 @@ import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 Widget createWelcomeHeader(
-    ThemeData theme, WelcomeTab tab, BuildContext context) {
+    WelcomeTab tab, BuildContext context) {
   Widget _title(String title, WelcomeTab tileTab) {
     if (tab == tileTab) {
       return Expanded(

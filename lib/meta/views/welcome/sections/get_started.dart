@@ -80,15 +80,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             ),
             VSeparators.large(),
             if (!snapshot.hasData)
-              Column(
-                children: <Widget>[
-                  hLoadingIndicator(
-                    context: context,
-                  ),
-                  const Text(
-                      'Preparing your system to start installing Flutter'),
-                ],
-              )
+              hLoadingIndicator(context: context)
             else
               infoWidget(context,
                   'Please make sure you have a good internet connection for the setup to go as smooth as possible.'),

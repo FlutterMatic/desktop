@@ -33,14 +33,7 @@ Widget installJava(
             padding: const EdgeInsets.only(top: 20),
             child: (javaNotifier.progress == Progress.started ||
                     javaNotifier.progress == Progress.checking)
-                ? Column(
-                    children: <Widget>[
-                      hLoadingIndicator(
-                        context: context,
-                      ),
-                      const Text('Checking for java'),
-                    ],
-                  )
+                ? hLoadingIndicator(context: context)
                 : (javaNotifier.progress == Progress.downloading)
                     ? CustomProgressIndicator(
                         disabled: (javaNotifier.progress != Progress.checking &&
@@ -54,16 +47,7 @@ Widget installJava(
                             : 'Downloading JRE',
                       )
                     : javaNotifier.progress == Progress.extracting
-                        ? Column(
-                            children: <Widget>[
-                              hLoadingIndicator(
-                                context: context,
-                                // message: javaNotifier.sw == Java.jdk
-                                //     ? 'Extracting JDK'
-                                //     : 'Extracting JRE',
-                              ),
-                            ],
-                          )
+                        ? hLoadingIndicator(context: context)
                         : javaNotifier.progress == Progress.done
                             ? welcomeToolInstalled(
                                 context,
@@ -112,7 +96,6 @@ Widget installJava(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const DialogHeader(title: 'Are you sure?'),
-                      VSeparators.small(),
                       informationWidget(
                         'We recommend that you installed Java. This will help eliminate some issues you might face in the future with Flutter.',
                       ),

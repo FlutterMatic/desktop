@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
@@ -36,69 +35,74 @@ class _TroubleShootSettingsSectionState
         truShootStudio == false &&
         truShootVSC == false) {
       setState(() => _requireTruShoot = true);
+    } else {
+      // TODO: Start troubleshooting for the selected service(s).
     }
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text(
-          'Troubleshooting',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        VSeparators.normal(),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            setState(() => truShootFullApp = !truShootFullApp);
-            _checkTroubleShoot();
-          },
-          value: truShootFullApp,
-          text: 'All Applications',
-        ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            setState(() {
-              truShootFlutter = !truShootFlutter;
-              truShootFullApp = false;
-            });
-            _checkTroubleShoot();
-          },
-          value: truShootFlutter,
-          text: 'Flutter',
-        ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            setState(() {
-              truShootStudio = !truShootStudio;
-              truShootFullApp = false;
-            });
-            _checkTroubleShoot();
-          },
-          value: truShootStudio,
-          text: 'Android Studio',
-        ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            setState(() {
-              truShootVSC = !truShootVSC;
-              truShootFullApp = false;
-            });
-            _checkTroubleShoot();
-          },
-          value: truShootVSC,
-          text: 'Visual Studio Code',
-        ),
-        if (_requireTruShoot)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: informationWidget(
-              'You need to choose at least one troubleshoot option.',
-              type: InformationType.error,
-            ),
+    return TabViewTabHeadline(
+      title: 'Troubleshoot',
+      allowContentScroll: false,
+      content: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              CheckBoxElement(
+                onChanged: (bool? val) {
+                  setState(() => truShootFullApp = !truShootFullApp);
+                  _checkTroubleShoot();
+                },
+                value: truShootFullApp,
+                text: 'All Applications',
+              ),
+              CheckBoxElement(
+                onChanged: (bool? val) {
+                  setState(() {
+                    truShootFlutter = !truShootFlutter;
+                    truShootFullApp = false;
+                  });
+                  _checkTroubleShoot();
+                },
+                value: truShootFlutter,
+                text: 'Flutter',
+              ),
+              CheckBoxElement(
+                onChanged: (bool? val) {
+                  setState(() {
+                    truShootStudio = !truShootStudio;
+                    truShootFullApp = false;
+                  });
+                  _checkTroubleShoot();
+                },
+                value: truShootStudio,
+                text: 'Android Studio',
+              ),
+              CheckBoxElement(
+                onChanged: (bool? val) {
+                  setState(() {
+                    truShootVSC = !truShootVSC;
+                    truShootFullApp = false;
+                  });
+                  _checkTroubleShoot();
+                },
+                value: truShootVSC,
+                text: 'Visual Studio Code',
+              ),
+              if (_requireTruShoot)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: informationWidget(
+                    'You need to choose at least one troubleshoot option.',
+                    type: InformationType.error,
+                  ),
+                ),
+            ],
           ),
+        ),
         Align(
           alignment: Alignment.centerRight,
           child: RectangleButton(

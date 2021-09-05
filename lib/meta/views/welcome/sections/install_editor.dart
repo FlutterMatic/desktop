@@ -83,15 +83,7 @@ Widget installEditor(
                     vsCodeNotifier.progress == Progress.checking ||
                     androidStudioNotifier.progress == Progress.checking ||
                     androidStudioNotifier.progress == Progress.started)
-                ? Column(
-                    children: <Widget>[
-                      hLoadingIndicator(
-                        context: context,
-                      ),
-                      Text(
-                          'Checking for ${selectedType.index == 0 ? 'Visual Studio Code' : selectedType.index == 1 ? 'Android Studio' : 'Both'}'),
-                    ],
-                  )
+                ? hLoadingIndicator(context: context)
                 : (vsCodeNotifier.progress == Progress.downloading ||
                         androidStudioNotifier.progress == Progress.downloading)
                     ? CustomProgressIndicator(
@@ -121,16 +113,7 @@ Widget installEditor(
                     : (vsCodeNotifier.progress == Progress.extracting ||
                             androidStudioNotifier.progress ==
                                 Progress.extracting)
-                        ? Column(
-                            children: <Widget>[
-                              hLoadingIndicator(
-                                context: context,
-                              ),
-                              Text(
-                                'Extracting ${vsCodeNotifier.progress == Progress.downloading ? 'Visual Studio Code' : androidStudioNotifier.progress == Progress.downloading ? 'Android Studio' : 'Editors'}',
-                              ),
-                            ],
-                          )
+                        ? hLoadingIndicator(context: context)
                         : (vsCodeNotifier.progress == Progress.done ||
                                 androidStudioNotifier.progress == Progress.done)
                             ? welcomeToolInstalled(
@@ -212,13 +195,15 @@ Widget installEditor(
   });
 }
 
-Widget _selectEditor(BuildContext context,
-    {required String name,
-    required EditorType type,
-    required Widget icon,
-    required Function(EditorType)? onEditorTypeChanged,
-    required EditorType? selectedType,
-    required bool installation}) {
+Widget _selectEditor(
+  BuildContext context, {
+  required String name,
+  required EditorType type,
+  required Widget icon,
+  required Function(EditorType)? onEditorTypeChanged,
+  required EditorType? selectedType,
+  required bool installation,
+}) {
   bool _selected = selectedType == type;
   return Expanded(
     child: SizedBox(

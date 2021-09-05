@@ -28,7 +28,6 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const DialogHeader(title: 'Upgrade Flutter'),
-          VSeparators.large(),
           const Text(
             'Keeping Flutter up-to-date is a good idea since it helps with many things including performance improvements, bug fixes and new features.',
             textAlign: TextAlign.center,

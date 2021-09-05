@@ -28,14 +28,7 @@ Widget installGit(
             padding: const EdgeInsets.only(top: 20),
             child: (gitNotifier.progress == Progress.started ||
                     gitNotifier.progress == Progress.checking)
-                ? Column(
-                    children: <Widget>[
-                      hLoadingIndicator(
-                        context: context,
-                      ),
-                      const Text('Checking for git'),
-                    ],
-                  )
+                ? hLoadingIndicator(context: context)
                 : (gitNotifier.progress == Progress.downloading)
                     ? CustomProgressIndicator(
                         disabled: (gitNotifier.progress != Progress.checking &&
@@ -47,14 +40,7 @@ Widget installGit(
                         message: 'Downloading git',
                       )
                     : gitNotifier.progress == Progress.extracting
-                        ? Column(
-                            children: <Widget>[
-                              hLoadingIndicator(
-                                context: context,
-                              ),
-                              const Text('Extracting git'),
-                            ],
-                          )
+                        ? hLoadingIndicator(context: context)
                         : gitNotifier.progress == Progress.done
                             ? welcomeToolInstalled(
                                 context,

@@ -26,14 +26,7 @@ Widget installFlutter(
           padding: const EdgeInsets.only(bottom: 15.0),
           child: (flutterNotifier.progress == Progress.started ||
                   flutterNotifier.progress == Progress.checking)
-              ? Column(
-                  children: <Widget>[
-                    hLoadingIndicator(
-                      context: context,
-                    ),
-                    const Text('Checking for flutter'),
-                  ],
-                )
+              ? hLoadingIndicator(context: context)
               : (flutterNotifier.progress == Progress.downloading ||
                       flutterNotifier.progress == Progress.failed)
                   ? CustomProgressIndicator(
@@ -47,20 +40,7 @@ Widget installFlutter(
                       message: 'Downloading Flutter',
                     )
                   : (flutterNotifier.progress == Progress.extracting)
-                      // ? CustomProgressIndicator(
-                      //     disabled: true,
-                      //     progress: flutterNotifier.progress,
-                      //     toolName: 'Flutter',
-                      //     onCancel: onCancel,
-                      //   )
-                      ? Column(
-                          children: <Widget>[
-                            hLoadingIndicator(
-                              context: context,
-                            ),
-                            const Text('Extracting Flutter'),
-                          ],
-                        )
+                      ? hLoadingIndicator(context: context)
                       : flutterNotifier.progress == Progress.done
                           ? welcomeToolInstalled(
                               context,
@@ -70,9 +50,7 @@ Widget installFlutter(
                             )
                           : flutterNotifier.progress == Progress.none
                               ? const SizedBox.shrink()
-                              : hLoadingIndicator(
-                                  context: context,
-                                ),
+                              : hLoadingIndicator(context: context),
         ),
         VSeparators.xLarge(),
         WelcomeButton(

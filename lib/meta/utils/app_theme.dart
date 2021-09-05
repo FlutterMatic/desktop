@@ -33,6 +33,7 @@ class AppTheme {
         fontFamily: 'NotoSans',
         primaryColor: darkBackgroundColor,
         backgroundColor: darkBackgroundColor,
+        unselectedWidgetColor: Colors.blueGrey.withOpacity(0.4),
         scaffoldBackgroundColor: darkBackgroundColor,
         primaryColorLight: const Color(0xFF2D333A),
         buttonColor: const Color(0xFF373E47),

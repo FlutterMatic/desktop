@@ -24,31 +24,34 @@ class DialogHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        leading ?? const SizedBox(width: 40),
-        Expanded(
-          child: Center(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          leading ?? const SizedBox(width: 40),
+          Expanded(
+            child: Center(
+              child: Text(
+                title,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-        ),
-        if (canClose)
-          Align(
-            alignment: Alignment.centerRight,
-            child: CustomCloseButton(
-              onClose: onClose,
-              iconColor: context.read<ThemeChangeNotifier>().isDarkTheme
-                  ? AppTheme.darkTheme.iconTheme.color!
-                  : AppTheme.lightTheme.iconTheme.color!,
-              onHoverColor: onHoverButtonColor,
+          if (canClose)
+            Align(
+              alignment: Alignment.centerRight,
+              child: CustomCloseButton(
+                onClose: onClose,
+                iconColor: context.read<ThemeChangeNotifier>().isDarkTheme
+                    ? AppTheme.darkTheme.iconTheme.color!
+                    : AppTheme.lightTheme.iconTheme.color!,
+                onHoverColor: onHoverButtonColor,
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
