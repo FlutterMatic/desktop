@@ -14,109 +14,56 @@ class DiscoverSettingsSection extends StatelessWidget {
     return TabViewTabHeadline(
       title: 'Discover',
       content: <Widget>[
-        Row(
-          children: <Widget>[
-            // GitHub
-            Expanded(
-              child: RectangleButton(
-                height: 100,
-                onPressed: () => launch(
-                    'https://github.com/FlutterMatic/FlutterMatic-desktop'),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: SvgPicture.asset(
-                        Assets.github,
-                        height: 20,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? null
-                            : Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'GitHub',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color),
-                    ),
-                  ],
-                ),
+        ActionOptions(
+          actions: <ActionOptionsObject>[
+            ActionOptionsObject(
+              'GitHub',
+              () => launch(
+                  'https://github.com/FlutterMatic/FlutterMatic-desktop'),
+              icon: SvgPicture.asset(
+                Assets.github,
+                height: 14,
+                color: context.read<ThemeChangeNotifier>().isDarkTheme
+                    ? null
+                    : Colors.black,
               ),
             ),
-            HSeparators.small(),
-            // DartPad
-            Expanded(
-              child: RectangleButton(
-                height: 100,
-                onPressed: () =>
-                    launch('https://www.dartpad.dev/flutter?null_safety=true'),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: SvgPicture.asset(Assets.dart, height: 20),
-                    ),
-                    Text(
-                      'DartPad',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color),
-                    ),
-                  ],
-                ),
+            ActionOptionsObject(
+              'Twitter',
+              () => launch('https://twitter.com/FlutterMatic'),
+              icon: SvgPicture.asset(
+                Assets.twitter,
+                height: 14,
+                color: context.read<ThemeChangeNotifier>().isDarkTheme
+                    ? null
+                    : Colors.black,
               ),
             ),
-          ],
-        ),
-        VSeparators.small(),
-        Row(
-          children: <Widget>[
-            // Twitter
-            Expanded(
-              child: RectangleButton(
-                height: 100,
-                onPressed: () => launch('https://twitter.com/FlutterMatic'),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: SvgPicture.asset(
-                        Assets.twitter,
-                        height: 20,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? null
-                            : Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'Twitter',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color),
-                    ),
-                  ],
-                ),
+            ActionOptionsObject(
+              'DartPad',
+              () => launch('https://www.dartpad.dev/flutter?null_safety=true'),
+              icon: SvgPicture.asset(Assets.dart, height: 14),
+            ),
+            ActionOptionsObject(
+              'Flutter Docs',
+              () => launch('https://flutter.dev/docs'),
+              icon: SvgPicture.asset(
+                Assets.flutter,
+                height: 14,
+                color: context.read<ThemeChangeNotifier>().isDarkTheme
+                    ? null
+                    : Colors.black,
               ),
             ),
-            HSeparators.small(),
-            // Docs
-            Expanded(
-              child: RectangleButton(
-                height: 100,
-                onPressed: () => launch('https://flutter.dev/docs'),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: SvgPicture.asset(
-                        Assets.doc,
-                        height: 20,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? null
-                            : Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'Docs',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color),
-                    ),
-                  ],
-                ),
+            ActionOptionsObject(
+              'Our Docs',
+              () {}, // TODO: Navigate to our documentation.
+              icon: SvgPicture.asset(
+                Assets.doc,
+                height: 14,
+                color: context.read<ThemeChangeNotifier>().isDarkTheme
+                    ? null
+                    : Colors.black,
               ),
             ),
           ],

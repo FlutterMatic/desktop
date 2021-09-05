@@ -2,7 +2,7 @@ library widgets;
 
 /// Buttons
 export '../../components/widgets/buttons/action_options.dart';
-export '../../components/widgets/buttons/button_list.dart';
+export '../../components/widgets/buttons/select_tiles.dart';
 export '../../components/widgets/buttons/close_button.dart';
 export '../../components/widgets/buttons/rectangle_button.dart';
 export '../../components/widgets/buttons/square_button.dart';

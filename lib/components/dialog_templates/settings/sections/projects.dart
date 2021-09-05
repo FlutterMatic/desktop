@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/services/logs.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
   @override
@@ -12,23 +12,27 @@ class ProjectsSettingsSection extends StatefulWidget {
 }
 
 class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
-  late SharedPreferences _pref;
-  late bool _dirPathError;
-
-  //User Inputs
+  // User Inputs
   String? _dirPath;
   String? _editorOption;
+  bool _dirPathError = false;
 
   Future<void> _getEditorOptions() async {
-    _pref = await SharedPreferences.getInstance();
-    if (_pref.containsKey('editor_option')) {
-      setState(() => _editorOption = _pref.getString('editor_option'));
+    if (SharedPref().pref.containsKey('Editor_Option')) {
+      setState(
+          () => _editorOption = SharedPref().pref.getString('Editor_Option'));
+    } else {
+      setState(() => _editorOption = 'always_ask');
+      await SharedPref().pref.setString('Editor_Option', 'always_ask');
     }
   }
 
   Future<void> _getProjectPath() async {
-    _pref = await SharedPreferences.getInstance();
-    setState(() => _dirPath = _pref.getString('projects_path'));
+    if (SharedPref().pref.containsKey('Projects_Path')) {
+      setState(() => _dirPath = SharedPref().pref.getString('Projects_Path'));
+    } else {
+      setState(() => _dirPathError = true);
+    }
   }
 
   @override
@@ -45,11 +49,15 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
     return TabViewTabHeadline(
       title: 'Projects',
       content: <Widget>[
+        if (_dirPathError)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: informationWidget(
+              'Couldn\'t fetch your projects path. Try settings your projects path.',
+              type: InformationType.error,
+            ),
+          ),
         RoundContainer(
-          borderColor: _dirPathError ? kRedColor : Colors.transparent,
-          borderWith: 2,
-          width: double.infinity,
-          radius: 5,
           color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
@@ -73,18 +81,26 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                     color: customTheme.textTheme.bodyText1!.color,
                   ),
                   onPressed: () async {
-                    String? projectsDirectory;
-                    String? directoryPath =
+                    String? _projectsDirectory;
+                    String? _directoryPath =
                         await file_selector.getDirectoryPath(
-                      initialDirectory: projectsDirectory,
-                      confirmButtonText: 'Choose this',
+                      initialDirectory: _projectsDirectory,
+                      confirmButtonText: 'Confirm',
                     );
-                    if (directoryPath != null) {
-                      setState(() => _dirPath = directoryPath);
-                      await _pref.setString('projects_path', directoryPath);
+                    if (_directoryPath != null) {
+                      setState(() {
+                        _dirPathError = false;
+                        _dirPath = _directoryPath;
+                      });
+                      await SharedPref()
+                          .pref
+                          .setString('Projects_Path', _directoryPath);
+
+                      await logger.file(LogTypeTag.info,
+                          'Projects path was set to: $_directoryPath');
                     } else {
                       await logger.file(
-                          LogTypeTag.warning, 'Path was not chosen');
+                          LogTypeTag.warning, 'Projects path was not chosen');
                     }
                   },
                 ),
@@ -102,11 +118,18 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
             'Always open projects in preferred editor',
             'Ask me which editor to open with every time',
           ],
-          defaultChoiceValue: _editorOption,
+          defaultChoiceValue: _editorOption == 'always_ask'
+              ? 'Ask me which editor to open with every time'
+              : 'Always open projects in preferred editor',
           onChanged: (String val) async {
-            setState(() => _editorOption = val);
-            _pref = await SharedPreferences.getInstance();
-            await _pref.setString('editor_option', val);
+            String _newVal =
+                val == 'Ask me which editor to open with every time'
+                    ? 'always_ask'
+                    : 'preferred_editor';
+            setState(() => _editorOption = _newVal);
+            await SharedPref().pref.setString('Editor_Option', _newVal);
+            await logger.file(
+                LogTypeTag.info, 'Editor option was set to: $_newVal');
           },
         ),
       ],

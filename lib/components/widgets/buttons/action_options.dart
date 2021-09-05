@@ -15,6 +15,7 @@ class ActionOptions extends StatelessWidget {
     return Column(
       children: actions.map((ActionOptionsObject e) {
         return _buttonListTile(
+          icon: e.icon,
           color: customTheme.buttonColor,
           onPressed: e.onPressed,
           title: e.title,
@@ -28,13 +29,15 @@ class ActionOptions extends StatelessWidget {
 }
 
 class ActionOptionsObject {
+  final Widget? icon;
   final String title;
   final VoidCallback? onPressed;
 
-  const ActionOptionsObject(this.title, this.onPressed);
+  const ActionOptionsObject(this.title, this.onPressed, {this.icon});
 }
 
 Widget _buttonListTile({
+  required Widget? icon,
   required String title,
   required VoidCallback? onPressed,
   required Color color,
@@ -55,10 +58,14 @@ Widget _buttonListTile({
       bottomLeft: index + 1 == length ? _curveValue : _endExpression,
       bottomRight: index + 1 == length ? _curveValue : _endExpression,
     ),
-    color: color,
     padding: const EdgeInsets.symmetric(horizontal: 15),
     child: Row(
       children: <Widget>[
+        if (icon != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: icon,
+          ),
         Expanded(
           child: Text(
             title,
