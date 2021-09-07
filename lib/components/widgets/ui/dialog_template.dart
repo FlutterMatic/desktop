@@ -10,6 +10,7 @@ class DialogTemplate extends StatelessWidget {
   final EdgeInsets? childPadding;
   final bool outerTapExit;
   final double? width;
+  final double? height;
   final Alignment align;
   final Color? closeBgColor;
   final Color? closeIconColor;
@@ -19,6 +20,7 @@ class DialogTemplate extends StatelessWidget {
     required this.child,
     this.childPadding,
     this.width,
+    this.height,
     this.align = Alignment.center,
     this.outerTapExit = true,
     this.closeBgColor,
@@ -40,9 +42,8 @@ class DialogTemplate extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {},
                   child: RoundContainer(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? AppTheme.darkCardColor
-                        : Colors.white,
+                    height: height,
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme ? AppTheme.darkCardColor : Colors.white,
                     padding: childPadding ?? const EdgeInsets.all(10),
                     child: Center(child: child),
                   ),

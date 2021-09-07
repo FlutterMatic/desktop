@@ -4,8 +4,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
-Widget informationWidget(String text,
-    {InformationType type = InformationType.warning, bool showIcon = true}) {
+Widget informationWidget(String text, {InformationType type = InformationType.warning, bool showIcon = true}) {
   return RoundContainer(
     color: _getColor(type).withOpacity(0.1),
     borderColor: _getColor(type),
@@ -26,7 +25,7 @@ Widget informationWidget(String text,
                             : Assets.done,
                     height: 20),
           ),
-        Expanded(child: Text(text)),
+        Expanded(child: SelectableText(text)),
       ],
     ),
   );

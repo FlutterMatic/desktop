@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/enum.dart';
@@ -40,26 +41,21 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
   @override
   Widget build(BuildContext context) {
     return Consumer2<VSCodeNotifier, AndroidStudioNotifier>(
-      builder: (BuildContext context, VSCodeNotifier vsCodeNotifier,
-          AndroidStudioNotifier androidStudioNotifier, _) {
+      builder: (BuildContext context, VSCodeNotifier vsCodeNotifier, AndroidStudioNotifier androidStudioNotifier, _) {
         Progress _getActivityProgress() {
-          return Progress.done;
-          // TODO: Fixe progress issue.
-          // if (_editorTypes.contains(EditorType.vscode) &&
-          //     _editorTypes.contains(EditorType.androidStudio)) {
-          //   if (vsCodeNotifier.progress != Progress.none &&
-          //       vsCodeNotifier.progress != Progress.done) {
-          //     return vsCodeNotifier.progress;
-          //   } else {
-          //     return androidStudioNotifier.progress;
-          //   }
-          // } else {
-          //   if (_editorTypes.contains(EditorType.vscode)) {
-          //     return vsCodeNotifier.progress;
-          //   } else {
-          //     return androidStudioNotifier.progress;
-          //   }
-          // }
+          // return Progress.done;
+          // TODO: Fix progress issue.
+          if (_editorTypes.contains(EditorType.vscode) && _editorTypes.contains(EditorType.androidStudio)) {
+            if (vsCodeNotifier.progress != Progress.none && vsCodeNotifier.progress != Progress.done) {
+              return vsCodeNotifier.progress;
+            } else {
+              return androidStudioNotifier.progress;
+            }
+          } else if (_editorTypes.contains(EditorType.vscode)) {
+            return vsCodeNotifier.progress;
+          } else {
+            return androidStudioNotifier.progress;
+          }
         }
 
         return Column(
@@ -88,16 +84,13 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     type: EditorType.vscode,
                     onEditorTypeChanged: (EditorType val) {
                       if (_editorTypes.contains(EditorType.none)) {
-                        setState(() =>
-                            _editorTypes = <EditorType>[EditorType.vscode]);
+                        setState(() => _editorTypes = <EditorType>[EditorType.vscode]);
                       } else {
                         if (_editorTypes.contains(EditorType.vscode)) {
                           if (_editorTypes.length == 1) {
-                            setState(() =>
-                                _editorTypes = <EditorType>[EditorType.none]);
+                            setState(() => _editorTypes = <EditorType>[EditorType.none]);
                           } else {
-                            setState(
-                                () => _editorTypes.remove(EditorType.vscode));
+                            setState(() => _editorTypes.remove(EditorType.vscode));
                           }
                         } else {
                           setState(() => _editorTypes.add(EditorType.vscode));
@@ -105,8 +98,8 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                       }
                       widget.onEditorTypeChanged(_editorTypes);
                     },
-                    installation: vsCodeNotifier.progress != Progress.none ||
-                        androidStudioNotifier.progress != Progress.none,
+                    installation:
+                        vsCodeNotifier.progress != Progress.none || androidStudioNotifier.progress != Progress.none,
                     isSelected: _editorTypes.contains(EditorType.vscode),
                   ),
                   HSeparators.normal(),
@@ -117,27 +110,22 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     type: EditorType.androidStudio,
                     onEditorTypeChanged: (EditorType val) {
                       if (_editorTypes.contains(EditorType.none)) {
-                        setState(() => _editorTypes = <EditorType>[
-                              EditorType.androidStudio
-                            ]);
+                        setState(() => _editorTypes = <EditorType>[EditorType.androidStudio]);
                       } else {
                         if (_editorTypes.contains(EditorType.androidStudio)) {
                           if (_editorTypes.length == 1) {
-                            setState(() =>
-                                _editorTypes = <EditorType>[EditorType.none]);
+                            setState(() => _editorTypes = <EditorType>[EditorType.none]);
                           } else {
-                            setState(() =>
-                                _editorTypes.remove(EditorType.androidStudio));
+                            setState(() => _editorTypes.remove(EditorType.androidStudio));
                           }
                         } else {
-                          setState(
-                              () => _editorTypes.add(EditorType.androidStudio));
+                          setState(() => _editorTypes.add(EditorType.androidStudio));
                         }
                       }
                       widget.onEditorTypeChanged(_editorTypes);
                     },
-                    installation: vsCodeNotifier.progress != Progress.none ||
-                        androidStudioNotifier.progress != Progress.none,
+                    installation:
+                        vsCodeNotifier.progress != Progress.none || androidStudioNotifier.progress != Progress.none,
                     isSelected: _editorTypes.contains(EditorType.androidStudio),
                   ),
                   HSeparators.normal(),
@@ -145,19 +133,16 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     context,
                     icon: Icon(
                       Icons.close_rounded,
-                      color: context.read<ThemeChangeNotifier>().isDarkTheme
-                          ? Colors.white
-                          : Colors.black,
+                      color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
                     ),
                     name: 'None',
                     type: EditorType.none,
                     onEditorTypeChanged: (EditorType val) {
-                      setState(
-                          () => _editorTypes = <EditorType>[EditorType.none]);
+                      setState(() => _editorTypes = <EditorType>[EditorType.none]);
                       widget.onEditorTypeChanged(_editorTypes);
                     },
-                    installation: vsCodeNotifier.progress != Progress.none ||
-                        androidStudioNotifier.progress != Progress.none,
+                    installation:
+                        vsCodeNotifier.progress != Progress.none || androidStudioNotifier.progress != Progress.none,
                     isSelected: _editorTypes.contains(EditorType.none),
                   ),
                 ],
@@ -172,58 +157,52 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                         androidStudioNotifier.progress == Progress.started)
                     ? hLoadingIndicator(context: context)
                     : (vsCodeNotifier.progress == Progress.downloading ||
-                            androidStudioNotifier.progress ==
-                                Progress.downloading)
+                            androidStudioNotifier.progress == Progress.downloading)
                         ? CustomProgressIndicator()
                         : (vsCodeNotifier.progress == Progress.extracting ||
-                                androidStudioNotifier.progress ==
-                                    Progress.extracting)
+                                androidStudioNotifier.progress == Progress.extracting)
                             ? hLoadingIndicator(context: context)
                             : (vsCodeNotifier.progress == Progress.done ||
-                                    androidStudioNotifier.progress ==
-                                        Progress.done)
+                                    androidStudioNotifier.progress == Progress.done)
                                 ? welcomeToolInstalled(
                                     context,
-                                    title:
-                                        '${_editorTypes.length >= 2 ? 'Editors' : 'Editor'} Installed',
+                                    title: '${_editorTypes.length >= 2 ? 'Editors' : 'Editor'} Installed',
                                     message:
                                         '${_editorTypes.length >= 2 ? 'Editors' : 'Editor'} installed successfully on your device. Continue to the next step.',
                                   )
                                 : (vsCodeNotifier.progress == Progress.none ||
-                                        androidStudioNotifier.progress ==
-                                            Progress.none)
+                                        androidStudioNotifier.progress == Progress.none)
                                     ? const SizedBox.shrink()
                                     : CustomProgressIndicator(),
               ),
             if (widget.doneInstalling && !_showEditorSelector)
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
                     flex: 4,
                     child: welcomeToolInstalled(
                       context,
-                      title:
-                          '${_editorTypes.length >= 2 ? 'Editors' : 'Editor'} Installed',
+                      title: '${_editorTypes.length >= 2 ? 'Editors' : 'Editor'} Installed',
                       message:
                           'You have successfully installed ${_editorTypes.length} ${_editorTypes.length >= 2 ? 'Editors' : 'Editor'}.',
                     ),
                   ),
-                  HSeparators.xSmall(),
-                  Expanded(
-                    flex: 1,
-                    child: RectangleButton(
-                      height: 75,
-                      child: Icon(
-                        Icons.edit,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                  if (kDebugMode || kProfileMode) HSeparators.xSmall(),
+                  if (kDebugMode || kProfileMode)
+                    Expanded(
+                      flex: 1,
+                      child: RectangleButton(
+                        height: 75,
+                        child: Icon(
+                          Icons.edit,
+                          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                        ),
+                        onPressed: () {
+                          setState(() => _showEditorSelector = true);
+                        },
                       ),
-                      onPressed: () {
-                        setState(() => _showEditorSelector = true);
-                      },
                     ),
-                  ),
                 ],
               ),
             VSeparators.small(),
@@ -256,9 +235,7 @@ Widget _selectEditor(
       height: 120,
       width: 120,
       child: MaterialButton(
-        color: context.read<ThemeChangeNotifier>().isDarkTheme
-            ? const Color(0xff1B2529)
-            : const Color(0xffF4F8FA),
+        color: context.read<ThemeChangeNotifier>().isDarkTheme ? const Color(0xff1B2529) : const Color(0xffF4F8FA),
         onPressed: installation ? null : () => onEditorTypeChanged!(type),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -278,9 +255,7 @@ Widget _selectEditor(
                 Text(
                   name,
                   style: TextStyle(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? Colors.white
-                        : const Color(0xff161E21),
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : const Color(0xff161E21),
                   ),
                 ),
               ],

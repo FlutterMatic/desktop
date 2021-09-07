@@ -71,8 +71,7 @@ class TabViewObject {
   const TabViewObject(this.name, this.widget);
 }
 
-Widget tabItemWidget(
-    String name, Function() onPressed, bool selected, BuildContext context) {
+Widget tabItemWidget(String name, Function() onPressed, bool selected, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     width: 130,
@@ -80,18 +79,14 @@ Widget tabItemWidget(
     focusColor: Colors.transparent,
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    color: selected
-        ? customTheme.accentColor.withOpacity(0.2)
-        : Colors.transparent,
+    color: selected ? customTheme.accentColor.withOpacity(0.2) : Colors.transparent,
     padding: const EdgeInsets.all(10),
     onPressed: onPressed,
     child: Align(
       alignment: Alignment.centerLeft,
       child: Text(
         name,
-        style: TextStyle(
-            color: customTheme.textTheme.bodyText1!.color!
-                .withOpacity(selected ? 1 : .4)),
+        style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(selected ? 1 : .4)),
       ),
     ),
   );
@@ -101,12 +96,10 @@ class TabViewTabHeadline extends StatelessWidget {
   final String title;
   final List<Widget> content;
   final bool allowContentScroll;
+  final TextStyle? titleStyle;
 
   const TabViewTabHeadline(
-      {Key? key,
-      required this.title,
-      required this.content,
-      this.allowContentScroll = true})
+      {Key? key, required this.title, required this.content, this.allowContentScroll = true, this.titleStyle})
       : super(key: key);
 
   @override
@@ -114,12 +107,13 @@ class TabViewTabHeadline extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title),
+        Text(
+          title,
+          style: titleStyle,
+        ),
         VSeparators.xSmall(),
         Expanded(
-          child: allowContentScroll
-              ? SingleChildScrollView(child: _pageContent())
-              : _pageContent(),
+          child: allowContentScroll ? SingleChildScrollView(child: _pageContent()) : _pageContent(),
         ),
       ],
     );
@@ -128,8 +122,9 @@ class TabViewTabHeadline extends StatelessWidget {
   Widget _pageContent() {
     return Padding(
       padding: const EdgeInsets.only(top: 5),
-      child: Column(
+      child: Flex(
         crossAxisAlignment: CrossAxisAlignment.start,
+        direction: Axis.vertical,
         children: content,
       ),
     );

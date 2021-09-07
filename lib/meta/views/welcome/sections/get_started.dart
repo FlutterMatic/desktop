@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/components/widgets/ui/warning_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:manager/app/constants/enum.dart';

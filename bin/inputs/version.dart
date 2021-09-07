@@ -51,10 +51,7 @@ Future<void> versionCollection() async {
     await versionCollection();
   } else {
     appData.version = Version(major, minor, patch);
-    if (appData.version!.compareTo(await checkPubspecVersion()) == 0) {
-      printInfo('💙 Version is same, try incrementing the version.');
-      exit(1);
-    } else if (appData.version!.compareTo(await checkPubspecVersion()) < 0) {
+    if (appData.version!.compareTo(await checkPubspecVersion()) < 0) {
       printWarning('🧡 Version is not up to date');
       printWarning('🧡 Current version : ${appData.version}');
       printWarning('🧡 Update the version in pubspec.yaml');

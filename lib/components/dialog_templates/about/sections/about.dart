@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 
 class AboutSection extends StatelessWidget {
   const AboutSection({Key? key}) : super(key: key);
@@ -19,6 +20,14 @@ class AboutSection extends StatelessWidget {
           context,
           'This project is completely open-source and can be found on GitHub.',
         ),
+        VSeparators.small(),
+        // infoWidget(context,
+        //     '- Version: ${SharedPref().pref.getString('App_Version')} (${SharedPref().pref.getString('App_Build')!.toUpperCase()}) \n- $osName - $osVersion'),
+        informationWidget(
+          'Version: ${SharedPref().pref.getString('App_Version')} (${SharedPref().pref.getString('App_Build')!.toUpperCase()}) \n$osName - $osVersion',
+          showIcon: false,
+          type: InformationType.info,
+        )
       ],
     );
   }

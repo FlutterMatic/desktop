@@ -13,8 +13,7 @@ class ContributorsAboutSection extends StatefulWidget {
   const ContributorsAboutSection({Key? key}) : super(key: key);
 
   @override
-  _ContributorsAboutSectionState createState() =>
-      _ContributorsAboutSectionState();
+  _ContributorsAboutSectionState createState() => _ContributorsAboutSectionState();
 }
 
 class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
@@ -51,8 +50,7 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
                     'https://github.com/FlutterMatic/FlutterMatic-desktop'),
                 child: Text(
                   'Get Started',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
               ),
             ],
@@ -186,15 +184,12 @@ class _ContributorTileState extends State<ContributorTile> {
                           VSeparators.xSmall(),
                           Text(
                             'GitHub: ' + _userId,
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color!
-                                    .withOpacity(0.7)),
+                            style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.7)),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios_rounded,
-                        color: customTheme.indicatorColor, size: 18),
+                    Icon(Icons.arrow_forward_ios_rounded, color: customTheme.indicatorColor, size: 18),
                   ],
                 ),
         ),
