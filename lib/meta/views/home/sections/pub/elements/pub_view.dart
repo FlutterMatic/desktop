@@ -7,10 +7,14 @@ import 'package:provider/provider.dart';
 class HorizontalAxisView extends StatefulWidget {
   final String title;
   final List<Widget> content;
+  final bool isVertical;
 
-  const HorizontalAxisView(
-      {Key? key, required this.title, required this.content})
-      : super(key: key);
+  const HorizontalAxisView({
+    Key? key,
+    required this.title,
+    required this.content,
+    this.isVertical = false,
+  }) : super(key: key);
 
   @override
   _HorizontalAxisViewState createState() => _HorizontalAxisViewState();
@@ -21,6 +25,8 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
 
   @override
   Widget build(BuildContext context) {
+    Size _size = MediaQuery.of(context).size;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -97,21 +103,32 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
           ],
         ),
         VSeparators.large(),
-        SingleChildScrollView(
-          controller: _controller,
-          scrollDirection: Axis.horizontal,
-          child: Row(
-              children: widget.content.map(
-            (Widget e) {
-              bool _isFinal =
-                  (widget.content.indexOf(e) + 1) == widget.content.length;
-              return Padding(
-                padding: EdgeInsets.only(right: _isFinal ? 0 : 15),
-                child: e,
-              );
-            },
-          ).toList()),
-        ),
+        if (widget.isVertical)
+          GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: _size.width > 1100 ? 4 : 3,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            childAspectRatio: _size.height / 500,
+            children: widget.content,
+            shrinkWrap: true,
+          )
+        else
+          SingleChildScrollView(
+            controller: _controller,
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                children: widget.content.map(
+              (Widget e) {
+                bool _isFinal =
+                    (widget.content.indexOf(e) + 1) == widget.content.length;
+                return Padding(
+                  padding: EdgeInsets.only(right: _isFinal ? 0 : 15),
+                  child: e,
+                );
+              },
+            ).toList()),
+          ),
       ],
     );
   }

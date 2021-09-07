@@ -6,7 +6,7 @@ import 'package:manager/components/widgets/ui/warning_widget.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/meta/views/home/sections/pub/elements/pub_fav_tile.dart';
-import 'package:manager/meta/views/home/sections/pub/elements/horizontal_pub_view.dart';
+import 'package:manager/meta/views/home/sections/pub/elements/pub_view.dart';
 import 'package:manager/meta/views/home/sections/pub/elements/search_result_tile.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +30,8 @@ class _HomePubSectionState extends State<HomePubSection> {
   List<dynamic> _pubs = <dynamic>[];
 
   bool _loadingSearch = false;
+
+  static final int _buttonsOnRight = 2;
 
   // Will get the JSON from this URL: https://pub.dev/api/package-name-completion-data
   // This JSON will contain the list of all pub packages that are available.
@@ -126,12 +128,15 @@ class _HomePubSectionState extends State<HomePubSection> {
               child: Center(
                 child: Row(
                   children: <Widget>[
-                    const SizedBox(
-                        width: 40 *
-                            (2 /** The total number of buttons on the right side */)),
+                    if (_buttonsOnRight > 0)
+                    SizedBox(
+                        width: (40 * _buttonsOnRight) +
+                            ((_buttonsOnRight - 1) * 10)),
                     const Spacer(),
                     SizedBox(
-                      width: 500,
+                      width: (MediaQuery.of(context).size.width > 1000)
+                          ? 500
+                          : 400,
                       height: 40,
                       child: RoundContainer(
                         padding: EdgeInsets.zero,
@@ -172,6 +177,9 @@ class _HomePubSectionState extends State<HomePubSection> {
                                       border: InputBorder.none,
                                       isCollapsed: true,
                                     ),
+                                    onFieldSubmitted: (String? val) {
+                                      // Show a page with all the results.
+                                    },
                                     onChanged: (String val) {
                                       if (val.isEmpty) {
                                         setState(() {
@@ -280,7 +288,8 @@ class _HomePubSectionState extends State<HomePubSection> {
                       ),
                       VSeparators.large(),
                       const HorizontalAxisView(
-                        title: 'Popular Packages',
+                        isVertical: true,
+                        title: 'Suggested Packages',
                         content: <Widget>[
                           PubFavoriteTile(),
                           PubFavoriteTile(),

@@ -16,7 +16,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
   bool _showResults = false;
   String? _searchInput;
 
-  final List<ProjectsModel> _searchResults = <ProjectsModel>[];
+  final List<ProjectObject> _searchResults = <ProjectObject>[];
 
   Future<void> _loadProjects() async {
     setState(() => _loading = true);
@@ -42,7 +42,7 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
       String _itemValue = projs[i];
       if (_itemValue.toLowerCase().contains(_searchInput!)) {
         _searchResults.add(
-          ProjectsModel(
+          ProjectObject(
             name: projs[i],
             modDate: projsModDate[i],
             // TODO: Specify the project path.
