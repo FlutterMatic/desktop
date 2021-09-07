@@ -62,8 +62,11 @@ class _WelcomePageState extends State<WelcomePage> {
                     child: SizedBox(
                       width: 415,
                       child: Center(
-                        child: SingleChildScrollView(
-                          child: _getCurrentPage(context),
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                          child: SingleChildScrollView(
+                            child: _getCurrentPage(context),
+                          ),
                         ),
                       ),
                     ),
@@ -181,9 +184,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 _completedInstall = false;
               });
             } else {
-              setState(() {
-                _installing = true;
-              });
+              setState(() => _installing = true);
+
               await context.read<FlutterNotifier>().checkFlutter(context, sdkData);
               setState(() {
                 _installing = false;
@@ -202,29 +204,27 @@ class _WelcomePageState extends State<WelcomePage> {
                 _completedInstall = false;
               });
             } else {
-              setState(() {
-                _installing = true;
-              });
-              while (_editor.isNotEmpty) {
-                if (_editor.contains(EditorType.none)) {
-                  // None will be skipped and next page will be shown.
-                  setState(() {
-                    _editor.clear();
-                    _tab = WelcomeTab.installGit;
-                  });
-                }
-                if (_editor.contains(EditorType.androidStudio)) {
-                  // Installs Android Studio.
-                  await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
-                  _editor.remove(EditorType.androidStudio);
-                }
-                if (_editor.contains(EditorType.vscode)) {
-                  // Installs VSCode.
-                  await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
-                  // After completing, we will remove the item from the list.
-                  _editor.remove(EditorType.vscode);
-                }
+              setState(() => _installing = true);
+
+              if (_editor.contains(EditorType.none)) {
+                // None will be skipped and next page will be shown.
+                setState(() {
+                  _editor.clear();
+                  _tab = WelcomeTab.installGit;
+                });
               }
+              if (_editor.contains(EditorType.androidStudio)) {
+                // Installs Android Studio.
+                await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
+                _editor.remove(EditorType.androidStudio);
+              }
+              if (_editor.contains(EditorType.vscode)) {
+                // Installs VSCode.
+                await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
+                // After completing, we will remove the item from the list.
+                _editor.remove(EditorType.vscode);
+              }
+
               setState(() {
                 _installing = false;
                 _completedInstall = false;

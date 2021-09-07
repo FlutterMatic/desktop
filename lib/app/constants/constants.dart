@@ -73,6 +73,8 @@ class Assets {
   static const String ghosts = '${_lottieBase}ghosts.json';
   static const String packages = '${_lottieBase}packages.json';
   static const String confetti = '${_imagesIconsBase}confetti.svg';
+  static const String package = '${_imagesIconsBase}package.svg';
+  static const String project = '${_imagesIconsBase}project.svg';
   static const String flutter = '${_imagesLogosBase}flutter.svg';
   static const String logo = '${_imagesLogosBase}app_logo.svg';
   static const String twitter = '${_imagesLogosBase}twitter.svg';
@@ -83,6 +85,7 @@ class Assets {
   static const String github = '${_imagesLogosBase}github.svg';
   static const String xcode = '${_imagesLogosBase}xcode.png';
   static const String error = '${_imagesIconsBase}error.svg';
+  static const String home = '${_imagesIconsBase}home.svg';
   static const String dart = '${_imagesLogosBase}dart.svg';
   static const String done = '${_imagesIconsBase}done.svg';
   static const String warn = '${_imagesIconsBase}warn.svg';
