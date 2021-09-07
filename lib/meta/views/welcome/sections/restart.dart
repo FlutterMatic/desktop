@@ -55,7 +55,6 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? ti
         onInstall: onRestart,
         progress: Progress.none,
         buttonText: timer ?? 'Restart',
-        showIcon: timer == null ? true : false,
       ),
     ],
   );

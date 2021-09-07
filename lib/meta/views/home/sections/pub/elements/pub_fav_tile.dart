@@ -20,7 +20,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
 
   // If the package is migrated to null safety, then this will be true,
   // otherwise false.
-  bool _nullSafe = true;
+  final bool _nullSafe = true;
 
   @override
   Widget build(BuildContext context) {
