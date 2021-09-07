@@ -96,8 +96,10 @@ class TabViewTabHeadline extends StatelessWidget {
   final String title;
   final List<Widget> content;
   final bool allowContentScroll;
+  final TextStyle? titleStyle;
 
-  const TabViewTabHeadline({Key? key, required this.title, required this.content, this.allowContentScroll = true})
+  const TabViewTabHeadline(
+      {Key? key, required this.title, required this.content, this.allowContentScroll = true, this.titleStyle})
       : super(key: key);
 
   @override
@@ -105,7 +107,10 @@ class TabViewTabHeadline extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title),
+        Text(
+          title,
+          style: titleStyle,
+        ),
         VSeparators.xSmall(),
         Expanded(
           child: allowContentScroll ? SingleChildScrollView(child: _pageContent()) : _pageContent(),

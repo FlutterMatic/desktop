@@ -1,8 +1,7 @@
 name: manager
 description: Flutter App Manager
 publish_to: none
-version: 2.0.1
-
+version: 0.0.1
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
@@ -31,6 +30,7 @@ dependencies:
   path_provider: ^2.0.2
   process_run: ^0.12.1+1
   provider: ^5.0.0
+  pub_api_client: ^2.1.0
   retry: ^3.1.0
   shared_preferences: ^2.0.6
   unix_disk_space:
@@ -41,16 +41,17 @@ dependencies:
 msix_config:
   display_name: Flutter Manager
   publisher_display_name: Fluttermatic
-  msix_version: 0.0.1
+  msix_version: 0.0.0.2
   certificate_path: ./CERTIFICATE.pfx
   certificate_password: fluttermatic
   identity_name: fluttermanager
   publisher: CN=FLUTTERMATIC, O=Fluttermatic
   icons_background_color: transparent
   architecture: x64
-  vs_generated_images_folder_path: ./assets/images
-  start_menu_icon_path: ./assets/images/flutter_manager.png
-  tile_icon_path: ./assets/images/flutter_manager.png
+  vs_generated_images_folder_path: ./assets/images/app_icons/
+  # logo_path: ./assets/images/flutter_manager.png
+  # start_menu_icon_path: ./assets/images/flutter_manager.png
+  # tile_icon_path: ./assets/images/flutter_manager.png
   capabilities: 'internetClient'
 
 dev_dependencies:
@@ -64,9 +65,12 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/font/
+    - assets/fonts/
+    - assets/images/
+    - assets/images/app_icons/
     - assets/images/logos/
     - assets/images/icons/
+    - assets/images/placeholders/
     - assets/markdown/
     - assets/lottie/
     - changelog.md
@@ -74,10 +78,15 @@ flutter:
   fonts:
     - family: NotoSans
       fonts:
-        - asset: assets/font/NotoSans/NotoSans-Regular.ttf
-        - asset: assets/font/NotoSans/NotoSans-Bold.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-Bold.ttf
     - family: VictorMono
       fonts:
-        - asset: assets/font/VictorMono/VictorMono-SemiBold.ttf
-        - asset: assets/font/VictorMono/VictorMono-SemiBoldItalic.ttf
+        - asset: assets/fonts/VictorMono/VictorMono-SemiBold.ttf
+        - asset: assets/fonts/VictorMono/VictorMono-SemiBoldItalic.ttf
           style: italic
+    - family: LexendDeca
+      fonts:
+        - asset: assets/fonts/LexendDeca/LexendDeca-Bold.ttf
+        - asset: assets/fonts/LexendDeca/LexendDeca-SemiBold.ttf
+        - asset: assets/fonts/LexendDeca/LexendDeca-Medium.ttf

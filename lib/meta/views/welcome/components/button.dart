@@ -8,12 +8,14 @@ class WelcomeButton extends StatelessWidget {
   final VoidCallback? onContinue;
   final VoidCallback? onInstall;
   final String? buttonText;
-  
+  final bool showIcon;
+
   const WelcomeButton({
     required this.progress,
     required this.onInstall,
     required this.onContinue,
     this.buttonText,
+    this.showIcon = true,
     Key? key,
   }) : super(key: key);
 
@@ -39,16 +41,17 @@ class WelcomeButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  buttonText ??
-                      (progress == Progress.done ? 'Continue' : 'Check'),
+                  buttonText ?? (progress == Progress.done ? 'Continue' : 'Check'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(width: 6),
-                const Icon(Icons.arrow_forward_rounded,
-                    size: 18, color: Colors.white),
+                if (showIcon)
+                  const Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white)
+                else
+                  const SizedBox.shrink(),
               ],
             ),
           ),

@@ -20,6 +20,7 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
             'Light Mode', 'Get a bright and shining desktop', () {
           if (context.read<ThemeChangeNotifier>().isDarkTheme) {
             context.read<ThemeChangeNotifier>().updateTheme(false);
+            setState(() {});
             // We will exit the settings page and re-open it to update the theme
             // for the settings dialog. The user won't really see this happening.
             Navigator.pop(context);
@@ -35,6 +36,7 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
           () {
             if (!context.read<ThemeChangeNotifier>().isDarkTheme) {
               context.read<ThemeChangeNotifier>().updateTheme(true);
+            setState(() {});
               // We will exit the settings page and re-open it to update the theme
               // for the settings dialog. The user won't really see this happening.
               Navigator.pop(context);

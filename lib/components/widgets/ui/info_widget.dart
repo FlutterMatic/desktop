@@ -6,9 +6,7 @@ import 'package:manager/core/notifiers/theme.notifier.dart';
 
 Widget infoWidget(BuildContext context, String text) {
   return RoundContainer(
-    color: context.read<ThemeChangeNotifier>().isDarkTheme
-        ? Colors.blueGrey.withOpacity(0.2)
-        : AppTheme.lightCardColor,
+    color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.blueGrey.withOpacity(0.2) : AppTheme.lightCardColor,
     radius: 5,
     child: Row(
       children: <Widget>[

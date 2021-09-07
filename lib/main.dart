@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
@@ -47,24 +48,21 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
     await SharedPref.init();
 
-    await SharedPref().pref.clear();
+    if (kDebugMode || kProfileMode) await SharedPref().pref.clear();
 
     appVersion = const String.fromEnvironment('current-version');
     await SharedPref().pref.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
     await SharedPref().pref.setString('App_Build', appBuild.toString());
-    if (SharedPref().pref.containsKey('All_Checked') &&
-        !SharedPref().pref.containsKey('Tab')) {
+    if (SharedPref().pref.containsKey('All_Checked') && !SharedPref().pref.containsKey('Tab')) {
       allChecked = SharedPref().pref.getBool('All_Checked');
     } else {
       await SharedPref().pref.setBool('All_Checked', false);
       allChecked = SharedPref().pref.getBool('All_Checked');
     }
     if (!SharedPref().pref.containsKey('platform')) {
-      List<ProcessResult?>? platformData = Platform.isWindows
-          ? await shell
-              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
-          : null;
+      List<ProcessResult?>? platformData =
+          Platform.isWindows ? await shell.run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"') : null;
       await SharedPref()
           .pref
           .setString('platform', Platform.operatingSystem)
@@ -127,69 +125,45 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
-          Widget? child) {
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier, Widget? child) {
         return Directionality(
-          textDirection: TextDirection.ltr,
-          child: _CustomWindow(
-            child: MaterialApp(
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: themeChangeNotifier.isDarkTheme
-                  ? ThemeMode.dark
-                  : ThemeMode.light,
-              debugShowCheckedModeBanner: false,
-              home: isChecking
-                  ? const Scaffold(body: Center(child: Spinner()))
-                  : !allChecked!
-                      ? const WelcomePage()
-                      : const HomeScreen(),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _CustomWindow extends StatelessWidget {
-  final Widget child;
-
-  _CustomWindow({Key? key, required this.child}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: context.read<ThemeChangeNotifier>().isDarkTheme
-          ? AppTheme.darkBackgroundColor
-          : AppTheme.lightBackgroundColor,
-      child: Column(
-        children: <Widget>[
-          WindowTitleBarBox(
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    'Flutter App Manager',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: !context.read<ThemeChangeNotifier>().isDarkTheme
-                          ? AppTheme.darkBackgroundColor
-                          : AppTheme.lightBackgroundColor,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Roboto',
+            textDirection: TextDirection.ltr,
+            child: Container(
+              color: context.read<ThemeChangeNotifier>().isDarkTheme
+                  ? AppTheme.darkBackgroundColor
+                  : AppTheme.lightBackgroundColor,
+              child: Column(
+                children: <Widget>[
+                  WindowTitleBarBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Image.asset(Assets.appLogo),
+                        ),
+                        Expanded(child: MoveWindow()),
+                        windowControls(context)
+                      ],
                     ),
                   ),
-                ),
-                Expanded(child: MoveWindow()),
-                windowControls(context)
-              ],
-            ),
-          ),
-          Expanded(child: child),
-        ],
-      ),
+                  Expanded(
+                    child: MaterialApp(
+                      theme: AppTheme.lightTheme,
+                      darkTheme: AppTheme.darkTheme,
+                      themeMode: themeChangeNotifier.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+                      debugShowCheckedModeBanner: false,
+                      home: isChecking
+                          ? const Scaffold(body: Center(child: Spinner()))
+                          : !allChecked!
+                              ? const WelcomePage()
+                              : const HomeScreen(),
+                    ),
+                  ),
+                ],
+              ),
+            ));
+      },
     );
   }
 }

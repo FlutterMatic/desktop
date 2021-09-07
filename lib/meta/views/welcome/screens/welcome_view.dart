@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:manager/app/constants/enum.dart';
@@ -24,7 +26,7 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   WelcomeTab _tab = WelcomeTab.gettingStarted;
-
+  int startIndex = 10;
   bool _installing = false;
   bool _completedInstall = false;
 
@@ -89,10 +91,12 @@ class _WelcomePageState extends State<WelcomePage> {
                       ),
                       HSeparators.xSmall(),
                       TextButton(
-                        onPressed: () async {
-                          await Navigator.push(
-                              context, MaterialPageRoute<Widget>(builder: (_) => const SystemRequirementsScreen()));
-                        },
+                        onPressed: kReleaseMode
+                            ? () {}
+                            : () async {
+                                await Navigator.push(context,
+                                    MaterialPageRoute<Widget>(builder: (_) => const SystemRequirementsScreen()));
+                              },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
@@ -123,6 +127,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                   onPressed: () {
                     context.read<ThemeChangeNotifier>().updateTheme(!context.read<ThemeChangeNotifier>().isDarkTheme);
+                    setState(() {});
                   },
                 ),
                 HSeparators.xSmall(),
@@ -149,8 +154,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute<Widget>(
-                        builder: (_) => const HomeScreen()),
+                    MaterialPageRoute<Widget>(builder: (_) => const HomeScreen()),
                   );
                 },
               ),
@@ -201,36 +205,36 @@ class _WelcomePageState extends State<WelcomePage> {
               setState(() {
                 _installing = true;
               });
-              if (_editor.contains(EditorType.none)) {
-                // None will be skipped and next page will be shown.
-                setState(() {
-                  _editor.clear();
-                  _tab = WelcomeTab.installGit;
-                });
-              }
-              if (_editor.contains(EditorType.androidStudio)) {
-                // Installs Android Studio.
-                await context
-                    .read<AndroidStudioNotifier>()
-                    .checkAStudio(context, apiData);
-                _editor.remove(EditorType.androidStudio);
-              }
-              if (_editor.contains(EditorType.vscode)) {
-                // Installs VSCode.
-                await context
-                    .read<VSCodeNotifier>()
-                    .checkVSCode(context, apiData);
-                // After completing, we will remove the item from the list.
-                _editor.remove(EditorType.vscode);
+              while (_editor.isNotEmpty) {
+                if (_editor.contains(EditorType.none)) {
+                  // None will be skipped and next page will be shown.
+                  setState(() {
+                    _editor.clear();
+                    _tab = WelcomeTab.installGit;
+                  });
+                }
+                if (_editor.contains(EditorType.androidStudio)) {
+                  // Installs Android Studio.
+                  await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
+                  _editor.remove(EditorType.androidStudio);
+                }
+                if (_editor.contains(EditorType.vscode)) {
+                  // Installs VSCode.
+                  await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
+                  // After completing, we will remove the item from the list.
+                  _editor.remove(EditorType.vscode);
+                }
               }
               setState(() {
                 _installing = false;
-                _completedInstall = true;
+                _completedInstall = false;
               });
             }
           },
-          onEditorTypeChanged: (List<EditorType> val) =>
-              setState(() => _editor = val),
+          onEditorTypeChanged: (List<EditorType> val) {
+            setState(() => _editor = val);
+            print(_editor);
+          },
           isInstalling: _installing,
           doneInstalling: _completedInstall,
           onContinue: () => setState(() => _tab = WelcomeTab.installGit),
@@ -294,15 +298,28 @@ class _WelcomePageState extends State<WelcomePage> {
       case WelcomeTab.restart:
         return welcomeRestart(
           context,
+          timer: startIndex == 0
+              ? 'Restarting'
+              : startIndex < 10
+                  ? startIndex.toString()
+                  : null,
           onRestart: () async {
-            int _restartSeconds = 5;
+            int _restartSeconds = 10;
 
+            Timer.periodic(const Duration(milliseconds: 750), (Timer timer) {
+              if (startIndex == 0) {
+                setState(() {
+                  timer.cancel();
+                });
+              } else {
+                setState(() {
+                  startIndex--;
+                });
+              }
+            });
             ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
                 context, 'Your device will restart in $_restartSeconds seconds.',
                 type: SnackBarType.warning));
-
-            await Future<void>.delayed(Duration(seconds: _restartSeconds));
-
             await SharedPref().pref.setBool('All_Checked', true);
             await SharedPref().pref.remove('Tab');
 
@@ -312,7 +329,7 @@ class _WelcomePageState extends State<WelcomePage> {
               await logger.file(LogTypeTag.info, 'Restarting device to continue Flutter setup');
               // Restart the device immediately. There is no need to schedule
               // the restart since we are already having a timer above.
-              await shell.run('shutdown /r /f');
+              await shell.run('shutdown /r /f /t $_restartSeconds');
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 snackBarTile(

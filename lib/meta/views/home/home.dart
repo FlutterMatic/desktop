@@ -4,6 +4,8 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/home/sections/home.dart';
+import 'package:manager/meta/views/home/sections/projects.dart';
 import 'package:manager/meta/views/home/sections/pub.dart';
 import 'package:provider/provider.dart';
 
@@ -18,8 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late HomeTabObject _selectedTab;
 
   final List<HomeTabObject> _tabs = const <HomeTabObject>[
-    HomeTabObject('Home', SizedBox.shrink()),
-    HomeTabObject('Projects', SizedBox.shrink()),
+    HomeTabObject('Home', HomeSection()),
+    HomeTabObject('Projects', HomeProjectSection()),
     HomeTabObject('Pub Packages', HomePubSection()),
   ];
 
@@ -61,11 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               splashRadius: 1,
                               icon: SvgPicture.asset(
                                 Assets.settings,
-                                color: context
-                                        .read<ThemeChangeNotifier>()
-                                        .isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black,
+                                color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
                               ),
                               onPressed: () {
                                 showDialog(
@@ -102,8 +100,7 @@ class HomeTabObject {
   const HomeTabObject(this.name, this.child);
 }
 
-Widget _tabTile(
-    String name, Function() onPressed, bool selected, BuildContext context) {
+Widget _tabTile(String name, Function() onPressed, bool selected, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
@@ -113,18 +110,14 @@ Widget _tabTile(
       focusColor: Colors.transparent,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      color: selected
-          ? customTheme.accentColor.withOpacity(0.2)
-          : Colors.transparent,
+      color: selected ? customTheme.accentColor.withOpacity(0.2) : Colors.transparent,
       padding: const EdgeInsets.all(10),
       onPressed: onPressed,
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
           name,
-          style: TextStyle(
-              color: customTheme.textTheme.bodyText1!.color!
-                  .withOpacity(selected ? 1 : .4)),
+          style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(selected ? 1 : .4)),
         ),
       ),
     ),

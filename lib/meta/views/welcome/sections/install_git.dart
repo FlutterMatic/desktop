@@ -13,8 +13,7 @@ Widget installGit(
   required bool isInstalling,
   required bool doneInstalling,
 }) {
-  return Consumer<GitNotifier>(
-      builder: (BuildContext context, GitNotifier gitNotifier, _) {
+  return Consumer<GitNotifier>(builder: (BuildContext context, GitNotifier gitNotifier, _) {
     return Column(
       children: <Widget>[
         welcomeHeaderTitle(
@@ -24,8 +23,7 @@ Widget installGit(
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20),
-          child: (gitNotifier.progress == Progress.started ||
-                  gitNotifier.progress == Progress.checking)
+          child: (gitNotifier.progress == Progress.started || gitNotifier.progress == Progress.checking)
               ? hLoadingIndicator(context: context)
               : gitNotifier.progress == Progress.downloading
                   ? CustomProgressIndicator()
@@ -35,8 +33,7 @@ Widget installGit(
                           ? welcomeToolInstalled(
                               context,
                               title: 'Git Installed',
-                              message:
-                                  'Git installed successfully on your device. Continue to the next step.',
+                              message: 'Git installed successfully on your device. Continue to the next step.',
                             )
                           : gitNotifier.progress == Progress.none
                               ? infoWidget(context,
