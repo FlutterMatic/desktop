@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:manager/main.dart';
 
 class ThemeSettingsSection extends StatefulWidget {
   @override
@@ -20,10 +20,13 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
             'Light Mode', 'Get a bright and shining desktop', () {
           if (context.read<ThemeChangeNotifier>().isDarkTheme) {
             context.read<ThemeChangeNotifier>().updateTheme(false);
-            // We will exit the settings page and re-open it to update the theme
-            // for the settings dialog. The user won't really see this happening.
-            Navigator.pop(context);
-            showDialog(context: context, builder: (_) => const SettingDialog());
+            // We will restart the app for the theme to fully take place.
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => const Spinner(),
+            );
+            RestartWidget.restartApp(context);
           }
         }),
         VSeparators.small(),
@@ -35,11 +38,13 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
           () {
             if (!context.read<ThemeChangeNotifier>().isDarkTheme) {
               context.read<ThemeChangeNotifier>().updateTheme(true);
-              // We will exit the settings page and re-open it to update the theme
-              // for the settings dialog. The user won't really see this happening.
-              Navigator.pop(context);
+              // We will restart the app for the theme to fully take place.
               showDialog(
-                  context: context, builder: (_) => const SettingDialog());
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => const Spinner(),
+              );
+              RestartWidget.restartApp(context);
             }
           },
         ),

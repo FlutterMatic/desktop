@@ -8,11 +8,13 @@ class WelcomeButton extends StatelessWidget {
   final VoidCallback? onContinue;
   final VoidCallback? onInstall;
   final String? buttonText;
-  
+  final bool loading;
+
   const WelcomeButton({
     required this.progress,
     required this.onInstall,
     required this.onContinue,
+    this.loading = false,
     this.buttonText,
     Key? key,
   }) : super(key: key);
@@ -27,30 +29,32 @@ class WelcomeButton extends StatelessWidget {
       width: 210,
       height: 50,
       child: IgnorePointer(
-        ignoring: _disabled,
+        ignoring: (_disabled || loading),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
-          opacity: _disabled ? 0.2 : 1,
+          opacity: (_disabled || loading) ? 0.2 : 1,
           child: RectangleButton(
             onPressed: progress == Progress.done ? onContinue : onInstall,
             color: AppTheme.lightTheme.buttonColor,
             hoverColor: AppTheme.lightTheme.accentColor,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  buttonText ??
-                      (progress == Progress.done ? 'Continue' : 'Check'),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
+            child: loading
+                ? const Spinner(size: 20, color: Colors.white, thickness: 2)
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        buttonText ??
+                            (progress == Progress.done ? 'Continue' : 'Check'),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.arrow_forward_rounded,
+                          size: 18, color: Colors.white),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 6),
-                const Icon(Icons.arrow_forward_rounded,
-                    size: 18, color: Colors.white),
-              ],
-            ),
           ),
         ),
       ),

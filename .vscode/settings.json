@@ -60,7 +60,4 @@
   "editor.formatOnType": true,
   "powershell.codeFormatting.autoCorrectAliases": true,
   "editor.formatOnSave": true,
-  "cSpell.words": [
-    "grey"
-  ]
 }

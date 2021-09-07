@@ -71,6 +71,8 @@ class Assets {
   static const String settings = '${_imagesIconsBase}settings.svg';
   static const String extracting = '${_lottieBase}extraction.json';
   static const String confetti = '${_imagesIconsBase}confetti.svg';
+  static const String package = '${_imagesIconsBase}package.svg';
+  static const String project = '${_imagesIconsBase}project.svg';
   static const String flutter = '${_imagesLogosBase}flutter.svg';
   static const String twitter = '${_imagesLogosBase}twitter.svg';
   static const String vscode = '${_imagesLogosBase}vs_code.svg';
@@ -78,11 +80,12 @@ class Assets {
   static const String github = '${_imagesLogosBase}github.svg';
   static const String xcode = '${_imagesLogosBase}xcode.png';
   static const String error = '${_imagesIconsBase}error.svg';
-  static const String doc = '${_imagesIconsBase}doc.svg';
+  static const String home = '${_imagesIconsBase}home.svg';
   static const String dart = '${_imagesLogosBase}dart.svg';
   static const String done = '${_imagesIconsBase}done.svg';
   static const String warn = '${_imagesIconsBase}warn.svg';
   static const String java = '${_imagesLogosBase}java.svg';
+  static const String doc = '${_imagesIconsBase}doc.svg';
   static const String git = '${_imagesLogosBase}git.svg';
 }
 

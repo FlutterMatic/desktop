@@ -17,7 +17,7 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MultiProviders(FlutterMaticMain()));
+  runApp(RestartWidget(child: MultiProviders(FlutterMaticMain())));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
     appWindow.maximize();
@@ -46,8 +46,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
     bool appDir = await Directory('C:\\fluttermatic').exists();
 
     await SharedPref.init();
-
-    await SharedPref().pref.clear();
 
     appVersion = const String.fromEnvironment('current-version');
     await SharedPref().pref.setString('App_Version', appVersion.toString());
@@ -115,6 +113,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       await Directory('C:\\fluttermatic').create();
       await logger.file(LogTypeTag.info, 'Created fluttermatic directory.');
     }
+
     setState(() => isChecking = false);
   }
 
@@ -190,6 +189,37 @@ class _CustomWindow extends StatelessWidget {
           Expanded(child: child),
         ],
       ),
+    );
+  }
+}
+
+class RestartWidget extends StatefulWidget {
+  RestartWidget({required this.child});
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()!.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
     );
   }
 }

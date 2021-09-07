@@ -62,8 +62,12 @@ class _WelcomePageState extends State<WelcomePage> {
                     child: SizedBox(
                       width: 415,
                       child: Center(
-                        child: SingleChildScrollView(
-                          child: _getCurrentPage(context, _currentTheme),
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context)
+                              .copyWith(scrollbars: false),
+                          child: SingleChildScrollView(
+                            child: _getCurrentPage(context, _currentTheme),
+                          ),
                         ),
                       ),
                     ),
@@ -181,9 +185,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 _completedInstall = false;
               });
             } else {
-              setState(() {
-                _installing = true;
-              });
+              setState(() => _installing = true);
+
               await context
                   .read<FlutterNotifier>()
                   .checkFlutter(context, sdkData);
@@ -204,9 +207,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 _completedInstall = false;
               });
             } else {
-              setState(() {
-                _installing = true;
-              });
+              setState(() => _installing = true);
+
               if (_editor.contains(EditorType.none)) {
                 // None will be skipped and next page will be shown.
                 setState(() {
@@ -229,6 +231,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 // After completing, we will remove the item from the list.
                 _editor.remove(EditorType.vscode);
               }
+
               setState(() {
                 _installing = false;
                 _completedInstall = true;

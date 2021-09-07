@@ -4,7 +4,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/home/sections/pub.dart';
+import 'package:manager/meta/views/home/sections/pub/pub.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,9 +18,21 @@ class _HomeScreenState extends State<HomeScreen> {
   late HomeTabObject _selectedTab;
 
   final List<HomeTabObject> _tabs = const <HomeTabObject>[
-    HomeTabObject('Home', SizedBox.shrink()),
-    HomeTabObject('Projects', SizedBox.shrink()),
-    HomeTabObject('Pub Packages', HomePubSection()),
+    HomeTabObject(
+      'Home',
+      Assets.home,
+      SizedBox.shrink(),
+    ),
+    HomeTabObject(
+      'Projects',
+      Assets.project,
+      SizedBox.shrink(),
+    ),
+    HomeTabObject(
+      'Pub Packages',
+      Assets.package,
+      HomePubSection(),
+    ),
   ];
 
   @override
@@ -31,63 +43,76 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size _size = MediaQuery.of(context).size;
+
+    bool _showShortView = _size.width < 900;
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                width: 230,
-                child: ColoredBox(
-                  color: Colors.blueGrey.withOpacity(0.08),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Column(
-                      children: <Widget>[
-                        ..._tabs.map(
-                          (HomeTabObject e) => _tabTile(
-                            e.name,
-                            () => setState(() => _selectedTab = e),
-                            _selectedTab == e,
-                            context,
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  width: _showShortView ? 50 : 230,
+                  child: ColoredBox(
+                    color: Colors.blueGrey.withOpacity(0.08),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: _showShortView ? 5 : 15,
+                        vertical: _showShortView ? 5 : 20,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          ..._tabs.map(
+                            (HomeTabObject e) {
+                              return _tabTile(
+                                context,
+                                icon: SvgPicture.asset(
+                                  e.icon,
+                                  color: context
+                                          .read<ThemeChangeNotifier>()
+                                          .isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                name: e.name,
+                                onPressed: () =>
+                                    setState(() => _selectedTab = e),
+                                selected: _selectedTab == e,
+                              );
+                            },
                           ),
-                        ),
-                        const Spacer(),
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                              splashRadius: 1,
-                              icon: SvgPicture.asset(
-                                Assets.settings,
-                                color: context
-                                        .read<ThemeChangeNotifier>()
-                                        .isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => const SettingDialog(),
-                                );
-                              },
+                          const Spacer(),
+                          _tabTile(
+                            context,
+                            icon: SvgPicture.asset(
+                              Assets.settings,
+                              color: context
+                                      .read<ThemeChangeNotifier>()
+                                      .isDarkTheme
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
-                          ],
-                        ),
-                      ],
+                            name: 'Settings',
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const SettingDialog(),
+                              );
+                            },
+                            selected: true,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: _selectedTab.child,
-                ),
-              ),
-            ],
+                Expanded(child: _selectedTab.child),
+              ],
+            ),
           ),
         ),
       ),
@@ -97,14 +122,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class HomeTabObject {
   final String name;
+  final String icon;
   final Widget child;
 
-  const HomeTabObject(this.name, this.child);
+  const HomeTabObject(this.name, this.icon, this.child);
 }
 
 Widget _tabTile(
-    String name, Function() onPressed, bool selected, BuildContext context) {
+  BuildContext context, {
+  required Widget icon,
+  required String name,
+  required Function() onPressed,
+  required bool selected,
+}) {
   ThemeData customTheme = Theme.of(context);
+  Size _size = MediaQuery.of(context).size;
+
+  bool _showShortView = _size.width < 900;
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: RectangleButton(
@@ -116,16 +150,27 @@ Widget _tabTile(
       color: selected
           ? customTheme.accentColor.withOpacity(0.2)
           : Colors.transparent,
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(_showShortView ? 5 : 10),
       onPressed: onPressed,
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Text(
-          name,
-          style: TextStyle(
-              color: customTheme.textTheme.bodyText1!.color!
-                  .withOpacity(selected ? 1 : .4)),
-        ),
+        child: !_showShortView
+            ? Row(
+                children: <Widget>[
+                  icon,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        color: customTheme.textTheme.bodyText1!.color!
+                            .withOpacity(selected ? 1 : .4),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Center(child: icon),
       ),
     ),
   );

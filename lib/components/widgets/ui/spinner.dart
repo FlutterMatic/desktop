@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Spinner extends StatelessWidget {
-  final double thickness;
   final double size;
+  final Color? color;
+  final double thickness;
 
-  const Spinner({Key? key, this.thickness = 4, this.size = 30}): super(key: key);
+  const Spinner({Key? key, this.color, this.thickness = 4, this.size = 30})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class Spinner extends StatelessWidget {
       child: Center(
         child: CircularProgressIndicator(
           strokeWidth: thickness,
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+          valueColor: AlwaysStoppedAnimation<Color>(color ?? Colors.blueGrey),
         ),
       ),
     );
