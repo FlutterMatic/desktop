@@ -14,6 +14,7 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   @override
   Widget build(BuildContext context) {
     return TabViewTabHeadline(
+      // TODO: Fix the theme switching issue that persists in settings/theme tab. 
       title: 'Themes',
       content: <Widget>[
         _themeTiles(context, !context.read<ThemeChangeNotifier>().isDarkTheme,

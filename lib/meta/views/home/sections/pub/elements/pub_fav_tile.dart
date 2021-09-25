@@ -4,6 +4,7 @@ import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/core/notifiers/theme.notifier.dart';
+import 'package:manager/meta/views/home/sections/pub/package_dialog.dart';
 import 'package:provider/provider.dart';
 
 class PubFavoriteTile extends StatefulWidget {
@@ -20,7 +21,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
 
   // If the package is migrated to null safety, then this will be true,
   // otherwise false.
-  final bool _nullSafe = true;
+  final bool _nullSafe = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,66 +30,72 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
       onExit: (_) => setState(() => _isHovering = false),
       child: RectangleButton(
         width: 250,
-        height: 200,
-        onPressed: () {},
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
+        height: 230,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => const PubPackageDialog(),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        'package_info_plus',
-                        style: TextStyle(
-                          color: context.read<ThemeChangeNotifier>().isDarkTheme
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 17,
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            'package_info_plus',
+                            style: TextStyle(
+                              color: context
+                                      .read<ThemeChangeNotifier>()
+                                      .isDarkTheme
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 17,
+                            ),
+                          ),
                         ),
-                      ),
+                        // Show a copy icon to copy the dependency directly on when
+                        // hovering to avoid UI distraction.
+                        if (_isHovering)
+                          RectangleButton(
+                            width: 22,
+                            height: 22,
+                            padding: EdgeInsets.zero,
+                            color: Colors.transparent,
+                            child: Icon(
+                              Icons.content_copy,
+                              size: 14,
+                              color: (context
+                                          .read<ThemeChangeNotifier>()
+                                          .isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(0.5),
+                            ),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(
+                                  context,
+                                  'Dependency has been copied to your clipboard.',
+                                  type: SnackBarType.done,
+                                  revert: true,
+                                ),
+                              );
+                            },
+                          ),
+                      ],
                     ),
-                    HSeparators.small(),
-                    Tooltip(
-                      message: _nullSafe ? 'Null safe' : 'Not null safe',
-                      child: RoundContainer(
-                        width: 10,
-                        height: 10,
-                        radius: 30,
-                        color: _nullSafe ? kGreenColor : kYellowColor,
-                        child: const SizedBox.shrink(),
-                      ),
-                    ),
-                  ],
-                ),
-                VSeparators.small(),
-                Expanded(
-                  child: Text(
-                    'Flutter plugin for querying information about the application package, such as CFBundleVersion on iOS or versionCode on Android.',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: (context.read<ThemeChangeNotifier>().isDarkTheme
-                              ? Colors.white
-                              : Colors.black)
-                          .withOpacity(0.5),
-                    ),
-                  ),
-                ),
-                VSeparators.small(),
-                Row(
-                  children: <Widget>[
-                    const Tooltip(
-                      message: 'Verified Publisher',
-                      child: Icon(Icons.verified, size: 15, color: kGreenColor),
-                    ),
-                    HSeparators.xSmall(),
+                    VSeparators.small(),
                     Expanded(
                       child: Text(
-                        'fluttercommunity.dev',
-                        overflow: TextOverflow.ellipsis,
+                        'Flutter plugin for querying information about the application package, such as CFBundleVersion on iOS or versionCode on Android.',
                         style: TextStyle(
                           fontSize: 13.5,
                           color:
@@ -99,17 +106,18 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                         ),
                       ),
                     ),
-                    HSeparators.xSmall(),
-                    // Show a copy icon to copy the dependency directly on when
-                    // hovering to avoid UI distraction.
-                    if (_isHovering)
-                      RectangleButton(
-                        width: 19,
-                        height: 19,
-                        padding: EdgeInsets.zero,
-                        color: Colors.transparent,
-                        child: Icon(
-                          Icons.content_copy,
+                  ],
+                ),
+              ),
+              VSeparators.small(),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.thumb_up_alt_rounded,
                           size: 13,
                           color:
                               (context.read<ThemeChangeNotifier>().isDarkTheme
@@ -117,20 +125,119 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                                       : Colors.black)
                                   .withOpacity(0.5),
                         ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Dependency has been copied to your clipboard.',
-                              type: SnackBarType.done,
-                            ),
-                          );
-                        },
+                        HSeparators.xSmall(),
+                        Text(
+                          '5.01K',
+                          style: TextStyle(
+                            color:
+                                (context.read<ThemeChangeNotifier>().isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.insights_rounded,
+                          size: 13,
+                          color:
+                              (context.read<ThemeChangeNotifier>().isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(0.5),
+                        ),
+                        HSeparators.xSmall(),
+                        Text(
+                          '130',
+                          style: TextStyle(
+                            color:
+                                (context.read<ThemeChangeNotifier>().isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.public_rounded,
+                          size: 13,
+                          color:
+                              (context.read<ThemeChangeNotifier>().isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(0.5),
+                        ),
+                        HSeparators.xSmall(),
+                        Text(
+                          '100%',
+                          style: TextStyle(
+                            color:
+                                (context.read<ThemeChangeNotifier>().isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              VSeparators.small(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    _nullSafe
+                        ? Icons.done_all_rounded
+                        : Icons.do_not_disturb_alt_rounded,
+                    size: 13,
+                    color: _nullSafe ? kGreenColor : kYellowColor,
+                  ),
+                  HSeparators.xSmall(),
+                  Text(
+                    _nullSafe ? 'Null safe' : 'Not null safe',
+                    style: TextStyle(
+                        color: _nullSafe ? kGreenColor : kYellowColor),
+                  ),
+                ],
+              ),
+              VSeparators.small(),
+              Row(
+                children: <Widget>[
+                  const Tooltip(
+                    message: 'Verified Publisher',
+                    child: Icon(Icons.verified, size: 15, color: kGreenColor),
+                  ),
+                  HSeparators.xSmall(),
+                  Expanded(
+                    child: Text(
+                      'fluttercommunity.dev',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: (context.read<ThemeChangeNotifier>().isDarkTheme
+                                ? Colors.white
+                                : Colors.black)
+                            .withOpacity(0.5),
                       ),
-                  ],
-                ),
-              ],
-            ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

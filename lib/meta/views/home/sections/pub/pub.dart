@@ -129,9 +129,9 @@ class _HomePubSectionState extends State<HomePubSection> {
                 child: Row(
                   children: <Widget>[
                     if (_buttonsOnRight > 0)
-                    SizedBox(
-                        width: (40 * _buttonsOnRight) +
-                            ((_buttonsOnRight - 1) * 10)),
+                      SizedBox(
+                          width: (40 * _buttonsOnRight) +
+                              ((_buttonsOnRight - 1) * 10)),
                     const Spacer(),
                     SizedBox(
                       width: (MediaQuery.of(context).size.width > 1000)
@@ -334,10 +334,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                                       : Colors.black,
                                 ),
                               ),
-                              // ignore: unnecessary_lambdas
-                              onPressed: () {
-                                _searchNode.requestFocus();
-                              },
+                              onPressed: _searchNode.requestFocus,
                             ),
                           ],
                         ),
@@ -356,12 +353,10 @@ class _HomePubSectionState extends State<HomePubSection> {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 60, right: 10),
+              padding: const EdgeInsets.only(top: 60),
               child: Container(
-                constraints: const BoxConstraints(
-                  maxWidth: 500,
-                  maxHeight: 300,
-                ),
+                constraints:
+                    const BoxConstraints(maxWidth: 500, maxHeight: 300),
                 decoration: BoxDecoration(
                   color: context.read<ThemeChangeNotifier>().isDarkTheme
                       ? const Color(0xff262F34)
@@ -373,24 +368,24 @@ class _HomePubSectionState extends State<HomePubSection> {
                 ),
                 padding: const EdgeInsets.all(10),
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: _searchResults.isEmpty
-                        ? <Widget>[
-                            if (_loadingSearch)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: LinearProgressIndicator(
-                                  backgroundColor: Colors.blue.withOpacity(0.1),
-                                ),
-                              )
-                            else
-                              informationWidget(
-                                'There are no results for your search query. Try using another term instead.',
-                                type: InformationType.error,
-                              ),
-                          ]
-                        : _searchResults.map((PubPackageObject e) {
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      if (_searchResults.isEmpty && _loadingSearch) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: LinearProgressIndicator(
+                            backgroundColor: Colors.blue.withOpacity(0.1),
+                          ),
+                        );
+                      } else if (_searchResults.isEmpty && !_loadingSearch) {
+                        return informationWidget(
+                          'There are no results for your search query. Try using another term instead.',
+                          type: InformationType.error,
+                        );
+                      } else {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: _searchResults.map((PubPackageObject e) {
                             double _pad = _searchResults.indexOf(e) ==
                                     _searchResults.length - 1
                                 ? 0
@@ -400,6 +395,9 @@ class _HomePubSectionState extends State<HomePubSection> {
                               child: PubPackageSearchResultTile(package: e),
                             );
                           }).toList(),
+                        );
+                      }
+                    },
                   ),
                 ),
               ),

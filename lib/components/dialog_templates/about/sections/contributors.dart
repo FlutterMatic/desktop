@@ -158,7 +158,7 @@ class _ContributorTileState extends State<ContributorTile> {
         child: RectangleButton(
           height: 65,
           width: double.infinity,
-          color: customTheme.accentColor.withOpacity(0.2),
+          color: customTheme.colorScheme.secondary.withOpacity(0.2),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           onPressed: () => launch('https://www.github.com/$_userId'),
           child: _loading
@@ -191,7 +191,7 @@ class _ContributorTileState extends State<ContributorTile> {
                     ),
                     Icon(Icons.arrow_forward_ios_rounded, color: customTheme.indicatorColor, size: 18),
                   ],
-                ),
+                ),  
         ),
       );
     }
