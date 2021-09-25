@@ -44,7 +44,7 @@ class DialogHeader extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: CustomCloseButton(
                 onClose: onClose,
-                iconColor: context.read<ThemeChangeNotifier>().isDarkTheme
+                iconColor: Theme.of(context).isDarkTheme
                     ? AppTheme.darkTheme.iconTheme.color!
                     : AppTheme.lightTheme.iconTheme.color!,
                 onHoverColor: onHoverButtonColor,

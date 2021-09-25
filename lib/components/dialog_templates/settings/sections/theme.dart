@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:manager/main.dart';
 
@@ -16,35 +17,20 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
     return TabViewTabHeadline(
       title: 'Themes',
       content: <Widget>[
-        _themeTiles(context, !context.read<ThemeChangeNotifier>().isDarkTheme,
-            'Light Mode', 'Get a bright and shining desktop', () {
+        _themeTiles(context, !Theme.of(context).isDarkTheme, 'Light Mode', 'Get a bright and shining desktop', () {
           if (context.read<ThemeChangeNotifier>().isDarkTheme) {
-            context.read<ThemeChangeNotifier>().updateTheme(false);
-            // We will restart the app for the theme to fully take place.
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (_) => const Spinner(),
-            );
-            RestartWidget.restartApp(context);
+            context.read<ThemeChangeNotifier>().updateTheme(Theme.of(context).brightness == Brightness.light);
           }
         }),
         VSeparators.small(),
         _themeTiles(
           context,
-          context.read<ThemeChangeNotifier>().isDarkTheme,
+          Theme.of(context).isDarkTheme,
           'Dark Mode',
           'For dark and nighty appearance',
           () {
             if (!context.read<ThemeChangeNotifier>().isDarkTheme) {
-              context.read<ThemeChangeNotifier>().updateTheme(true);
-              // We will restart the app for the theme to fully take place.
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (_) => const Spinner(),
-              );
-              RestartWidget.restartApp(context);
+              context.read<ThemeChangeNotifier>().updateTheme(Theme.of(context).brightness == Brightness.light);
             }
           },
         ),
@@ -53,8 +39,7 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   }
 }
 
-Widget _themeTiles(BuildContext context, bool selected, String title,
-    String description, Function() onPressed) {
+Widget _themeTiles(BuildContext context, bool selected, String title, String description, Function() onPressed) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     height: 65,
@@ -75,17 +60,14 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
               children: <Widget>[
                 Text(
                   title,
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
                 VSeparators.xSmall(),
                 Text(
                   description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: customTheme.textTheme.bodyText1!.color!
-                          .withOpacity(0.6)),
+                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.6)),
                 ),
               ],
             ),

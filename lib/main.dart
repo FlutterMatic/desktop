@@ -18,7 +18,7 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(RestartWidget(child: MultiProviders(FlutterMaticMain())));
+  runApp(MultiProviders(FlutterMaticMain()));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
     appWindow.maximize();
@@ -130,9 +130,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
         return Directionality(
             textDirection: TextDirection.ltr,
             child: Container(
-              color: context.read<ThemeChangeNotifier>().isDarkTheme
-                  ? AppTheme.darkBackgroundColor
-                  : AppTheme.lightBackgroundColor,
+              color: themeChangeNotifier.isDarkTheme ? AppTheme.darkBackgroundColor : AppTheme.lightBackgroundColor,
               child: Column(
                 children: <Widget>[
                   WindowTitleBarBox(
@@ -165,37 +163,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
               ),
             ));
       },
-    );
-  }
-}
-
-class RestartWidget extends StatefulWidget {
-  RestartWidget({required this.child});
-
-  final Widget child;
-
-  static void restartApp(BuildContext context) {
-    context.findAncestorStateOfType<_RestartWidgetState>()!.restartApp();
-  }
-
-  @override
-  _RestartWidgetState createState() => _RestartWidgetState();
-}
-
-class _RestartWidgetState extends State<RestartWidget> {
-  Key key = UniqueKey();
-
-  void restartApp() {
-    setState(() {
-      key = UniqueKey();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return KeyedSubtree(
-      key: key,
-      child: widget.child,
     );
   }
 }

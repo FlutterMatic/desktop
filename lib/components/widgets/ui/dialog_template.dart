@@ -43,7 +43,7 @@ class DialogTemplate extends StatelessWidget {
                   onTap: () {},
                   child: RoundContainer(
                     height: height,
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme ? AppTheme.darkCardColor : Colors.white,
+                    color: Theme.of(context).isDarkTheme ? AppTheme.darkCardColor : Colors.white,
                     padding: childPadding ?? const EdgeInsets.all(10),
                     child: Center(child: child),
                   ),

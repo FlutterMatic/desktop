@@ -4,6 +4,7 @@ import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/core/notifiers/theme.notifier.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class PubFavoriteTile extends StatefulWidget {
@@ -44,9 +45,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                       child: Text(
                         'package_info_plus',
                         style: TextStyle(
-                          color: context.read<ThemeChangeNotifier>().isDarkTheme
-                              ? Colors.white
-                              : Colors.black,
+                          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                           fontSize: 17,
                         ),
                       ),
@@ -70,10 +69,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                     'Flutter plugin for querying information about the application package, such as CFBundleVersion on iOS or versionCode on Android.',
                     style: TextStyle(
                       fontSize: 13,
-                      color: (context.read<ThemeChangeNotifier>().isDarkTheme
-                              ? Colors.white
-                              : Colors.black)
-                          .withOpacity(0.5),
+                      color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
                     ),
                   ),
                 ),
@@ -91,11 +87,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 13.5,
-                          color:
-                              (context.read<ThemeChangeNotifier>().isDarkTheme
-                                      ? Colors.white
-                                      : Colors.black)
-                                  .withOpacity(0.5),
+                          color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
                         ),
                       ),
                     ),
@@ -111,11 +103,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                         child: Icon(
                           Icons.content_copy,
                           size: 13,
-                          color:
-                              (context.read<ThemeChangeNotifier>().isDarkTheme
-                                      ? Colors.white
-                                      : Colors.black)
-                                  .withOpacity(0.5),
+                          color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
                         ),
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(

@@ -12,12 +12,13 @@ class AppTheme {
   static const Color errorColor = Color(0xFFD73A49);
   static ThemeData get lightTheme => ThemeData(
         fontFamily: 'NotoSans',
+        brightness: Brightness.light,
         primaryColor: lightBackgroundColor,
         backgroundColor: lightBackgroundColor,
         scaffoldBackgroundColor: lightBackgroundColor,
-        primaryColorLight: const Color(0xFFF1F1F1),
         buttonColor: primaryColor,
         accentColor: const Color(0xFF79A6DC),
+        primaryColorLight: const Color(0xFFF1F1F1),
         splashColor: Colors.transparent,
         errorColor: errorColor,
         highlightColor: Colors.transparent,
@@ -32,6 +33,7 @@ class AppTheme {
   static ThemeData get darkTheme => ThemeData(
         fontFamily: 'NotoSans',
         primaryColor: darkBackgroundColor,
+        brightness: Brightness.dark,
         backgroundColor: darkBackgroundColor,
         unselectedWidgetColor: Colors.blueGrey.withOpacity(0.4),
         scaffoldBackgroundColor: darkBackgroundColor,
@@ -51,4 +53,9 @@ class AppTheme {
           bodyText2: TextStyle(color: Color(0xffCDD4DD)),
         ),
       );
+}
+
+extension MyThemeData on ThemeData {
+  bool get isDarkTheme => brightness == Brightness.dark;
+  bool get isLightTheme => brightness == Brightness.light;
 }
