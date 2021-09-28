@@ -78,6 +78,7 @@ flutter:
     - assets/markdown/
     - assets/lottie/
     - changelog.md
+    - sample_package.md
 
   fonts:
     - family: NotoSans

@@ -27,6 +27,9 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
 
+    double _itemHeight = (_size.height - kToolbarHeight - 24) / 2;
+    double _itemWidth = _size.width / 2;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -106,10 +109,10 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
         if (widget.isVertical)
           GridView.count(
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: _size.width > 1100 ? 4 : 3,
+            crossAxisCount: _size.width > 1200 ? 4 : 3,
             mainAxisSpacing: 15,
             crossAxisSpacing: 15,
-            childAspectRatio: _size.height / 500,
+            childAspectRatio: (_itemWidth / _itemHeight) * 0.5,
             children: widget.content,
             shrinkWrap: true,
           )
