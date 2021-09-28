@@ -6,7 +6,8 @@ class ProjectPlatformsSection extends StatefulWidget {
   final Function(bool ios, bool android, bool web, bool windows, bool macos,
       bool linux) onChanged;
 
-  ProjectPlatformsSection({required this.onChanged});
+  const ProjectPlatformsSection({Key? key, required this.onChanged})
+      : super(key: key);
 
   @override
   _ProjectPlatformsSectionState createState() =>

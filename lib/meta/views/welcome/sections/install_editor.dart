@@ -158,7 +158,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     ? hLoadingIndicator(context: context)
                     : (vsCodeNotifier.progress == Progress.downloading ||
                             androidStudioNotifier.progress == Progress.downloading)
-                        ? CustomProgressIndicator()
+                        ? const CustomProgressIndicator()
                         : (vsCodeNotifier.progress == Progress.extracting ||
                                 androidStudioNotifier.progress == Progress.extracting)
                             ? hLoadingIndicator(context: context)
@@ -173,7 +173,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                                 : (vsCodeNotifier.progress == Progress.none ||
                                         androidStudioNotifier.progress == Progress.none)
                                     ? const SizedBox.shrink()
-                                    : CustomProgressIndicator(),
+                                    : const CustomProgressIndicator(),
               ),
             if (widget.doneInstalling && !_showEditorSelector)
               Row(

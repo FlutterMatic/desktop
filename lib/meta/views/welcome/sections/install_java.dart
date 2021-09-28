@@ -34,7 +34,7 @@ Widget installJava(
                   javaNotifier.progress == Progress.checking)
               ? hLoadingIndicator(context: context)
               : (javaNotifier.progress == Progress.downloading)
-                  ? CustomProgressIndicator()
+                  ? const CustomProgressIndicator()
                   : javaNotifier.progress == Progress.extracting
                       ? hLoadingIndicator(context: context)
                       : javaNotifier.progress == Progress.done
@@ -47,7 +47,7 @@ Widget installJava(
                           : javaNotifier.progress == Progress.none
                               ? infoWidget(context,
                                   'Java can be essential for Android development. We recommend installing Java if you will be developing Android apps.')
-                              : CustomProgressIndicator(),
+                              : const CustomProgressIndicator(),
         ),
         if (doneInstalling)
           welcomeToolInstalled(
@@ -81,7 +81,7 @@ Widget installJava(
                       VSeparators.large(),
                       const Text('Tool Skipping:'),
                       VSeparators.normal(),
-                      BulletPoint('Java 8 by Oracle', 2),
+                      const BulletPoint('Java 8 by Oracle', 2),
                       VSeparators.large(),
                       Row(
                         children: <Widget>[

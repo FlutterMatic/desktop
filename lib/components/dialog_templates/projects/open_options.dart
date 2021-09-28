@@ -5,8 +5,10 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {
-  OpenOptionsDialog(this.fileName);
   final String fileName;
+
+  const OpenOptionsDialog(this.fileName, {Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
@@ -124,12 +126,13 @@ Widget _projectOptionTile({
       onPressed: onPressed,
       color: Colors.blueGrey.withOpacity(0.2),
       hoverColor: hoverType == HoverType.normal
-          ? customTheme.accentColor
+          ? customTheme.colorScheme.secondary
           : customTheme.errorColor,
-      splashColor:
-          hoverType == HoverType.normal ? customTheme.accentColor : kRedColor,
+      splashColor: hoverType == HoverType.normal
+          ? customTheme.colorScheme.secondary
+          : kRedColor,
       highlightColor: hoverType == HoverType.normal
-          ? customTheme.accentColor
+          ? customTheme.colorScheme.secondary
           : customTheme.errorColor,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       height: 110,
@@ -152,7 +155,7 @@ Widget _projectOptionTile({
 class ConfirmProjectDelete extends StatefulWidget {
   final String fName;
 
-  ConfirmProjectDelete(this.fName);
+  const ConfirmProjectDelete(this.fName, {Key? key}) : super(key: key);
 
   @override
   _ConfirmProjectDeleteState createState() => _ConfirmProjectDeleteState();
@@ -253,14 +256,14 @@ class _ConfirmProjectDeleteState extends State<ConfirmProjectDelete> {
 class OpenWithOptionsDialog extends StatelessWidget {
   final String name;
 
-  OpenWithOptionsDialog({required this.name});
+  const OpenWithOptionsDialog({Key? key, required this.name}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
       child: Column(
-        children: <Widget>[
-          const DialogHeader(title: 'Open Options'),
+        children: const <Widget>[
+          DialogHeader(title: 'Open Options'),
           // TODO: Show open options.
         ],
       ),

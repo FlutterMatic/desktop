@@ -45,17 +45,20 @@ class _SelectTileState extends State<SelectTile> {
         Column(
           children: widget.options
               .map(
-                (String val) => _selectTile(val, () {
-                  if (widget.disable == false) {
-                    widget.onPressed!(val);
-                    setState(() => _selected = val);
-                  }
-                },
-                    val == _selected,
-                    widget.disable,
-                    customTheme.backgroundColor,
-                    customTheme.accentColor,
-                    context),
+                (String val) => _selectTile(
+                  val,
+                  () {
+                    if (widget.disable == false) {
+                      widget.onPressed!(val);
+                      setState(() => _selected = val);
+                    }
+                  },
+                  val == _selected,
+                  widget.disable,
+                  customTheme.backgroundColor,
+                  customTheme.colorScheme.secondary,
+                  context,
+                ),
               )
               .toList(),
         ),

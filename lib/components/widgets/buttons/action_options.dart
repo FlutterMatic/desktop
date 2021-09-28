@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;
@@ -16,7 +17,8 @@ class ActionOptions extends StatelessWidget {
       children: actions.map((ActionOptionsObject e) {
         return _buttonListTile(
           icon: e.icon,
-          color: customTheme.buttonColor,
+          color: customTheme.buttonTheme.colorScheme?.primary ??
+              AppTheme.darkBackgroundColor,
           onPressed: e.onPressed,
           title: e.title,
           length: actions.length,

@@ -1,18 +1,18 @@
 library widgets;
 
-/// Buttons
+// Buttons
 export '../../components/widgets/buttons/select_tiles.dart';
 export '../../components/widgets/buttons/close_button.dart';
 export '../../components/widgets/buttons/square_button.dart';
 export '../../components/widgets/buttons/action_options.dart';
 export '../../components/widgets/buttons/rectangle_button.dart';
 
-/// Inputs
+// Inputs
 export '../../components/widgets/inputs/text_field.dart';
 export '../../components/widgets/inputs/multiple_choice.dart';
 export '../../components/widgets/inputs/check_box_element.dart';
 
-/// UI
+// UI
 export '../../components/widgets/ui/spinner.dart';
 export '../../components/widgets/ui/tab_view.dart';
 export '../../components/widgets/ui/info_widget.dart';
@@ -24,3 +24,4 @@ export '../../components/widgets/ui/warning_widget.dart';
 export '../../components/widgets/ui/round_container.dart';
 export '../../components/widgets/ui/dialog_template.dart';
 export '../../components/widgets/ui/current_directory.dart';
+export '../../components/widgets/ui/linear_progress_indicator.dart';

@@ -6,6 +6,8 @@ import 'dart:developer';
 import 'package:manager/meta/views/home/home.dart';
 
 class ChangeChannelDialog extends StatefulWidget {
+  const ChangeChannelDialog({Key? key}) : super(key: key);
+
   @override
   _ChangeChannelDialogState createState() => _ChangeChannelDialogState();
 }
@@ -55,9 +57,15 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                     ),
                     VSeparators.normal(),
                     SelectTile(
-                      onPressed: (String val) => setState(() => _selectedChannel = val),
+                      onPressed: (String val) =>
+                          setState(() => _selectedChannel = val),
                       defaultValue: _selectedChannel,
-                      options: const <String>['Master', 'Stable', 'Beta', 'Dev'],
+                      options: const <String>[
+                        'Master',
+                        'Stable',
+                        'Beta',
+                        'Dev'
+                      ],
                     ),
                     informationWidget(
                       'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
@@ -69,7 +77,8 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
                             child: Text('Cancel'),
                           ),
                         ),
@@ -89,13 +98,15 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
                               Navigator.pop(context);
                               showDialog(
                                 context: context,
-                                builder: (_) => ConfirmChannelChangeDialog(_selectedChannel!),
+                                builder: (_) => ConfirmChannelChangeDialog(
+                                    _selectedChannel!),
                               );
                             }
                           },
                           child: Text(
                             'Continue',
-                            style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color),
                           ),
                         ),
                       ],
@@ -107,6 +118,8 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
 }
 
 class AlreadyChannelDialog extends StatelessWidget {
+  const AlreadyChannelDialog({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -139,7 +152,8 @@ class AlreadyChannelDialog extends StatelessWidget {
 class ConfirmChannelChangeDialog extends StatelessWidget {
   final String channelName;
 
-  ConfirmChannelChangeDialog(this.channelName);
+  const ConfirmChannelChangeDialog(this.channelName, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

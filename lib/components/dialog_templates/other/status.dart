@@ -4,6 +4,8 @@ import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class StatusDialog extends StatelessWidget {
+  const StatusDialog({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);

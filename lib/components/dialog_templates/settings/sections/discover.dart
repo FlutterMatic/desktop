@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverSettingsSection extends StatelessWidget {
+  const DiscoverSettingsSection({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
@@ -71,7 +73,7 @@ class DiscoverSettingsSection extends StatelessWidget {
         VSeparators.small(),
         RoundContainer(
           width: double.infinity,
-          color: customTheme.accentColor.withOpacity(0.2),
+          color: customTheme.colorScheme.secondary.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               const Expanded(
@@ -82,7 +84,7 @@ class DiscoverSettingsSection extends StatelessWidget {
               ),
               HSeparators.small(),
               RectangleButton(
-                color: customTheme.accentColor.withOpacity(0.2),
+                color: customTheme.colorScheme.secondary.withOpacity(0.2),
                 hoverColor: customTheme.hoverColor,
                 width: 70,
                 onPressed: () {

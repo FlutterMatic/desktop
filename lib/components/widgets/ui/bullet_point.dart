@@ -4,7 +4,7 @@ class BulletPoint extends StatelessWidget {
   final String text;
   final double level;
 
-  BulletPoint(this.text, [this.level = 1]);
+  const BulletPoint(this.text, [this.level = 1, Key? key]) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

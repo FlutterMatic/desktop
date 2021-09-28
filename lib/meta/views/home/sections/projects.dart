@@ -27,8 +27,8 @@ class _HomeProjectSectionState extends State<HomeProjectSection> {
             ],
           )
         : Column(
-            children: <Widget>[
-              const Text('Pub Packages'),
+            children: const <Widget>[
+              Text('Pub Packages'),
             ],
           );
   }

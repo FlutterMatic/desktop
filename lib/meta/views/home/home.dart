@@ -150,7 +150,7 @@ Widget _tabTile(
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       color: selected
-          ? customTheme.accentColor.withOpacity(0.2)
+          ? customTheme.colorScheme.secondary.withOpacity(0.2)
           : Colors.transparent,
       padding: EdgeInsets.all(_showShortView ? 5 : 10),
       onPressed: onPressed,

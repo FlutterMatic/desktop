@@ -15,8 +15,8 @@ class _LowDriveSpaceDialogState extends State<LowDriveSpaceDialog> {
     return DialogTemplate(
       outerTapExit: false,
       child: Column(
-        children: <Widget>[
-          const DialogHeader(title: 'No Space'),
+        children: const <Widget>[
+          DialogHeader(title: 'No Space'),
         ],
       ),
     );

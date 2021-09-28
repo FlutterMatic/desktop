@@ -6,7 +6,8 @@ import 'package:manager/core/libraries/widgets.dart';
 class ProjectNameSection extends StatefulWidget {
   final Function(String? val) onChanged;
 
-  ProjectNameSection({required this.onChanged});
+  const ProjectNameSection({Key? key, required this.onChanged})
+      : super(key: key);
 
   @override
   _ProjectNameSectionState createState() => _ProjectNameSectionState();

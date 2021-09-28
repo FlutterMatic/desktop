@@ -6,7 +6,9 @@ class ProjectOrgNameSection extends StatefulWidget {
   final String projName;
   final Function(String? val) onChanged;
 
-  ProjectOrgNameSection({required this.projName, required this.onChanged});
+  const ProjectOrgNameSection(
+      {Key? key, required this.projName, required this.onChanged})
+      : super(key: key);
 
   @override
   _ProjectOrgNameSectionState createState() => _ProjectOrgNameSectionState();

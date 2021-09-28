@@ -5,19 +5,21 @@ import 'package:manager/meta/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
+  const CustomProgressIndicator({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Consumer<DownloadNotifier>(
       builder: (BuildContext context, DownloadNotifier downloadNotifier, _) {
         if (downloadNotifier.downloadProgress < 100) {
-          return Container(
+          return SizedBox(
             width: 200,
             child: Column(
               children: <Widget>[
                 hLoadingIndicator(
                   value: downloadNotifier.downloadProgress / 100,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppTheme.primaryColor),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
