@@ -5,6 +5,7 @@ import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/components/widgets/ui/warning_widget.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/views/home/sections/pub/elements/pub_fav_tile.dart';
 import 'package:manager/meta/views/home/sections/pub/elements/pub_view.dart';
 import 'package:manager/meta/views/home/sections/pub/elements/search_result_tile.dart';
@@ -31,7 +32,7 @@ class _HomePubSectionState extends State<HomePubSection> {
 
   bool _loadingSearch = false;
 
-  static final int _buttonsOnRight = 2;
+  static const int _buttonsOnRight = 2;
 
   // Will get the JSON from this URL: https://pub.dev/api/package-name-completion-data
   // This JSON will contain the list of all pub packages that are available.
@@ -129,7 +130,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                 child: Row(
                   children: <Widget>[
                     if (_buttonsOnRight > 0)
-                      SizedBox(
+                      const SizedBox(
                           width: (40 * _buttonsOnRight) +
                               ((_buttonsOnRight - 1) * 10)),
                     const Spacer(),
@@ -371,12 +372,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                   child: Builder(
                     builder: (BuildContext context) {
                       if (_searchResults.isEmpty && _loadingSearch) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: LinearProgressIndicator(
-                            backgroundColor: Colors.blue.withOpacity(0.1),
-                          ),
-                        );
+                        return const CustomLinearProgressIndicator();
                       } else if (_searchResults.isEmpty && !_loadingSearch) {
                         return informationWidget(
                           'There are no results for your search query. Try using another term instead.',

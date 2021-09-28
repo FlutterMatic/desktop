@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/buttons/square_button.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 Widget titleSection(String title, BuildContext context,
     [List<Widget>? actions]) {
@@ -50,7 +51,7 @@ Widget installationStatus(
             status != InstallationStatus.done
                 ? SquareButton(
                     size: 35,
-                    color: customTheme.buttonColor,
+                    color: AppTheme.darkBackgroundColor,
                     icon: Icon(Icons.download,
                         color: customTheme.textTheme.bodyText1!.color,
                         size: 20),

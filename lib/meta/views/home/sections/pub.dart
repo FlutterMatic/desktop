@@ -9,23 +9,25 @@ class HomePubSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SharedPref().pref.getString('App_Build') != 'STABLE'
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Lottie.asset(Assets.packages, height: 250),
-              VSeparators.normal(),
-              const Text(
-                'We are packing the data',
-                style: TextStyle(fontSize: 20),
-              ),
-            ],
-          )
-        : Column(
-            children: <Widget>[
-              const Text('Pub Packages'),
-            ],
-          );
+    if (SharedPref().pref.getString('App_Build') != 'STABLE') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Lottie.asset(Assets.packages, height: 250),
+          VSeparators.normal(),
+          const Text(
+            'We are packing the data',
+            style: TextStyle(fontSize: 20),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: const <Widget>[
+          Text('Pub Packages'),
+        ],
+      );
+    }
   }
 }

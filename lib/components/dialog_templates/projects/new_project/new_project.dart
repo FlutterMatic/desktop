@@ -9,6 +9,8 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'dart:developer';
 
 class NewProjectDialog extends StatefulWidget {
+  const NewProjectDialog({Key? key}) : super(key: key);
+
   @override
   _NewProjectDialogState createState() => _NewProjectDialogState();
 }
@@ -110,8 +112,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                       Icons.arrow_back_ios_rounded,
                       color: customTheme.textTheme.bodyText1!.color,
                     ),
-                    color: customTheme.buttonColor,
-                    hoverColor: customTheme.accentColor,
+                    hoverColor: customTheme.colorScheme.secondary,
                     onPressed: () => setState(() => _index--),
                   )
                 : null,
@@ -207,7 +208,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
 class ProjectCreatedDialog extends StatelessWidget {
   final String projectName;
 
-  ProjectCreatedDialog({required this.projectName});
+  const ProjectCreatedDialog({Key? key, required this.projectName})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(

@@ -18,7 +18,7 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(RestartWidget(child: MultiProviders(FlutterMaticMain())));
+  runApp(const RestartWidget(child: MultiProviders(FlutterMaticMain())));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
     appWindow.maximize();
@@ -29,6 +29,8 @@ Future<void> main(List<String> args) async {
 }
 
 class FlutterMaticMain extends StatefulWidget {
+  const FlutterMaticMain({Key? key}) : super(key: key);
+
   @override
   _FlutterMaticMainState createState() => _FlutterMaticMainState();
 }
@@ -54,15 +56,18 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
     await SharedPref().pref.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
     await SharedPref().pref.setString('App_Build', appBuild.toString());
-    if (SharedPref().pref.containsKey('All_Checked') && !SharedPref().pref.containsKey('Tab')) {
+    if (SharedPref().pref.containsKey('All_Checked') &&
+        !SharedPref().pref.containsKey('Tab')) {
       allChecked = SharedPref().pref.getBool('All_Checked');
     } else {
       await SharedPref().pref.setBool('All_Checked', false);
       allChecked = SharedPref().pref.getBool('All_Checked');
     }
     if (!SharedPref().pref.containsKey('platform')) {
-      List<ProcessResult?>? platformData =
-          Platform.isWindows ? await shell.run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"') : null;
+      List<ProcessResult?>? platformData = Platform.isWindows
+          ? await shell
+              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
+          : null;
       await SharedPref()
           .pref
           .setString('platform', Platform.operatingSystem)
@@ -126,7 +131,8 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier, Widget? child) {
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
+          Widget? child) {
         return Directionality(
             textDirection: TextDirection.ltr,
             child: Container(
@@ -152,7 +158,9 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                     child: MaterialApp(
                       theme: AppTheme.lightTheme,
                       darkTheme: AppTheme.darkTheme,
-                      themeMode: themeChangeNotifier.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+                      themeMode: themeChangeNotifier.isDarkTheme
+                          ? ThemeMode.dark
+                          : ThemeMode.light,
                       debugShowCheckedModeBanner: false,
                       home: isChecking
                           ? const Scaffold(body: Center(child: Spinner()))
@@ -170,7 +178,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 }
 
 class RestartWidget extends StatefulWidget {
-  RestartWidget({required this.child});
+  const RestartWidget({Key? key, required this.child}) : super(key: key);
 
   final Widget child;
 

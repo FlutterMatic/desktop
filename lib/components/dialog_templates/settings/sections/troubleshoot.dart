@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
+  const TroubleShootSettingsSection({Key? key}) : super(key: key);
+
   @override
   _TroubleShootSettingsSectionState createState() =>
       _TroubleShootSettingsSectionState();

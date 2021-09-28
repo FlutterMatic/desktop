@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:manager/main.dart';
 
 class ThemeSettingsSection extends StatefulWidget {
+  const ThemeSettingsSection({Key? key}) : super(key: key);
+
   @override
   _ThemeSettingsSectionState createState() => _ThemeSettingsSectionState();
 }

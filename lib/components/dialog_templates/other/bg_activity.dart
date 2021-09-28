@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class BgActivityDialog extends StatefulWidget {
+  const BgActivityDialog({Key? key}) : super(key: key);
+
   @override
   _BgActivityDialogState createState() => _BgActivityDialogState();
 }

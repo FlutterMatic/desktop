@@ -6,6 +6,8 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'dart:io' show Platform;
 
 class FlutterRequirementsDialog extends StatelessWidget {
+  const FlutterRequirementsDialog({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);

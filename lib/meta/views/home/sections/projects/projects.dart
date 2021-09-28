@@ -18,9 +18,9 @@ class HomeProjectsSection extends StatefulWidget {
 class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   String _searchText = '';
 
-  bool _loadingSearch = false;
+  final bool _loadingSearch = false;
 
-  static final int _buttonsOnRight = 0;
+  static const int _buttonsOnRight = 0;
 
   final FocusNode _searchNode = FocusNode();
 
@@ -41,7 +41,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                 child: Row(
                   children: <Widget>[
                     if (_buttonsOnRight > 0)
-                      SizedBox(
+                      const SizedBox(
                         width: (40 * _buttonsOnRight) +
                             ((_buttonsOnRight - 1) * 10),
                       ),

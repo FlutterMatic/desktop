@@ -6,6 +6,8 @@ import 'package:manager/meta/utils/shared_pref.dart';
 import 'dart:io';
 
 class EditorsSettingsSection extends StatefulWidget {
+  const EditorsSettingsSection({Key? key}) : super(key: key);
+
   @override
   _EditorsSettingsSectionState createState() => _EditorsSettingsSectionState();
 }

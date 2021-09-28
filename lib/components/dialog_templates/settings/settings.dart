@@ -28,7 +28,7 @@ class _SettingDialogState extends State<SettingDialog> {
           const DialogHeader(title: 'Settings'),
           TabViewWidget(
             defaultPage: widget.goToPage,
-            tabs: <TabViewObject>[
+            tabs: const <TabViewObject>[
               TabViewObject('Theme', ThemeSettingsSection()),
               TabViewObject('Projects', ProjectsSettingsSection()),
               TabViewObject('Editors', EditorsSettingsSection()),

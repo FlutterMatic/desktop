@@ -39,7 +39,7 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
       );
     } else {
       return SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height * (_data!.length / 7.2),
           child: ListView.builder(
             scrollDirection: Axis.vertical,

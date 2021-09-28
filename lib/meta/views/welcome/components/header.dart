@@ -17,7 +17,7 @@ Widget createWelcomeHeader(WelcomeTab tab, BuildContext context) {
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: AppTheme.lightTheme.buttonColor,
+                color: AppTheme.darkBackgroundColor,
               ),
             ),
           ],

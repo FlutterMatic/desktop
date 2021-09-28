@@ -27,7 +27,7 @@ Widget installFlutter(
                   flutterNotifier.progress == Progress.checking)
               ? hLoadingIndicator(context: context)
               : flutterNotifier.progress == Progress.downloading
-                  ? CustomProgressIndicator()
+                  ? const CustomProgressIndicator()
                   : (flutterNotifier.progress == Progress.extracting)
                       ? hLoadingIndicator(context: context)
                       : flutterNotifier.progress == Progress.done

@@ -7,6 +7,8 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/models/projects.model.dart';
 
 class SearchProjectsDialog extends StatefulWidget {
+  const SearchProjectsDialog({Key? key}) : super(key: key);
+
   @override
   _SearchProjectsDialogState createState() => _SearchProjectsDialogState();
 }
@@ -88,7 +90,8 @@ class _SearchProjectsDialogState extends State<SearchProjectsDialog> {
           VSeparators.small(),
           // Loading when finding initial projects
           if (_loading)
-            const Center(child: SizedBox(height: 80, width: 80, child: Spinner())),
+            const Center(
+                child: SizedBox(height: 80, width: 80, child: Spinner())),
           // No project(s) in provided path
           if (!_loading && projs.isEmpty)
             Center(
@@ -213,7 +216,6 @@ Widget _searchItem(BuildContext context, String name, String? modDate) {
     child: RectangleButton(
       width: double.infinity,
       height: 50,
-      color: customTheme.buttonColor,
       padding: EdgeInsets.zero,
       onPressed: () {
         showDialog(

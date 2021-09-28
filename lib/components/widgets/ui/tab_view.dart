@@ -71,7 +71,8 @@ class TabViewObject {
   const TabViewObject(this.name, this.widget);
 }
 
-Widget tabItemWidget(String name, Function() onPressed, bool selected, BuildContext context) {
+Widget tabItemWidget(
+    String name, Function() onPressed, bool selected, BuildContext context) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     width: 130,
@@ -79,14 +80,18 @@ Widget tabItemWidget(String name, Function() onPressed, bool selected, BuildCont
     focusColor: Colors.transparent,
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    color: selected ? customTheme.accentColor.withOpacity(0.2) : Colors.transparent,
+    color: selected
+        ? customTheme.colorScheme.secondary.withOpacity(0.2)
+        : Colors.transparent,
     padding: const EdgeInsets.all(10),
     onPressed: onPressed,
     child: Align(
       alignment: Alignment.centerLeft,
       child: Text(
         name,
-        style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(selected ? 1 : .4)),
+        style: TextStyle(
+            color: customTheme.textTheme.bodyText1!.color!
+                .withOpacity(selected ? 1 : .4)),
       ),
     ),
   );
@@ -99,7 +104,11 @@ class TabViewTabHeadline extends StatelessWidget {
   final TextStyle? titleStyle;
 
   const TabViewTabHeadline(
-      {Key? key, required this.title, required this.content, this.allowContentScroll = true, this.titleStyle})
+      {Key? key,
+      required this.title,
+      required this.content,
+      this.allowContentScroll = true,
+      this.titleStyle})
       : super(key: key);
 
   @override
@@ -113,7 +122,9 @@ class TabViewTabHeadline extends StatelessWidget {
         ),
         VSeparators.xSmall(),
         Expanded(
-          child: allowContentScroll ? SingleChildScrollView(child: _pageContent()) : _pageContent(),
+          child: allowContentScroll
+              ? SingleChildScrollView(child: _pageContent())
+              : _pageContent(),
         ),
       ],
     );

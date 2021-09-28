@@ -80,7 +80,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       TextButton(
                         onPressed: () => showDialog(
                           context: context,
-                          builder: (_) => FlutterRequirementsDialog(),
+                          builder: (_) => const FlutterRequirementsDialog(),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),

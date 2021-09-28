@@ -4,12 +4,13 @@ import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/new_project.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-
 import 'change_channel.dart';
 import 'flutter_upgrade.dart';
+import 'dart:io';
 
 class RunCommandDialog extends StatefulWidget {
+  const RunCommandDialog({Key? key}) : super(key: key);
+
   @override
   _RunCommandDialogState createState() => _RunCommandDialogState();
 }
@@ -45,13 +46,13 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
     } else if (_trimmedCommand == 'upgrade') {
       Navigator.pop(context);
       await showDialog(
-          context: context, builder: (_) => UpgradeFlutterDialog());
+          context: context, builder: (_) => const UpgradeFlutterDialog());
     } else if (_trimmedCommand == 'channelmaster' ||
         _trimmedCommand == 'channelstable' ||
         _trimmedCommand == 'channeldev' ||
         _trimmedCommand == 'channelbeta') {
       Navigator.pop(context);
-      await showDialog(context: context, builder: (_) => ChangeChannelDialog());
+      await showDialog(context: context, builder: (_) => const ChangeChannelDialog());
     } else if (_commandController.text.isNotEmpty) {
       setState(() => _loading = true);
       await shell
@@ -132,10 +133,10 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
               if (_preferVerbose == null)
                 Expanded(
                   child: Row(
-                    children: <Widget>[
-                      const SizedBox(
+                    children: const <Widget>[
+                      SizedBox(
                           height: 20, width: 20, child: Spinner(thickness: 2)),
-                      const Spacer(),
+                      Spacer(),
                     ],
                   ),
                 )

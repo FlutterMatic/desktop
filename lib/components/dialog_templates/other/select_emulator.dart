@@ -3,12 +3,14 @@ import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class SelectEmulatorDialog extends StatelessWidget {
+  const SelectEmulatorDialog({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
       child: Column(
-        children: <Widget>[
-          const DialogHeader(title: 'Select Emulator'),
+        children: const <Widget>[
+          DialogHeader(title: 'Select Emulator'),
           // TODO: Implement an emulator selection interface
         ],
       ),

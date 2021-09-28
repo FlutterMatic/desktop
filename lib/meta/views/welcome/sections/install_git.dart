@@ -26,7 +26,7 @@ Widget installGit(
           child: (gitNotifier.progress == Progress.started || gitNotifier.progress == Progress.checking)
               ? hLoadingIndicator(context: context)
               : gitNotifier.progress == Progress.downloading
-                  ? CustomProgressIndicator()
+                  ? const CustomProgressIndicator()
                   : gitNotifier.progress == Progress.extracting
                       ? hLoadingIndicator(context: context)
                       : gitNotifier.progress == Progress.done

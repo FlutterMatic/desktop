@@ -21,7 +21,7 @@ class CheckBoxElement extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: <Widget>[
-          Container(
+          SizedBox(
             width: 30,
             height: 30,
             child: Checkbox(

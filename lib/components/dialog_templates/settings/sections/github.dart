@@ -4,6 +4,8 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GitHubSettingsSection extends StatelessWidget {
+  const GitHubSettingsSection({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);

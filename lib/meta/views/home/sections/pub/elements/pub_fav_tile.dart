@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/core/notifiers/theme.notifier.dart';
 import 'package:manager/meta/views/home/sections/pub/package_dialog.dart';
@@ -34,7 +33,9 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (_) => const PubPackageDialog(),
+            builder: (_) => const PubPackageDialog(
+              pkgName: 'big_numbers',
+            ),
           );
         },
         child: Padding(
@@ -196,23 +197,25 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                 ],
               ),
               VSeparators.small(),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    _nullSafe
-                        ? Icons.done_all_rounded
-                        : Icons.do_not_disturb_alt_rounded,
-                    size: 13,
-                    color: _nullSafe ? kGreenColor : kYellowColor,
-                  ),
-                  HSeparators.xSmall(),
-                  Text(
-                    _nullSafe ? 'Null safe' : 'Not null safe',
-                    style: TextStyle(
-                        color: _nullSafe ? kGreenColor : kYellowColor),
-                  ),
-                ],
+              ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                    context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? (_nullSafe ? kGreenColor : kYellowColor)
+                        : (_nullSafe ? kGreenColor : Colors.redAccent),
+                    BlendMode.srcATop),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      _nullSafe
+                          ? Icons.done_all_rounded
+                          : Icons.do_not_disturb_alt_rounded,
+                      size: 13,
+                    ),
+                    HSeparators.xSmall(),
+                    Text(_nullSafe ? 'Null safe' : 'Not null safe'),
+                  ],
+                ),
               ),
               VSeparators.small(),
               Row(

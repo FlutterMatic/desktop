@@ -8,14 +8,17 @@ import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? timer}) {
+Widget welcomeRestart(BuildContext context,
+    {VoidCallback? onRestart, String? timer}) {
   return Column(
     children: <Widget>[
       welcomeHeaderTitle(
         Assets.confetti,
         Installed.congos,
         InstalledContent.allDone,
-        color: context.read<ThemeChangeNotifier>().isDarkTheme ? null : Colors.black,
+        color: context.read<ThemeChangeNotifier>().isDarkTheme
+            ? null
+            : Colors.black,
       ),
       VSeparators.xLarge(),
       RoundContainer(
@@ -29,16 +32,22 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? ti
               children: <Widget>[
                 Expanded(
                   child: RectangleButton(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme ? null : AppTheme.lightTheme.buttonColor,
-                    child: const Text('Flutter Documentation', style: TextStyle(color: Colors.white)),
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? null
+                        : AppTheme.darkBackgroundColor,
+                    child: const Text('Flutter Documentation',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () => launch('https://flutter.dev/docs'),
                   ),
                 ),
                 HSeparators.small(),
                 Expanded(
                   child: RectangleButton(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme ? null : AppTheme.lightTheme.buttonColor,
-                    child: const Text('Our Documentation', style: TextStyle(color: Colors.white)),
+                    color: context.read<ThemeChangeNotifier>().isDarkTheme
+                        ? null
+                        : AppTheme.darkBackgroundColor,
+                    child: const Text('Our Documentation',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () {},
                   ),
                 ),

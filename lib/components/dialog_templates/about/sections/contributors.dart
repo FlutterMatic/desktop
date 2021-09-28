@@ -25,7 +25,7 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
       content: <Widget>[
         RoundContainer(
           width: double.infinity,
-          color: customTheme.accentColor.withOpacity(0.2),
+          color: customTheme.colorScheme.secondary.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -43,7 +43,7 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
               ),
               HSeparators.small(),
               RectangleButton(
-                color: customTheme.accentColor.withOpacity(0.2),
+                color: customTheme.colorScheme.secondary.withOpacity(0.2),
                 hoverColor: customTheme.hoverColor,
                 width: 90,
                 onPressed: () => launch(
@@ -59,7 +59,7 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
         VSeparators.xSmall(),
         if (_failedRequest)
           RoundContainer(
-            color: customTheme.accentColor.withOpacity(0.2),
+            color: customTheme.colorScheme.secondary.withOpacity(0.2),
             width: double.infinity,
             child: Column(
               children: <Widget>[
@@ -81,9 +81,9 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
           )
         else
           Column(
-            children: <Widget>[
-              const ContributorTile('35523357'), // Minnu
-              const ContributorTile('56755783'), // Ziyad
+            children: const <Widget>[
+              ContributorTile('35523357'), // Minnu
+              ContributorTile('56755783'), // Ziyad
             ],
           ),
       ],

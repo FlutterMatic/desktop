@@ -6,6 +6,8 @@ import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/services/logs.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
+  const ProjectsSettingsSection({Key? key}) : super(key: key);
+
   @override
   _ProjectsSettingsSectionState createState() =>
       _ProjectsSettingsSectionState();
@@ -114,7 +116,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
         ),
         VSeparators.normal(),
         MultipleChoice(
-          options: <String>[
+          options: const <String>[
             'Always open projects in preferred editor',
             'Ask me which editor to open with every time',
           ],

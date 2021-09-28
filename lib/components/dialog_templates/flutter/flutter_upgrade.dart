@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-
 import '../dialog_header.dart';
 
 class UpgradeFlutterDialog extends StatefulWidget {
+  const UpgradeFlutterDialog({Key? key}) : super(key: key);
+
   @override
   _UpgradeFlutterDialogState createState() => _UpgradeFlutterDialogState();
 }

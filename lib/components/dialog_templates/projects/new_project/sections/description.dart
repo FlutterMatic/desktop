@@ -5,7 +5,8 @@ import 'package:manager/core/libraries/widgets.dart';
 class ProjectDescriptionSection extends StatefulWidget {
   final Function(String? val) onChanged;
 
-  ProjectDescriptionSection({required this.onChanged});
+  const ProjectDescriptionSection({Key? key, required this.onChanged})
+      : super(key: key);
 
   @override
   _ProjectDescriptionSectionState createState() =>
@@ -38,7 +39,8 @@ class _ProjectDescriptionSectionState extends State<ProjectDescriptionSection> {
             widget.onChanged(_projectDescription);
           },
         ),
-        infoWidget(context,
+        infoWidget(
+          context,
           'The description will be added as description in the pubspec.yaml file of your new project.',
         ),
       ],
