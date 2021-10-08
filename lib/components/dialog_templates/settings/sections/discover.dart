@@ -1,11 +1,15 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/about/about_us.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 class DiscoverSettingsSection extends StatelessWidget {
   const DiscoverSettingsSection({Key? key}) : super(key: key);
@@ -20,14 +24,11 @@ class DiscoverSettingsSection extends StatelessWidget {
           actions: <ActionOptionsObject>[
             ActionOptionsObject(
               'GitHub',
-              () => launch(
-                  'https://github.com/FlutterMatic/FlutterMatic-desktop'),
+              () => launch('https://github.com/FlutterMatic/FlutterMatic-desktop'),
               icon: SvgPicture.asset(
                 Assets.github,
                 height: 14,
-                color: context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? null
-                    : Colors.black,
+                color: Theme.of(context).isDarkTheme ? null : Colors.black,
               ),
             ),
             ActionOptionsObject(
@@ -36,9 +37,7 @@ class DiscoverSettingsSection extends StatelessWidget {
               icon: SvgPicture.asset(
                 Assets.twitter,
                 height: 14,
-                color: context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? null
-                    : Colors.black,
+                color: Theme.of(context).isDarkTheme ? null : Colors.black,
               ),
             ),
             ActionOptionsObject(
@@ -52,9 +51,7 @@ class DiscoverSettingsSection extends StatelessWidget {
               icon: SvgPicture.asset(
                 Assets.flutter,
                 height: 14,
-                color: context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? null
-                    : Colors.black,
+                color: Theme.of(context).isDarkTheme ? null : Colors.black,
               ),
             ),
             ActionOptionsObject(
@@ -63,9 +60,7 @@ class DiscoverSettingsSection extends StatelessWidget {
               icon: SvgPicture.asset(
                 Assets.doc,
                 height: 14,
-                color: context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? null
-                    : Colors.black,
+                color: Theme.of(context).isDarkTheme ? null : Colors.black,
               ),
             ),
           ],
@@ -96,8 +91,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 },
                 child: Text(
                   'About',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
               ),
             ],

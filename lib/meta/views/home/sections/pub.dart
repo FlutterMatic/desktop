@@ -1,6 +1,11 @@
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:lottie/lottie.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 

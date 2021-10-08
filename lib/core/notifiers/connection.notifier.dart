@@ -1,8 +1,15 @@
+// 🎯 Dart imports:
+import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+// 📦 Package imports:
 import 'package:connectivity_plus/connectivity_plus.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/services.dart';
-import 'dart:io';
 
 class ConnectionNotifier with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();

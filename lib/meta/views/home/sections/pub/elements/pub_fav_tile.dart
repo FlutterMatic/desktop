@@ -1,11 +1,11 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/core/notifiers/theme.notifier.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/meta/views/home/sections/pub/package_dialog.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/views.dart';
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/core/libraries/utils.dart';
 
 class PubFavoriteTile extends StatefulWidget {
   const PubFavoriteTile({Key? key}) : super(key: key);
@@ -35,7 +35,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
           showDialog(
             context: context,
             builder: (_) => const PubPackageDialog(
-              pkgName: 'big_numbers',
+              pkgName: 'dio',
             ),
           );
         },
@@ -52,9 +52,9 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            'package_info_plus',
+                            'dio',
                             style: TextStyle(
-                              color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                              color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                               fontSize: 17,
                             ),
                           ),
@@ -70,8 +70,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                             child: Icon(
                               Icons.content_copy,
                               size: 14,
-                              color: (context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black)
-                                  .withOpacity(0.5),
+                              color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
                             ),
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -164,7 +163,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
               VSeparators.small(),
               ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                    context.read<ThemeChangeNotifier>().isDarkTheme
+                    Theme.of(context).isDarkTheme
                         ? (_nullSafe ? kGreenColor : kYellowColor)
                         : (_nullSafe ? kGreenColor : Colors.redAccent),
                     BlendMode.srcATop),
@@ -172,9 +171,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(
-                      _nullSafe
-                          ? Icons.done_all_rounded
-                          : Icons.do_not_disturb_alt_rounded,
+                      _nullSafe ? Icons.done_all_rounded : Icons.do_not_disturb_alt_rounded,
                       size: 13,
                     ),
                     HSeparators.xSmall(),

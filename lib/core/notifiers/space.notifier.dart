@@ -1,6 +1,11 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/core/libraries/services.dart';
+
+// 📦 Package imports:
 import 'package:unix_disk_space/unix_disk_space.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/services.dart';
 
 class SpaceCheck extends ChangeNotifier {
   String _drive = 'C';

@@ -1,16 +1,14 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
-Widget welcomeToolInstalled(BuildContext context,
-    {required String title, required String message}) {
+// 🌎 Project imports:
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/widgets.dart';
+
+Widget welcomeToolInstalled(BuildContext context, {required String title, required String message}) {
   return RoundContainer(
-    color: context.read<ThemeChangeNotifier>().isDarkTheme
-        ? Colors.blueGrey.withOpacity(0.2)
-        : AppTheme.lightCardColor,
+    color: Theme.of(context).isDarkTheme ? Colors.blueGrey.withOpacity(0.2) : AppTheme.lightCardColor,
     padding: const EdgeInsets.all(15),
     child: Row(
       mainAxisSize: MainAxisSize.min,

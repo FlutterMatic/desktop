@@ -1,24 +1,28 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:manager/components/widgets/ui/markdown_view.dart';
-import 'package:manager/core/libraries/notifiers.dart';
+
+// 📦 Package imports:
 import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/utils.dart';
 
 // hi
 class SystemRequirementsScreen extends StatefulWidget {
   const SystemRequirementsScreen({Key? key}) : super(key: key);
 
   @override
-  _SystemRequirementsScreenState createState() =>
-      _SystemRequirementsScreenState();
+  _SystemRequirementsScreenState createState() => _SystemRequirementsScreenState();
 }
 
 class _SystemRequirementsScreenState extends State<SystemRequirementsScreen> {
   List<String?>? data;
 
   Future<void> _loadData() async {
-    String _data =
-        await rootBundle.loadString('assets/markdown/flutter_requirements.md');
+    String _data = await rootBundle.loadString('assets/markdown/flutter_requirements.md');
     setState(() => data = _data.split('------'));
   }
 
@@ -65,13 +69,10 @@ class _SystemRequirementsScreenState extends State<SystemRequirementsScreen> {
             child: IconButton(
               splashRadius: 1,
               icon: Icon(
-                context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
+                Theme.of(context).isDarkTheme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
               ),
               onPressed: () {
-                context.read<ThemeChangeNotifier>().updateTheme(
-                    !context.read<ThemeChangeNotifier>().isDarkTheme);
+                context.read<ThemeChangeNotifier>().updateTheme(!Theme.of(context).isDarkTheme);
                 setState(() {});
               },
             ),

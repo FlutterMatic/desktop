@@ -1,8 +1,13 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
   const CustomProgressIndicator({Key? key}) : super(key: key);
@@ -18,8 +23,7 @@ class CustomProgressIndicator extends StatelessWidget {
               children: <Widget>[
                 hLoadingIndicator(
                   value: downloadNotifier.downloadProgress / 100,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppTheme.primaryColor),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,18 +1,25 @@
+// 🎯 Dart imports:
 import 'dart:developer' as console;
 import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/models.dart';
-import 'package:manager/meta/utils/bin/code.bin.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
+
+// 📦 Package imports:
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
 import 'package:pub_semver/src/version.dart';
+
+// 🌎 Project imports:
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/app/constants/enum.dart';
+import 'package:manager/core/libraries/models.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/core/libraries/services.dart';
+import 'package:manager/meta/utils/bin/code.bin.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 
 /// [VSCodeNotifier] class is a [ChangeNotifier]
 /// for VS Code checks.

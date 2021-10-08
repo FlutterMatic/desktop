@@ -1,21 +1,23 @@
+// 🎯 Dart imports:
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/dialog_templates/about/about_us.dart';
+import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/checks.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/sections.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/flutter/install_flutter.dart';
-import 'package:manager/meta/views/home/home.dart';
-import 'package:manager/meta/views/welcome/screens/docs_tutorials.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:provider/provider.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/views.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -78,6 +80,11 @@ class _WelcomePageState extends State<WelcomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       TextButton(
+                        style: ButtonStyle(
+                          splashFactory: NoSplash.splashFactory,
+                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        ),
                         onPressed: () => showDialog(
                           context: context,
                           builder: (_) => const FlutterRequirementsDialog(),
@@ -87,13 +94,17 @@ class _WelcomePageState extends State<WelcomePage> {
                           child: Text(
                             'System Requirements',
                             style: TextStyle(
-                                fontSize: 12,
-                                color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black),
+                                fontSize: 12, color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black),
                           ),
                         ),
                       ),
                       HSeparators.xSmall(),
                       TextButton(
+                        style: ButtonStyle(
+                          splashFactory: NoSplash.splashFactory,
+                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        ),
                         onPressed: kReleaseMode
                             ? () {}
                             : () async {
@@ -105,8 +116,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           child: Text(
                             'Docs & Tutorials',
                             style: TextStyle(
-                                fontSize: 12,
-                                color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black),
+                                fontSize: 12, color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black),
                           ),
                         ),
                       ),
@@ -124,12 +134,10 @@ class _WelcomePageState extends State<WelcomePage> {
                 IconButton(
                   splashRadius: 1,
                   icon: Icon(
-                    context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? Icons.light_mode_outlined
-                        : Icons.dark_mode_outlined,
+                    Theme.of(context).isDarkTheme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
                   ),
                   onPressed: () {
-                    context.read<ThemeChangeNotifier>().updateTheme(!context.read<ThemeChangeNotifier>().isDarkTheme);
+                    context.read<ThemeChangeNotifier>().updateTheme(!Theme.of(context).isDarkTheme);
                     setState(() {});
                   },
                 ),

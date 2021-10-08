@@ -1,7 +1,10 @@
+// 🎯 Dart imports:
 import 'dart:io';
 
+// 📦 Package imports:
 import 'package:process_run/shell.dart';
 
+// 🌎 Project imports:
 import '../outputs/prints.dart';
 import 'app_data.dart';
 import 'enum.dart';

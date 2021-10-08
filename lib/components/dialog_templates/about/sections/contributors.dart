@@ -1,11 +1,18 @@
+// 🎯 Dart imports:
+import 'dart:convert';
 import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:manager/secret.dart';
-import 'dart:convert';
 
 bool _failedRequest = false;
 

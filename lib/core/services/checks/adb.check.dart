@@ -1,15 +1,22 @@
+// 🎯 Dart imports:
 import 'dart:developer' as console;
 import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:path_provider/path_provider.dart';
+import 'package:process_run/shell.dart';
+import 'package:provider/provider.dart';
+import 'package:pub_semver/src/version.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/models.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/meta/utils/bin/adb.bin.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:process_run/shell.dart';
-import 'package:pub_semver/src/version.dart';
 
 /// [ADBNotifier] class is a [ChangeNotifier]
 /// for ADB checks.

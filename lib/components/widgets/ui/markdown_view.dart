@@ -1,10 +1,14 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/services/code_highlighter.dart';
-import 'package:markdown/markdown.dart' as md;
 import 'package:flutter/painting.dart';
-import 'package:provider/provider.dart';
+
+// 📦 Package imports:
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/services.dart';
 
 class MarkdownBlock extends StatefulWidget {
   final String? _data;
@@ -30,8 +34,9 @@ class _MarkdownBlockState extends State<MarkdownBlock> {
     } else if (widget._data!.contains('img.shields.io')) {
       // We need to convert the tags to png images because we don't support
       // displaying svg in markdown yet.
-      return widget._data!.replaceAll('.svg',
-          '.png'); // TODO(@yahu1031): Make this .svg extension only replace the ones in the url "img.shields.io" and not anywhere else to .png so that it can be displayed.
+      return widget._data!.replaceAll('.svg', '.png');
+      // TODO(@yahu1031): Make this .svg extension only replace the ones in the 
+      // url "img.shields.io" and not anywhere else to .png so that it can be displayed.
     } else {
       return widget._data!;
     }
@@ -45,7 +50,7 @@ class _MarkdownBlockState extends State<MarkdownBlock> {
       selectable: true,
       styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
       syntaxHighlighter: DartSyntaxHighlighter(
-        context.read<ThemeChangeNotifier>().isDarkTheme
+        Theme.of(context).isDarkTheme
             ? SyntaxHighlighterStyle.darkThemeStyle()
             : SyntaxHighlighterStyle.lightThemeStyle(),
       ),
@@ -60,46 +65,46 @@ class _MarkdownBlockState extends State<MarkdownBlock> {
         codeblockPadding: const EdgeInsets.all(5),
         codeblockDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: (context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.grey).withOpacity(0.1),
+          color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.grey).withOpacity(0.1),
         ),
         p: TextStyle(
           fontSize: widget.shrinkView ? 16 : 20,
           fontWeight: FontWeight.w400,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h1: TextStyle(
           fontSize: widget.shrinkView ? 14 : 24,
           fontWeight: FontWeight.bold,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h2: TextStyle(
           fontSize: widget.shrinkView ? 13 : 20,
           fontWeight: FontWeight.bold,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h3: TextStyle(
           fontSize: widget.shrinkView ? 12 : 18,
           fontWeight: FontWeight.bold,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h4: TextStyle(
           fontSize: widget.shrinkView ? 11 : 16,
           fontWeight: FontWeight.bold,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h5: TextStyle(
           fontSize: widget.shrinkView ? 10 : 14,
           fontWeight: FontWeight.bold,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h6: TextStyle(
           fontSize: widget.shrinkView ? 9 : 12,
           fontWeight: FontWeight.bold,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         code: TextStyle(
           fontSize: 16,
-          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
           backgroundColor: Colors.grey.withOpacity(0.2),
         ),
         img: const TextStyle(color: Colors.transparent),

@@ -1,12 +1,14 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:markdown/markdown.dart' as md;
+
+// 📦 Package imports:
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:manager/core/notifiers/theme.notifier.dart';
+import 'package:markdown/markdown.dart' as md;
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 class ChangelogAboutSection extends StatefulWidget {
   const ChangelogAboutSection({Key? key}) : super(key: key);
@@ -47,54 +49,40 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
             itemCount: _data?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 7.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 7.0),
                 child: RoundContainer(
-                  color: context.read<ThemeChangeNotifier>().isDarkTheme
-                      ? Colors.blueGrey.withOpacity(0.2)
-                      : Colors.grey[200],
+                  color: Theme.of(context).isDarkTheme ? Colors.blueGrey.withOpacity(0.2) : Colors.grey[200],
                   child: MarkdownBody(
                     data: _data![index],
                     selectable: true,
                     styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
                     extensionSet: md.ExtensionSet(
                       md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-                      <md.InlineSyntax>[
-                        md.EmojiSyntax(),
-                        ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes
-                      ],
+                      <md.InlineSyntax>[md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
                     ),
                     styleSheet: MarkdownStyleSheet(
                       p: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.w400,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? Colors.grey[100]
-                            : Colors.grey[900],
+                        color: Theme.of(context).isDarkTheme ? Colors.grey[100] : Colors.grey[900],
                         fontFamily: 'LexendDeca',
                       ),
                       h1: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                         fontFamily: 'LexendDeca',
                       ),
                       h2: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                         fontFamily: 'LexendDeca',
                       ),
                       h3: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                         fontFamily: 'LexendDeca',
                       ),
                     ),

@@ -1,7 +1,11 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/meta/utils/app_theme.dart';
 
 AnimatedOpacity windowControls(BuildContext context, {bool disabled = false}) {
   return AnimatedOpacity(
@@ -39,23 +43,18 @@ AnimatedOpacity windowControls(BuildContext context, {bool disabled = false}) {
 }
 
 Widget _control(BuildContext context,
-    {required IconData icon,
-    required VoidCallback onPressed,
-    _HoverType hoverType = _HoverType.normal}) {
+    {required IconData icon, required VoidCallback onPressed, _HoverType hoverType = _HoverType.normal}) {
   return SizedBox(
     width: 40,
     child: MaterialButton(
+      splashColor: Colors.transparent,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      hoverColor: hoverType == _HoverType.normal
-          ? Colors.white.withOpacity(0.2)
-          : Colors.red[500],
+      hoverColor: hoverType == _HoverType.normal ? Colors.white.withOpacity(0.2) : Colors.red,
       onPressed: onPressed,
       child: Icon(
         icon,
         size: 15,
-        color: context.read<ThemeChangeNotifier>().isDarkTheme
-            ? Colors.white
-            : Colors.black,
+        color: Theme.of(context).isDarkTheme ? AppTheme.lightTheme.iconTheme.color : AppTheme.darkTheme.iconTheme.color,
       ),
     ),
   );

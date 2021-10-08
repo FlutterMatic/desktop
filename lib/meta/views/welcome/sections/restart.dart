@@ -1,24 +1,23 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/widgets.dart';
+
+// 📦 Package imports:
 import 'package:url_launcher/url_launcher.dart';
 
-Widget welcomeRestart(BuildContext context,
-    {VoidCallback? onRestart, String? timer}) {
+// 🌎 Project imports:
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/app_theme.dart';
+
+Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? timer}) {
   return Column(
     children: <Widget>[
       welcomeHeaderTitle(
         Assets.confetti,
         Installed.congos,
         InstalledContent.allDone,
-        color: context.read<ThemeChangeNotifier>().isDarkTheme
-            ? null
-            : Colors.black,
+        color: Theme.of(context).isDarkTheme ? null : Colors.black,
       ),
       VSeparators.xLarge(),
       RoundContainer(
@@ -32,22 +31,16 @@ Widget welcomeRestart(BuildContext context,
               children: <Widget>[
                 Expanded(
                   child: RectangleButton(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? null
-                        : AppTheme.darkBackgroundColor,
-                    child: const Text('Flutter Documentation',
-                        style: TextStyle(color: Colors.white)),
+                    color: Theme.of(context).isDarkTheme ? null : AppTheme.darkBackgroundColor,
+                    child: const Text('Flutter Documentation', style: TextStyle(color: Colors.white)),
                     onPressed: () => launch('https://flutter.dev/docs'),
                   ),
                 ),
                 HSeparators.small(),
                 Expanded(
                   child: RectangleButton(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? null
-                        : AppTheme.darkBackgroundColor,
-                    child: const Text('Our Documentation',
-                        style: TextStyle(color: Colors.white)),
+                    color: Theme.of(context).isDarkTheme ? null : AppTheme.darkBackgroundColor,
+                    child: const Text('Our Documentation', style: TextStyle(color: Colors.white)),
                     onPressed: () {},
                   ),
                 ),

@@ -1,3 +1,4 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -12,7 +13,6 @@ class AppTheme {
   static const Color errorColor = Color(0xFFD73A49);
   static ThemeData get lightTheme => ThemeData(
         fontFamily: 'NotoSans',
-        brightness: Brightness.light,
         primaryColor: lightBackgroundColor,
         backgroundColor: lightBackgroundColor,
         scaffoldBackgroundColor: lightBackgroundColor,
@@ -26,12 +26,15 @@ class AppTheme {
           headline2: TextStyle(color: Colors.black),
           bodyText1: TextStyle(color: Colors.black),
           bodyText2: TextStyle(color: Colors.black),
-        ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xFF79A6DC)),
+        ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: const Color(0xFF79A6DC),
+          brightness: Brightness.light,
+        ),
       );
   static ThemeData get darkTheme => ThemeData(
         fontFamily: 'NotoSans',
         primaryColor: darkBackgroundColor,
-        brightness: Brightness.dark,
         backgroundColor: darkBackgroundColor,
         unselectedWidgetColor: Colors.blueGrey.withOpacity(0.4),
         scaffoldBackgroundColor: darkBackgroundColor,
@@ -43,11 +46,23 @@ class AppTheme {
         iconTheme: const IconThemeData(color: Colors.white),
         dividerColor: Colors.white,
         textTheme: const TextTheme(
-          headline1: TextStyle(color: Color(0xffCDD4DD)),
-          headline2: TextStyle(color: Color(0xffCDD4DD)),
-          bodyText1: TextStyle(color: Color(0xffCDD4DD)),
-          bodyText2: TextStyle(color: Color(0xffCDD4DD)),
-        ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xFF6E7681)),
+          headline1: TextStyle(
+            color: Color(0xffFAFAFA),
+          ),
+          headline2: TextStyle(
+            color: Color(0xffFAFAFA),
+          ),
+          bodyText1: TextStyle(
+            color: Color(0xffFAFAFA),
+          ),
+          bodyText2: TextStyle(
+            color: Color(0xffFAFAFA),
+          ),
+        ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: const Color(0xFF6E7681),
+          brightness: Brightness.dark,
+        ),
       );
 }
 

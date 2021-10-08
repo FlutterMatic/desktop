@@ -1,10 +1,13 @@
+// 🎯 Dart imports:
 import 'dart:io';
-import 'utils/flutter_build.dart';
+
+// 🌎 Project imports:
 import 'inputs/build.dart';
 import 'inputs/release.dart';
 import 'inputs/version.dart';
-import 'utils/app_data.dart';
 import 'outputs/prints.dart';
+import 'utils/app_data.dart';
+import 'utils/flutter_build.dart';
 import 'utils/spinner.dart';
 
 String dartDefine = '--dart-define';

@@ -1,9 +1,12 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 SnackBar snackBarTile(BuildContext context, String message,
     {SnackBarType? type, Duration? duration, bool revert = false}) {
@@ -18,9 +21,7 @@ SnackBar snackBarTile(BuildContext context, String message,
             : type == SnackBarType.warning
                 ? kYellowColor
                 : kGreenColor)
-        : (context.read<ThemeChangeNotifier>().isDarkTheme
-            ? AppTheme.darkCardColor
-            : AppTheme.lightTheme.primaryColorLight),
+        : (Theme.of(context).isDarkTheme ? AppTheme.darkCardColor : AppTheme.lightTheme.primaryColorLight),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     content: Row(
       children: <Widget>[
@@ -37,9 +38,7 @@ SnackBar snackBarTile(BuildContext context, String message,
                         ? Assets.warn
                         : Assets.error,
                 color: revert
-                    ? (context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? AppTheme.darkBackgroundColor
-                        : AppTheme.lightBackgroundColor)
+                    ? (Theme.of(context).isDarkTheme ? AppTheme.darkBackgroundColor : AppTheme.lightBackgroundColor)
                     : (type == SnackBarType.done
                         ? kGreenColor
                         : type == SnackBarType.warning
@@ -51,7 +50,7 @@ SnackBar snackBarTile(BuildContext context, String message,
         Flexible(
           child: Text(
             message,
-            style: context.read<ThemeChangeNotifier>().isDarkTheme && !revert
+            style: Theme.of(context).isDarkTheme && !revert
                 ? AppTheme.darkTheme.textTheme.bodyText1
                 : AppTheme.lightTheme.textTheme.bodyText1,
           ),

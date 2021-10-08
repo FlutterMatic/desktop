@@ -1,9 +1,14 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:bitsdojo_window_platform_interface/window.dart';
-import 'package:manager/core/libraries/widgets.dart';
+
+// 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/core/libraries/models.dart';
+import 'package:bitsdojo_window_platform_interface/window.dart';
 import 'package:process_run/shell.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/models.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 /// Shell global reference
 Shell shell = Shell(

@@ -1,9 +1,9 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
 
 Widget createWelcomeHeader(WelcomeTab tab, BuildContext context) {
   Widget _title(String title, WelcomeTab tileTab) {
@@ -17,7 +17,7 @@ Widget createWelcomeHeader(WelcomeTab tab, BuildContext context) {
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: AppTheme.darkBackgroundColor,
+                color: Theme.of(context).isDarkTheme ? AppTheme.lightBackgroundColor : AppTheme.darkBackgroundColor,
               ),
             ),
           ],
@@ -40,9 +40,7 @@ Widget createWelcomeHeader(WelcomeTab tab, BuildContext context) {
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? const Color(0xff1B2529)
-                    : const Color(0xFFF4F8FA),
+                color: Theme.of(context).isDarkTheme ? const Color(0xff1B2529) : const Color(0xFFF4F8FA),
               ),
             ),
             Row(

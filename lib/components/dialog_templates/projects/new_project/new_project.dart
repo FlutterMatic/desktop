@@ -1,4 +1,10 @@
+// 🎯 Dart imports:
+import 'dart:developer';
+
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/description.dart';
@@ -6,7 +12,6 @@ import 'package:manager/components/dialog_templates/projects/new_project/section
 import 'package:manager/components/dialog_templates/projects/new_project/sections/org_name.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/platforms.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'dart:developer';
 
 class NewProjectDialog extends StatefulWidget {
   const NewProjectDialog({Key? key}) : super(key: key);

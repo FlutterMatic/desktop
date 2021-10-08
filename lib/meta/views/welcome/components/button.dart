@@ -1,4 +1,7 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
@@ -35,24 +38,30 @@ class WelcomeButton extends StatelessWidget {
           opacity: (_disabled || loading) ? 0.2 : 1,
           child: RectangleButton(
             onPressed: progress == Progress.done ? onContinue : onInstall,
-            color: AppTheme.darkBackgroundColor,
-            hoverColor: AppTheme.darkCardColor,
+            color: Theme.of(context).isDarkTheme ? AppTheme.lightBackgroundColor : AppTheme.darkBackgroundColor,
+            hoverColor: Theme.of(context).isDarkTheme ? AppTheme.lightCardColor : AppTheme.darkCardColor,
             child: loading
                 ? const Spinner(size: 20, color: Colors.white, thickness: 2)
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        buttonText ??
-                            (progress == Progress.done ? 'Continue' : 'Check'),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        buttonText ?? (progress == Progress.done ? 'Continue' : 'Check'),
+                        style: TextStyle(
+                          color: Theme.of(context).isDarkTheme
+                              ? AppTheme.lightTheme.textTheme.bodyText1!.color
+                              : AppTheme.darkTheme.textTheme.bodyText1!.color,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(Icons.arrow_forward_rounded,
-                          size: 18, color: Colors.white),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 18,
+                        color: Theme.of(context).isDarkTheme
+                            ? AppTheme.lightTheme.iconTheme.color
+                            : AppTheme.darkTheme.iconTheme.color,
+                      ),
                     ],
                   ),
           ),

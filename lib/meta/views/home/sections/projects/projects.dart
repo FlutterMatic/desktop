@@ -1,13 +1,12 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/meta/views/home/sections/projects/element/search_result_tile.dart';
-import 'package:manager/core/models/projects.model.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/models.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/views.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class HomeProjectsSection extends StatefulWidget {
   const HomeProjectsSection({Key? key}) : super(key: key);

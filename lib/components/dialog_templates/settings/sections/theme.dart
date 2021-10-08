@@ -1,10 +1,14 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
-import 'package:manager/main.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
 
 class ThemeSettingsSection extends StatefulWidget {
   const ThemeSettingsSection({Key? key}) : super(key: key);
@@ -17,11 +21,11 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   @override
   Widget build(BuildContext context) {
     return TabViewTabHeadline(
-      // TODO: Fix the theme switching issue that persists in settings/theme tab. 
+      // TODO: Fix the theme switching issue that persists in settings/theme tab.
       title: 'Themes',
       content: <Widget>[
         _themeTiles(context, !Theme.of(context).isDarkTheme, 'Light Mode', 'Get a bright and shining desktop', () {
-          if (context.read<ThemeChangeNotifier>().isDarkTheme) {
+          if (Theme.of(context).isDarkTheme) {
             context.read<ThemeChangeNotifier>().updateTheme(Theme.of(context).brightness == Brightness.light);
           }
         }),
@@ -32,7 +36,7 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
           'Dark Mode',
           'For dark and nighty appearance',
           () {
-            if (!context.read<ThemeChangeNotifier>().isDarkTheme) {
+            if (!Theme.of(context).isDarkTheme) {
               context.read<ThemeChangeNotifier>().updateTheme(Theme.of(context).brightness == Brightness.light);
             }
           },

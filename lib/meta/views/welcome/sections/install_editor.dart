@@ -1,14 +1,17 @@
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/checks.dart';
 import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/checks.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class WelcomeInstallEditor extends StatefulWidget {
   final VoidCallback onInstall;
@@ -133,7 +136,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     context,
                     icon: Icon(
                       Icons.close_rounded,
-                      color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                     ),
                     name: 'None',
                     type: EditorType.none,
@@ -196,7 +199,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                         height: 75,
                         child: Icon(
                           Icons.edit,
-                          color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                         ),
                         onPressed: () {
                           setState(() => _showEditorSelector = true);
@@ -235,7 +238,7 @@ Widget _selectEditor(
       height: 120,
       width: 120,
       child: MaterialButton(
-        color: context.read<ThemeChangeNotifier>().isDarkTheme ? const Color(0xff1B2529) : const Color(0xffF4F8FA),
+        color: Theme.of(context).isDarkTheme ? const Color(0xff1B2529) : const Color(0xffF4F8FA),
         onPressed: installation ? null : () => onEditorTypeChanged!(type),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -255,7 +258,7 @@ Widget _selectEditor(
                 Text(
                   name,
                   style: TextStyle(
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : const Color(0xff161E21),
+                    color: Theme.of(context).isDarkTheme ? Colors.white : const Color(0xff161E21),
                   ),
                 ),
               ],

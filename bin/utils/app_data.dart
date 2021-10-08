@@ -1,7 +1,8 @@
+// 📦 Package imports:
 import 'package:pub_semver/pub_semver.dart';
 
+// 🌎 Project imports:
 import 'enum.dart';
-
 
 /// [AppData] global object.
 AppData appData = AppData();

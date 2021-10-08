@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/new_project.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'change_channel.dart';
-import 'flutter_upgrade.dart';
+// 🎯 Dart imports:
 import 'dart:io';
+
+// 🐦 Flutter imports:
+import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:shared_preferences/shared_preferences.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/core/libraries/components.dart';
 
 class RunCommandDialog extends StatefulWidget {
   const RunCommandDialog({Key? key}) : super(key: key);
@@ -30,9 +34,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
 
   Future<void> _runCommand() async {
     String _command = 'flutter ' +
-        _commandController.text
-            .replaceAll('-v', '')
-            .replaceAll('-verbose', '') +
+        _commandController.text.replaceAll('-v', '').replaceAll('-verbose', '') +
         (_preferVerbose! ? ' -v' : '');
     _commandController.text = _commandController.text.replaceAll('flutter', '');
     setState(() {
@@ -42,11 +44,10 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
     });
     if (_trimmedCommand == 'create.' || _trimmedCommand == 'create') {
       Navigator.pop(context);
-      await showDialog(context: context, builder: (_) => NewProjectDialog());
+      await showDialog(context: context, builder: (_) => const NewProjectDialog());
     } else if (_trimmedCommand == 'upgrade') {
       Navigator.pop(context);
-      await showDialog(
-          context: context, builder: (_) => const UpgradeFlutterDialog());
+      await showDialog(context: context, builder: (_) => const UpgradeFlutterDialog());
     } else if (_trimmedCommand == 'channelmaster' ||
         _trimmedCommand == 'channelstable' ||
         _trimmedCommand == 'channeldev' ||
@@ -134,8 +135,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                 Expanded(
                   child: Row(
                     children: const <Widget>[
-                      SizedBox(
-                          height: 20, width: 20, child: Spinner(thickness: 2)),
+                      SizedBox(height: 20, width: 20, child: Spinner(thickness: 2)),
                       Spacer(),
                     ],
                   ),
@@ -162,8 +162,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                   children: <Widget>[
                     Text(
                       'Run',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color!),
+                      style: TextStyle(color: customTheme.textTheme.bodyText1!.color!),
                     ),
                     HSeparators.xSmall(),
                     const Icon(Icons.play_arrow_rounded, color: kGreenColor),

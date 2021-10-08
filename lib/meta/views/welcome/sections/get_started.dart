@@ -1,15 +1,19 @@
+// 🎯 Dart imports:
+import 'dart:async';
+import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
+
+// 📦 Package imports:
 import 'package:provider/provider.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/core/libraries/api.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
-import 'package:manager/core/libraries/components.dart';
 import 'package:retry/retry.dart';
-import 'dart:io';
-import 'dart:async';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/api.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
 
 class WelcomeGettingStarted extends StatefulWidget {
   const WelcomeGettingStarted(this.onContinue, {Key? key}) : super(key: key);

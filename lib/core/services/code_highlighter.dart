@@ -1,5 +1,8 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+
+// 📦 Package imports:
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:string_scanner/string_scanner.dart';
 
@@ -137,31 +140,36 @@ class DartSyntaxHighlighter extends SyntaxHighlighter {
 
   @override
   TextSpan format(String source) {
-    _src = source;
-    _scanner = StringScanner(_src!);
+    try {
+      _src = source;
+      _scanner = StringScanner(_src!);
 
-    if (_generateSpans()) {
-      // Successfully parsed the code
-      List<TextSpan> formattedText = <TextSpan>[];
-      int currentPosition = 0;
+      if (_generateSpans()) {
+        // Successfully parsed the code
+        List<TextSpan> formattedText = <TextSpan>[];
+        int currentPosition = 0;
 
-      for (_HighlightSpan span in _spans!) {
-        if (currentPosition != span.start) {
-          formattedText.add(TextSpan(text: _src!.substring(currentPosition, span.start)));
+        for (_HighlightSpan span in _spans!) {
+          if (currentPosition != span.start) {
+            formattedText.add(TextSpan(text: _src!.substring(currentPosition, span.start)));
+          }
+
+          formattedText.add(TextSpan(style: span.textStyle(_style!), text: span.textForSpan(_src!)));
+
+          currentPosition = span.end;
         }
 
-        formattedText.add(TextSpan(style: span.textStyle(_style!), text: span.textForSpan(_src!)));
-
-        currentPosition = span.end;
+        if (currentPosition != _src!.length) {
+          formattedText.add(TextSpan(text: _src!.substring(currentPosition, _src!.length)));
+        }
+        _spans!.clear();
+        return TextSpan(style: _style!.baseStyle, children: formattedText);
+      } else {
+        // Parsing failed, return with only basic formatting
+        return TextSpan(style: _style!.baseStyle, text: source);
       }
-
-      if (currentPosition != _src!.length) {
-        formattedText.add(TextSpan(text: _src!.substring(currentPosition, _src!.length)));
-      }
-      _spans!.clear();
-      return TextSpan(style: _style!.baseStyle, children: formattedText);
-    } else {
-      // Parsing failed, return with only basic formatting
+    } catch (e) {
+      print(e.toString());
       return TextSpan(style: _style!.baseStyle, text: source);
     }
   }

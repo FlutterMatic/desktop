@@ -1,17 +1,17 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/utils.dart';
 
 class CustomLinearProgressIndicator extends StatelessWidget {
-  const CustomLinearProgressIndicator({ Key? key }) : super(key: key);
+  const CustomLinearProgressIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.read<ThemeChangeNotifier>().isDarkTheme
-            ? const Color(0xff262F34)
-            : Colors.white,
+        color: Theme.of(context).isDarkTheme ? const Color(0xff262F34) : Colors.white,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
           color: Colors.blueGrey.withOpacity(0.4),

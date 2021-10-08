@@ -1,6 +1,13 @@
+// 🎯 Dart imports:
 import 'dart:convert';
+
+// 🐦 Flutter imports:
 import 'package:flutter/widgets.dart';
+
+// 📦 Package imports:
 import 'package:http/http.dart' as http;
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/models/fluttermatic.model.dart';

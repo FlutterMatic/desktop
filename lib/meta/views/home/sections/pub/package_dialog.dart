@@ -1,17 +1,18 @@
-import 'package:intl/intl.dart';
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/markdown_view.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:pub_api_client/src/models/package_like_model.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:pub_api_client/pub_api_client.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:provider/src/provider.dart';
+
+// 📦 Package imports:
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:pub_api_client/pub_api_client.dart';
+import 'package:pub_api_client/src/models/package_like_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class PubPackageDialog extends StatefulWidget {
   final String pkgName;
@@ -46,19 +47,18 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
     PubPackage _pkgInfo = await _pubClient.packageInfo(widget.pkgName);
 
     // Gets the publisher information.
-    PackagePublisher _pkgPublisher =
-        await _pubClient.packagePublisher(widget.pkgName);
+    PackagePublisher _pkgPublisher = await _pubClient.packagePublisher(widget.pkgName);
 
-    String? _readMeBase =
-        _pkgInfo.latestPubspec.homepage?.replaceAll('https://github.com/', '');
+    String? _readMeBase = _pkgInfo.latestPubspec.homepage?.replaceAll('https://github.com/', '');
 
-    PackageOptions _pkgOptions =
-        await _pubClient.packageOptions(widget.pkgName);
+    PackageOptions _pkgOptions = await _pubClient.packageOptions(widget.pkgName);
 
     // Get the package documentation from GitHub if available.
     http.Response _response = await http.get(
-      Uri.parse( // TODO: Figure out a way to get the readme from the API or any other way.
-          'https://raw.githubusercontent.com/ZiyadF296/big_numbers/main/README.md'),
+      Uri.parse(
+        // TODO: Figure out a way to get the readme from the API or any other way.
+        'https://raw.githubusercontent.com/fluttercommunity/import_sorter/master/README.md',
+      ),
     );
 
     setState(() {
@@ -149,8 +149,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                     color: Colors.blueGrey.withOpacity(0.2),
                                     child: Column(
                                       children: <Widget>[
-                                        Text(_metrics!.score.grantedPoints
-                                            .toString()),
+                                        Text(_metrics!.score.grantedPoints.toString()),
                                         VSeparators.small(),
                                         const Text('Pub Points'),
                                       ],
@@ -163,9 +162,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                     color: Colors.blueGrey.withOpacity(0.2),
                                     child: Column(
                                       children: <Widget>[
-                                        Text(NumberFormat.percentPattern()
-                                            .format(_metrics!
-                                                .score.popularityScore)),
+                                        Text(NumberFormat.percentPattern().format(_metrics!.score.popularityScore)),
                                         VSeparators.small(),
                                         const Text('Popularity'),
                                       ],
@@ -182,11 +179,9 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                 children: <Widget>[
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Text(NumberFormat.compact()
-                                            .format(_metrics!.score.likeCount)),
+                                        Text(NumberFormat.compact().format(_metrics!.score.likeCount)),
                                         VSeparators.small(),
                                         const Text('Package Likes'),
                                       ],
@@ -197,33 +192,23 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   // package.
                                   IconButton(
                                     onPressed: () async {
-                                      if (_userLikeStatus != null &&
-                                          _userLikeStatus!.liked) {
-                                        await _pubClient
-                                            .unlikePackage(widget.pkgName);
-                                      } else if (_userLikeStatus != null &&
-                                          !_userLikeStatus!.liked) {
-                                        await _pubClient
-                                            .likePackage(widget.pkgName);
+                                      if (_userLikeStatus != null && _userLikeStatus!.liked) {
+                                        await _pubClient.unlikePackage(widget.pkgName);
+                                      } else if (_userLikeStatus != null && !_userLikeStatus!.liked) {
+                                        await _pubClient.likePackage(widget.pkgName);
                                       } else {
                                         // Show snackbar to ask the user to sign
                                         // in to like the package.
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          snackBarTile(context,
-                                              'Please sign in to like and view all of your package inventory.',
-                                              type: SnackBarType.warning,
-                                              revert: true),
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          snackBarTile(
+                                              context, 'Please sign in to like and view all of your package inventory.',
+                                              type: SnackBarType.warning, revert: true),
                                         );
                                       }
                                     },
                                     icon: Icon(
                                       Icons.thumb_up_outlined,
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Colors.white
-                                          : Colors.black,
+                                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                                     ),
                                   ),
                                 ],
@@ -242,8 +227,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   VSeparators.small(),
                                   Text(
                                     'Version ' + _info!.version,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -257,8 +241,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(
-                                      _publisher!.publisherId ??
-                                          'Unknown Publisher',
+                                      _publisher!.publisherId ?? 'Unknown Publisher',
                                     ),
                                   ),
                                   HSeparators.small(),
@@ -269,8 +252,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   if (1 == 2)
                                     const Tooltip(
                                       message: 'Verified Publisher',
-                                      child: Icon(Icons.verified_rounded,
-                                          size: 18, color: kGreenColor),
+                                      child: Icon(Icons.verified_rounded, size: 18, color: kGreenColor),
                                     )
                                   else
                                     const Tooltip(
@@ -294,22 +276,14 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   Text(
                                     'Open in Pub.dev',
                                     style: TextStyle(
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Colors.white
-                                          : Colors.black,
+                                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                                     ),
                                   ),
                                   HSeparators.small(),
                                   Icon(
                                     Icons.open_in_new_rounded,
                                     size: 15,
-                                    color: context
-                                            .read<ThemeChangeNotifier>()
-                                            .isDarkTheme
-                                        ? Colors.white
-                                        : Colors.black,
+                                    color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                                   ),
                                 ],
                               ),

@@ -1,7 +1,12 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:shared_preferences/shared_preferences.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/services/logs.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeChangeNotifier with ChangeNotifier {
   /// [_isDarkTheme] boolean value that indicates

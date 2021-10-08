@@ -1,9 +1,10 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/constants.dart';
 
 class DialogTemplate extends StatelessWidget {
   final Widget child;

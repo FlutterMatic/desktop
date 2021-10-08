@@ -1,4 +1,7 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:manager/components/dialog_templates/about/sections/about.dart';
 import 'package:manager/components/dialog_templates/about/sections/changelog.dart';
 import 'package:manager/components/dialog_templates/about/sections/contributors.dart';

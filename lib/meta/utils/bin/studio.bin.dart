@@ -1,8 +1,13 @@
+// 🎯 Dart imports:
+import 'dart:io';
+
+// 📦 Package imports:
 import 'package:path_provider/path_provider.dart';
-import 'package:manager/core/services/logs.dart';
 import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'dart:io';
+
+// 🌎 Project imports:
+import 'package:manager/core/services/logs.dart';
 
 Future<Version?> getAStudioVersion() => getAStudioBinVersion();
 

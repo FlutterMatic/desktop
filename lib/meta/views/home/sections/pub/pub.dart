@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/meta/views/home/sections/pub/elements/pub_fav_tile.dart';
-import 'package:manager/meta/views/home/sections/pub/elements/pub_view.dart';
-import 'package:manager/meta/views/home/sections/pub/elements/search_result_tile.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+// 🎯 Dart imports:
 import 'dart:convert';
+
+// 🐦 Flutter imports:
+import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/views.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class HomePubSection extends StatefulWidget {
   const HomePubSection({Key? key}) : super(key: key);
@@ -126,9 +126,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                 child: Row(
                   children: <Widget>[
                     if (_buttonsOnRight > 0)
-                      const SizedBox(
-                          width: (40 * _buttonsOnRight) +
-                              ((_buttonsOnRight - 1) * 10)),
+                      const SizedBox(width: (40 * _buttonsOnRight) + ((_buttonsOnRight - 1) * 10)),
                     const Spacer(),
                     SizedBox(
                       width: (MediaQuery.of(context).size.width > 1000) ? 500 : 400,
@@ -146,17 +144,13 @@ class _HomePubSectionState extends State<HomePubSection> {
                                   child: TextFormField(
                                     focusNode: _searchNode,
                                     style: TextStyle(
-                                      color: (context.read<ThemeChangeNotifier>().isDarkTheme
-                                              ? Colors.white
-                                              : Colors.black)
+                                      color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black)
                                           .withOpacity(0.8),
                                     ),
                                     cursorRadius: const Radius.circular(5),
                                     decoration: InputDecoration(
                                       hintStyle: TextStyle(
-                                        color: (context.read<ThemeChangeNotifier>().isDarkTheme
-                                                ? Colors.white
-                                                : Colors.black)
+                                        color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black)
                                             .withOpacity(0.6),
                                         fontSize: 14,
                                       ),
@@ -225,7 +219,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                       child: Icon(
                         Icons.inventory_2_outlined,
                         size: 13,
-                        color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                        color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                       ),
                       onPressed: () {},
                     ),
@@ -288,7 +282,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                             SvgPicture.asset(
                               Assets.package,
                               height: 25,
-                              color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                              color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                             ),
                             HSeparators.small(),
                             const Expanded(
@@ -302,7 +296,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                               child: Text(
                                 'Search',
                                 style: TextStyle(
-                                  color: context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black,
+                                  color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                                 ),
                               ),
                               onPressed: _searchNode.requestFocus,
@@ -326,10 +320,9 @@ class _HomePubSectionState extends State<HomePubSection> {
             child: Padding(
               padding: const EdgeInsets.only(top: 60),
               child: Container(
-                constraints:
-                    const BoxConstraints(maxWidth: 500, maxHeight: 300),
+                constraints: const BoxConstraints(maxWidth: 500, maxHeight: 300),
                 decoration: BoxDecoration(
-                  color: context.read<ThemeChangeNotifier>().isDarkTheme ? const Color(0xff262F34) : Colors.white,
+                  color: Theme.of(context).isDarkTheme ? const Color(0xff262F34) : Colors.white,
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
                     color: Colors.blueGrey.withOpacity(0.4),
@@ -350,10 +343,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: _searchResults.map((PubPackageObject e) {
-                            double _pad = _searchResults.indexOf(e) ==
-                                    _searchResults.length - 1
-                                ? 0
-                                : 5;
+                            double _pad = _searchResults.indexOf(e) == _searchResults.length - 1 ? 0 : 5;
                             return Padding(
                               padding: EdgeInsets.only(bottom: _pad),
                               child: PubPackageSearchResultTile(package: e),

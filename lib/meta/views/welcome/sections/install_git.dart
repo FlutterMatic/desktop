@@ -1,10 +1,13 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/info_widget.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/components.dart';
-import 'package:provider/provider.dart';
+import 'package:manager/core/libraries/constants.dart';
 
 Widget installGit(
   BuildContext context, {

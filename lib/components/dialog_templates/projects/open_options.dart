@@ -1,8 +1,13 @@
+// 🎯 Dart imports:
+import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'dart:io';
 
 class OpenOptionsDialog extends StatelessWidget {
   final String fileName;

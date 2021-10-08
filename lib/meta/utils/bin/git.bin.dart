@@ -1,9 +1,14 @@
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/services/logs.dart';
-import 'package:process_run/shell_run.dart';
-import 'package:pub_semver/pub_semver.dart';
+// 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
+
+// 📦 Package imports:
+import 'package:process_run/shell_run.dart';
+import 'package:pub_semver/pub_semver.dart';
+
+// 🌎 Project imports:
+import 'package:manager/app/constants/constants.dart';
+import 'package:manager/core/services/logs.dart';
 
 Future<Version?> getGitVersion() => getGitBinVersion();
 

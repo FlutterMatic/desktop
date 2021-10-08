@@ -1,9 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/core/libraries/widgets.dart';
+// 🎯 Dart imports:
 import 'dart:io' show Platform;
+
+// 🐦 Flutter imports:
+import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:flutter_svg/flutter_svg.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
 
 class FlutterRequirementsDialog extends StatelessWidget {
   const FlutterRequirementsDialog({Key? key}) : super(key: key);
@@ -73,23 +80,18 @@ Widget _windowsTemplate() {
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint('1.64 GB (does not include disk space for IDE/tools).'),
+      const BulletPoint('1.64 GB (does not include disk space for IDE/tools).'),
       VSeparators.normal(),
       const Text(
         'Tools',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint(
-          'Flutter depends on these tools being available in your environment.'),
+      const BulletPoint('Flutter depends on these tools being available in your environment.'),
       VSeparators.small(),
-      BulletPoint(
-          'Windows PowerShell 5.0 or newer (this is pre-installed with Windows)',
-          2),
+      const BulletPoint('Windows PowerShell 5.0 or newer (this is pre-installed with Windows)', 2),
       VSeparators.small(),
-      BulletPoint(
-          'Git for Windows 2.x, with the Use Git from the Windows Command Prompt option.',
-          2),
+      const BulletPoint('Git for Windows 2.x, with the Use Git from the Windows Command Prompt option.', 2),
       VSeparators.normal(),
       const Text(
           'If Git for Windows is already installed, make sure you can run git commands from the command prompt or PowerShell.'),
@@ -107,14 +109,14 @@ Widget _macOSTemplate() {
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint('2.8 GB (does not include disk space for IDE/tools).'),
+      const BulletPoint('2.8 GB (does not include disk space for IDE/tools).'),
       VSeparators.normal(),
       const Text(
         'Tools',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint(
+      const BulletPoint(
           'Flutter uses git for installation and upgrade. We recommend installing Xcode, which includes git, but you can also install git separately.'),
     ],
   );
@@ -130,29 +132,25 @@ Widget _linuxTemplate() {
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint('600 MB (does not include disk space for IDE/tools).'),
+      const BulletPoint('600 MB (does not include disk space for IDE/tools).'),
       VSeparators.normal(),
       const Text(
         'Tools',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint(
-          'Flutter depends on these command-line tools being available in your environment.'),
+      const BulletPoint('Flutter depends on these command-line tools being available in your environment.'),
       VSeparators.small(),
-      BulletPoint(
-          'bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils and zip',
-          2),
+      const BulletPoint('bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils and zip', 2),
       VSeparators.normal(),
       const Text(
         'Shared libraries',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      BulletPoint(
-          '"Flutter test" command depends on this library being available in your environment.'),
+      const BulletPoint('"Flutter test" command depends on this library being available in your environment.'),
       VSeparators.small(),
-      BulletPoint(
+      const BulletPoint(
           '"libGLU.so.1" - provided by mesa packages such as "libglu1-mesa" on Ubuntu/Debian and "mesa-libGLU" on Fedora.',
           2),
     ],

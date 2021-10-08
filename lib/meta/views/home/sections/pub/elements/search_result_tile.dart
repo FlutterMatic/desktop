@@ -1,9 +1,10 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class PubPackageObject {
   final String name;
@@ -14,8 +15,7 @@ class PubPackageObject {
 class PubPackageSearchResultTile extends StatelessWidget {
   final PubPackageObject package;
 
-  const PubPackageSearchResultTile({Key? key, required this.package})
-      : super(key: key);
+  const PubPackageSearchResultTile({Key? key, required this.package}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +29,7 @@ class PubPackageSearchResultTile extends StatelessWidget {
             child: Text(
               package.name,
               style: TextStyle(
-                color: context.read<ThemeChangeNotifier>().isDarkTheme
-                    ? Colors.white
-                    : Colors.black,
+                color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -47,10 +45,7 @@ class PubPackageSearchResultTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 13.5,
-                  color: (context.read<ThemeChangeNotifier>().isDarkTheme
-                          ? Colors.white
-                          : Colors.black)
-                      .withOpacity(0.5),
+                  color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
                 ),
               ),
               HSeparators.xSmall(),
@@ -65,10 +60,7 @@ class PubPackageSearchResultTile extends StatelessWidget {
                 child: Icon(
                   Icons.content_copy,
                   size: 13,
-                  color: (context.read<ThemeChangeNotifier>().isDarkTheme
-                          ? Colors.white
-                          : Colors.black)
-                      .withOpacity(0.5),
+                  color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(

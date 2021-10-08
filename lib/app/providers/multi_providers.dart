@@ -1,10 +1,15 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/api.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/notifiers/space.notifier.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
 
 class MultiProviders extends StatelessWidget {
   const MultiProviders(this.child, {Key? key}) : super(key: key);

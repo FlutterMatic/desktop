@@ -1,13 +1,16 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/app/constants/enum.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/core/libraries/checks.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/core/libraries/components.dart';
 import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 Widget installJava(
   BuildContext context, {
@@ -17,8 +20,7 @@ Widget installJava(
   required bool isInstalling,
   required bool doneInstalling,
 }) {
-  return Consumer<JavaNotifier>(
-      builder: (BuildContext context, JavaNotifier javaNotifier, _) {
+  return Consumer<JavaNotifier>(builder: (BuildContext context, JavaNotifier javaNotifier, _) {
     return Column(
       children: <Widget>[
         welcomeHeaderTitle(
@@ -30,8 +32,7 @@ Widget installJava(
         VSeparators.large(),
         Padding(
           padding: const EdgeInsets.only(top: 20),
-          child: (javaNotifier.progress == Progress.started ||
-                  javaNotifier.progress == Progress.checking)
+          child: (javaNotifier.progress == Progress.started || javaNotifier.progress == Progress.checking)
               ? hLoadingIndicator(context: context)
               : (javaNotifier.progress == Progress.downloading)
                   ? const CustomProgressIndicator()
@@ -41,8 +42,7 @@ Widget installJava(
                           ? welcomeToolInstalled(
                               context,
                               title: 'Java Installed',
-                              message:
-                                  'Java installed successfully on your device. Continue to the next step.',
+                              message: 'Java installed successfully on your device. Continue to the next step.',
                             )
                           : javaNotifier.progress == Progress.none
                               ? infoWidget(context,
@@ -76,8 +76,7 @@ Widget installJava(
                         'We recommend that you installed Java. This will help eliminate some issues you might face in the future with Flutter.',
                       ),
                       VSeparators.normal(),
-                      infoWidget(context,
-                          'You will still be able to install Java later if you change your mind.'),
+                      infoWidget(context, 'You will still be able to install Java later if you change your mind.'),
                       VSeparators.large(),
                       const Text('Tool Skipping:'),
                       VSeparators.normal(),
@@ -90,11 +89,8 @@ Widget installJava(
                               child: Text(
                                 'Skip',
                                 style: TextStyle(
-                                    color: context
-                                            .read<ThemeChangeNotifier>()
-                                            .isDarkTheme
-                                        ? Colors.white
-                                        : Colors.black),
+                                    color:
+                                        context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black),
                               ),
                               hoverColor: AppTheme.errorColor,
                               color: Colors.blueGrey.withOpacity(0.2),
@@ -110,11 +106,8 @@ Widget installJava(
                               child: Text(
                                 'Cancel',
                                 style: TextStyle(
-                                    color: context
-                                            .read<ThemeChangeNotifier>()
-                                            .isDarkTheme
-                                        ? Colors.white
-                                        : Colors.black),
+                                    color:
+                                        context.read<ThemeChangeNotifier>().isDarkTheme ? Colors.white : Colors.black),
                               ),
                               color: Colors.blueGrey.withOpacity(0.2),
                               onPressed: () => Navigator.pop(context),

@@ -1,9 +1,14 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file_selector;
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
 import 'package:manager/core/services/logs.dart';
+import 'package:manager/meta/utils/shared_pref.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
   const ProjectsSettingsSection({Key? key}) : super(key: key);

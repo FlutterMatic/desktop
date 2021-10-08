@@ -1,8 +1,10 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/core/notifiers/theme.notifier.dart';
-import 'package:provider/provider.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 class HorizontalAxisView extends StatefulWidget {
   final String title;
@@ -58,16 +60,13 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                 child: Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 12,
-                  color: context.read<ThemeChangeNotifier>().isDarkTheme
-                      ? Colors.grey
-                      : Colors.black,
+                  color: Theme.of(context).isDarkTheme ? Colors.grey : Colors.black,
                 ),
               ),
             HSeparators.small(),
             // Check if we are at the end of the list. If we are then we
             // don't want to show the right arrow.
-            if (_controller.hasClients &&
-                _controller.offset < _controller.position.maxScrollExtent)
+            if (_controller.hasClients && _controller.offset < _controller.position.maxScrollExtent)
               RectangleButton(
                 width: 30,
                 height: 30,
@@ -82,9 +81,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                 child: Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 12,
-                  color: context.read<ThemeChangeNotifier>().isDarkTheme
-                      ? Colors.grey
-                      : Colors.black,
+                  color: Theme.of(context).isDarkTheme ? Colors.grey : Colors.black,
                 ),
               ),
             HSeparators.small(),
@@ -96,9 +93,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                 'Show more',
                 style: TextStyle(
                   fontSize: 13,
-                  color: context.read<ThemeChangeNotifier>().isDarkTheme
-                      ? Colors.white
-                      : Colors.black,
+                  color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
                 ),
               ),
               onPressed: () {},
@@ -123,8 +118,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
             child: Row(
                 children: widget.content.map(
               (Widget e) {
-                bool _isFinal =
-                    (widget.content.indexOf(e) + 1) == widget.content.length;
+                bool _isFinal = (widget.content.indexOf(e) + 1) == widget.content.length;
                 return Padding(
                   padding: EdgeInsets.only(right: _isFinal ? 0 : 15),
                   child: e,

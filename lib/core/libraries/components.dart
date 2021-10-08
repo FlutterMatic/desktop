@@ -1,9 +1,21 @@
 library components;
 
+export '../../components/widgets/ui/spinner.dart';
 export '../../meta/views/welcome/components/button.dart';
 export '../../meta/views/welcome/components/header.dart';
+export '../../components/dialog_templates/dialog_header.dart';
 export '../../meta/views/welcome/components/header_title.dart';
 export '../../meta/views/welcome/components/tool_installed.dart';
 export '../../meta/views/welcome/components/windows_controls.dart';
 export '../../meta/views/welcome/components/loading_indicator.dart';
+export '../../meta/views/welcome/screens/welcome_view.dart';
 export '../../meta/views/welcome/components/progress_indicator.dart';
+export '../../components/dialog_templates/about/about_us.dart';
+export '../../components/widgets/ui/warning_widget.dart';
+export '../../components/dialog_templates/flutter/install_flutter.dart';
+export '../../components/widgets/ui/info_widget.dart';
+export '../../components/widgets/ui/markdown_view.dart';
+export '../../components/dialog_templates/flutter/change_channel.dart';
+export '../../components/dialog_templates/flutter/change_channel.dart';
+export '../../components/dialog_templates/flutter/flutter_upgrade.dart';
+export '../../components/dialog_templates/projects/new_project/new_project.dart';

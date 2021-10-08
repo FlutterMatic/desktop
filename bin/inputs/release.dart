@@ -1,6 +1,9 @@
+// 🎯 Dart imports:
 import 'dart:io';
-import '../utils/app_data.dart';
+
+// 🌎 Project imports:
 import '../outputs/prints.dart';
+import '../utils/app_data.dart';
 import '../utils/enum.dart';
 
 /// Function that returns a String value from the user input.

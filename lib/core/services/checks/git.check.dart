@@ -1,17 +1,24 @@
+// 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:process_run/shell.dart';
+import 'package:provider/provider.dart';
+import 'package:pub_semver/src/version.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/meta/utils/bin/git.bin.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:process_run/shell.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:pub_semver/src/version.dart';
 
 /// [GitNotifier] class is a [ChangeNotifier]
 /// for Git checks.

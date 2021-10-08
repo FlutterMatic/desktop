@@ -1,7 +1,13 @@
+// 🎯 Dart imports:
 import 'dart:io';
+
+// 📦 Package imports:
+import 'package:process_run/shell.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:process_run/shell.dart';
+
 // import 'package:process_run/shell.dart';
 
 /// This function will download the files.

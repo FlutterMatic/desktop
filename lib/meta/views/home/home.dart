@@ -1,5 +1,11 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/notifiers.dart';
@@ -7,7 +13,6 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/views/home/sections/home/home.dart';
 import 'package:manager/meta/views/home/sections/projects/projects.dart';
 import 'package:manager/meta/views/home/sections/pub/pub.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

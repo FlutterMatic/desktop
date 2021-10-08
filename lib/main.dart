@@ -1,20 +1,24 @@
+// 🎯 Dart imports:
+import 'dart:io';
+
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
-import 'package:manager/app/constants/constants.dart';
+
+// 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/notifiers/space.notifier.dart';
-import 'package:manager/app/providers/multi_providers.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/meta/views/welcome/screens/welcome_view.dart';
-import 'package:manager/core/libraries/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:manager/meta/views/home/home.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
+
+// 🌎 Project imports:
+import 'package:manager/app/providers/multi_providers.dart';
+import 'package:manager/core/libraries/components.dart';
+import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/core/libraries/services.dart';
+import 'package:manager/core/libraries/views.dart';
+
+import 'package:manager/core/libraries/utils.dart'; 
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,18 +60,15 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
     await SharedPref().pref.setString('App_Version', appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
     await SharedPref().pref.setString('App_Build', appBuild.toString());
-    if (SharedPref().pref.containsKey('All_Checked') &&
-        !SharedPref().pref.containsKey('Tab')) {
+    if (SharedPref().pref.containsKey('All_Checked') && !SharedPref().pref.containsKey('Tab')) {
       allChecked = SharedPref().pref.getBool('All_Checked');
     } else {
       await SharedPref().pref.setBool('All_Checked', false);
       allChecked = SharedPref().pref.getBool('All_Checked');
     }
     if (!SharedPref().pref.containsKey('platform')) {
-      List<ProcessResult?>? platformData = Platform.isWindows
-          ? await shell
-              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
-          : null;
+      List<ProcessResult?>? platformData =
+          Platform.isWindows ? await shell.run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"') : null;
       await SharedPref()
           .pref
           .setString('platform', Platform.operatingSystem)
@@ -131,45 +132,49 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
-          Widget? child) {
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier, Widget? child) {
         return Directionality(
-            textDirection: TextDirection.ltr,
-            child: Container(
-              color: themeChangeNotifier.isDarkTheme ? AppTheme.darkBackgroundColor : AppTheme.lightBackgroundColor,
-              child: Column(
-                children: <Widget>[
-                  WindowTitleBarBox(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Image.asset(Assets.appLogo),
-                        ),
-                        Expanded(child: MoveWindow()),
-                        windowControls(context)
-                      ],
-                    ),
+          textDirection: TextDirection.ltr,
+          child: Container(
+            color: themeChangeNotifier.isDarkTheme ? AppTheme.darkBackgroundColor : AppTheme.lightBackgroundColor,
+            child: Column(
+              children: <Widget>[
+                WindowTitleBarBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Image.asset(Assets.appLogo),
+                      ),
+                      Expanded(
+                        child: MoveWindow(),
+                      ),
+                      windowControls(context)
+                    ],
                   ),
-                  Expanded(
-                    child: MaterialApp(
-                      theme: AppTheme.lightTheme,
-                      darkTheme: AppTheme.darkTheme,
-                      themeMode: themeChangeNotifier.isDarkTheme
-                          ? ThemeMode.dark
-                          : ThemeMode.light,
-                      debugShowCheckedModeBanner: false,
-                      home: isChecking
-                          ? const Scaffold(body: Center(child: Spinner()))
-                          : !allChecked!
-                              ? const WelcomePage()
-                              : const HomeScreen(),
-                    ),
+                ),
+                Expanded(
+                  child: MaterialApp(
+                    theme: AppTheme.lightTheme,
+                    darkTheme: AppTheme.darkTheme,
+                    themeMode: themeChangeNotifier.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+                    debugShowCheckedModeBanner: false,
+                    home: isChecking
+                        ? const Scaffold(
+                            body: Center(
+                              child: Spinner(),
+                            ),
+                          )
+                        : !allChecked!
+                            ? const WelcomePage()
+                            : const HomeScreen(),
                   ),
-                ],
-              ),
-            ));
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
