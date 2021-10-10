@@ -6,6 +6,8 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 // 🌎 Project imports:
 import 'package:manager/meta/utils/app_theme.dart';
+import 'package:provider/src/provider.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 
 AnimatedOpacity windowControls(BuildContext context, {bool disabled = false}) {
   return AnimatedOpacity(
@@ -54,7 +56,9 @@ Widget _control(BuildContext context,
       child: Icon(
         icon,
         size: 15,
-        color: Theme.of(context).isDarkTheme ? AppTheme.lightTheme.iconTheme.color : AppTheme.darkTheme.iconTheme.color,
+        color: !context.watch<ThemeChangeNotifier>().isDarkTheme
+            ? AppTheme.lightTheme.iconTheme.color
+            : AppTheme.darkTheme.iconTheme.color,
       ),
     ),
   );

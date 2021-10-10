@@ -51,7 +51,14 @@ class _SystemRequirementsScreenState extends State<SystemRequirementsScreen> {
               itemCount: data!.length,
               itemBuilder: (BuildContext context, int index) {
                 return Center(
-                  child: MarkdownBlock(data: data![index]),
+                  child: Container(
+                    color: Colors.white.withOpacity(0.1),
+                    padding: const EdgeInsets.all(16),
+                    width: 750,
+                    child: MarkdownBlock(
+                      data: data![index],
+                    ),
+                  ),
                 );
               },
             ),
@@ -61,20 +68,6 @@ class _SystemRequirementsScreenState extends State<SystemRequirementsScreen> {
             child: IconButton(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 10,
-            child: IconButton(
-              splashRadius: 1,
-              icon: Icon(
-                Theme.of(context).isDarkTheme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-              ),
-              onPressed: () {
-                context.read<ThemeChangeNotifier>().updateTheme(!Theme.of(context).isDarkTheme);
-                setState(() {});
-              },
             ),
           ),
         ],
