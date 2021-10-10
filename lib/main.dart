@@ -20,7 +20,7 @@ import 'package:manager/core/libraries/views.dart';
 
 import 'package:manager/core/libraries/utils.dart'; 
 
-Future<void> main(List<String> args) async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MultiProviders(FlutterMaticMain()));
   doWhenWindowReady(() {

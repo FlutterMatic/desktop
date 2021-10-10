@@ -28,7 +28,6 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   WelcomeTab _tab = WelcomeTab.gettingStarted;
-  int startIndex = 10;
   bool _installing = false;
   bool _completedInstall = false;
 
@@ -65,7 +64,8 @@ class _WelcomePageState extends State<WelcomePage> {
                       width: 415,
                       child: Center(
                         child: ScrollConfiguration(
-                          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                          behavior: ScrollConfiguration.of(context)
+                              .copyWith(scrollbars: false),
                           child: SingleChildScrollView(
                             child: _getCurrentPage(context),
                           ),
@@ -82,8 +82,10 @@ class _WelcomePageState extends State<WelcomePage> {
                       TextButton(
                         style: ButtonStyle(
                           splashFactory: NoSplash.splashFactory,
-                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
                         ),
                         onPressed: () => showDialog(
                           context: context,
@@ -94,7 +96,10 @@ class _WelcomePageState extends State<WelcomePage> {
                           child: Text(
                             'System Requirements',
                             style: TextStyle(
-                                fontSize: 12, color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black),
+                                fontSize: 12,
+                                color: Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black),
                           ),
                         ),
                       ),
@@ -102,21 +107,29 @@ class _WelcomePageState extends State<WelcomePage> {
                       TextButton(
                         style: ButtonStyle(
                           splashFactory: NoSplash.splashFactory,
-                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
                         ),
                         onPressed: kReleaseMode
                             ? () {}
                             : () async {
-                                await Navigator.push(context,
-                                    MaterialPageRoute<Widget>(builder: (_) => const SystemRequirementsScreen()));
+                                await Navigator.push(
+                                    context,
+                                    MaterialPageRoute<Widget>(
+                                        builder: (_) =>
+                                            const SystemRequirementsScreen()));
                               },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'Docs & Tutorials',
                             style: TextStyle(
-                                fontSize: 12, color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black),
+                                fontSize: 12,
+                                color: Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black),
                           ),
                         ),
                       ),
@@ -134,10 +147,14 @@ class _WelcomePageState extends State<WelcomePage> {
                 IconButton(
                   splashRadius: 1,
                   icon: Icon(
-                    Theme.of(context).isDarkTheme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                    Theme.of(context).isDarkTheme
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
                   ),
                   onPressed: () {
-                    context.read<ThemeChangeNotifier>().updateTheme(!Theme.of(context).isDarkTheme);
+                    context
+                        .read<ThemeChangeNotifier>()
+                        .updateTheme(!Theme.of(context).isDarkTheme);
                     setState(() {});
                   },
                 ),
@@ -165,7 +182,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute<Widget>(builder: (_) => const HomeScreen()),
+                    MaterialPageRoute<Widget>(
+                        builder: (_) => const HomeScreen()),
                   );
                 },
               ),
@@ -194,7 +212,9 @@ class _WelcomePageState extends State<WelcomePage> {
             } else {
               setState(() => _installing = true);
 
-              await context.read<FlutterNotifier>().checkFlutter(context, sdkData);
+              await context
+                  .read<FlutterNotifier>()
+                  .checkFlutter(context, sdkData);
               setState(() {
                 _installing = false;
                 _completedInstall = false;
@@ -223,12 +243,16 @@ class _WelcomePageState extends State<WelcomePage> {
               }
               if (_editor.contains(EditorType.androidStudio)) {
                 // Installs Android Studio.
-                await context.read<AndroidStudioNotifier>().checkAStudio(context, apiData);
+                await context
+                    .read<AndroidStudioNotifier>()
+                    .checkAStudio(context, apiData);
                 _editor.remove(EditorType.androidStudio);
               }
               if (_editor.contains(EditorType.vscode)) {
                 // Installs VSCode.
-                await context.read<VSCodeNotifier>().checkVSCode(context, apiData);
+                await context
+                    .read<VSCodeNotifier>()
+                    .checkVSCode(context, apiData);
                 // After completing, we will remove the item from the list.
                 _editor.remove(EditorType.vscode);
               }
@@ -306,38 +330,26 @@ class _WelcomePageState extends State<WelcomePage> {
       case WelcomeTab.restart:
         return welcomeRestart(
           context,
-          timer: startIndex == 0
-              ? 'Restarting'
-              : startIndex < 10
-                  ? startIndex.toString()
-                  : null,
           onRestart: () async {
-            int _restartSeconds = 10;
+            int _restartSeconds = 5;
 
-            Timer.periodic(const Duration(milliseconds: 750), (Timer timer) {
-              if (startIndex == 0) {
-                setState(() {
-                  timer.cancel();
-                });
-              } else {
-                setState(() {
-                  startIndex--;
-                });
-              }
-            });
-            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-                context, 'Your device will restart in $_restartSeconds seconds.',
+            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
+                'Your device will restart in $_restartSeconds seconds.',
                 type: SnackBarType.warning));
+
             await SharedPref().pref.setBool('All_Checked', true);
             await SharedPref().pref.remove('Tab');
+
+            await Future<void>.delayed(Duration(seconds: _restartSeconds));
 
             // Restart the system only if it's compiled for release. Prevent
             // restart otherwise.
             if (kReleaseMode) {
-              await logger.file(LogTypeTag.info, 'Restarting device to continue Flutter setup');
+              await logger.file(LogTypeTag.info,
+                  'Restarting device to continue Flutter setup');
               // Restart the device immediately. There is no need to schedule
               // the restart since we are already having a timer above.
-              await shell.run('shutdown /r /f /t $_restartSeconds');
+              await shell.run('shutdown /r /f /t');
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 snackBarTile(

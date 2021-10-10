@@ -99,7 +99,7 @@ class _TroubleShootSettingsSectionState
               ),
               if (_requireTruShoot)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 10, top: 10),
                   child: informationWidget(
                     'You need to choose at least one troubleshoot option.',
                     type: InformationType.error,

@@ -10,7 +10,7 @@ import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
-Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? timer}) {
+Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
   return Column(
     children: <Widget>[
       welcomeHeaderTitle(
@@ -31,16 +31,22 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? ti
               children: <Widget>[
                 Expanded(
                   child: RectangleButton(
-                    color: Theme.of(context).isDarkTheme ? null : AppTheme.darkBackgroundColor,
-                    child: const Text('Flutter Documentation', style: TextStyle(color: Colors.white)),
+                    color: Theme.of(context).isDarkTheme
+                        ? null
+                        : AppTheme.darkBackgroundColor,
+                    child: const Text('Flutter Documentation',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () => launch('https://flutter.dev/docs'),
                   ),
                 ),
                 HSeparators.small(),
                 Expanded(
                   child: RectangleButton(
-                    color: Theme.of(context).isDarkTheme ? null : AppTheme.darkBackgroundColor,
-                    child: const Text('Our Documentation', style: TextStyle(color: Colors.white)),
+                    color: Theme.of(context).isDarkTheme
+                        ? null
+                        : AppTheme.darkBackgroundColor,
+                    child: const Text('Our Documentation',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () {},
                   ),
                 ),
@@ -56,7 +62,7 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart, String? ti
         onContinue: () {},
         onInstall: onRestart,
         progress: Progress.none,
-        buttonText: timer ?? 'Restart',
+        buttonText: 'Restart',
       ),
     ],
   );
