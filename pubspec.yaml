@@ -71,8 +71,11 @@ dev_dependencies:
   # Lint
   flutter_lints: ^1.0.4
   import_sorter: ^4.6.0
+
+# Emoji Sorter Service
 import_sorter:
   emojis: true
+
 flutter:
   uses-material-design: true
 

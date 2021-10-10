@@ -1,9 +1,11 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;
@@ -78,7 +80,10 @@ Widget _buttonListTile({
           ),
         ),
         Icon(Icons.arrow_forward_ios_rounded,
-            color: customTheme.indicatorColor, size: 15),
+            color: context.read<ThemeChangeNotifier>().isDarkTheme
+                ? Colors.white
+                : Colors.black,
+            size: 15),
       ],
     ),
   );
