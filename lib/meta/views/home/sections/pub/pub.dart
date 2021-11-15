@@ -1,7 +1,9 @@
 // 🎯 Dart imports:
 import 'dart:convert';
+import 'dart:isolate';
 
 // 🐦 Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -14,6 +16,7 @@ import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:pub_api_client/pub_api_client.dart';
 
 class HomePubSection extends StatefulWidget {
   const HomePubSection({Key? key}) : super(key: key);
@@ -27,11 +30,15 @@ class _HomePubSectionState extends State<HomePubSection> {
 
   final FocusNode _searchNode = FocusNode();
 
-  List<PubPackageObject> _searchResults = <PubPackageObject>[];
+  final List<PubPackageObject> _searchResults = <PubPackageObject>[];
+  final List<PubPackageObject> _pubFavorites = <PubPackageObject>[];
 
   List<dynamic> _pubs = <dynamic>[];
 
+  bool _fastSearch = true;
   bool _loadingSearch = false;
+  bool _loadedFlutterFavorites = false;
+  bool _errorPage = false;
 
   static const int _buttonsOnRight = 2;
 
@@ -47,21 +54,39 @@ class _HomePubSectionState extends State<HomePubSection> {
   // filter the results as the user types.
   // This is done to avoid making too many requests to the pub API.
   Future<void> _getInitialPackages() async {
-    setState(() => _loadingSearch = true);
-    http.Response _result = await http.get(
-      Uri.parse('https://pub.dev/api/package-name-completion-data'),
-    );
+    setState(() {
+      _errorPage = false;
+      _loadingSearch = true;
+      _fastSearch = SharedPref().pref.getBool('Pub_Fast_Search') ?? true;
+    });
+    http.Response _result = await http
+        .get(Uri.parse('https://pub.dev/api/package-name-completion-data'))
+        .onError((_, __) => http.Response('', 300));
     if (_result.statusCode == 200 && mounted) {
       dynamic _packages = json.decode(_result.body)['packages'];
-      setState(() => _pubs = _packages);
+      await PubClient().search('').then((SearchResults value) {
+        setState(() {
+          _pubs = _packages;
+          _pubFavorites.addAll(value.packages
+              .map((PackageResult e) => PubPackageObject(name: e.package)));
+          _loadedFlutterFavorites = true;
+          _errorPage = false;
+        });
+      });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'We couldn\'t fetch the pub packages. Please make sure you have an internet connection and try again.',
-          type: SnackBarType.error,
-        ),
-      );
+      if (_pubs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'We couldn\'t fetch the pub packages. Please make sure you have an internet connection and try again.',
+            type: SnackBarType.error,
+          ),
+        );
+      }
+      setState(() {
+        _pubs = <dynamic>[''];
+        _errorPage = true;
+      });
     }
     setState(() => _loadingSearch = false);
   }
@@ -71,45 +96,79 @@ class _HomePubSectionState extends State<HomePubSection> {
   // We will filter out the [_pub] list and set the results to the
   // [_searchResults].
   Future<void> _updateResults() async {
-    if (_pubs.isEmpty) {
-      await _getInitialPackages();
-    }
-    if (_searchText.isEmpty) {
-      setState(() => _searchResults = <PubPackageObject>[]);
-      return;
-    }
+    int _max = 5;
 
-    // The total results for the current search. This shouldn't be greater than
-    // the [_maxResults].
-    int _resultsCount = 0;
+    setState(() {
+      _loadingSearch = true;
+      _searchResults.clear();
+    });
+    if (_fastSearch) {
+      if (_pubs.isEmpty) {
+        await _getInitialPackages();
+      }
 
-    // The maximum search results to show at a time.
-    int _maxResults = 5;
+      if (_searchText.isEmpty) {
+        setState(_searchResults.clear);
+        return;
+      }
+      // The total results for the current search. This shouldn't be greater than
+      // the [_maxResults].
+      int _resultsCount = 0;
 
-    // Filters the results based on the [_searchText].
-    List<dynamic> _flexResults = _pubs.where((dynamic e) {
-      String _name = e.toString().replaceAll('_', '');
+      // Filters the results based on the [_searchText].
+      List<dynamic> _flexResults = _pubs.where((dynamic e) {
+        String _name = e.toString().replaceAll('_', '');
 
-      // Filters the pub packages down to the user search.
-      bool _hasMatch() {
-        if (_name.toLowerCase().contains(_searchText.toLowerCase().replaceAll(' ', '').replaceAll('_', ''))) {
+        // Filters the pub packages down to the user search.
+        bool _hasMatch() {
+          if (_name.toLowerCase().contains(_searchText
+              .toLowerCase()
+              .replaceAll(' ', '')
+              .replaceAll('_', ''))) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+
+        // Returns true of false depending on if the package name matches.
+        if (_resultsCount < _max && _hasMatch()) {
+          _resultsCount++;
           return true;
         } else {
           return false;
         }
+      }).toList();
+
+      // Sets the results of no more than [_maxResults] to the [_searchResults].
+      setState(() => _searchResults.addAll(_flexResults
+          .map((dynamic e) => PubPackageObject(name: e.toString()))
+          .toList()));
+    } else {
+      if (_searchText.isEmpty) {
+        setState(_searchResults.clear);
+        return;
       }
 
-      // Returns true of false depending on if the package name matches.
-      if (_resultsCount < _maxResults && _hasMatch()) {
-        _resultsCount++;
-        return true;
-      } else {
-        return false;
-      }
-    }).toList();
+      List<String> _flexResults = <String>[];
 
-    // Sets the results of no more than [_maxResults] to the [_searchResults].
-    setState(() => _searchResults = _flexResults.map((dynamic e) => PubPackageObject(name: e.toString())).toList());
+      // TODO: Consider isolating this task to avoid clogging UI.
+      await PubClient().search(_searchText).then((_) =>
+          _flexResults.addAll(_.packages.map((PackageResult e) => e.package)));
+
+      // Sets the results of no more than [_maxResults] to the [_searchResults].
+      setState(() => _searchResults.addAll(_flexResults
+          .sublist(0, _flexResults.length > _max ? _max : _flexResults.length)
+          .map((dynamic e) => PubPackageObject(name: e.toString()))
+          .toList()));
+    }
+    setState(() => _loadingSearch = false);
+  }
+
+  @override
+  void initState() {
+    _getInitialPackages();
+    super.initState();
   }
 
   @override
@@ -126,31 +185,43 @@ class _HomePubSectionState extends State<HomePubSection> {
                 child: Row(
                   children: <Widget>[
                     if (_buttonsOnRight > 0)
-                      const SizedBox(width: (40 * _buttonsOnRight) + ((_buttonsOnRight - 1) * 10)),
+                      const SizedBox(
+                          width: (40 * _buttonsOnRight) +
+                              ((_buttonsOnRight - 1) * 10)),
                     const Spacer(),
                     SizedBox(
-                      width: (MediaQuery.of(context).size.width > 1000) ? 500 : 400,
+                      width: (MediaQuery.of(context).size.width > 1000)
+                          ? 500
+                          : 400,
                       height: 40,
                       child: RoundContainer(
                         padding: EdgeInsets.zero,
                         borderColor: Colors.blueGrey.withOpacity(0.2),
                         child: Center(
                           child: Padding(
-                            padding:
-                                EdgeInsets.only(left: 8, right: _searchText == '' || !_searchNode.hasFocus ? 8 : 5),
+                            padding: EdgeInsets.only(
+                                left: 8,
+                                right:
+                                    _searchText == '' || !_searchNode.hasFocus
+                                        ? 8
+                                        : 5),
                             child: Row(
                               children: <Widget>[
                                 Expanded(
                                   child: TextFormField(
                                     focusNode: _searchNode,
                                     style: TextStyle(
-                                      color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black)
+                                      color: (Theme.of(context).isDarkTheme
+                                              ? Colors.white
+                                              : Colors.black)
                                           .withOpacity(0.8),
                                     ),
                                     cursorRadius: const Radius.circular(5),
                                     decoration: InputDecoration(
                                       hintStyle: TextStyle(
-                                        color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black)
+                                        color: (Theme.of(context).isDarkTheme
+                                                ? Colors.white
+                                                : Colors.black)
                                             .withOpacity(0.6),
                                         fontSize: 14,
                                       ),
@@ -165,7 +236,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                                       if (val.isEmpty) {
                                         setState(() {
                                           _searchText = val;
-                                          _searchResults = <PubPackageObject>[];
+                                          _searchResults.clear();
                                         });
                                       } else {
                                         setState(() => _searchText = val);
@@ -175,7 +246,8 @@ class _HomePubSectionState extends State<HomePubSection> {
                                   ),
                                 ),
                                 HSeparators.xSmall(),
-                                if (_searchText == '' || !_searchNode.hasFocus)
+                                if (_searchText.isEmpty ||
+                                    !_searchNode.hasFocus)
                                   const Icon(Icons.search_rounded, size: 16)
                                 else
                                   RectangleButton(
@@ -185,12 +257,14 @@ class _HomePubSectionState extends State<HomePubSection> {
                                     child: Icon(
                                       Icons.close_rounded,
                                       size: 13,
-                                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                                      color: Theme.of(context).isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                     onPressed: () {
                                       _searchNode.unfocus();
                                       setState(() {
-                                        _searchResults = <PubPackageObject>[];
+                                        _searchResults.clear();
                                         _searchText = '';
                                       });
                                     },
@@ -208,7 +282,9 @@ class _HomePubSectionState extends State<HomePubSection> {
                       child: Icon(
                         Icons.favorite_outline_rounded,
                         size: 13,
-                        color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                        color: Theme.of(context).isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
                       ),
                       onPressed: () {},
                     ),
@@ -219,7 +295,9 @@ class _HomePubSectionState extends State<HomePubSection> {
                       child: Icon(
                         Icons.inventory_2_outlined,
                         size: 13,
-                        color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                        color: Theme.of(context).isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
                       ),
                       onPressed: () {},
                     ),
@@ -228,131 +306,181 @@ class _HomePubSectionState extends State<HomePubSection> {
               ),
             ),
             VSeparators.small(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      VSeparators.large(),
-                      const HorizontalAxisView(
-                        title: 'Flutter Favorites',
-                        content: <Widget>[
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                        ],
-                      ),
-                      VSeparators.large(),
-                      const HorizontalAxisView(
-                        title: 'Popular Packages',
-                        content: <Widget>[
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                        ],
-                      ),
-                      VSeparators.large(),
-                      const HorizontalAxisView(
-                        isVertical: true,
-                        title: 'Suggested Packages',
-                        content: <Widget>[
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                          PubFavoriteTile(),
-                        ],
-                      ),
-                      VSeparators.large(),
-                      RoundContainer(
-                        borderWith: 2,
-                        borderColor: Colors.blueGrey.withOpacity(0.2),
-                        width: double.infinity,
-                        child: Row(
-                          children: <Widget>[
-                            SvgPicture.asset(
-                              Assets.package,
-                              height: 25,
-                              color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
-                            ),
-                            HSeparators.small(),
-                            const Expanded(
-                              child: Text(
-                                'Try searching for the package that you are looking for.',
-                                style: TextStyle(fontSize: 20),
+            if (_errorPage)
+              Expanded(
+                child: Center(
+                  child: SizedBox(
+                    width: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SvgPicture.asset(Assets.error),
+                        VSeparators.normal(),
+                        Text(
+                          'Hmm... Something went wrong',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: (Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black)
+                                .withOpacity(0.8),
+                            fontSize: 20,
+                          ),
+                        ),
+                        VSeparators.normal(),
+                        const Text(
+                          'Maybe check your internet connection and try again.',
+                          textAlign: TextAlign.center,
+                        ),
+                        VSeparators.large(),
+                        RectangleButton(
+                          child: const Text('Retry'),
+                          onPressed: _getInitialPackages,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            else if (!_loadedFlutterFavorites)
+              const Expanded(child: Center(child: Spinner(thickness: 2)))
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        VSeparators.large(),
+                        HorizontalAxisView(
+                          title: 'Favorites & Popular Packages',
+                          isVertical: true,
+                          content: _pubFavorites
+                              .map((PubPackageObject e) =>
+                                  PubFavoriteTile(name: e.name))
+                              .toList(),
+                        ),
+                        VSeparators.large(),
+                        RoundContainer(
+                          borderWith: 2,
+                          borderColor: Colors.blueGrey.withOpacity(0.2),
+                          width: double.infinity,
+                          child: Row(
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                Assets.package,
+                                height: 25,
+                                color: Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
-                            ),
-                            HSeparators.large(),
-                            RectangleButton(
-                              child: Text(
-                                'Search',
-                                style: TextStyle(
-                                  color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                              HSeparators.small(),
+                              const Expanded(
+                                child: Text(
+                                  'Try searching for the package that you are looking for.',
+                                  style: TextStyle(fontSize: 20),
                                 ),
                               ),
-                              onPressed: _searchNode.requestFocus,
-                            ),
-                          ],
+                              HSeparators.large(),
+                              RectangleButton(
+                                child: Text(
+                                  'Search',
+                                  style: TextStyle(
+                                    color: Theme.of(context).isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                                onPressed: _searchNode.requestFocus,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      VSeparators.large(),
-                    ],
+                        VSeparators.large(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
         // Show the search results in realtime if the user has typed anything
         // to search for.
-        if (_searchText != '')
+        if (_searchText.isNotEmpty)
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
               padding: const EdgeInsets.only(top: 60),
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 500, maxHeight: 300),
+                constraints:
+                    const BoxConstraints(maxWidth: 500, maxHeight: 300),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).isDarkTheme ? const Color(0xff262F34) : Colors.white,
+                  color: Theme.of(context).isDarkTheme
+                      ? const Color(0xff262F34)
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
                     color: Colors.blueGrey.withOpacity(0.4),
                   ),
                 ),
                 padding: const EdgeInsets.all(10),
-                child: SingleChildScrollView(
-                  child: Builder(
-                    builder: (BuildContext context) {
-                      if (_searchResults.isEmpty && _loadingSearch) {
-                        return const CustomLinearProgressIndicator();
-                      } else if (_searchResults.isEmpty && !_loadingSearch) {
-                        return informationWidget(
-                          'There are no results for your search query. Try using another term instead.',
-                          type: InformationType.error,
-                        );
-                      } else {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: _searchResults.map((PubPackageObject e) {
-                            double _pad = _searchResults.indexOf(e) == _searchResults.length - 1 ? 0 : 5;
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: _pad),
-                              child: PubPackageSearchResultTile(package: e),
-                            );
-                          }).toList(),
-                        );
-                      }
-                    },
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Builder(
+                      builder: (BuildContext context) {
+                        if (_searchResults.isEmpty && _loadingSearch) {
+                          return const CustomLinearProgressIndicator();
+                        } else if (_searchResults.isEmpty && !_loadingSearch) {
+                          return informationWidget(
+                            'There are no results for your search query. Try using another term instead.',
+                            type: InformationType.error,
+                          );
+                        } else {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _searchResults.length > 5
+                                ? 5
+                                : _searchResults.length,
+                            itemBuilder: (_, int i) {
+                              double _pad;
+                              if (i == _searchResults.length - 1) {
+                                _pad = 0;
+                              } else {
+                                _pad = 5;
+                              }
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: _pad),
+                                child: PubPackageSearchResultTile(
+                                    package: _searchResults[i]),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    if (_searchResults.isNotEmpty && !_loadingSearch)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            const Text('Fast search'),
+                            HSeparators.xSmall(),
+                            Switch(
+                              value: _fastSearch,
+                              onChanged: (bool value) async {
+                                setState(() => _fastSearch = value);
+                                await SharedPref()
+                                    .pref
+                                    .setBool('Pub_Fast_Search', value);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
