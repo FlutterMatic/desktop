@@ -148,7 +148,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         child: Image.asset(Assets.appLogo),
                       ),
                       Expanded(
-                        child: MoveWindow(),
+                        child: MoveWindow()
                       ),
                       windowControls(context)
                     ],

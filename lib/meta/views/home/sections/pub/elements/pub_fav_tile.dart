@@ -1,14 +1,20 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/libraries/utils.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pub_api_client/pub_api_client.dart';
 
 class PubFavoriteTile extends StatefulWidget {
-  const PubFavoriteTile({Key? key}) : super(key: key);
+  final String name;
+  const PubFavoriteTile({Key? key, required this.name}) : super(key: key);
 
   @override
   _PubFavoriteTileState createState() => _PubFavoriteTileState();
@@ -19,12 +25,40 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
   // if the user is hovering.
   bool _isHovering = false;
 
+  PubPackage? _package;
+  PackageMetrics? _metrics;
+  PackagePublisher? _publisher;
+
   // If the package is migrated to null safety, then this will be true,
   // otherwise false.
   final bool _nullSafe = false;
 
+  Future<void> _getPkgInfo() async {
+    PubPackage _info = await PubClient().packageInfo(widget.name);
+    PackageMetrics? _data = await PubClient().packageMetrics(widget.name);
+    PackagePublisher _author = await PubClient().packagePublisher(widget.name);
+    setState(() {
+      _package = _info;
+      _metrics = _data;
+      _publisher = _author;
+    });
+  }
+
+  @override
+  void initState() {
+    _getPkgInfo();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_package == null) {
+      return const RoundContainer(
+        width: 250,
+        height: 230,
+        child: Spinner(thickness: 2),
+      );
+    }
     return MouseRegion(
       onHover: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
@@ -34,9 +68,7 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (_) => const PubPackageDialog(
-              pkgName: 'dio',
-            ),
+            builder: (_) => PubPackageDialog(pkgName: widget.name),
           );
         },
         child: Padding(
@@ -52,9 +84,11 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            'dio',
+                            widget.name,
                             style: TextStyle(
-                              color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                              color: Theme.of(context).isDarkTheme
+                                  ? Colors.white
+                                  : Colors.black,
                               fontSize: 17,
                             ),
                           ),
@@ -70,9 +104,15 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                             child: Icon(
                               Icons.content_copy,
                               size: 14,
-                              color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                              color: (Theme.of(context).isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(0.5),
                             ),
                             onPressed: () {
+                              Clipboard.setData(ClipboardData(
+                                  text:
+                                      widget.name + ': ^${_package!.version}'));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 snackBarTile(
                                   context,
@@ -88,9 +128,12 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                     VSeparators.small(),
                     Expanded(
                       child: Text(
-                        'Flutter plugin for querying information about the application package, such as CFBundleVersion on iOS or versionCode on Android.',
+                        _package?.description ??
+                            'No package description provided.',
                         style: TextStyle(
-                          color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                          color: Theme.of(context).isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
                           fontSize: 13.5,
                         ),
                       ),
@@ -108,13 +151,20 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                         Icon(
                           Icons.thumb_up_alt_rounded,
                           size: 13,
-                          color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                          color: (Theme.of(context).isDarkTheme
+                                  ? Colors.white
+                                  : Colors.black)
+                              .withOpacity(0.5),
                         ),
                         HSeparators.xSmall(),
                         Text(
-                          '5.01K',
+                          NumberFormat.compact()
+                              .format(_metrics?.score.likeCount ?? 0),
                           style: TextStyle(
-                            color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                            color: (Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black)
+                                .withOpacity(0.5),
                           ),
                         ),
                       ],
@@ -127,13 +177,19 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                         Icon(
                           Icons.insights_rounded,
                           size: 13,
-                          color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                          color: (Theme.of(context).isDarkTheme
+                                  ? Colors.white
+                                  : Colors.black)
+                              .withOpacity(0.5),
                         ),
                         HSeparators.xSmall(),
                         Text(
-                          '130',
+                          (_metrics?.score.maxPoints ?? 0).toString(),
                           style: TextStyle(
-                            color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                            color: (Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black)
+                                .withOpacity(0.5),
                           ),
                         ),
                       ],
@@ -146,13 +202,19 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                         Icon(
                           Icons.public_rounded,
                           size: 13,
-                          color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                          color: (Theme.of(context).isDarkTheme
+                                  ? Colors.white
+                                  : Colors.black)
+                              .withOpacity(0.5),
                         ),
                         HSeparators.xSmall(),
                         Text(
-                          '100%',
+                          (_metrics?.score.maxPoints ?? 0).toString() + '%',
                           style: TextStyle(
-                            color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                            color: (Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black)
+                                .withOpacity(0.5),
                           ),
                         ),
                       ],
@@ -171,7 +233,9 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(
-                      _nullSafe ? Icons.done_all_rounded : Icons.do_not_disturb_alt_rounded,
+                      _nullSafe
+                          ? Icons.done_all_rounded
+                          : Icons.do_not_disturb_alt_rounded,
                       size: 13,
                     ),
                     HSeparators.xSmall(),
@@ -189,11 +253,14 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
                   HSeparators.xSmall(),
                   Expanded(
                     child: Text(
-                      'fluttercommunity.dev',
+                      _publisher?.publisherId ?? 'Unknown',
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 13.5,
-                        color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                        color: (Theme.of(context).isDarkTheme
+                                ? Colors.white
+                                : Colors.black)
+                            .withOpacity(0.5),
                       ),
                     ),
                   ),
