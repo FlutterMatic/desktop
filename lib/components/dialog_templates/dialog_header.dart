@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;

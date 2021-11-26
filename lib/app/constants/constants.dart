@@ -10,7 +10,7 @@ import 'package:process_run/shell.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
-/// Shell global reference
+// Shell global reference
 Shell shell = Shell(
   commandVerbose: false,
   commentVerbose: false,
@@ -18,36 +18,36 @@ Shell shell = Shell(
   verbose: false,
 );
 
-bool? allChecked;
+bool? completedSetup;
 
-/// VSCode Git API data object.
+// VSCode Git API data object.
 VSCodeAPI? vscodeApi;
 
-/// Fluttermatic API data object.
+// Fluttermatic API data object.
 FluttermaticAPI? apiData;
 
-/// Flutter-SDK API data object.
+// Flutter-SDK API data object.
 FlutterSDK? sdkData;
 
-/// Tag name for vscode
+// Tag name for vscode
 String? tagName;
 
-/// SHA for vscode
+// SHA for vscode
 String? sha;
 
-/// OS
+// OS
 String? platform;
 String? osName;
 String? osVersion;
 String? appVersion;
 String? appBuild;
 
-/// Application path in Root(C:\\ in win32) directory.
+// Application path in Root(C:\\ in win32) directory.
 // String applicationPath = 'C:\\fluttermatic\\flutter\\bin\\';
 String? appTemp;
 String? appMainDir;
 
-/// Report issue url
+// Report issue url
 String reportIssueUrl = 'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new';
 
 DesktopWindow startup = appWindow;
@@ -88,7 +88,7 @@ class Assets {
   static const String codingLottie = '${_lottieBase}coding.json';
   static const String editor = '${_imagesIconsBase}editor.svg';
   static const String github = '${_imagesLogosBase}github.svg';
-  static const String xcode = '${_imagesLogosBase}xcode.png';
+  static const String xCode = '${_imagesLogosBase}xcode.png';
   static const String error = '${_imagesIconsBase}error.svg';
   static const String home = '${_imagesIconsBase}home.svg';
   static const String dart = '${_imagesLogosBase}dart.svg';
@@ -100,7 +100,7 @@ class Assets {
   static const String appLogo = 'assets/images/logo.png';
 }
 
-/// Class for installed softwares
+/// Class for installed softwares messages
 class Installed {
   static const String vscode = 'Visual Studio Code installed';
   static const String studio = 'Android Studio installed';
@@ -110,7 +110,7 @@ class Installed {
   static const String congos = 'Congrats';
 }
 
-/// Class for install softwares
+/// Class to install softwares messages
 class Install {
   static const String vscode = 'Install Visual Studio Code';
   static const String studio = 'Install Android Studio';
@@ -142,7 +142,6 @@ class InstalledContent {
       'You will need to restart your device to fully complete this setup. Make sure to save all your work before restarting.';
 }
 
-//Lists
 /// List of Background activities.
 List<BgActivityTile> bgActivities = <BgActivityTile>[];
 
@@ -202,12 +201,17 @@ class HSeparators {
 }
 
 class SystemRequirementsContent {
+  // OS Type
   static const String winOS = 'Windows 7 SP1 or later (64-bit), x86-64 based';
   static const String macOS = 'macOS';
   static const String linuxOS = 'Linux (64 bit)';
+
+  // Space Required
   static const String winSpace = '1.7 GB (Only Flutter SDK)';
   static const String macSpace = '2.8 GB (Only Flutter SDK)';
   static const String linuxSpace = '600 MB (Only Flutter SDK)';
+  
+  // Tools Required
   static const String winTools = 'Git, PowerShell, Java (version: 1.8.***)';
   static const String macTools = 'Git, CocoaPods, Java (version: 1.8.***)';
   static const String linuxTools =

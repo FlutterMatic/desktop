@@ -15,6 +15,7 @@ import 'package:pub_semver/src/version.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
@@ -85,7 +86,7 @@ class VSCodeNotifier extends ChangeNotifier {
         );
         if (vscExtracted) {
           await logger.file(
-              LogTypeTag.info, 'VSCode extraction was successfull');
+              LogTypeTag.info, 'VSCode extraction was successful');
         } else {
           await logger.file(LogTypeTag.error, 'VSCode extraction failed.');
           _progress = Progress.failed;
@@ -107,12 +108,12 @@ class VSCodeNotifier extends ChangeNotifier {
           _progress = Progress.failed;
           notifyListeners();
         }
-      } else if (!SharedPref().pref.containsKey('VSC_path') ||
-          !SharedPref().pref.containsKey('VSC_version')) {
+      } else if (!SharedPref().pref.containsKey(SPConst.vscPath) ||
+          !SharedPref().pref.containsKey(SPConst.vscVersion)) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
-        await SharedPref().pref.setString('VSC_path', vscPath);
+        await SharedPref().pref.setString(SPConst.vscPath, vscPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -120,15 +121,15 @@ class VSCodeNotifier extends ChangeNotifier {
         versions.vsCode = vscVersion.toString();
         await logger.file(
             LogTypeTag.info, 'VS Code version : ${versions.vsCode}');
-        await SharedPref().pref.setString('VSC_version', versions.vsCode!);
+        await SharedPref().pref.setString(SPConst.vscVersion, versions.vsCode!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.info, 'Loading VS Code details from shared preferences');
-        vscPath = SharedPref().pref.getString('VSC_path');
+        vscPath = SharedPref().pref.getString(SPConst.vscPath);
         await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
-        versions.vsCode = SharedPref().pref.getString('VSC_version');
+        versions.vsCode = SharedPref().pref.getString(SPConst.vscVersion);
         await logger.file(LogTypeTag.info, 'VS Code version : ${versions.git}');
         _progress = Progress.done;
         notifyListeners();

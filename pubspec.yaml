@@ -1,5 +1,5 @@
 name: manager
-description: Flutter App Manager
+description: Flutter manager helps managing your system's Flutter setup environment and makes development with Flutter even easier.
 publish_to: none
 version: 0.0.1
 environment:

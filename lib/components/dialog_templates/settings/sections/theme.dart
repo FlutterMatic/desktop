@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class ThemeSettingsSection extends StatefulWidget {
   const ThemeSettingsSection({Key? key}) : super(key: key);

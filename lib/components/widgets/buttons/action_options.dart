@@ -1,11 +1,13 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/core/libraries/notifiers.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;

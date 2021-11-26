@@ -1,6 +1,5 @@
 // 🎯 Dart imports:
 import 'dart:convert';
-import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
@@ -9,14 +8,15 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:pub_api_client/pub_api_client.dart';
 
 class HomePubSection extends StatefulWidget {
   const HomePubSection({Key? key}) : super(key: key);
@@ -57,7 +57,7 @@ class _HomePubSectionState extends State<HomePubSection> {
     setState(() {
       _errorPage = false;
       _loadingSearch = true;
-      _fastSearch = SharedPref().pref.getBool('Pub_Fast_Search') ?? true;
+      _fastSearch = SharedPref().pref.getBool(SPConst.pubFastSearch) ?? true;
     });
     http.Response _result = await http
         .get(Uri.parse('https://pub.dev/api/package-name-completion-data'))
@@ -474,7 +474,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                                 setState(() => _fastSearch = value);
                                 await SharedPref()
                                     .pref
-                                    .setBool('Pub_Fast_Search', value);
+                                    .setBool(SPConst.pubFastSearch, value);
                               },
                             ),
                           ],

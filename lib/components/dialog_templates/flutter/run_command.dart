@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 🌎 Project imports:
+import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/core/libraries/components.dart';
 
 class RunCommandDialog extends StatefulWidget {
   const RunCommandDialog({Key? key}) : super(key: key);

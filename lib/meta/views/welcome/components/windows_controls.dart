@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:provider/src/provider.dart';
 import 'package:manager/core/libraries/notifiers.dart';
+import 'package:manager/meta/utils/app_theme.dart';
 
 AnimatedOpacity windowControls(BuildContext context, {bool disabled = false}) {
   return AnimatedOpacity(

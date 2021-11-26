@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 
@@ -23,12 +24,12 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
   String? _defaultEditor;
 
   Future<void> _getDefaultEditor() async {
-    if (SharedPref().pref.containsKey('Default_Editor')) {
-      setState(
-          () => _defaultEditor = SharedPref().pref.getString('Default_Editor'));
+    if (SharedPref().pref.containsKey(SPConst.defaultEditor)) {
+      setState(() =>
+          _defaultEditor = SharedPref().pref.getString(SPConst.defaultEditor));
     } else {
       setState(() => _defaultEditor = 'code');
-      await SharedPref().pref.setString('Default_Editor', 'code');
+      await SharedPref().pref.setString(SPConst.defaultEditor, 'code');
     }
   }
 
@@ -64,7 +65,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                   height: 100,
                   onPressed: () async {
                     setState(() => _defaultEditor = 'code');
-                    await SharedPref().pref.setString('Default_Editor', 'code');
+                    await SharedPref().pref.setString(SPConst.defaultEditor, 'code');
                   },
                   child: Center(
                     child: Column(
@@ -95,7 +96,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                     setState(() => _defaultEditor = 'studio64');
                     await SharedPref()
                         .pref
-                        .setString('Default_Editor', 'studio64');
+                        .setString(SPConst.defaultEditor, 'studio64');
                   },
                   child: Center(
                     child: Column(
@@ -131,12 +132,12 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                       setState(() => _defaultEditor = 'xcode');
                       await SharedPref()
                           .pref
-                          .setString('Default_Editor', 'xcode');
+                          .setString(SPConst.defaultEditor, 'xcode');
                     },
                     child: Center(
                       child: Column(
                         children: <Widget>[
-                          Expanded(child: Image.asset(Assets.xcode)),
+                          Expanded(child: Image.asset(Assets.xCode)),
                           Text(
                             'Xcode',
                             style: TextStyle(

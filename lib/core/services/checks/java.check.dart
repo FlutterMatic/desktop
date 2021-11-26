@@ -14,6 +14,7 @@ import 'package:pub_semver/src/version.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/enum.dart';
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
@@ -89,7 +90,7 @@ class JavaNotifier extends ChangeNotifier {
               try {
                 await e.rename('C:\\fluttermatic\\Java\\jdk');
                 await logger.file(
-                    LogTypeTag.info, 'Extracted folder rename successfull');
+                    LogTypeTag.info, 'Extracted folder rename successful');
               } on FileSystemException catch (fileSystemException) {
                 console.log(fileSystemException.message);
                 await logger.file(
@@ -148,7 +149,7 @@ class JavaNotifier extends ChangeNotifier {
               try {
                 await e.rename('C:\\fluttermatic\\Java\\jre');
                 await logger.file(
-                    LogTypeTag.info, 'Extracted folder rename successfull');
+                    LogTypeTag.info, 'Extracted folder rename successful');
               } on FileSystemException catch (fileSystemException) {
                 console.log(fileSystemException.message);
                 await logger.file(
@@ -181,27 +182,27 @@ class JavaNotifier extends ChangeNotifier {
       }
 
       /// Else we need to get version information.
-      else if (!SharedPref().pref.containsKey('Java_path') ||
-          !SharedPref().pref.containsKey('Java_version')) {
+      else if (!SharedPref().pref.containsKey(SPConst.javaPath) ||
+          !SharedPref().pref.containsKey(SPConst.javaVersion)) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'Java found at - $javaPath');
-        await SharedPref().pref.setString('Java_path', javaPath);
+        await SharedPref().pref.setString(SPConst.javaPath, javaPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
         javaVersion = await getJavaBinVersion();
         versions.java = javaVersion.toString();
         await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
-        await SharedPref().pref.setString('Java_version', versions.java!);
+        await SharedPref().pref.setString(SPConst.javaVersion, versions.java!);
         _progress = Progress.done;
         notifyListeners();
       } else {
         await logger.file(
             LogTypeTag.info, 'Loading Java details from shared preferences');
-        javaPath = SharedPref().pref.getString('Java_path');
+        javaPath = SharedPref().pref.getString(SPConst.javaPath);
         await logger.file(LogTypeTag.info, 'Java found at - $javaPath');
-        versions.java = SharedPref().pref.getString('Java_version');
+        versions.java = SharedPref().pref.getString(SPConst.javaVersion);
         await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
         _progress = Progress.done;
         notifyListeners();

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 🌎 Project imports:
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/services/logs.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 
@@ -17,12 +18,12 @@ class ThemeChangeNotifier with ChangeNotifier {
   }
 
   Future<void> loadSharedPref() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('DARK_THEME')) {
-      darkTheme = prefs.getBool('DARK_THEME')!;
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    if (_pref.containsKey(SPConst.isDarkTheme)) {
+      darkTheme = _pref.getBool(SPConst.isDarkTheme)!;
     } else {
       darkTheme = true;
-      await prefs.setBool('DARK_THEME', true);
+      await _pref.setBool(SPConst.isDarkTheme, true);
     }
   }
 
@@ -40,6 +41,6 @@ class ThemeChangeNotifier with ChangeNotifier {
     _isDarkTheme = isDarkTheme;
     notifyListeners();
     await logger.file(LogTypeTag.info, 'Dark theme updated to $isDarkTheme.');
-    await SharedPref().pref.setBool('DARK_THEME', isDarkTheme);
+    await SharedPref().pref.setBool(SPConst.isDarkTheme, isDarkTheme);
   }
 }

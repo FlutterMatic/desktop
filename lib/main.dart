@@ -11,14 +11,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/app/providers/multi_providers.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
+import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
-
-import 'package:manager/core/libraries/utils.dart'; 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,27 +57,33 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
     if (kDebugMode) await SharedPref().pref.clear();
 
     appVersion = const String.fromEnvironment('current-version');
-    await SharedPref().pref.setString('App_Version', appVersion.toString());
+    await SharedPref()
+        .pref
+        .setString(SPConst.appVersion, appVersion.toString());
     appBuild = const String.fromEnvironment('release-type');
-    await SharedPref().pref.setString('App_Build', appBuild.toString());
-    if (SharedPref().pref.containsKey('All_Checked') && !SharedPref().pref.containsKey('Tab')) {
-      allChecked = SharedPref().pref.getBool('All_Checked');
+    await SharedPref().pref.setString(SPConst.appBuild, appBuild.toString());
+    if (SharedPref().pref.containsKey(SPConst.completedSetup) &&
+        !SharedPref().pref.containsKey(SPConst.setupTab)) {
+      completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
     } else {
-      await SharedPref().pref.setBool('All_Checked', false);
-      allChecked = SharedPref().pref.getBool('All_Checked');
+      await SharedPref().pref.setBool(SPConst.completedSetup, false);
+      completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
     }
-    if (!SharedPref().pref.containsKey('platform')) {
-      List<ProcessResult?>? platformData =
-          Platform.isWindows ? await shell.run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"') : null;
+    if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
+      List<ProcessResult?>? platformData = Platform.isWindows
+          ? await shell
+              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
+          : null;
       await SharedPref()
           .pref
-          .setString('platform', Platform.operatingSystem)
-          .then((_) => platform = SharedPref().pref.getString('platform'));
-      platform = SharedPref().pref.getString('platform');
+          .setString(SPConst.sysPlatform, Platform.operatingSystem)
+          .then((_) =>
+              platform = SharedPref().pref.getString(SPConst.sysPlatform));
+      platform = SharedPref().pref.getString(SPConst.sysPlatform);
       await SharedPref()
           .pref
           .setString(
-              'OS_Name',
+              SPConst.osName,
               platformData![0]!
                   .stdout
                   .split('\n')[0]
@@ -85,10 +91,10 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                   .replaceAll('OS Name: ', '')
                   .replaceAll('\\r', '')
                   .trim())
-          .then((_) => osName = SharedPref().pref.getString('OS_Name'));
-      osName = SharedPref().pref.getString('OS_Name');
+          .then((_) => osName = SharedPref().pref.getString(SPConst.osName));
+      osName = SharedPref().pref.getString(SPConst.osName);
       await SharedPref().pref.setString(
-          'OS_Version',
+          SPConst.osVersion,
           platformData[0]!
               .stdout
               .split('\n')[1]
@@ -97,15 +103,15 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
               .replaceAll(':', '')
               .split('N/A')[0]
               .trim());
-      osVersion = SharedPref().pref.getString('OS_Version');
+      osVersion = SharedPref().pref.getString(SPConst.osVersion);
     } else {
-      platform = SharedPref().pref.getString('platform');
-      osName = SharedPref().pref.getString('OS_Name');
-      osVersion = SharedPref().pref.getString('OS_Version');
-      appTemp = SharedPref().pref.getString('App_Temp_Dir');
-      appMainDir = SharedPref().pref.getString('App_Main_Dir');
-      appVersion = SharedPref().pref.getString('App_Version');
-      appBuild = SharedPref().pref.getString('App_Build');
+      platform = SharedPref().pref.getString(SPConst.sysPlatform);
+      osName = SharedPref().pref.getString(SPConst.osName);
+      osVersion = SharedPref().pref.getString(SPConst.osVersion);
+      appTemp = SharedPref().pref.getString(SPConst.appTempDir);
+      appMainDir = SharedPref().pref.getString(SPConst.appMainDir);
+      appVersion = SharedPref().pref.getString(SPConst.appVersion);
+      appBuild = SharedPref().pref.getString(SPConst.appBuild);
     }
 
     /// If tmpDir is false, then create a temporary directory.
@@ -132,11 +138,14 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier, Widget? child) {
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
+          Widget? child) {
         return Directionality(
           textDirection: TextDirection.ltr,
           child: Container(
-            color: themeChangeNotifier.isDarkTheme ? AppTheme.darkBackgroundColor : AppTheme.lightBackgroundColor,
+            color: themeChangeNotifier.isDarkTheme
+                ? AppTheme.darkBackgroundColor
+                : AppTheme.lightBackgroundColor,
             child: Column(
               children: <Widget>[
                 WindowTitleBarBox(
@@ -147,9 +156,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         padding: const EdgeInsets.all(5),
                         child: Image.asset(Assets.appLogo),
                       ),
-                      Expanded(
-                        child: MoveWindow()
-                      ),
+                      Expanded(child: MoveWindow()),
                       windowControls(context)
                     ],
                   ),
@@ -158,7 +165,9 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                   child: MaterialApp(
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
-                    themeMode: themeChangeNotifier.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+                    themeMode: themeChangeNotifier.isDarkTheme
+                        ? ThemeMode.dark
+                        : ThemeMode.light,
                     debugShowCheckedModeBanner: false,
                     home: isChecking
                         ? const Scaffold(
@@ -166,7 +175,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                               child: Spinner(),
                             ),
                           )
-                        : !allChecked!
+                        : !completedSetup!
                             ? const WelcomePage()
                             : const HomeScreen(),
                   ),

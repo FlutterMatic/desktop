@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
@@ -39,7 +40,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   void initState() {
-    if (SharedPref().pref.containsKey('Tab')) {
+    if (SharedPref().pref.containsKey(SPConst.setupTab)) {
       _tab = WelcomeTab.restart;
     } else {
       _tab = WelcomeTab.gettingStarted;
@@ -321,7 +322,7 @@ class _WelcomePageState extends State<WelcomePage> {
             _tab = WelcomeTab.restart;
           }),
           onContinue: () async {
-            await SharedPref().pref.setString('Tab', 'restart');
+            await SharedPref().pref.setString(SPConst.setupTab, 'restart');
             setState(() => _tab = WelcomeTab.restart);
           },
           isInstalling: _installing,
@@ -337,8 +338,8 @@ class _WelcomePageState extends State<WelcomePage> {
                 'Your device will restart in $_restartSeconds seconds.',
                 type: SnackBarType.warning));
 
-            await SharedPref().pref.setBool('All_Checked', true);
-            await SharedPref().pref.remove('Tab');
+            await SharedPref().pref.setBool(SPConst.completedSetup, true);
+            await SharedPref().pref.remove(SPConst.setupTab);
 
             await Future<void>.delayed(Duration(seconds: _restartSeconds));
 

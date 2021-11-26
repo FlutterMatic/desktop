@@ -49,10 +49,13 @@ int userVersionInput(String? question) {
 
 Future<void> versionCollection() async {
   int major = userVersionInput('Enter the major number in version (*.*.*) : ');
-  int minor = userVersionInput('Enter the major number in version ($major.*.*) : ');
-  int patch = userVersionInput('Enter the major number in version ($major.$minor.*) : ');
+  int minor =
+      userVersionInput('Enter the major number in version ($major.*.*) : ');
+  int patch = userVersionInput(
+      'Enter the major number in version ($major.$minor.*) : ');
   if (major + minor + patch == 0) {
-    printErrorln(Exception('❌ Version cannot be $major.$minor.$patch').toString());
+    printErrorln(
+        Exception('❌ Version cannot be $major.$minor.$patch').toString());
     await versionCollection();
   } else {
     appData.version = Version(major, minor, patch);

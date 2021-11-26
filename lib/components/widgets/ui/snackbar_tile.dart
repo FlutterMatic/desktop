@@ -8,9 +8,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
-SnackBar snackBarTile(BuildContext context, String message,
-    {SnackBarType? type, Duration? duration, bool revert = false}) {
+SnackBar snackBarTile(
+  BuildContext context,
+  String message, {
+  SnackBarType? type,
+  Duration? duration,
+  bool revert = false,
+  SnackBarAction? action,
+}) {
   return SnackBar(
+    action: action,
     duration: duration ?? const Duration(seconds: 5),
     behavior: SnackBarBehavior.floating,
     width: 600,
@@ -21,7 +28,9 @@ SnackBar snackBarTile(BuildContext context, String message,
             : type == SnackBarType.warning
                 ? kYellowColor
                 : kGreenColor)
-        : (Theme.of(context).isDarkTheme ? AppTheme.darkCardColor : AppTheme.lightTheme.primaryColorLight),
+        : (Theme.of(context).isDarkTheme
+            ? AppTheme.darkCardColor
+            : AppTheme.lightTheme.primaryColorLight),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     content: Row(
       children: <Widget>[
@@ -38,7 +47,9 @@ SnackBar snackBarTile(BuildContext context, String message,
                         ? Assets.warn
                         : Assets.error,
                 color: revert
-                    ? (Theme.of(context).isDarkTheme ? AppTheme.darkBackgroundColor : AppTheme.lightBackgroundColor)
+                    ? (Theme.of(context).isDarkTheme
+                        ? AppTheme.darkBackgroundColor
+                        : AppTheme.lightBackgroundColor)
                     : (type == SnackBarType.done
                         ? kGreenColor
                         : type == SnackBarType.warning

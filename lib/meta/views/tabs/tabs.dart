@@ -10,9 +10,9 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/home/sections/home/home.dart';
-import 'package:manager/meta/views/home/sections/projects/projects.dart';
-import 'package:manager/meta/views/home/sections/pub/pub.dart';
+import 'package:manager/meta/views/tabs/sections/home/home.dart';
+import 'package:manager/meta/views/tabs/sections/projects/projects.dart';
+import 'package:manager/meta/views/tabs/sections/pub/pub.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

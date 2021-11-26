@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 class FlutterRequirementsDialog extends StatelessWidget {
   const FlutterRequirementsDialog({Key? key}) : super(key: key);

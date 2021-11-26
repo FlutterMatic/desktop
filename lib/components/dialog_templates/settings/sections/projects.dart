@@ -6,6 +6,7 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/core/services/logs.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
@@ -25,18 +26,19 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   bool _dirPathError = false;
 
   Future<void> _getEditorOptions() async {
-    if (SharedPref().pref.containsKey('Editor_Option')) {
-      setState(
-          () => _editorOption = SharedPref().pref.getString('Editor_Option'));
+    if (SharedPref().pref.containsKey(SPConst.editorOption)) {
+      setState(() =>
+          _editorOption = SharedPref().pref.getString(SPConst.editorOption));
     } else {
       setState(() => _editorOption = 'always_ask');
-      await SharedPref().pref.setString('Editor_Option', 'always_ask');
+      await SharedPref().pref.setString(SPConst.editorOption, 'always_ask');
     }
   }
 
   Future<void> _getProjectPath() async {
-    if (SharedPref().pref.containsKey('Projects_Path')) {
-      setState(() => _dirPath = SharedPref().pref.getString('Projects_Path'));
+    if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
+      setState(
+          () => _dirPath = SharedPref().pref.getString(SPConst.projectsPath));
     } else {
       setState(() => _dirPathError = true);
     }
@@ -101,7 +103,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                       });
                       await SharedPref()
                           .pref
-                          .setString('Projects_Path', _directoryPath);
+                          .setString(SPConst.projectsPath, _directoryPath);
 
                       await logger.file(LogTypeTag.info,
                           'Projects path was set to: $_directoryPath');
@@ -134,7 +136,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                     ? 'always_ask'
                     : 'preferred_editor';
             setState(() => _editorOption = _newVal);
-            await SharedPref().pref.setString('Editor_Option', _newVal);
+            await SharedPref().pref.setString(SPConst.projectsPath, _newVal);
             await logger.file(
                 LogTypeTag.info, 'Editor option was set to: $_newVal');
           },
