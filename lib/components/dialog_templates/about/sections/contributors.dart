@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:http/http.dart' as http;
+import 'package:manager/tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/secret.dart';
 
 bool _failedRequest = false;
 
@@ -20,7 +20,8 @@ class ContributorsAboutSection extends StatefulWidget {
   const ContributorsAboutSection({Key? key}) : super(key: key);
 
   @override
-  _ContributorsAboutSectionState createState() => _ContributorsAboutSectionState();
+  _ContributorsAboutSectionState createState() =>
+      _ContributorsAboutSectionState();
 }
 
 class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
@@ -57,7 +58,8 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
                     'https://github.com/FlutterMatic/FlutterMatic-desktop'),
                 child: Text(
                   'Get Started',
-                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
               ),
             ],
@@ -191,14 +193,17 @@ class _ContributorTileState extends State<ContributorTile> {
                           VSeparators.xSmall(),
                           Text(
                             'GitHub: ' + _userId,
-                            style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.7)),
+                            style: TextStyle(
+                                color: customTheme.textTheme.bodyText1!.color!
+                                    .withOpacity(0.7)),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios_rounded, color: customTheme.indicatorColor, size: 18),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        color: customTheme.indicatorColor, size: 18),
                   ],
-                ),  
+                ),
         ),
       );
     }

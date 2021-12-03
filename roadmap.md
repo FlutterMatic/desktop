@@ -1,4 +1,4 @@
-# This is the roadmap of things being and will be worked on in the future.
+# This is the road map of things being and will be worked on in the future.
 
 - [ ] Ability to create a Flutter project.
 - [ ] Being able to integrate Firebase into a Flutter project.

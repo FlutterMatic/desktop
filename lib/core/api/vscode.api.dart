@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/models.dart';
-import 'package:manager/secret.dart';
+import 'package:manager/tokens.dart';
 
 class VSCodeAPINotifier with ChangeNotifier {
   VSCodeAPI? _vscMap;
