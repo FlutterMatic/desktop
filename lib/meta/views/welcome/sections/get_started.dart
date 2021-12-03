@@ -5,7 +5,6 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:manager/core/libraries/services.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
@@ -15,6 +14,7 @@ import 'package:retry/retry.dart';
 import 'package:manager/core/libraries/api.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/services.dart';
 
 class WelcomeGettingStarted extends StatefulWidget {
   const WelcomeGettingStarted(this.onContinue, {Key? key}) : super(key: key);

@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:http/http.dart' as http;
-import 'package:manager/tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/tokens.dart';
 
 bool _failedRequest = false;
 
