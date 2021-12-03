@@ -27,8 +27,8 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         CustomTextField(
-          controller: widget.controller,
           autofocus: true,
+          controller: widget.controller,
           hintText: 'Project Name',
           filterFormatters: <TextInputFormatter>[
             TextInputFormatter.withFunction(

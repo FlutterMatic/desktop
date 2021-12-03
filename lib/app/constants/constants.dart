@@ -11,7 +11,7 @@ import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 // Shell global reference
-Shell shell = Shell(
+final Shell shell = Shell(
   commandVerbose: false,
   commentVerbose: false,
   runInShell: true,
@@ -73,6 +73,7 @@ const String _lottieBase = 'assets/lottie/';
 /// Class for assets
 class Assets {
   static const String studio = '${_imagesLogosBase}android_studio.svg';
+  static const String firebase = '${_imagesLogosBase}firebase.svg';
   static const String settings = '${_imagesIconsBase}settings.svg';
   static const String extracting = '${_lottieBase}extraction.json';
   static const String ghosts = '${_lottieBase}ghosts.json';
@@ -143,13 +144,13 @@ class InstalledContent {
 }
 
 /// List of Background activities.
-List<BgActivityTile> bgActivities = <BgActivityTile>[];
+final List<BgActivityTile> bgActivities = <BgActivityTile>[];
 
 /// List of Projects.
-List<String> projs = <String>[];
+final List<String> projs = <String>[];
 
 /// List of Projects modified dates.
-List<String> projsModDate = <String>[];
+final List<String> projsModDate = <String>[];
 
 const Color kRedColor = Color(0xffE44516);
 const Color kYellowColor = Color(0xffF7C605);
