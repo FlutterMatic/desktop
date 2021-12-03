@@ -92,6 +92,7 @@ class FlutterNotifier extends ChangeNotifier {
           dir.path + '\\tmp\\' + 'flutter.$archiveType',
           'C:\\fluttermatic\\',
         );
+
         if (extracted) {
           // value = 'Extracted Flutter-SDK';
           await logger.file(

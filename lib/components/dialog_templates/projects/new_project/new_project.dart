@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/sections/dart_config.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/description.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/name.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/org_name.dart';
@@ -56,6 +55,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   // Dart & Flutter Config
   bool _isNullSafety = true;
 
+  // Pre Config
+  Map<String, dynamic>? _firebaseJson;
+
   Future<void> _createNewProject() async {
     if (_createProjectFormKey.currentState!.validate()) {
       // Name
@@ -86,7 +88,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
         );
 
         if (_isValid) {
-          setState(() => _index = _NewProjectSections.projectDartConfig);
+          setState(() => _index = _NewProjectSections.preConfigProject);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             snackBarTile(
@@ -98,24 +100,23 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           );
         }
       }
-      // Pre configure
-      else if (_index == _NewProjectSections.projectDartConfig) {
-        setState(() => _index = _NewProjectSections.preConfigProject);
-      }
       // Creating project page.
       else if (_index == _NewProjectSections.preConfigProject) {
         try {
-          // TODO: Create a new Flutter project based on the user input.
+          setState(() => _index = _NewProjectSections.creatingProject);
           BgActivityTile _activityElement = BgActivityTile(
             title: 'Creating new Flutter project',
             activityId: Timeline.now.toString(),
           );
           bgActivities.add(_activityElement);
+          // TODO: Create a new Flutter project based on the user input.
           bgActivities.remove(_activityElement);
+          Navigator.pop(context);
           await showDialog(
             context: context,
-            builder: (_) =>
-                ProjectCreatedDialog(projectName: _nameController.text),
+            builder: (_) => ProjectCreatedDialog(
+              projectName: _nameController.text,
+            ),
           );
         } catch (_) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -172,6 +173,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 // Project Platforms
                 if (_index == _NewProjectSections.projectPlatforms)
                   ProjectPlatformsSection(
+                    isNullSafety: _isNullSafety,
                     ios: _ios,
                     android: _android,
                     windows: _windows,
@@ -185,6 +187,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                       bool windows = true,
                       bool macos = true,
                       bool linux = true,
+                      bool isNullSafety = true,
                     }) {
                       setState(() {
                         _ios = ios;
@@ -193,26 +196,20 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                         _windows = windows;
                         _macos = macos;
                         _linux = linux;
-                      });
-                    },
-                  ),
-                if (_index == _NewProjectSections.projectDartConfig)
-                  ProjectDartConfigSection(
-                    isNullSafety: _isNullSafety,
-                    onChanged: ({
-                      bool isNullSafety = true,
-                    }) {
-                      setState(() {
                         _isNullSafety = isNullSafety;
                       });
                     },
                   ),
                 if (_index == _NewProjectSections.preConfigProject)
-                  const ProjectPreConfigSection(),
+                  ProjectPreConfigSection(
+                    firebaseJson: _firebaseJson,
+                    onFirebaseUpload: (Map<String, dynamic>? json) {
+                      setState(() => _firebaseJson = json);
+                    },
+                  ),
               ],
             ),
           ),
-
           // Creating Project Indicator
           if (_index == _NewProjectSections.creatingProject)
             Padding(
@@ -222,7 +219,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   const CustomLinearProgressIndicator(),
-                  VSeparators.normal(),
+                  VSeparators.xLarge(),
                   const Text('Creating new project. Hold on tight.'),
                 ],
               ),
@@ -245,7 +242,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                   onPressed: _createNewProject,
                   width: 120,
                   child: Text(
-                    'Next',
+                    _index == _NewProjectSections.preConfigProject
+                        ? 'Create'
+                        : 'Next',
                     style: TextStyle(
                       color: customTheme.textTheme.bodyText1!.color,
                     ),
@@ -264,7 +263,6 @@ enum _NewProjectSections {
   projectDescription,
   projectOrgName,
   projectPlatforms,
-  projectDartConfig,
   preConfigProject,
   creatingProject,
 }
@@ -286,29 +284,49 @@ class ProjectCreatedDialog extends StatelessWidget {
               'Your new project has successfully been created. You should be able to open your project and run it!',
               textAlign: TextAlign.center),
           VSeparators.large(),
-          RectangleButton(
-            width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
-            onPressed: () async {
-              // TODO: Open project in the editor.
-              Navigator.pop(context);
-            },
-            child: const Text('Open in Preferred Editor'),
-          ),
-          VSeparators.small(),
-          RectangleButton(
-            width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+          infoWidget(context,
+              'If you are new here, take some time to read the documentation and how you can automate some workflows you do day to day in your Flutter environment.'),
+          VSeparators.large(),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RectangleButton(
+                  width: double.infinity,
+                  color: Colors.blueGrey,
+                  splashColor: Colors.blueGrey.withOpacity(0.5),
+                  focusColor: Colors.blueGrey.withOpacity(0.5),
+                  hoverColor: Colors.grey.withOpacity(0.5),
+                  highlightColor: Colors.blueGrey.withOpacity(0.5),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'You can still find your project in the Projects tab.',
+                        revert: true,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Close'),
+                ),
+              ),
+              HSeparators.small(),
+              Expanded(
+                child: RectangleButton(
+                  width: double.infinity,
+                  color: Colors.blueGrey,
+                  splashColor: Colors.blueGrey.withOpacity(0.5),
+                  focusColor: Colors.blueGrey.withOpacity(0.5),
+                  hoverColor: Colors.grey.withOpacity(0.5),
+                  highlightColor: Colors.blueGrey.withOpacity(0.5),
+                  onPressed: () async {
+                    // TODO: Open project in the editor.
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Open in Preferred Editor'),
+                ),
+              ),
+            ],
           ),
         ],
       ),

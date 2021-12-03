@@ -12,6 +12,7 @@ class ProjectPlatformsSection extends StatefulWidget {
   final bool windows;
   final bool macos;
   final bool linux;
+  final bool isNullSafety;
 
   final Function({
     bool ios,
@@ -20,6 +21,7 @@ class ProjectPlatformsSection extends StatefulWidget {
     bool windows,
     bool macos,
     bool linux,
+    bool isNullSafety,
   }) onChanged;
 
   const ProjectPlatformsSection({
@@ -31,6 +33,7 @@ class ProjectPlatformsSection extends StatefulWidget {
     required this.windows,
     required this.macos,
     required this.linux,
+    required this.isNullSafety,
   }) : super(key: key);
 
   @override
@@ -46,91 +49,152 @@ class _ProjectPlatformsSectionState extends State<ProjectPlatformsSection> {
       children: <Widget>[
         const Text(
             'Choose which environments you want to enable for your new Flutter project.'),
-        VSeparators.small(),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            widget.onChanged(
-              ios: val ?? true,
-              android: widget.android,
-              web: widget.web,
-              windows: widget.windows,
-              macos: widget.macos,
-              linux: widget.linux,
-            );
-          },
-          value: widget.ios,
-          text: 'iOS',
+        VSeparators.normal(),
+        RoundContainer(
+          color: Colors.blueGrey.withOpacity(0.1),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: CheckBoxElement(
+                  onChanged: (bool? val) {
+                    widget.onChanged(
+                      ios: val ?? true,
+                      android: widget.android,
+                      web: widget.web,
+                      windows: widget.windows,
+                      macos: widget.macos,
+                      linux: widget.linux,
+                    );
+                  },
+                  value: widget.ios,
+                  text: 'iOS',
+                ),
+              ),
+              HSeparators.normal(),
+              Expanded(
+                child: CheckBoxElement(
+                  onChanged: (bool? val) {
+                    widget.onChanged(
+                      ios: widget.ios,
+                      android: val ?? true,
+                      web: widget.web,
+                      windows: widget.windows,
+                      macos: widget.macos,
+                      linux: widget.linux,
+                    );
+                  },
+                  value: widget.android,
+                  text: 'Android',
+                ),
+              ),
+              HSeparators.normal(),
+              Expanded(
+                child: CheckBoxElement(
+                  onChanged: (bool? val) {
+                    widget.onChanged(
+                      ios: widget.ios,
+                      android: widget.android,
+                      web: val ?? true,
+                      windows: widget.windows,
+                      macos: widget.macos,
+                      linux: widget.linux,
+                    );
+                  },
+                  value: widget.web,
+                  text: 'Web',
+                ),
+              ),
+            ],
+          ),
         ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            widget.onChanged(
-              ios: widget.ios,
-              android: val ?? true,
-              web: widget.web,
-              windows: widget.windows,
-              macos: widget.macos,
-              linux: widget.linux,
-            );
-          },
-          value: widget.android,
-          text: 'Android',
+        VSeparators.normal(),
+        RoundContainer(
+          color: Colors.blueGrey.withOpacity(0.1),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: CheckBoxElement(
+                  onChanged: (bool? val) {
+                    widget.onChanged(
+                      ios: widget.ios,
+                      android: widget.android,
+                      web: widget.web,
+                      windows: val ?? true,
+                      macos: widget.macos,
+                      linux: widget.linux,
+                    );
+                  },
+                  value: widget.windows,
+                  text: 'Windows',
+                ),
+              ),
+              HSeparators.normal(),
+              Expanded(
+                child: CheckBoxElement(
+                  onChanged: (bool? val) {
+                    widget.onChanged(
+                      ios: widget.ios,
+                      android: widget.android,
+                      web: widget.web,
+                      windows: widget.windows,
+                      macos: val ?? true,
+                      linux: widget.linux,
+                    );
+                  },
+                  value: widget.macos,
+                  text: 'MacOS',
+                ),
+              ),
+              HSeparators.normal(),
+              Expanded(
+                child: CheckBoxElement(
+                  onChanged: (bool? val) {
+                    widget.onChanged(
+                      ios: widget.ios,
+                      android: widget.android,
+                      web: widget.web,
+                      windows: widget.windows,
+                      macos: widget.macos,
+                      linux: val ?? true,
+                    );
+                  },
+                  value: widget.linux,
+                  text: 'Linux',
+                ),
+              ),
+            ],
+          ),
         ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            widget.onChanged(
-              ios: widget.ios,
-              android: widget.android,
-              web: val ?? true,
-              windows: widget.windows,
-              macos: widget.macos,
-              linux: widget.linux,
-            );
-          },
-          value: widget.web,
-          text: 'Web',
+        VSeparators.normal(),
+        RoundContainer(
+          color: Colors.blueGrey.withOpacity(0.1),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              informationWidget(
+                'Dart supports null-safety. Null safety helps you catch probable bugs before they happen. Learn more about null-safety from the official Dart documentations.',
+                type: InformationType.info,
+              ),
+              VSeparators.normal(),
+              CheckBoxElement(
+                onChanged: (bool? val) {
+                  widget.onChanged(
+                    ios: widget.ios,
+                    android: widget.android,
+                    web: widget.web,
+                    windows: widget.windows,
+                    macos: widget.macos,
+                    linux: widget.linux,
+                    isNullSafety: val ?? true,
+                  );
+                },
+                value: widget.isNullSafety,
+                text: 'Enable null-safety',
+              ),
+            ],
+          ),
         ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            widget.onChanged(
-              ios: widget.ios,
-              android: widget.android,
-              web: widget.web,
-              windows: val ?? true,
-              macos: widget.macos,
-              linux: widget.linux,
-            );
-          },
-          value: widget.windows,
-          text: 'Windows',
-        ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            widget.onChanged(
-              ios: widget.ios,
-              android: widget.android,
-              web: widget.web,
-              windows: widget.windows,
-              macos: val ?? true,
-              linux: widget.linux,
-            );
-          },
-          value: widget.macos,
-          text: 'MacOS',
-        ),
-        CheckBoxElement(
-          onChanged: (bool? val) {
-            widget.onChanged(
-              ios: widget.ios,
-              android: widget.android,
-              web: widget.web,
-              windows: widget.windows,
-              macos: widget.macos,
-              linux: val ?? true,
-            );
-          },
-          value: widget.linux,
-          text: 'Linux',
-        ),
+        VSeparators.normal(),
         if (!validatePlatformSelection(
           ios: widget.ios,
           android: widget.android,
