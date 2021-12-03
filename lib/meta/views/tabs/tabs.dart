@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData customTheme = Theme.of(context);
     Size _size = MediaQuery.of(context).size;
 
     bool _showShortView = _size.width < 900;
@@ -93,24 +94,58 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                           const Spacer(),
-                          _tabTile(
-                            context,
-                            icon: SvgPicture.asset(
-                              Assets.settings,
-                              color: context
-                                      .read<ThemeChangeNotifier>()
-                                      .isDarkTheme
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                            name: 'Settings',
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (_) => const SettingDialog(),
-                              );
-                            },
-                            selected: true,
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: _tabTile(
+                                  context,
+                                  icon: SvgPicture.asset(
+                                    Assets.settings,
+                                    color: context
+                                            .read<ThemeChangeNotifier>()
+                                            .isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  name: 'Settings',
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => const SettingDialog(),
+                                    );
+                                  },
+                                  selected: true,
+                                ),
+                              ),
+                              if (true)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, bottom: 10),
+                                  child: RectangleButton(
+                                    width: 40,
+                                    height: 40,
+                                    hoverColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    color: customTheme.colorScheme.secondary
+                                        .withOpacity(0.2),
+                                    child: const Icon(Icons.download_rounded),
+                                    onPressed: () {
+                                      // TODO(@ZiyadF296): Show update FlutterMatic dialog
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        snackBarTile(
+                                          context,
+                                          'There is a new version of FlutterMatic ready to be installed on your device.',
+                                          type: SnackBarType.warning,
+                                          revert: true,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                            ],
                           ),
                         ],
                       ),

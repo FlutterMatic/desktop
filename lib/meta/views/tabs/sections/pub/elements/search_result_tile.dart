@@ -68,6 +68,7 @@ class PubPackageSearchResultTile extends StatelessWidget {
                       context,
                       'Dependency has been copied to your clipboard.',
                       type: SnackBarType.done,
+                      revert: true,
                     ),
                   );
                 },

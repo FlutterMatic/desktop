@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
+import 'package:manager/components/dialog_templates/projects/new_project/sections/dart_config.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/description.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/name.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/org_name.dart';
 import 'package:manager/components/dialog_templates/projects/new_project/sections/platforms.dart';
+import 'package:manager/components/dialog_templates/projects/new_project/sections/pre_config.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class NewProjectDialog extends StatefulWidget {
@@ -21,17 +23,17 @@ class NewProjectDialog extends StatefulWidget {
 }
 
 class _NewProjectDialogState extends State<NewProjectDialog> {
-  //Inputs
-  String? _projectName;
-  String? _projectDescription;
-  String? _projectOrg;
+  // Input Controllers
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _orgController = TextEditingController();
 
-  //Utils
-  int _index = 0;
+  // Utils
+  _NewProjectSections _index = _NewProjectSections.projectName;
 
   final GlobalKey<FormState> _createProjectFormKey = GlobalKey<FormState>();
 
-  //Platforms
+  // Platforms
   bool _ios = true;
   bool _android = true;
   bool _web = true;
@@ -40,43 +42,68 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   bool _linux = true;
 
   bool _projectNameCondition() =>
-      _projectName != null &&
-      _projectName!.startsWith(RegExp('[a-zA-Z]')) &&
-      !_projectName!.contains(RegExp('[0-9]'));
+      _nameController.text != '' &&
+      _nameController.text.startsWith(RegExp('[a-zA-Z]')) &&
+      !_nameController.text.contains(RegExp('[0-9]'));
 
   bool _validateOrgName() =>
-      _projectOrg != null &&
-      _projectOrg!.contains('.') &&
-      _projectOrg!.contains(RegExp('[A-Za-z_]')) &&
-      !_projectOrg!.endsWith('.') &&
-      !_projectOrg!.endsWith('_');
+      _orgController.text != '' &&
+      _orgController.text.contains('.') &&
+      _orgController.text.contains(RegExp('[A-Za-z_]')) &&
+      !_orgController.text.endsWith('.') &&
+      !_orgController.text.endsWith('_');
+
+  // Dart & Flutter Config
+  bool _isNullSafety = true;
 
   Future<void> _createNewProject() async {
     if (_createProjectFormKey.currentState!.validate()) {
-      //Index 0 - Name
-      if (_index == 0 && _projectNameCondition()) {
-        setState(() => _projectName = _projectName!.toLowerCase());
-        setState(() => _index = 1);
+      // Name
+      if (_index == _NewProjectSections.projectName &&
+          _projectNameCondition()) {
+        setState(
+            () => _nameController.text = _nameController.text.toLowerCase());
+        setState(() => _index = _NewProjectSections.projectDescription);
       }
-      // Index 1 - Description
-      else if (_index == 1) {
-        setState(() => _index = 2);
+      // Description
+      else if (_index == _NewProjectSections.projectDescription) {
+        setState(() => _index = _NewProjectSections.projectOrgName);
       }
-      // Index 2 - Org Name
-      else if (_index == 2 && _validateOrgName()) {
-        setState(() => _index = 3);
+      // Organization Name
+      else if (_index == _NewProjectSections.projectOrgName &&
+          _validateOrgName()) {
+        setState(() => _index = _NewProjectSections.projectPlatforms);
       }
-      // Index 3 - Platforms
-      else if (_index == 3 &&
-          validatePlatformSelection(
-            ios: _ios,
-            android: _android,
-            web: _web,
-            windows: _windows,
-            macos: _macos,
-            linux: _linux,
-          )) {
-        setState(() => _index = 4);
+      // Platforms
+      else if (_index == _NewProjectSections.projectPlatforms) {
+        bool _isValid = validatePlatformSelection(
+          ios: _ios,
+          android: _android,
+          web: _web,
+          windows: _windows,
+          macos: _macos,
+          linux: _linux,
+        );
+
+        if (_isValid) {
+          setState(() => _index = _NewProjectSections.projectDartConfig);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'Please select appropriate platforms.',
+              type: SnackBarType.error,
+              revert: true,
+            ),
+          );
+        }
+      }
+      // Pre configure
+      else if (_index == _NewProjectSections.projectDartConfig) {
+        setState(() => _index = _NewProjectSections.preConfigProject);
+      }
+      // Creating project page.
+      else if (_index == _NewProjectSections.preConfigProject) {
         try {
           // TODO: Create a new Flutter project based on the user input.
           BgActivityTile _activityElement = BgActivityTile(
@@ -87,7 +114,8 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
           bgActivities.remove(_activityElement);
           await showDialog(
             context: context,
-            builder: (_) => ProjectCreatedDialog(projectName: _projectName!),
+            builder: (_) =>
+                ProjectCreatedDialog(projectName: _nameController.text),
           );
         } catch (_) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -111,76 +139,97 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           DialogHeader(
-            leading: _index != 0 && _index != 4
+            leading: _index != _NewProjectSections.projectName &&
+                    _index != _NewProjectSections.creatingProject
                 ? SquareButton(
                     icon: Icon(
                       Icons.arrow_back_ios_rounded,
                       color: customTheme.textTheme.bodyText1!.color,
                     ),
-                    hoverColor: customTheme.colorScheme.secondary,
-                    onPressed: () => setState(() => _index--),
+                    color: Colors.transparent,
+                    onPressed: () => setState(() =>
+                        _index = _NewProjectSections.values[_index.index - 1]),
                   )
                 : null,
-            title: 'Create New Project',
+            title: 'New Project',
           ),
           Form(
             key: _createProjectFormKey,
             child: Column(
               children: <Widget>[
                 // Project Name
-                if (_index == 0)
-                  ProjectNameSection(
-                    onChanged: (String? val) =>
-                        setState(() => _projectName = val),
-                  ),
+                if (_index == _NewProjectSections.projectName)
+                  ProjectNameSection(controller: _nameController),
                 // Project Description
-                if (_index == 1)
-                  ProjectDescriptionSection(
-                    onChanged: (String? val) =>
-                        setState(() => _projectDescription = val),
-                  ),
+                if (_index == _NewProjectSections.projectDescription)
+                  ProjectDescriptionSection(controller: _descriptionController),
                 // Project Org Name
-                if (_index == 2)
+                if (_index == _NewProjectSections.projectOrgName)
                   ProjectOrgNameSection(
-                    projName: _projectName!,
-                    onChanged: (String? val) =>
-                        setState(() => _projectOrg = val),
+                    projName: _nameController.text,
+                    controller: _orgController,
                   ),
+                // Project Platforms
+                if (_index == _NewProjectSections.projectPlatforms)
+                  ProjectPlatformsSection(
+                    ios: _ios,
+                    android: _android,
+                    windows: _windows,
+                    macos: _macos,
+                    linux: _linux,
+                    web: _web,
+                    onChanged: ({
+                      bool ios = true,
+                      bool android = true,
+                      bool web = true,
+                      bool windows = true,
+                      bool macos = true,
+                      bool linux = true,
+                    }) {
+                      setState(() {
+                        _ios = ios;
+                        _android = android;
+                        _web = web;
+                        _windows = windows;
+                        _macos = macos;
+                        _linux = linux;
+                      });
+                    },
+                  ),
+                if (_index == _NewProjectSections.projectDartConfig)
+                  ProjectDartConfigSection(
+                    isNullSafety: _isNullSafety,
+                    onChanged: ({
+                      bool isNullSafety = true,
+                    }) {
+                      setState(() {
+                        _isNullSafety = isNullSafety;
+                      });
+                    },
+                  ),
+                if (_index == _NewProjectSections.preConfigProject)
+                  const ProjectPreConfigSection(),
               ],
             ),
           ),
-          // Project Platforms
-          if (_index == 3)
-            ProjectPlatformsSection(
-              onChanged: (bool ios, bool android, bool web, bool windows,
-                  bool macos, bool linux) {
-                setState(() {
-                  _ios = ios;
-                  _android = android;
-                  _web = web;
-                  _windows = windows;
-                  _macos = macos;
-                  _linux = linux;
-                });
-              },
-            ),
+
           // Creating Project Indicator
-          if (_index == 4)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                VSeparators.xLarge(),
-                const Center(child: Spinner(thickness: 3)),
-                VSeparators.xLarge(),
-                const Text(
-                  'Creating your new Flutter project. This may take a while.',
-                ),
-              ],
+          if (_index == _NewProjectSections.creatingProject)
+            Padding(
+              padding: const EdgeInsets.only(left: 50, right: 50, top: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  const CustomLinearProgressIndicator(),
+                  VSeparators.normal(),
+                  const Text('Creating new project. Hold on tight.'),
+                ],
+              ),
             ),
           VSeparators.small(),
           // Cancel & Next Buttons
-          if (_index != 4)
+          if (_index != _NewProjectSections.creatingProject)
             Row(
               children: <Widget>[
                 TextButton(
@@ -208,6 +257,16 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       ),
     );
   }
+}
+
+enum _NewProjectSections {
+  projectName,
+  projectDescription,
+  projectOrgName,
+  projectPlatforms,
+  projectDartConfig,
+  preConfigProject,
+  creatingProject,
 }
 
 class ProjectCreatedDialog extends StatelessWidget {

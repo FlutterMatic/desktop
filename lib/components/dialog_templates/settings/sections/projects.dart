@@ -136,7 +136,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                     ? 'always_ask'
                     : 'preferred_editor';
             setState(() => _editorOption = _newVal);
-            await SharedPref().pref.setString(SPConst.projectsPath, _newVal);
+            await SharedPref().pref.setString(SPConst.editorOption, _newVal);
             await logger.file(
                 LogTypeTag.info, 'Editor option was set to: $_newVal');
           },

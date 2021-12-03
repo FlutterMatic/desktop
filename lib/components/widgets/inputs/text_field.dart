@@ -9,7 +9,12 @@ class CustomTextField extends StatelessWidget {
   final String? hintText;
   final Function(String?)? validator;
   final ValueChanged<String>? onChanged;
-  final FilteringTextInputFormatter? filteringTextInputFormatter;
+
+  /// If [filterFormatters] is provided then this will be no effect.
+  final TextInputFormatter? filteringTextInputFormatter;
+
+  /// If this is provided then [filteringTextInputFormatter] will be ignored.
+  final List<TextInputFormatter>? filterFormatters;
   final int? numLines;
   final int? maxLength;
   final dynamic suffixIcon;
@@ -49,6 +54,7 @@ class CustomTextField extends StatelessWidget {
     this.onEditCompleted,
     this.readOnly = false,
     this.textCapitalization,
+    this.filterFormatters,
   }) : super(key: key);
 
   @override
@@ -67,9 +73,10 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       maxLines: numLines ?? 1,
       style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-      inputFormatters: <TextInputFormatter>[
-        filteringTextInputFormatter ?? FilteringTextInputFormatter.deny('')
-      ],
+      inputFormatters: filterFormatters ??
+          <TextInputFormatter>[
+            filteringTextInputFormatter ?? FilteringTextInputFormatter.deny('')
+          ],
       decoration: InputDecoration(
         errorStyle: const TextStyle(color: kRedColor),
         border: OutlineInputBorder(

@@ -41,7 +41,7 @@ class FlutterNotifier extends ChangeNotifier {
       /// stable/windows/flutter_windows_2.2.3-stable.zip
       String? archive = context.read<FlutterSDKNotifier>().sdk;
 
-      /// The comppressed archive type.
+      /// The compressed archive type.
       String? archiveType = Platform.isLinux ? 'tar.xz' : 'zip';
 
       /// Checking for flutter path,
@@ -95,7 +95,7 @@ class FlutterNotifier extends ChangeNotifier {
         if (extracted) {
           // value = 'Extracted Flutter-SDK';
           await logger.file(
-              LogTypeTag.info, 'Flutter-SDK extraction was successfull');
+              LogTypeTag.info, 'Flutter-SDK extraction was successful');
         } else {
           // value = 'Extracting Flutter-SDK failed';
           _progress = Progress.failed;

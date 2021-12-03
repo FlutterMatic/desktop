@@ -38,15 +38,20 @@ class WelcomeButton extends StatelessWidget {
           opacity: (_disabled || loading) ? 0.2 : 1,
           child: RectangleButton(
             onPressed: progress == Progress.done ? onContinue : onInstall,
-            color: Theme.of(context).isDarkTheme ? AppTheme.lightBackgroundColor : AppTheme.darkBackgroundColor,
-            hoverColor: Theme.of(context).isDarkTheme ? AppTheme.lightCardColor : AppTheme.darkCardColor,
+            color: Theme.of(context).isDarkTheme
+                ? AppTheme.lightBackgroundColor
+                : AppTheme.darkBackgroundColor,
+            hoverColor: Theme.of(context).isDarkTheme
+                ? AppTheme.lightCardColor
+                : AppTheme.darkCardColor,
             child: loading
-                ? const Spinner(size: 20, color: Colors.white, thickness: 2)
+                ? const Spinner(size: 20, thickness: 2)
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        buttonText ?? (progress == Progress.done ? 'Continue' : 'Check'),
+                        buttonText ??
+                            (progress == Progress.done ? 'Continue' : 'Check'),
                         style: TextStyle(
                           color: Theme.of(context).isDarkTheme
                               ? AppTheme.lightTheme.textTheme.bodyText1!.color

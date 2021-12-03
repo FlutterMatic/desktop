@@ -3,6 +3,7 @@ class SPConst {
   static String setupTab = 'SETUP_TAB';
   static String homeShowGuide = 'HOME_SHOW_GUIDE';
   static String completedSetup = 'COMPLETED_SETUP';
+  static String guideFinishedHashes = 'GUIDE_FINISHED_HASHES';
 
   // App Data
   static String appBuild = 'APP_BUILD';

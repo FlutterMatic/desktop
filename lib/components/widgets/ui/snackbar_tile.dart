@@ -22,12 +22,14 @@ SnackBar snackBarTile(
     behavior: SnackBarBehavior.floating,
     width: 600,
     elevation: 0,
-    backgroundColor: (revert && type != null)
-        ? (type == SnackBarType.error
-            ? kRedColor
-            : type == SnackBarType.warning
-                ? kYellowColor
-                : kGreenColor)
+    backgroundColor: revert
+        ? (type == null
+            ? Colors.white
+            : type == SnackBarType.error
+                ? kRedColor
+                : type == SnackBarType.warning
+                    ? kYellowColor
+                    : kGreenColor)
         : (Theme.of(context).isDarkTheme
             ? AppTheme.darkCardColor
             : AppTheme.lightTheme.primaryColorLight),
@@ -68,6 +70,17 @@ SnackBar snackBarTile(
         ),
       ],
     ),
+  );
+}
+
+SnackBarAction? snackBarAction({
+  required String text,
+  required Function() onPressed,
+}) {
+  return SnackBarAction(
+    label: text,
+    onPressed: onPressed,
+    textColor: Colors.white,
   );
 }
 

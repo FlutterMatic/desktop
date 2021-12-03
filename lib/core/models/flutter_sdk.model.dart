@@ -1,5 +1,5 @@
 class FlutterSDK {
-  Map<String, dynamic>? data;
+  final Map<String, dynamic>? data;
 
   FlutterSDK(this.data);
 

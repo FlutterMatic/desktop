@@ -162,6 +162,7 @@ class _HomePubSectionState extends State<HomePubSection> {
           .map((dynamic e) => PubPackageObject(name: e.toString()))
           .toList()));
     }
+
     setState(() => _loadingSearch = false);
   }
 

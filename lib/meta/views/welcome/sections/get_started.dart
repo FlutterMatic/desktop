@@ -5,6 +5,7 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:manager/core/libraries/services.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
@@ -40,9 +41,11 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             apiData = context.read<FlutterMaticAPINotifier>().apiMap;
           }
         },
-        onRetry: (Exception e) {
+        onRetry: (Exception e) async {
           _totalAttempts++;
           if (_totalAttempts == _options.maxAttempts) {
+            await logger.file(LogTypeTag.info,
+                'Couldn\'t initialize for setup because of connection issues.');
             _result = 'error';
             return;
           }
@@ -56,9 +59,11 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             sdkData = context.read<FlutterSDKNotifier>().sdkMap;
           }
         },
-        onRetry: (Exception e) {
+        onRetry: (Exception e) async {
           _totalAttempts++;
           if (_totalAttempts == _options.maxAttempts) {
+            await logger.file(LogTypeTag.info,
+                'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
             _result = 'error';
             return;
           }
@@ -73,9 +78,11 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             sha = context.read<VSCodeAPINotifier>().sha;
           }
         },
-        onRetry: (Exception e) {
+        onRetry: (Exception e) async {
           _totalAttempts++;
           if (_totalAttempts == _options.maxAttempts) {
+            await logger.file(LogTypeTag.info,
+                'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
             _result = 'error';
             return;
           }

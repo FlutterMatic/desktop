@@ -6,11 +6,32 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class ProjectPlatformsSection extends StatefulWidget {
-  final Function(bool ios, bool android, bool web, bool windows, bool macos,
-      bool linux) onChanged;
+  final bool ios;
+  final bool android;
+  final bool web;
+  final bool windows;
+  final bool macos;
+  final bool linux;
 
-  const ProjectPlatformsSection({Key? key, required this.onChanged})
-      : super(key: key);
+  final Function({
+    bool ios,
+    bool android,
+    bool web,
+    bool windows,
+    bool macos,
+    bool linux,
+  }) onChanged;
+
+  const ProjectPlatformsSection({
+    Key? key,
+    required this.onChanged,
+    required this.ios,
+    required this.android,
+    required this.web,
+    required this.windows,
+    required this.macos,
+    required this.linux,
+  }) : super(key: key);
 
   @override
   _ProjectPlatformsSectionState createState() =>
@@ -18,14 +39,6 @@ class ProjectPlatformsSection extends StatefulWidget {
 }
 
 class _ProjectPlatformsSectionState extends State<ProjectPlatformsSection> {
-  // Platforms
-  bool _ios = true;
-  bool _android = true;
-  bool _web = true;
-  bool _windows = true;
-  bool _macos = true;
-  bool _linux = true;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,59 +49,95 @@ class _ProjectPlatformsSectionState extends State<ProjectPlatformsSection> {
         VSeparators.small(),
         CheckBoxElement(
           onChanged: (bool? val) {
-            setState(() => _ios = !_ios);
-            widget.onChanged(_ios, _android, _web, _windows, _macos, _linux);
+            widget.onChanged(
+              ios: val ?? true,
+              android: widget.android,
+              web: widget.web,
+              windows: widget.windows,
+              macos: widget.macos,
+              linux: widget.linux,
+            );
           },
-          value: _ios,
+          value: widget.ios,
           text: 'iOS',
         ),
         CheckBoxElement(
           onChanged: (bool? val) {
-            setState(() => _android = !_android);
-            widget.onChanged(_ios, _android, _web, _windows, _macos, _linux);
+            widget.onChanged(
+              ios: widget.ios,
+              android: val ?? true,
+              web: widget.web,
+              windows: widget.windows,
+              macos: widget.macos,
+              linux: widget.linux,
+            );
           },
-          value: _android,
+          value: widget.android,
           text: 'Android',
         ),
         CheckBoxElement(
           onChanged: (bool? val) {
-            setState(() => _web = !_web);
-            widget.onChanged(_ios, _android, _web, _windows, _macos, _linux);
+            widget.onChanged(
+              ios: widget.ios,
+              android: widget.android,
+              web: val ?? true,
+              windows: widget.windows,
+              macos: widget.macos,
+              linux: widget.linux,
+            );
           },
-          value: _web,
+          value: widget.web,
           text: 'Web',
         ),
         CheckBoxElement(
           onChanged: (bool? val) {
-            setState(() => _windows = !_windows);
-            widget.onChanged(_ios, _android, _web, _windows, _macos, _linux);
+            widget.onChanged(
+              ios: widget.ios,
+              android: widget.android,
+              web: widget.web,
+              windows: val ?? true,
+              macos: widget.macos,
+              linux: widget.linux,
+            );
           },
-          value: _windows,
+          value: widget.windows,
           text: 'Windows',
         ),
         CheckBoxElement(
           onChanged: (bool? val) {
-            setState(() => _macos = !_macos);
-            widget.onChanged(_ios, _android, _web, _windows, _macos, _linux);
+            widget.onChanged(
+              ios: widget.ios,
+              android: widget.android,
+              web: widget.web,
+              windows: widget.windows,
+              macos: val ?? true,
+              linux: widget.linux,
+            );
           },
-          value: _macos,
+          value: widget.macos,
           text: 'MacOS',
         ),
         CheckBoxElement(
           onChanged: (bool? val) {
-            setState(() => _linux = !_linux);
-            widget.onChanged(_ios, _android, _web, _windows, _macos, _linux);
+            widget.onChanged(
+              ios: widget.ios,
+              android: widget.android,
+              web: widget.web,
+              windows: widget.windows,
+              macos: widget.macos,
+              linux: val ?? true,
+            );
           },
-          value: _linux,
+          value: widget.linux,
           text: 'Linux',
         ),
         if (!validatePlatformSelection(
-          ios: _ios,
-          android: _android,
-          web: _web,
-          windows: _windows,
-          macos: _macos,
-          linux: _linux,
+          ios: widget.ios,
+          android: widget.android,
+          web: widget.web,
+          windows: widget.windows,
+          macos: widget.macos,
+          linux: widget.linux,
         ))
           informationWidget(
             'You will need to choose at least one platform. You will be able to change it later.',

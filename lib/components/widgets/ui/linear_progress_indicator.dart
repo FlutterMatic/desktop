@@ -11,7 +11,9 @@ class CustomLinearProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).isDarkTheme ? const Color(0xff262F34) : Colors.white,
+        color: Theme.of(context).isDarkTheme
+            ? const Color(0xff262F34)
+            : Colors.white,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
           color: Colors.blueGrey.withOpacity(0.4),

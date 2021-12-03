@@ -171,10 +171,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                     debugShowCheckedModeBanner: false,
                     home: isChecking
                         ? const Scaffold(
-                            body: Center(
-                              child: Spinner(),
-                            ),
-                          )
+                            body: Center(child: Spinner(thickness: 2)))
                         : !completedSetup!
                             ? const WelcomePage()
                             : const HomeScreen(),
