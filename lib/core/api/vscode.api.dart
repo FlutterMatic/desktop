@@ -1,6 +1,5 @@
 // 🎯 Dart imports:
 import 'dart:convert';
-import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/widgets.dart';
@@ -10,17 +9,18 @@ import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/models.dart';
-import 'package:manager/tokens.dart';
 
 class VSCodeAPINotifier with ChangeNotifier {
   VSCodeAPI? _vscMap;
   String? _tagName, _sha;
+
+  // Getters
   VSCodeAPI? get vscMap => _vscMap;
   String? get tagName => _tagName;
   String? get sha => _sha;
+
   Future<void> fetchVscAPIData() async {
-    Map<String, String> _header = <String, String>{
-      HttpHeaders.authorizationHeader: 'token ' + personalAccessToken,
+    const Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
       'Accept': 'application/vnd.github.v3+json',
     };
@@ -53,8 +53,7 @@ class VSCodeAPINotifier with ChangeNotifier {
         notifyListeners();
       }
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
+      // If the server did not return a 200 OK response, then throw an exception.
       throw Exception('Failed to Fetch API data.');
     }
   }

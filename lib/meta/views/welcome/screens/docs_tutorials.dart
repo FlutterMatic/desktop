@@ -2,27 +2,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// 📦 Package imports:
-import 'package:provider/provider.dart';
-
 // 🌎 Project imports:
 import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/utils.dart';
 
-// hi
 class SystemRequirementsScreen extends StatefulWidget {
   const SystemRequirementsScreen({Key? key}) : super(key: key);
 
   @override
-  _SystemRequirementsScreenState createState() => _SystemRequirementsScreenState();
+  _SystemRequirementsScreenState createState() =>
+      _SystemRequirementsScreenState();
 }
 
 class _SystemRequirementsScreenState extends State<SystemRequirementsScreen> {
   List<String?>? data;
 
   Future<void> _loadData() async {
-    String _data = await rootBundle.loadString('assets/markdown/flutter_requirements.md');
+    String _data =
+        await rootBundle.loadString('assets/markdown/flutter_requirements.md');
     setState(() => data = _data.split('------'));
   }
 

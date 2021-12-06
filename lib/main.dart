@@ -70,10 +70,13 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
     }
     if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
-      List<ProcessResult?>? platformData = Platform.isWindows
-          ? await shell
-              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"')
-          : null;
+      List<ProcessResult?>? platformData;
+      if (Platform.isWindows) {
+        platformData = await shell
+            .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"');
+      } else {
+        platformData = null;
+      }
       await SharedPref()
           .pref
           .setString(SPConst.sysPlatform, Platform.operatingSystem)

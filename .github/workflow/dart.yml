@@ -5,7 +5,7 @@ on:
     branches: [ redesign ]
 jobs:
   flutter_analyze:
-    name: Ananlyzing code on ${{ matrix.os }}
+    name: Analyzing code on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

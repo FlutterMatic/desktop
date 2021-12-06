@@ -4,12 +4,10 @@ import 'package:flutter/services.dart';
 
 // 📦 Package imports:
 import 'package:intl/intl.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';

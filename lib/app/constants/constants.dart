@@ -20,19 +20,22 @@ final Shell shell = Shell(
 
 bool? completedSetup;
 
-// VSCode Git API data object.
+/// Whether there is a new version of the app available.
+bool isNewVersionAvailable = false;
+
+/// VSCode Git API data object.
 VSCodeAPI? vscodeApi;
 
-// Fluttermatic API data object.
+/// Fluttermatic API data object.
 FluttermaticAPI? apiData;
 
-// Flutter-SDK API data object.
+/// Flutter-SDK API data object.
 FlutterSDK? sdkData;
 
-// Tag name for vscode
+/// Tag name for vscode
 String? tagName;
 
-// SHA for vscode
+/// SHA for vscode
 String? sha;
 
 // OS
@@ -48,7 +51,8 @@ String? appTemp;
 String? appMainDir;
 
 // Report issue url
-String reportIssueUrl = 'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new';
+String reportIssueUrl =
+    'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new';
 
 DesktopWindow startup = appWindow;
 
@@ -124,21 +128,28 @@ class Install {
 class InstallContent {
   static const String welcome =
       'Welcome to the Flutter App Manager. You will be guided through the steps necessary to setup and install Flutter in your device.';
-  static const String git = 'Flutter relies on Git to get and install dependencies and other tools.';
+  static const String git =
+      'Flutter relies on Git to get and install dependencies and other tools.';
   static const String java =
       'Java is sometimes needed in Flutter development. However you can skip if you do not want to install Java.';
-  static const String flutter = 'Flutter relies on Flutter to build and run Flutter.';
+  static const String flutter =
+      'Flutter relies on Flutter to build and run Flutter.';
   static const String docs =
       'Read the official Flutter documentation or check our documentation for how to use this app.';
 }
 
 /// Class for installed software content
 class InstalledContent {
-  static const String java = 'You have successfully installed Java. Click next to wrap up.';
-  static const String flutter = 'You have successfully installed Flutter. Click next to wrap up.';
-  static const String vscode = 'You have successfully installed Visual Studio Code. Click next to wrap up.';
-  static const String studio = 'You have successfully installed Android Studio. Click next to wrap up.';
-  static const String allDone = 'All set! You will need to restart your device to start using Flutter.';
+  static const String java =
+      'You have successfully installed Java. Click next to wrap up.';
+  static const String flutter =
+      'You have successfully installed Flutter. Click next to wrap up.';
+  static const String vscode =
+      'You have successfully installed Visual Studio Code. Click next to wrap up.';
+  static const String studio =
+      'You have successfully installed Android Studio. Click next to wrap up.';
+  static const String allDone =
+      'All set! You will need to restart your device to start using Flutter.';
   static const String restart =
       'You will need to restart your device to fully complete this setup. Make sure to save all your work before restarting.';
 }
@@ -211,7 +222,7 @@ class SystemRequirementsContent {
   static const String winSpace = '1.7 GB (Only Flutter SDK)';
   static const String macSpace = '2.8 GB (Only Flutter SDK)';
   static const String linuxSpace = '600 MB (Only Flutter SDK)';
-  
+
   // Tools Required
   static const String winTools = 'Git, PowerShell, Java (version: 1.8.***)';
   static const String macTools = 'Git, CocoaPods, Java (version: 1.8.***)';

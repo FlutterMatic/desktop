@@ -94,10 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                           const Spacer(),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: _tabTile(
+                          // Short view
+                          if (_size.width < 900)
+                            Column(
+                              children: <Widget>[
+                                if (isNewVersionAvailable)
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child:
+                                        _updateAppButton(context, customTheme),
+                                  ),
+                                _tabTile(
                                   context,
                                   icon: SvgPicture.asset(
                                     Assets.settings,
@@ -116,37 +123,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   selected: true,
                                 ),
-                              ),
-                              if (true)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, bottom: 10),
-                                  child: RectangleButton(
-                                    width: 40,
-                                    height: 40,
-                                    hoverColor: Colors.transparent,
-                                    focusColor: Colors.transparent,
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    color: customTheme.colorScheme.secondary
-                                        .withOpacity(0.2),
-                                    child: const Icon(Icons.download_rounded),
+                              ],
+                            )
+                          else
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: _tabTile(
+                                    context,
+                                    icon: SvgPicture.asset(
+                                      Assets.settings,
+                                      color: context
+                                              .read<ThemeChangeNotifier>()
+                                              .isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    name: 'Settings',
                                     onPressed: () {
-                                      // TODO(@ZiyadF296): Show update FlutterMatic dialog
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        snackBarTile(
-                                          context,
-                                          'There is a new version of FlutterMatic ready to be installed on your device.',
-                                          type: SnackBarType.warning,
-                                          revert: true,
-                                        ),
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => const SettingDialog(),
                                       );
                                     },
+                                    selected: true,
                                   ),
                                 ),
-                            ],
-                          ),
+                                if (isNewVersionAvailable)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 10),
+                                    child:
+                                        _updateAppButton(context, customTheme),
+                                  ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -215,5 +226,29 @@ Widget _tabTile(
             : Center(child: icon),
       ),
     ),
+  );
+}
+
+Widget _updateAppButton(BuildContext context, ThemeData theme) {
+  return RectangleButton(
+    width: 40,
+    height: 40,
+    hoverColor: Colors.transparent,
+    focusColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+    color: theme.colorScheme.secondary.withOpacity(0.2),
+    child: const Icon(Icons.download_rounded),
+    onPressed: () {
+      // TODO(@ZiyadF296): Show update FlutterMatic dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(
+          context,
+          'There is a new version of FlutterMatic ready to be installed on your device.',
+          type: SnackBarType.warning,
+          revert: true,
+        ),
+      );
+    },
   );
 }

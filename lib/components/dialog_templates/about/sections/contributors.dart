@@ -1,6 +1,5 @@
 // 🎯 Dart imports:
 import 'dart:convert';
-import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/tokens.dart';
 
 bool _failedRequest = false;
 
@@ -125,7 +123,6 @@ class _ContributorTileState extends State<ContributorTile> {
     Map<String, String> _header = <String, String>{
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      HttpHeaders.authorizationHeader: 'token ' + personalAccessToken,
     };
 
     http.Response _result = await http.get(
