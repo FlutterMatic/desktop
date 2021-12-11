@@ -7,6 +7,7 @@ import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/workflows/startup.dart';
 
 class HomeProjectsSection extends StatefulWidget {
   const HomeProjectsSection({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
 
   final bool _loadingSearch = false;
 
-  static const int _buttonsOnRight = 0;
+  static const int _buttonsOnRight = 1;
 
   final FocusNode _searchNode = FocusNode();
 
@@ -47,22 +48,30 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                       ),
                     const Spacer(),
                     SizedBox(
-                      width: (MediaQuery.of(context).size.width > 1000) ? 500 : 400,
+                      width: (MediaQuery.of(context).size.width > 1000)
+                          ? 500
+                          : 400,
                       height: 40,
                       child: RoundContainer(
                         padding: EdgeInsets.zero,
                         borderColor: Colors.blueGrey.withOpacity(0.2),
                         child: Center(
                           child: Padding(
-                            padding:
-                                EdgeInsets.only(left: 8, right: _searchText == '' || !_searchNode.hasFocus ? 8 : 5),
+                            padding: EdgeInsets.only(
+                                left: 8,
+                                right:
+                                    _searchText == '' || !_searchNode.hasFocus
+                                        ? 8
+                                        : 5),
                             child: Row(
                               children: <Widget>[
                                 Expanded(
                                   child: TextFormField(
                                     focusNode: _searchNode,
                                     style: TextStyle(
-                                      color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black)
+                                      color: (Theme.of(context).isDarkTheme
+                                              ? Colors.white
+                                              : Colors.black)
                                           .withOpacity(0.8),
                                     ),
                                     cursorRadius: const Radius.circular(5),
@@ -102,15 +111,11 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                                     child: Icon(
                                       Icons.close_rounded,
                                       size: 13,
-                                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                                      color: Theme.of(context).isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
-                                    onPressed: () {
-                                      // _searchNode.unfocus();
-                                      // setState(() {
-                                      //   _searchResults = <PubPackageObject>[];
-                                      //   _searchText = '';
-                                      // });
-                                    },
+                                    onPressed: () {},
                                   ),
                               ],
                             ),
@@ -119,6 +124,19 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                       ),
                     ),
                     const Spacer(),
+                    RectangleButton(
+                      width: 40,
+                      height: 40,
+                      child: const Icon(Icons.play_arrow_rounded,
+                          size: 20, color: kGreenColor),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) => const StartUpWorkflow(),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -138,7 +156,9 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                   maxHeight: 300,
                 ),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).isDarkTheme ? const Color(0xff262F34) : Colors.white,
+                  color: Theme.of(context).isDarkTheme
+                      ? const Color(0xff262F34)
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
                     color: Colors.blueGrey.withOpacity(0.4),
@@ -164,7 +184,10 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                               ),
                           ]
                         : _searchResults.map((ProjectObject e) {
-                            double _pad = _searchResults.indexOf(e) == _searchResults.length - 1 ? 0 : 5;
+                            double _pad = _searchResults.indexOf(e) ==
+                                    _searchResults.length - 1
+                                ? 0
+                                : 5;
                             return Padding(
                               padding: EdgeInsets.only(bottom: _pad),
                               child: ProjectSearchResultTile(project: e),
@@ -175,6 +198,12 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
               ),
             ),
           ),
+        Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: Column(
+            children: <Widget>[],
+          ),
+        )
       ],
     );
   }

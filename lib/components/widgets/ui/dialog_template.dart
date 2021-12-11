@@ -10,6 +10,7 @@ class DialogTemplate extends StatelessWidget {
   final Widget child;
   final EdgeInsets? childPadding;
   final bool outerTapExit;
+  final Function()? onExit;
   final double? width;
   final double? height;
   final Alignment align;
@@ -26,12 +27,13 @@ class DialogTemplate extends StatelessWidget {
     this.outerTapExit = true,
     this.closeBgColor,
     this.closeIconColor,
+    this.onExit,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: outerTapExit ? () => Navigator.pop(context) : null,
+      onTap: onExit ?? (outerTapExit ? () => Navigator.pop(context) : null),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -42,11 +44,16 @@ class DialogTemplate extends StatelessWidget {
               child: SingleChildScrollView(
                 child: GestureDetector(
                   onTap: () {},
-                  child: RoundContainer(
-                    height: height,
-                    color: Theme.of(context).isDarkTheme ? AppTheme.darkCardColor : Colors.white,
-                    padding: childPadding ?? const EdgeInsets.all(10),
-                    child: Center(child: child),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    child: RoundContainer(
+                      height: height,
+                      color: Theme.of(context).isDarkTheme
+                          ? AppTheme.darkCardColor
+                          : Colors.white,
+                      padding: childPadding ?? const EdgeInsets.all(10),
+                      child: Center(child: child),
+                    ),
                   ),
                 ),
               ),

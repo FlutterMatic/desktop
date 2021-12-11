@@ -21,12 +21,14 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   @override
   Widget build(BuildContext context) {
     return TabViewTabHeadline(
-      // TODO: Fix the theme switching issue that persists in settings/theme tab.
       title: 'Themes',
       content: <Widget>[
-        _themeTiles(context, !Theme.of(context).isDarkTheme, 'Light Mode', 'Get a bright and shining desktop', () {
+        _themeTiles(context, !Theme.of(context).isDarkTheme, 'Light Mode',
+            'Get a bright and shining desktop', () {
           if (Theme.of(context).isDarkTheme) {
-            context.read<ThemeChangeNotifier>().updateTheme(Theme.of(context).brightness == Brightness.light);
+            context
+                .read<ThemeChangeNotifier>()
+                .updateTheme(Theme.of(context).brightness == Brightness.light);
           }
         }),
         VSeparators.small(),
@@ -37,7 +39,8 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
           'For dark and nighty appearance',
           () {
             if (!Theme.of(context).isDarkTheme) {
-              context.read<ThemeChangeNotifier>().updateTheme(Theme.of(context).brightness == Brightness.light);
+              context.read<ThemeChangeNotifier>().updateTheme(
+                  Theme.of(context).brightness == Brightness.light);
             }
           },
         ),
@@ -46,7 +49,8 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   }
 }
 
-Widget _themeTiles(BuildContext context, bool selected, String title, String description, Function() onPressed) {
+Widget _themeTiles(BuildContext context, bool selected, String title,
+    String description, Function() onPressed) {
   ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     height: 65,
@@ -67,14 +71,17 @@ Widget _themeTiles(BuildContext context, bool selected, String title, String des
               children: <Widget>[
                 Text(
                   title,
-                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
                 VSeparators.xSmall(),
                 Text(
                   description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.6)),
+                  style: TextStyle(
+                      color: customTheme.textTheme.bodyText1!.color!
+                          .withOpacity(0.6)),
                 ),
               ],
             ),

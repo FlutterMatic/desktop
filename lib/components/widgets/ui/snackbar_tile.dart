@@ -49,9 +49,7 @@ SnackBar snackBarTile(
                         ? Assets.warn
                         : Assets.error,
                 color: revert
-                    ? (Theme.of(context).isDarkTheme
-                        ? AppTheme.darkBackgroundColor
-                        : AppTheme.lightBackgroundColor)
+                    ? AppTheme.darkBackgroundColor
                     : (type == SnackBarType.done
                         ? kGreenColor
                         : type == SnackBarType.warning
@@ -80,7 +78,7 @@ SnackBarAction? snackBarAction({
   return SnackBarAction(
     label: text,
     onPressed: onPressed,
-    textColor: Colors.white,
+    textColor: Colors.black,
   );
 }
 

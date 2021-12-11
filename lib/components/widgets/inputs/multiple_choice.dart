@@ -35,7 +35,9 @@ class _MultipleChoiceState extends State<MultipleChoice> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _elements = <Widget>[];
+
     _elements.clear();
+
     for (int i = 0; i < widget.options.length; i++) {
       _elements.add(
         _circleElement(_value == widget.options[i], widget.options[i],
@@ -80,9 +82,13 @@ class _MultipleChoiceState extends State<MultipleChoice> {
           HSeparators.small(),
           Expanded(
             child: GestureDetector(
-                onTap: () => onPressed(message),
-                child: Text(message,
-                    overflow: TextOverflow.ellipsis, maxLines: 2)),
+              onTap: () => onPressed(message),
+              child: Text(
+                message,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+            ),
           ),
         ],
       ),

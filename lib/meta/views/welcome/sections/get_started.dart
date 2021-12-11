@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:io';
 
 // 🐦 Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -124,16 +123,18 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             if (snapshot.hasData && snapshot.data == 'error')
               WelcomeButton(
                 onInstall: () {},
-                buttonText: 'Retry',
+                buttonText: allowDevControls ? 'Continue' : 'Retry',
                 loading: _isLoading,
-                onContinue: () async {
-                  setState(() {
-                    _totalAttempts = 0;
-                    _isLoading = true;
-                  });
-                  await _initCalls();
-                  setState(() => _isLoading = false);
-                },
+                onContinue: allowDevControls
+                    ? widget.onContinue
+                    : () async {
+                        setState(() {
+                          _totalAttempts = 0;
+                          _isLoading = true;
+                        });
+                        await _initCalls();
+                        setState(() => _isLoading = false);
+                      },
                 progress: Progress.done,
               )
             else

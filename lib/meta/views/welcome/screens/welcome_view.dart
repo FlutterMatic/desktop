@@ -32,7 +32,7 @@ class _WelcomePageState extends State<WelcomePage> {
   bool _installing = false;
   bool _completedInstall = false;
 
-  // Editors to install
+  // Editor(s) to install.
   List<EditorType> _editor = <EditorType>[
     EditorType.androidStudio,
     EditorType.vscode,
@@ -173,7 +173,7 @@ class _WelcomePageState extends State<WelcomePage> {
               ],
             ),
           ),
-          if (kDebugMode)
+          if (allowDevControls)
             Positioned(
               top: 20,
               right: 20,

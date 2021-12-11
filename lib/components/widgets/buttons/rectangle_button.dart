@@ -11,15 +11,16 @@ class RectangleButton extends StatelessWidget {
 
   final EdgeInsets? padding;
 
-  final Color? hoverColor,
-      splashColor,
-      highlightColor,
-      focusColor,
-      disableColor,
-      contentColor,
-      color;
+  final Color? hoverColor;
+  final Color? splashColor;
+  final Color? highlightColor;
+  final Color? focusColor;
+  final Color? disableColor;
+  final Color? contentColor;
+  final Color? color;
 
-  final bool loading, disable;
+  final bool loading;
+  final bool disable;
 
   final Widget child;
 

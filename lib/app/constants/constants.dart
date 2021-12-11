@@ -1,4 +1,5 @@
 // 🐦 Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -19,6 +20,11 @@ final Shell shell = Shell(
 );
 
 bool? completedSetup;
+
+/// Whether or not to show the dev controls.
+bool _showDevControls = true;
+
+bool allowDevControls = (kDebugMode && _showDevControls);
 
 /// Whether there is a new version of the app available.
 bool isNewVersionAvailable = false;
