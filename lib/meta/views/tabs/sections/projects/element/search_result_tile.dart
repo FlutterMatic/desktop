@@ -10,12 +10,14 @@ import 'package:manager/core/libraries/widgets.dart';
 class ProjectSearchResultTile extends StatelessWidget {
   final ProjectObject project;
 
-  const ProjectSearchResultTile({Key? key, required this.project}) : super(key: key);
+  const ProjectSearchResultTile({Key? key, required this.project})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return RectangleButton(
       width: 500,
+      height: 60,
       padding: const EdgeInsets.all(5),
       child: Row(
         children: <Widget>[
@@ -26,56 +28,54 @@ class ProjectSearchResultTile extends StatelessWidget {
               children: <Widget>[
                 Text(
                   project.name,
+                  maxLines: 1,
                   style: TextStyle(
-                    color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                    color: Theme.of(context).isDarkTheme
+                        ? Colors.white
+                        : Colors.black,
                   ),
                 ),
                 VSeparators.small(),
-                Text(project.path),
+                Text(
+                  project.description ?? project.path,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.grey),
+                ),
               ],
             ),
           ),
-          Row(
-            children: <Widget>[
-              const Tooltip(
-                message: 'Verified Publisher',
-                child: Icon(Icons.verified, size: 15, color: kGreenColor),
-              ),
-              HSeparators.xSmall(),
-              Text(
-                'dart.dev',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13.5,
-                  color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
-                ),
-              ),
-              HSeparators.xSmall(),
-              // Show a copy icon to copy the dependency directly on when
-              // hovering to avoid UI distraction.
-              RectangleButton(
-                width: 30,
-                height: 30,
-                padding: EdgeInsets.zero,
-                color: Colors.transparent,
-                hoverColor: Colors.blueGrey.withOpacity(0.2),
-                child: Icon(
-                  Icons.content_copy,
-                  size: 13,
-                  color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      'Dependency has been copied to your clipboard.',
-                      type: SnackBarType.done,
-                    ),
-                  );
-                },
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 13,
+              color:
+                  (Theme.of(context).isDarkTheme ? Colors.white : Colors.black)
+                      .withOpacity(0.5),
+            ),
           ),
+          // RectangleButton(
+          //   width: 30,
+          //   height: 30,
+          //   padding: EdgeInsets.zero,
+          //   color: Colors.transparent,
+          //   hoverColor: Colors.blueGrey.withOpacity(0.2),
+          //   child: Icon(
+          //     Icons.arrow_forward_ios_rounded,
+          //     size: 13,
+          //     color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+          //   ),
+          //   onPressed: () {
+          //     ScaffoldMessenger.of(context).showSnackBar(
+          //       snackBarTile(
+          //         context,
+          //         'Not implemented...',
+          //         type: SnackBarType.error,
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
       onPressed: () {},

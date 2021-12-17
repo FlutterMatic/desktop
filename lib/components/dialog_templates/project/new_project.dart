@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/sections/description.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/sections/name.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/sections/org_name.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/sections/platforms.dart';
-import 'package:manager/components/dialog_templates/projects/new_project/sections/pre_config.dart';
+import 'package:manager/components/dialog_templates/project/sections/description.dart';
+import 'package:manager/components/dialog_templates/project/sections/name.dart';
+import 'package:manager/components/dialog_templates/project/sections/org_name.dart';
+import 'package:manager/components/dialog_templates/project/sections/platforms.dart';
+import 'package:manager/components/dialog_templates/project/sections/pre_config.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class NewProjectDialog extends StatefulWidget {

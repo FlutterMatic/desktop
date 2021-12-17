@@ -1,12 +1,14 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-
-// 🌎 Project imports:
 import 'package:manager/meta/views/workflows/action_settings/build_android.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_ios.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_web.dart';

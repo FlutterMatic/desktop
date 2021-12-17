@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 // 🐦 Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -12,11 +11,41 @@ import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+
+// void _applySearch(List<dynamic> info) {
+//   String _search = info[0];
+//   List<PubPackageObject> _packagesNames = info[1];
+//   SendPort _sendPort = info[2];
+
+//   List<PubPackageObject> _results = <PubPackageObject>[];
+
+//   if (_search.isEmpty) {
+//     _sendPort.send(_results);
+//     return;
+//   }
+
+//   String _q = removeSpaces(_search.toLowerCase());
+
+//   for (PubPackageObject _packages in _packagesNames) {
+//     if (_results.length >= 5) {
+//       break;
+//     }
+
+//     List<bool> _matches = <bool>[
+//       removeSpaces(_packages.name.toLowerCase()).contains(_q),
+//     ];
+
+//     if (_matches.contains(true)) {
+//       _results.add(_packages);
+//     }
+//   }
+
+//   _sendPort.send(_results);
+// }
 
 class HomePubSection extends StatefulWidget {
   const HomePubSection({Key? key}) : super(key: key);
@@ -91,11 +120,31 @@ class _HomePubSectionState extends State<HomePubSection> {
     setState(() => _loadingSearch = false);
   }
 
+  // final ReceivePort _searchPort = ReceivePort();
+
+  // Future<void> _startSearch() async {
+  //   setState(() => _loadingSearch = true);
+
+  //   Isolate _isolate = await Isolate.spawn(_applySearch,
+  //       <dynamic>[_searchText, _pubFavorites, _searchPort.sendPort]);
+
+  //   _searchPort.listen((dynamic _results) {
+  //     if (_results is List<PubPackageObject>) {
+  //       setState(() {
+  //         _searchResults.clear();
+  //         _searchResults.addAll(_results);
+  //         _loadingSearch = false;
+  //       });
+  //       _isolate.kill();
+  //     }
+  //   });
+  // }
+
   // We do not need to make a request to the pub API because this won't be
   // called every time the user types.
   // We will filter out the [_pub] list and set the results to the
   // [_searchResults].
-  Future<void> _updateResults() async {
+  Future<void> _startSearch() async {
     int _max = 5;
 
     setState(() {
@@ -230,18 +279,13 @@ class _HomePubSectionState extends State<HomePubSection> {
                                       border: InputBorder.none,
                                       isCollapsed: true,
                                     ),
-                                    onFieldSubmitted: (String? val) {
-                                      // Show a page with all the results.
-                                    },
                                     onChanged: (String val) {
                                       if (val.isEmpty) {
-                                        setState(() {
-                                          _searchText = val;
-                                          _searchResults.clear();
-                                        });
+                                        setState(() => _searchText = val);
+                                        _startSearch();
                                       } else {
                                         setState(() => _searchText = val);
-                                        _updateResults();
+                                        _startSearch();
                                       }
                                     },
                                   ),
@@ -359,7 +403,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                           isVertical: true,
                           content: _pubFavorites
                               .map((PubPackageObject e) =>
-                                  PubFavoriteTile(name: e.name))
+                                  PubPkgTile(name: e.name))
                               .toList(),
                         ),
                         VSeparators.large(),

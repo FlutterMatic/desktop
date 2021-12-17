@@ -8,7 +8,6 @@ import 'package:process_run/shell.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/services/logs.dart';
 
 /// Sets the path of a directory to env path variable.
 ///

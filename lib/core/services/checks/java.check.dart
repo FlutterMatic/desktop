@@ -18,7 +18,7 @@ import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/utils/bin/java.bin.dart';
+import 'package:manager/meta/utils/bin/tools/java.bin.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 
 /// [JavaNotifier] class is a [ValueNotifier]

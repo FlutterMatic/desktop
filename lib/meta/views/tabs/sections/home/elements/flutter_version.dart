@@ -1,5 +1,4 @@
 // 🐦 Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -7,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
 import 'package:manager/components/dialog_templates/flutter/flutter_upgrade.dart';
+import 'package:manager/components/dialog_templates/project/new_project.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
 import 'package:manager/core/libraries/components.dart';

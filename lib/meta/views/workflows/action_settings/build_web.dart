@@ -1,4 +1,7 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:manager/components/widgets/ui/info_widget.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/meta/views/workflows/components/build_mode_selector.dart';

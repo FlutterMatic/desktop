@@ -16,7 +16,7 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/utils/bin/adb.bin.dart';
+import 'package:manager/meta/utils/bin/tools/adb.bin.dart';
 
 /// [ADBNotifier] class is a [ChangeNotifier]
 /// for ADB checks.

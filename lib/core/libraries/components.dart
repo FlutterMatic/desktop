@@ -18,4 +18,3 @@ export '../../components/widgets/ui/markdown_view.dart';
 export '../../components/dialog_templates/flutter/change_channel.dart';
 export '../../components/dialog_templates/flutter/change_channel.dart';
 export '../../components/dialog_templates/flutter/flutter_upgrade.dart';
-export '../../components/dialog_templates/projects/new_project/new_project.dart';

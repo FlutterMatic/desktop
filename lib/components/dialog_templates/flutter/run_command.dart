@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 🌎 Project imports:
+import 'package:manager/components/dialog_templates/project/new_project.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
@@ -34,7 +35,9 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
 
   Future<void> _runCommand() async {
     String _command = 'flutter ' +
-        _commandController.text.replaceAll('-v', '').replaceAll('-verbose', '') +
+        _commandController.text
+            .replaceAll('-v', '')
+            .replaceAll('-verbose', '') +
         (_preferVerbose! ? ' -v' : '');
     _commandController.text = _commandController.text.replaceAll('flutter', '');
     setState(() {
@@ -44,16 +47,19 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
     });
     if (_trimmedCommand == 'create.' || _trimmedCommand == 'create') {
       Navigator.pop(context);
-      await showDialog(context: context, builder: (_) => const NewProjectDialog());
+      await showDialog(
+          context: context, builder: (_) => const NewProjectDialog());
     } else if (_trimmedCommand == 'upgrade') {
       Navigator.pop(context);
-      await showDialog(context: context, builder: (_) => const UpgradeFlutterDialog());
+      await showDialog(
+          context: context, builder: (_) => const UpgradeFlutterDialog());
     } else if (_trimmedCommand == 'channelmaster' ||
         _trimmedCommand == 'channelstable' ||
         _trimmedCommand == 'channeldev' ||
         _trimmedCommand == 'channelbeta') {
       Navigator.pop(context);
-      await showDialog(context: context, builder: (_) => const ChangeChannelDialog());
+      await showDialog(
+          context: context, builder: (_) => const ChangeChannelDialog());
     } else if (_commandController.text.isNotEmpty) {
       setState(() => _loading = true);
       await shell
@@ -135,7 +141,8 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                 Expanded(
                   child: Row(
                     children: const <Widget>[
-                      SizedBox(height: 20, width: 20, child: Spinner(thickness: 2)),
+                      SizedBox(
+                          height: 20, width: 20, child: Spinner(thickness: 2)),
                       Spacer(),
                     ],
                   ),
@@ -162,7 +169,8 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
                   children: <Widget>[
                     Text(
                       'Run',
-                      style: TextStyle(color: customTheme.textTheme.bodyText1!.color!),
+                      style: TextStyle(
+                          color: customTheme.textTheme.bodyText1!.color!),
                     ),
                     HSeparators.xSmall(),
                     const Icon(Icons.play_arrow_rounded, color: kGreenColor),

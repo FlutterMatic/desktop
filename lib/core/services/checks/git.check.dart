@@ -18,7 +18,7 @@ import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/utils/bin/git.bin.dart';
+import 'package:manager/meta/utils/bin/tools/git.bin.dart';
 import 'package:manager/meta/utils/shared_pref.dart';
 
 /// [GitNotifier] class is a [ChangeNotifier]

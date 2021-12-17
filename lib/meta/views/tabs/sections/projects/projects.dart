@@ -1,13 +1,63 @@
+// 🎯 Dart imports:
+import 'dart:isolate';
+
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
+import 'package:manager/app/constants/shared_pref.dart';
+import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/utils/bin/utils/projects.search.dart';
+import 'package:manager/meta/utils/extract_pubspec.dart';
 import 'package:manager/meta/views/workflows/startup.dart';
+
+Future<void> _getProjects(SendPort send) async {
+  // Init shared preference once again because we are in a different isolate.
+  await SharedPref.init();
+  List<ProjectObject> _projectsPaths =
+      await ProjectSearchUtils.getProjectsFromPath();
+
+  send.send(_projectsPaths);
+}
+
+void _applySearch(List<dynamic> info) {
+  String _search = info[0];
+  List<ProjectObject> _projectsPaths = info[1];
+  SendPort _sendPort = info[2];
+
+  List<ProjectObject> _results = <ProjectObject>[];
+
+  if (_search.isEmpty) {
+    _sendPort.send(_results);
+    return;
+  }
+
+  String _q = removeSpaces(_search.toLowerCase());
+
+  for (ProjectObject _project in _projectsPaths) {
+    if (_results.length >= 5) {
+      break;
+    }
+
+    List<bool> _matches = <bool>[
+      removeSpaces(_project.name.toLowerCase()).contains(_q),
+      _project.path.toLowerCase().contains(_q),
+      if (_project.description != null)
+        removeSpaces(_project.description!.toLowerCase()).contains(_q),
+    ];
+
+    if (_matches.contains(true)) {
+      _results.add(_project);
+    }
+  }
+
+  _sendPort.send(_results);
+}
 
 class HomeProjectsSection extends StatefulWidget {
   const HomeProjectsSection({Key? key}) : super(key: key);
@@ -19,15 +69,70 @@ class HomeProjectsSection extends StatefulWidget {
 class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   String _searchText = '';
 
-  final bool _loadingSearch = false;
+  final List<ProjectObject> _projects = <ProjectObject>[];
+
+  bool _loadingSearch = false;
+  bool _projectsLoading = false;
 
   static const int _buttonsOnRight = 1;
 
   final FocusNode _searchNode = FocusNode();
 
-  List<ProjectObject> _searchResults = <ProjectObject>[
-    const ProjectObject(name: 'Ok', path: '123'),
-  ];
+  final List<ProjectObject> _searchResults = <ProjectObject>[];
+
+  final ReceivePort _searchPort = ReceivePort('projects_search_isolate');
+  final ReceivePort _loadProjectsPort = ReceivePort('find_projects_isolate');
+
+  Future<void> _startSearch() async {
+    setState(() => _loadingSearch = true);
+
+    Isolate _isolate = await Isolate.spawn(
+        _applySearch, <dynamic>[_searchText, _projects, _searchPort.sendPort]);
+
+    _searchPort.listen((dynamic _results) {
+      if (_results is List<ProjectObject>) {
+        setState(() {
+          _searchResults.clear();
+          _searchResults.addAll(_results);
+          _loadingSearch = false;
+        });
+        _isolate.kill();
+      }
+    });
+  }
+
+  Future<void> _loadProjects() async {
+    if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
+      setState(() => _projectsLoading = true);
+
+      Isolate _isolate =
+          await Isolate.spawn(_getProjects, _loadProjectsPort.sendPort)
+              .timeout(const Duration(minutes: 2));
+
+      _loadProjectsPort.listen((dynamic message) {
+        if (message is List<ProjectObject>) {
+          setState(() {
+            _projectsLoading = false;
+            _projects.addAll(message);
+          });
+          _isolate.kill(priority: Isolate.immediate);
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _loadProjects();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchPort.close();
+    _loadProjectsPort.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,18 +189,13 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                                       border: InputBorder.none,
                                       isCollapsed: true,
                                     ),
-                                    onFieldSubmitted: (String? val) {
-                                      // Show a page with all the results.
-                                    },
                                     onChanged: (String val) {
                                       if (val.isEmpty) {
-                                        setState(() {
-                                          _searchText = val;
-                                          _searchResults = <ProjectObject>[];
-                                        });
+                                        setState(() => _searchText = '');
+                                        _startSearch();
                                       } else {
                                         setState(() => _searchText = val);
-                                        // _updateResults();
+                                        _startSearch();
                                       }
                                     },
                                   ),
@@ -115,7 +215,11 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                                           ? Colors.white
                                           : Colors.black,
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      setState(() => _searchText = '');
+                                      _searchNode.unfocus();
+                                      _startSearch();
+                                    },
                                   ),
                               ],
                             ),
@@ -200,9 +304,48 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           ),
         Padding(
           padding: const EdgeInsets.only(top: 70),
-          child: Column(
-            children: <Widget>[],
-          ),
+          child: !SharedPref().pref.containsKey(SPConst.projectsPath)
+              ? Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Icon(Icons.info_outline_rounded, size: 40),
+                        VSeparators.large(),
+                        const Text(
+                          'You have not yet added the projects path for us to search in. Add the path to continue.',
+                          textAlign: TextAlign.center,
+                        ),
+                        VSeparators.large(),
+                        RectangleButton(
+                          width: 200,
+                          height: 40,
+                          child: const Text('Add Path'),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => const SettingDialog(
+                                goToPage: 'Projects',
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : _projectsLoading
+                  ? const Center(child: Spinner(thickness: 2))
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: _projects
+                            .map((ProjectObject e) => Text(e.name))
+                            .toList(),
+                      ),
+                    ),
         )
       ],
     );

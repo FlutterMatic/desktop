@@ -7,20 +7,21 @@ import 'package:intl/intl.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
+import 'package:manager/components/widgets/ui/shimmer.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
-class PubFavoriteTile extends StatefulWidget {
+class PubPkgTile extends StatefulWidget {
   final String name;
-  const PubFavoriteTile({Key? key, required this.name}) : super(key: key);
+  const PubPkgTile({Key? key, required this.name}) : super(key: key);
 
   @override
-  _PubFavoriteTileState createState() => _PubFavoriteTileState();
+  _PubPkgTileState createState() => _PubPkgTileState();
 }
 
-class _PubFavoriteTileState extends State<PubFavoriteTile> {
+class _PubPkgTileState extends State<PubPkgTile> {
   // Whether or not the user is hovering on the tile. We will show more details
   // if the user is hovering.
   bool _isHovering = false;
@@ -53,10 +54,28 @@ class _PubFavoriteTileState extends State<PubFavoriteTile> {
   @override
   Widget build(BuildContext context) {
     if (_package == null) {
-      return const RoundContainer(
+      return RoundContainer(
         width: 250,
         height: 230,
-        child: Spinner(thickness: 2),
+        child: Shimmer.fromColors(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const RoundContainer(
+                  child: SizedBox.shrink(), width: 150, height: 20),
+              VSeparators.normal(),
+              const RoundContainer(
+                  child: SizedBox.shrink(), width: 200, height: 20),
+              VSeparators.normal(),
+              const Expanded(
+                child: RoundContainer(child: SizedBox.shrink(), width: 350),
+              ),
+              VSeparators.normal(),
+              const RoundContainer(
+                  child: SizedBox.shrink(), width: 50, height: 30),
+            ],
+          ),
+        ),
       );
     }
     return MouseRegion(

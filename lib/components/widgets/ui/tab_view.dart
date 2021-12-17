@@ -27,12 +27,11 @@ class _TabViewWidgetState extends State<TabViewWidget> {
     if (widget.defaultPage != null) {
       setState(() {
         widget.tabs.where((TabViewObject e) {
-          if (e.name == widget.defaultPage) {
+          if (e.name.toLowerCase() == widget.defaultPage!.toLowerCase()) {
             _index = widget.tabs.indexOf(e);
             return true;
-          } else {
-            return false;
           }
+          return false;
         });
       });
     }

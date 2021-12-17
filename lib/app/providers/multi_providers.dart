@@ -9,7 +9,6 @@ import 'package:provider/single_child_widget.dart';
 import 'package:manager/core/libraries/api.dart';
 import 'package:manager/core/libraries/checks.dart';
 import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/notifiers/space.notifier.dart';
 
 class MultiProviders extends StatelessWidget {
   const MultiProviders(this.child, {Key? key}) : super(key: key);
