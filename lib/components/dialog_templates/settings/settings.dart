@@ -11,16 +11,11 @@ import 'package:manager/components/dialog_templates/settings/sections/theme.dart
 import 'package:manager/components/dialog_templates/settings/sections/troubleshoot.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
-class SettingDialog extends StatefulWidget {
+class SettingDialog extends StatelessWidget {
   final String? goToPage;
 
   const SettingDialog({Key? key, this.goToPage}) : super(key: key);
 
-  @override
-  _SettingDialogState createState() => _SettingDialogState();
-}
-
-class _SettingDialogState extends State<SettingDialog> {
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
@@ -30,7 +25,7 @@ class _SettingDialogState extends State<SettingDialog> {
         children: <Widget>[
           const DialogHeader(title: 'Settings'),
           TabViewWidget(
-            defaultPage: widget.goToPage,
+            defaultPage: goToPage,
             tabs: const <TabViewObject>[
               TabViewObject('Theme', ThemeSettingsSection()),
               TabViewObject('Projects', ProjectsSettingsSection()),

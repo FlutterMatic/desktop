@@ -1,4 +1,6 @@
 // 🐦 Flutter imports:
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
@@ -8,6 +10,7 @@ import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/buttons/square_button.dart';
 import 'package:manager/components/widgets/ui/dialog_template.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
+import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/meta/utils/extract_pubspec.dart';
 import 'package:manager/meta/views/workflows/actions.dart';
@@ -17,7 +20,9 @@ import 'package:manager/meta/views/workflows/sections/info.dart';
 import 'package:manager/meta/views/workflows/sections/reorder_actions.dart';
 
 class StartUpWorkflow extends StatefulWidget {
-  const StartUpWorkflow({Key? key}) : super(key: key);
+  final String? pubspecPath;
+
+  const StartUpWorkflow({Key? key, this.pubspecPath}) : super(key: key);
 
   @override
   State<StartUpWorkflow> createState() => _StartUpWorkflowState();
@@ -84,6 +89,37 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
         ),
       ),
     );
+  }
+
+  Future<void> _initPubspec() async {
+    try {
+      List<String> _pubspec =
+          await File.fromUri(Uri.file(widget.pubspecPath!, windows: true))
+              .readAsLines();
+
+      _pubspecFile = extractPubspec(_pubspec);
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Couldn\'t read pubspec.yaml file',
+          stackTraces: s);
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'Couldn\'t read pubspec.yaml file. Invalid permissions set. Please try again.',
+          type: SnackBarType.error,
+          revert: true,
+        ));
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    if (widget.pubspecPath != null) {
+      _initPubspec();
+    }
+    super.initState();
   }
 
   @override

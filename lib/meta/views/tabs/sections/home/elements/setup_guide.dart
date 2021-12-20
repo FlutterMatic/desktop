@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/app/constants/shared_pref.dart';
+import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/views/tabs/sections/home/elements/circle_chart.dart';
@@ -287,7 +288,14 @@ final List<_GuideModel> _guides = <_GuideModel>[
   _GuideModel(
     text:
         'Set your projects path where we can find all of your Flutter projects. You can then manage these projects easily from the projects tab.',
-    onPressed: (_) {},
+    onPressed: (BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (_) => const SettingDialog(
+          goToPage: 'Projects',
+        ),
+      );
+    },
   ),
   _GuideModel(
     text:

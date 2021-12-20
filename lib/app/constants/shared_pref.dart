@@ -43,4 +43,7 @@ class SPConst {
   // VSCode Setup
   static String vscPath = 'VISUAL_CODE_PATH';
   static String vscVersion = 'VISUAL_CODE_VERSION';
+
+  // Projects Services
+  static String projectsCache = 'PROJECTS_CACHE';
 }

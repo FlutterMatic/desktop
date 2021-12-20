@@ -38,7 +38,6 @@ class _HomeMainSectionState extends State<HomeMainSection> {
                 const Expanded(child: HomeJavaVersionTile()),
                 HSeparators.normal(),
                 const Spacer(),
-                // const Expanded(child: HomeDartVersionTile()),
               ],
             ),
           ],

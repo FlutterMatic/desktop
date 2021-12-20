@@ -94,15 +94,17 @@ class _HomePubSectionState extends State<HomePubSection> {
     if (_result.statusCode == 200 && mounted) {
       dynamic _packages = json.decode(_result.body)['packages'];
       await PubClient().search('').then((SearchResults value) {
-        setState(() {
-          _pubs = _packages;
-          _pubFavorites.addAll(value.packages
-              .map((PackageResult e) => PubPackageObject(name: e.package)));
-          _loadedFlutterFavorites = true;
-          _errorPage = false;
-        });
+        if (mounted) {
+          setState(() {
+            _pubs = _packages;
+            _pubFavorites.addAll(value.packages
+                .map((PackageResult e) => PubPackageObject(name: e.package)));
+            _loadedFlutterFavorites = true;
+            _errorPage = false;
+          });
+        }
       });
-    } else {
+    } else if (mounted) {
       if (_pubs.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           snackBarTile(
@@ -112,33 +114,16 @@ class _HomePubSectionState extends State<HomePubSection> {
           ),
         );
       }
+
       setState(() {
         _pubs = <dynamic>[''];
         _errorPage = true;
       });
     }
-    setState(() => _loadingSearch = false);
+    if (mounted) {
+      setState(() => _loadingSearch = false);
+    }
   }
-
-  // final ReceivePort _searchPort = ReceivePort();
-
-  // Future<void> _startSearch() async {
-  //   setState(() => _loadingSearch = true);
-
-  //   Isolate _isolate = await Isolate.spawn(_applySearch,
-  //       <dynamic>[_searchText, _pubFavorites, _searchPort.sendPort]);
-
-  //   _searchPort.listen((dynamic _results) {
-  //     if (_results is List<PubPackageObject>) {
-  //       setState(() {
-  //         _searchResults.clear();
-  //         _searchResults.addAll(_results);
-  //         _loadingSearch = false;
-  //       });
-  //       _isolate.kill();
-  //     }
-  //   });
-  // }
 
   // We do not need to make a request to the pub API because this won't be
   // called every time the user types.
