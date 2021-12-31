@@ -17,6 +17,7 @@ class SetProjectWorkflowInfo extends StatefulWidget {
   final TextEditingController descriptionController;
   final PubspecInfo? pubspecFile;
   final Function(PubspecInfo pubspec) onPubspecUpdate;
+  final bool showLastPage;
 
   const SetProjectWorkflowInfo({
     Key? key,
@@ -25,6 +26,7 @@ class SetProjectWorkflowInfo extends StatefulWidget {
     required this.descriptionController,
     required this.pubspecFile,
     required this.onPubspecUpdate,
+    required this.showLastPage,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,14 @@ class SetProjectWorkflowInfo extends StatefulWidget {
 
 class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    if (widget.showLastPage) {
+      setState(() => _selectedIndex = 2);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +124,6 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
           ),
         );
       },
-      // controlsBuilder: (BuildContext context,
-      //     {Function()? onStepCancel, Function()? onStepContinue}) {},
       steps: <Step>[
         Step(
           state: _getStepState(_selectedIndex, 0),

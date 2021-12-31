@@ -151,6 +151,11 @@ class _DeployWebWorkflowActionStateConfig
                   ),
                 ]
           : <Widget>[
+              infoWidget(
+                context,
+                'We will show you the information you entered to verify one by one to make sure there are no mistakes.',
+              ),
+              VSeparators.normal(),
               const Text('Configure your web deploy workflow action here.'),
               VSeparators.normal(),
               InputHoverAffect(
@@ -277,50 +282,30 @@ class _DeployWebWorkflowActionStateConfig
                 ],
               ),
               VSeparators.normal(),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RoundContainer(
-                      padding: EdgeInsets.zero,
-                      borderColor: kGreenColor,
-                      borderWith: 1.5,
-                      child: infoWidget(
-                        context,
-                        'We will show you the information you entered to verify one by one to make sure there are no mistakes.',
-                      ),
-                    ),
-                  ),
-                  HSeparators.normal(),
-                  RoundContainer(
-                    borderWith: 1.5,
-                    padding: EdgeInsets.zero,
-                    borderColor: kGreenColor,
-                    child: RectangleButton(
-                      width: 100,
-                      color: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      child: const Text('Start'),
-                      onPressed: () {
-                        if (widget.webUrlController.text.isNotEmpty &&
-                            widget
-                                .firebaseProjectIDController.text.isNotEmpty &&
-                            widget.firebaseProjectName.text.isNotEmpty) {
-                          widget.onValidate(true);
-                        } else {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Please fill out all fields about your Firebase app.',
-                              type: SnackBarType.warning,
-                              revert: true,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
+              Align(
+                
+                alignment: Alignment.centerRight,
+                child: RectangleButton(
+                  width: 100,
+                  child: const Text('Start'),
+                  onPressed: () {
+                    if (widget.webUrlController.text.isNotEmpty &&
+                        widget.firebaseProjectIDController.text.isNotEmpty &&
+                        widget.firebaseProjectName.text.isNotEmpty) {
+                      widget.onValidate(true);
+                    } else {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarTile(
+                          context,
+                          'Please fill out all fields about your Firebase app.',
+                          type: SnackBarType.warning,
+                          revert: true,
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
     );

@@ -15,7 +15,8 @@ import 'package:manager/meta/views/tabs/sections/projects/projects.dart';
 import 'package:manager/meta/views/tabs/sections/pub/pub.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final int? index;
+  const HomeScreen({Key? key, this.index}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -44,7 +45,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    setState(() => _selectedTab = _tabs.first);
+    setState(() {
+      if (widget.index != null) {
+        _selectedTab = _tabs[widget.index!];
+      } else {
+        _selectedTab = _tabs.first;
+      }
+    });
     super.initState();
   }
 

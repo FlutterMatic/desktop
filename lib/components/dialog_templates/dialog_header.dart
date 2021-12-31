@@ -36,21 +36,28 @@ class DialogHeader extends StatelessWidget {
             child: Center(
               child: Text(
                 title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          if (canClose)
-            Align(
-              alignment: Alignment.centerRight,
-              child: CustomCloseButton(
-                onClose: onClose,
-                iconColor: Theme.of(context).isDarkTheme
-                    ? AppTheme.darkTheme.iconTheme.color!
-                    : AppTheme.lightTheme.iconTheme.color!,
-                onHoverColor: onHoverButtonColor,
+          AnimatedOpacity(
+            duration: Duration.zero,
+            opacity: canClose ? 1 : 0,
+            child: IgnorePointer(
+              ignoring: !canClose,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: CustomCloseButton(
+                  onClose: onClose,
+                  iconColor: Theme.of(context).isDarkTheme
+                      ? AppTheme.darkTheme.iconTheme.color!
+                      : AppTheme.lightTheme.iconTheme.color!,
+                  onHoverColor: onHoverButtonColor,
+                ),
               ),
             ),
+          )
         ],
       ),
     );

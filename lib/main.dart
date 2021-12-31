@@ -13,7 +13,6 @@ import 'package:provider/provider.dart';
 // 🌎 Project imports:
 import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/app/providers/multi_providers.dart';
-import 'package:manager/components/widgets/buttons/square_button.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/notifiers.dart';
@@ -177,38 +176,38 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                       return Stack(
                         children: <Widget>[
                           Center(child: child),
-                          if (allowDevControls)
-                            Positioned(
-                              bottom: 10,
-                              right: 10,
-                              child: SquareButton(
-                                color: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                icon: Icon(
-                                  context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
-                                      ? Icons.dark_mode
-                                      : Icons.light_mode,
-                                  color: context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<ThemeChangeNotifier>()
-                                      .updateTheme(context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Theme.of(context).brightness !=
-                                              Brightness.light
-                                          : Theme.of(context).brightness ==
-                                              Brightness.light);
-                                },
-                              ),
-                            ),
+                          // if (allowDevControls)
+                          //   Positioned(
+                          //     bottom: 10,
+                          //     right: 10,
+                          //     child: SquareButton(
+                          //       color: Colors.transparent,
+                          //       hoverColor: Colors.transparent,
+                          //       icon: Icon(
+                          //         context
+                          //                 .read<ThemeChangeNotifier>()
+                          //                 .isDarkTheme
+                          //             ? Icons.dark_mode
+                          //             : Icons.light_mode,
+                          //         color: context
+                          //                 .read<ThemeChangeNotifier>()
+                          //                 .isDarkTheme
+                          //             ? Colors.white
+                          //             : Colors.black,
+                          //       ),
+                          //       onPressed: () {
+                          //         context
+                          //             .read<ThemeChangeNotifier>()
+                          //             .updateTheme(context
+                          //                     .read<ThemeChangeNotifier>()
+                          //                     .isDarkTheme
+                          //                 ? Theme.of(context).brightness !=
+                          //                     Brightness.light
+                          //                 : Theme.of(context).brightness ==
+                          //                     Brightness.light);
+                          //       },
+                          //     ),
+                          //   ),
                         ],
                       );
                     },

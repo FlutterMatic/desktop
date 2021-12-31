@@ -16,6 +16,7 @@ import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/bin/utils/projects.search.dart';
 import 'package:manager/meta/utils/extract_pubspec.dart';
+import 'package:manager/meta/views/dialogs/open_project.dart';
 import 'package:manager/meta/views/workflows/startup.dart';
 
 Future<void> _getProjects(SendPort sendPort) async {
@@ -316,11 +317,19 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                           width: 200,
                           height: 40,
                           child: const Text('Add Path'),
-                          onPressed: () {
-                            showDialog(
+                          onPressed: () async {
+                            await showDialog(
                               context: context,
                               builder: (_) => const SettingDialog(
                                 goToPage: 'Projects',
+                              ),
+                            );
+                            await Navigator.pushReplacement(
+                              context,
+                              PageRouteBuilder<Route<dynamic>>(
+                                pageBuilder: (_, __, ___) =>
+                                    const HomeScreen(index: 1),
+                                transitionDuration: Duration.zero,
                               ),
                             );
                           },
@@ -381,7 +390,14 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                                       Expanded(
                                         child: RectangleButton(
                                           child: const Text('Open Project'),
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  OpenProjectOnEditor(
+                                                      path: e.path),
+                                            );
+                                          },
                                         ),
                                       ),
                                       HSeparators.xSmall(),

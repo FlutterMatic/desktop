@@ -46,4 +46,5 @@ class SPConst {
 
   // Projects Services
   static String projectsCache = 'PROJECTS_CACHE';
+  static String askEditorAlways = 'ASK_EDITOR_ALWAYS';
 }

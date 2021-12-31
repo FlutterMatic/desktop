@@ -49,6 +49,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   String _defaultWebRenderer = 'CanvasKit';
   String _defaultWebBuildMode = 'Release';
 
+  // Utils
+  bool _showInfoLast = false;
+
   void _confirmCancel() {
     showDialog(
       context: context,
@@ -136,8 +139,14 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 ? SquareButton(
                     icon: const Icon(Icons.arrow_back_ios_rounded),
                     color: Colors.transparent,
-                    onPressed: () => setState(() => _interfaceView =
-                        _InterfaceView.values[_interfaceView.index - 1]),
+                    onPressed: () => setState(() {
+                      _showInfoLast = false;
+                      _interfaceView =
+                          _InterfaceView.values[_interfaceView.index - 1];
+                      if (_interfaceView == _InterfaceView.workflowInfo) {
+                        _showInfoLast = true;
+                      }
+                    }),
                   )
                 : null,
             onClose: _confirmCancel,
@@ -145,6 +154,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           VSeparators.normal(),
           if (_interfaceView == _InterfaceView.workflowInfo)
             SetProjectWorkflowInfo(
+              showLastPage: _showInfoLast,
               onPubspecUpdate: (PubspecInfo pubspec) =>
                   setState(() => _pubspecFile = pubspec),
               onNext: () {

@@ -22,8 +22,15 @@ class EditorsSettingsSection extends StatefulWidget {
 
 class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
   String? _defaultEditor;
+  bool _askEditorAlways = false;
 
   Future<void> _getDefaultEditor() async {
+    if (SharedPref().pref.containsKey(SPConst.askEditorAlways)) {
+      setState(() {
+        _askEditorAlways =
+            SharedPref().pref.getBool(SPConst.askEditorAlways) ?? false;
+      });
+    }
     if (SharedPref().pref.containsKey(SPConst.defaultEditor)) {
       setState(() =>
           _defaultEditor = SharedPref().pref.getString(SPConst.defaultEditor));
@@ -53,67 +60,77 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
               type: InformationType.warning,
             ),
           ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: RoundContainer(
-                borderWith: 2,
-                borderColor:
-                    _defaultEditor == 'code' ? kGreenColor : Colors.transparent,
-                padding: EdgeInsets.zero,
-                child: RectangleButton(
-                  height: 100,
-                  onPressed: () async {
-                    setState(() => _defaultEditor = 'code');
-                    await SharedPref().pref.setString(SPConst.defaultEditor, 'code');
-                  },
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(child: SvgPicture.asset(Assets.vscode)),
-                        Text(
-                          'VS Code',
-                          style: TextStyle(
-                              color: customTheme.textTheme.bodyText1!.color),
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 100),
+          opacity: _askEditorAlways ? 0.5 : 1,
+          child: IgnorePointer(
+            ignoring: _askEditorAlways,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: RoundContainer(
+                    borderWith: 2,
+                    borderColor: _defaultEditor == 'code'
+                        ? kGreenColor
+                        : Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    child: RectangleButton(
+                      height: 100,
+                      onPressed: () async {
+                        setState(() => _defaultEditor = 'code');
+                        await SharedPref()
+                            .pref
+                            .setString(SPConst.defaultEditor, 'code');
+                      },
+                      child: Center(
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(child: SvgPicture.asset(Assets.vscode)),
+                            Text(
+                              'VS Code',
+                              style: TextStyle(
+                                  color: customTheme.textTheme.bodyText1!.color),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            HSeparators.small(),
-            Expanded(
-              child: RoundContainer(
-                borderWith: 2,
-                borderColor: _defaultEditor == 'studio64'
-                    ? kGreenColor
-                    : Colors.transparent,
-                padding: EdgeInsets.zero,
-                child: RectangleButton(
-                  height: 100,
-                  onPressed: () async {
-                    setState(() => _defaultEditor = 'studio64');
-                    await SharedPref()
-                        .pref
-                        .setString(SPConst.defaultEditor, 'studio64');
-                  },
-                  child: Center(
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(child: SvgPicture.asset(Assets.studio)),
-                        Text(
-                          'Android Studio',
-                          style: TextStyle(
-                              color: customTheme.textTheme.bodyText1!.color),
+                HSeparators.small(),
+                Expanded(
+                  child: RoundContainer(
+                    borderWith: 2,
+                    borderColor: _defaultEditor == 'studio64'
+                        ? kGreenColor
+                        : Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    child: RectangleButton(
+                      height: 100,
+                      onPressed: () async {
+                        setState(() => _defaultEditor = 'studio64');
+                        await SharedPref()
+                            .pref
+                            .setString(SPConst.defaultEditor, 'studio64');
+                      },
+                      child: Center(
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(child: SvgPicture.asset(Assets.studio)),
+                            Text(
+                              'Android Studio',
+                              style: TextStyle(
+                                  color: customTheme.textTheme.bodyText1!.color),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
         VSeparators.small(),
         Row(
@@ -149,6 +166,22 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                   ),
                 ),
               ),
+            HSeparators.small(),
+            CheckBoxElement(
+              onChanged: (bool? val) async {
+                val = val ?? false; // Ensures not `null`.
+
+                if (val) {
+                  setState(() => _askEditorAlways = true);
+                  await SharedPref().pref.setBool(SPConst.defaultEditor, true);
+                } else {
+                  setState(() => _askEditorAlways = false);
+                  await SharedPref().pref.setBool(SPConst.defaultEditor, false);
+                }
+              },
+              value: _askEditorAlways,
+              text: 'Always ask me which editor to use',
+            ),
             HSeparators.small(),
             const Spacer(),
           ],
