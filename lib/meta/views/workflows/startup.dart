@@ -1,9 +1,12 @@
-// 🐦 Flutter imports:
+// 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:

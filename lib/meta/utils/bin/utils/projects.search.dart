@@ -2,10 +2,10 @@
 import 'dart:io';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/core/libraries/models.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/app/constants/shared_pref.dart';
+import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/meta/utils/extract_pubspec.dart';
 
 class ProjectSearchUtils {
