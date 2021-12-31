@@ -38,8 +38,10 @@ class ProjectSearchUtils {
             continue;
           }
 
-          PubspecInfo _pubspec =
-              extractPubspec(await File(file.path).readAsLines());
+          PubspecInfo _pubspec = extractPubspec(
+            lines: await File(file.path).readAsLines(),
+            path: file.path,
+          );
 
           if (_pubspec.isValid) {
             projects.add(ProjectObject(
@@ -78,7 +80,8 @@ class ProjectSearchUtils {
 
         for (String project in _projectsFromCache) {
           File _file = File(project + '\\pubspec.yaml');
-          PubspecInfo _pubspec = extractPubspec(await _file.readAsLines());
+          PubspecInfo _pubspec = extractPubspec(
+              lines: await _file.readAsLines(), path: _file.path);
           String _parentName = _file.parent.path.split('\\').last;
 
           projects.add(

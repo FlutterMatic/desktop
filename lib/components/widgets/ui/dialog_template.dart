@@ -41,18 +41,22 @@ class DialogTemplate extends StatelessWidget {
             child: Container(
               constraints: BoxConstraints(maxWidth: width ?? 500),
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: SingleChildScrollView(
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: RoundContainer(
-                      height: height,
-                      color: Theme.of(context).isDarkTheme
-                          ? AppTheme.darkCardColor
-                          : Colors.white,
-                      padding: childPadding ?? const EdgeInsets.all(10),
-                      child: Center(child: child),
+              child: Scrollbar(
+                notificationPredicate: (ScrollNotification notification) =>
+                    false,
+                child: SingleChildScrollView(
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: RoundContainer(
+                        height: height,
+                        color: Theme.of(context).isDarkTheme
+                            ? AppTheme.darkCardColor
+                            : Colors.white,
+                        padding: childPadding ?? const EdgeInsets.all(10),
+                        child: Center(child: child),
+                      ),
                     ),
                   ),
                 ),

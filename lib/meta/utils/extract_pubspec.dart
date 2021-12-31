@@ -1,4 +1,7 @@
-PubspecInfo extractPubspec(List<String> lines) {
+PubspecInfo extractPubspec({
+  required List<String> lines,
+  required String path,
+}) {
   try {
     // Dependencies. This includes both the "dependencies" and "dev_dependencies".
     DependencyExtraction? _dependencies;
@@ -142,6 +145,7 @@ PubspecInfo extractPubspec(List<String> lines) {
       devDependencies: _dependencies.dependencies
           .where((DependenciesInfo element) => element.isDev)
           .toList(),
+      pathToPubspec: path,
     );
   } catch (_) {
     return const PubspecInfo(
@@ -156,6 +160,7 @@ PubspecInfo extractPubspec(List<String> lines) {
       repository: null,
       dependencies: <DependenciesInfo>[],
       devDependencies: <DependenciesInfo>[],
+      pathToPubspec: null,
     );
   }
 }
@@ -249,6 +254,7 @@ class PubspecInfo {
   final String? author;
   final String? homepage;
   final String? repository;
+  final String? pathToPubspec;
 
   final List<DependenciesInfo> dependencies;
   final List<DependenciesInfo> devDependencies;
@@ -268,6 +274,7 @@ class PubspecInfo {
     required this.repository,
     required this.dependencies,
     required this.devDependencies,
+    required this.pathToPubspec,
   });
 }
 

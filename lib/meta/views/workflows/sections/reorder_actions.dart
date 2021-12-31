@@ -46,7 +46,7 @@ class _SetProjectWorkflowActionsOrderState
         if (widget.workflowActions.length == 1)
           informationWidget(
             'You can\'t actually reorder your workflow action since you only have one. You can go to the next step.',
-            type: InformationType.error,
+            type: InformationType.info,
           )
         else
           informationWidget(

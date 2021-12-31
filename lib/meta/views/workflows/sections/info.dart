@@ -18,9 +18,11 @@ class SetProjectWorkflowInfo extends StatefulWidget {
   final PubspecInfo? pubspecFile;
   final Function(PubspecInfo pubspec) onPubspecUpdate;
   final bool showLastPage;
+  final bool disableChangePubspec;
 
   const SetProjectWorkflowInfo({
     Key? key,
+    required this.disableChangePubspec,
     required this.onNext,
     required this.nameController,
     required this.descriptionController,
@@ -184,6 +186,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                     padding: EdgeInsets.zero,
                     borderColor: Colors.blueGrey.withOpacity(0.5),
                     child: RectangleButton(
+                      disable: widget.disableChangePubspec,
                       width: 120,
                       child: Text(
                           widget.pubspecFile == null ? 'Select' : 'Change'),
@@ -224,9 +227,12 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                           return;
                         }
 
-                        PubspecInfo _pubspec = extractPubspec(await _file
-                            .readAsString()
-                            .then((String value) => value.split('\n')));
+                        PubspecInfo _pubspec = extractPubspec(
+                          lines: await _file
+                              .readAsString()
+                              .then((String value) => value.split('\n')),
+                          path: _file.path,
+                        );
 
                         widget.onPubspecUpdate(_pubspec);
 
