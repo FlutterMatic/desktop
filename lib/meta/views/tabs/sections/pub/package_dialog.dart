@@ -1,18 +1,58 @@
 // 🐦 Flutter imports:
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:manager/core/libraries/services.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 import 'package:pub_api_client/src/models/package_like_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_html/flutter_html.dart' as html;
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
+
+Future<void> _getPkgReadMe(List<dynamic> data) async {
+  SendPort _port = data[0];
+  String _pkgName = data[1];
+
+  try {
+    String _readMe = '';
+
+    http.Response _response =
+        await http.get(Uri.parse('https://pub.dev/packages/$_pkgName'));
+
+    // Everything between `<section class="tab-content detail-tab-readme-content -active markdown-body">`
+    // and `</section>` is the README.md markdown data.
+
+    String _startTxt =
+        '<section class="tab-content detail-tab-readme-content -active markdown-body">';
+    String _endTxt = '</section>';
+
+    int _start = _response.body.indexOf(_startTxt) + _startTxt.length;
+
+    int _end = 0;
+
+    while (_end < _start) {
+      _end = _response.body.indexOf(_endTxt, _end + 1);
+    }
+
+    _readMe = _response.body.substring(_start, _end);
+
+    _port.send(_readMe);
+  } catch (_, s) {
+    await logger.file(
+        LogTypeTag.error, 'Failed to fetch README for package: $_pkgName',
+        stackTraces: s);
+    _port.send(false);
+  }
+}
 
 class PubPackageDialog extends StatefulWidget {
   final String pkgName;
@@ -39,6 +79,8 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
 
   bool _shouldDisplay = false;
 
+  final ReceivePort _readMePort = ReceivePort();
+
   Future<void> _loadData() async {
     // Gets the package metrics information.
     PackageMetrics? _pkgScore = await _pubClient.packageMetrics(widget.pkgName);
@@ -47,31 +89,31 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
     PubPackage _pkgInfo = await _pubClient.packageInfo(widget.pkgName);
 
     // Gets the publisher information.
-    PackagePublisher _pkgPublisher = await _pubClient.packagePublisher(widget.pkgName);
+    PackagePublisher _pkgPublisher =
+        await _pubClient.packagePublisher(widget.pkgName);
 
-    String? _readMeBase = _pkgInfo.latestPubspec.homepage?.replaceAll('https://github.com/', '');
+    PackageOptions _pkgOptions =
+        await _pubClient.packageOptions(widget.pkgName);
 
-    PackageOptions _pkgOptions = await _pubClient.packageOptions(widget.pkgName);
+    Isolate _isolate = await Isolate.spawn(_getPkgReadMe, <dynamic>[
+      _readMePort.sendPort,
+      widget.pkgName,
+    ]);
 
-    // Get the package documentation from GitHub if available.
-    http.Response _response = await http.get(
-      Uri.parse(
-        // TODO: Figure out a way to get the readme from the API or any other way.
-        'https://raw.githubusercontent.com/fluttercommunity/import_sorter/master/README.md',
-      ),
-    );
-
-    setState(() {
-      if (_response.statusCode == 200 && _readMeBase != null) {
-        _data = _response.body;
+    _readMePort.listen((dynamic _readMe) {
+      if (_readMe is String) {
+        setState(() => _data = _readMe);
       } else {
-        _hasReadme = false;
+        setState(() => _hasReadme = false);
       }
-      _info = _pkgInfo;
-      _metrics = _pkgScore;
-      _publisher = _pkgPublisher;
-      _options = _pkgOptions;
-      _shouldDisplay = true;
+      setState(() {
+        _info = _pkgInfo;
+        _metrics = _pkgScore;
+        _publisher = _pkgPublisher;
+        _options = _pkgOptions;
+        _shouldDisplay = true;
+      });
+      _isolate.kill();
     });
   }
 
@@ -79,6 +121,12 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
   void initState() {
     _loadData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _readMePort.close();
+    super.dispose();
   }
 
   @override
@@ -113,15 +161,21 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                       try {
                         if (!_hasReadme) {
                           return informationWidget(
-                            'Seems like this package doesn\'t have a README.md file.',
-                            type: InformationType.error,
+                            'Couldn\'t find a README.md file for this package. Check it out in pub.dev',
+                            type: InformationType.warning,
                           );
                         } else {
                           return SingleChildScrollView(
-                            child: MarkdownBlock(
+                            child: html.Html(
                               data: _data,
-                              wrapWithBox: false,
-                              shrinkView: true,
+                              onLinkTap: (String? url, _, __, ___) async {
+                                if (url != null) {
+                                  bool _canLaunch = await canLaunch(url);
+                                  if (_canLaunch) {
+                                    await launch(url);
+                                  }
+                                }
+                              },
                             ),
                           );
                         }
@@ -149,7 +203,8 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                     color: Colors.blueGrey.withOpacity(0.2),
                                     child: Column(
                                       children: <Widget>[
-                                        Text(_metrics!.score.grantedPoints.toString()),
+                                        Text(_metrics!.score.grantedPoints
+                                            .toString()),
                                         VSeparators.small(),
                                         const Text('Pub Points'),
                                       ],
@@ -162,7 +217,9 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                     color: Colors.blueGrey.withOpacity(0.2),
                                     child: Column(
                                       children: <Widget>[
-                                        Text(NumberFormat.percentPattern().format(_metrics!.score.popularityScore)),
+                                        Text(NumberFormat.percentPattern()
+                                            .format(_metrics!
+                                                .score.popularityScore)),
                                         VSeparators.small(),
                                         const Text('Popularity'),
                                       ],
@@ -179,9 +236,11 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                 children: <Widget>[
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Text(NumberFormat.compact().format(_metrics!.score.likeCount)),
+                                        Text(NumberFormat.compact()
+                                            .format(_metrics!.score.likeCount)),
                                         VSeparators.small(),
                                         const Text('Package Likes'),
                                       ],
@@ -192,23 +251,31 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   // package.
                                   IconButton(
                                     onPressed: () async {
-                                      if (_userLikeStatus != null && _userLikeStatus!.liked) {
-                                        await _pubClient.unlikePackage(widget.pkgName);
-                                      } else if (_userLikeStatus != null && !_userLikeStatus!.liked) {
-                                        await _pubClient.likePackage(widget.pkgName);
+                                      if (_userLikeStatus != null &&
+                                          _userLikeStatus!.liked) {
+                                        await _pubClient
+                                            .unlikePackage(widget.pkgName);
+                                      } else if (_userLikeStatus != null &&
+                                          !_userLikeStatus!.liked) {
+                                        await _pubClient
+                                            .likePackage(widget.pkgName);
                                       } else {
                                         // Show snackbar to ask the user to sign
                                         // in to like the package.
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          snackBarTile(
-                                              context, 'Please sign in to like and view all of your package inventory.',
-                                              type: SnackBarType.warning, revert: true),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          snackBarTile(context,
+                                              'Please sign in to like and view all of your package inventory.',
+                                              type: SnackBarType.warning,
+                                              revert: true),
                                         );
                                       }
                                     },
                                     icon: Icon(
                                       Icons.thumb_up_outlined,
-                                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                                      color: Theme.of(context).isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                   ),
                                 ],
@@ -227,7 +294,8 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   VSeparators.small(),
                                   Text(
                                     'Version ' + _info!.version,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -241,27 +309,19 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(
-                                      _publisher!.publisherId ?? 'Unknown Publisher',
+                                      _publisher!.publisherId ??
+                                          'Unknown Publisher',
                                     ),
                                   ),
                                   HSeparators.small(),
-                                  // Shows verified icon if the publisher is
-                                  // verified.
-                                  // TODO: Check if the publisher is verified
-                                  // first.
+                                  // Shows verified icon if the publisher is verified.
+                                  // TODO: Check if the publisher is verified first.
+                                  // Dumbest code I had to write in my career.
                                   if (1 == 2)
                                     const Tooltip(
                                       message: 'Verified Publisher',
-                                      child: Icon(Icons.verified_rounded, size: 18, color: kGreenColor),
-                                    )
-                                  else
-                                    const Tooltip(
-                                      message: 'Unknown Publisher',
-                                      child: Icon(
-                                        Icons.do_not_disturb_alt_rounded,
-                                        size: 18,
-                                        color: kRedColor,
-                                      ),
+                                      child: Icon(Icons.verified_rounded,
+                                          size: 18, color: kGreenColor),
                                     ),
                                 ],
                               ),
@@ -276,14 +336,18 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   Text(
                                     'Open in Pub.dev',
                                     style: TextStyle(
-                                      color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                                      color: Theme.of(context).isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                   ),
                                   HSeparators.small(),
                                   Icon(
                                     Icons.open_in_new_rounded,
                                     size: 15,
-                                    color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                                    color: Theme.of(context).isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 ],
                               ),

@@ -25,6 +25,8 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   String? _editorOption;
   bool _dirPathError = false;
 
+  int _refreshIntervals = 1;
+
   Future<void> _getEditorOptions() async {
     if (SharedPref().pref.containsKey(SPConst.editorOption)) {
       setState(() =>
@@ -44,12 +46,27 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
     }
   }
 
+  Future<void> _getProjectRefreshIntervals() async {
+    if (SharedPref().pref.containsKey(SPConst.projectRefresh)) {
+      setState(() => _refreshIntervals =
+          SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1);
+    } else {
+      await SharedPref().pref.setInt(SPConst.projectRefresh, 1);
+    }
+  }
+
   @override
   void initState() {
-    _dirPathError = false;
     _getEditorOptions();
     _getProjectPath();
+    _getProjectRefreshIntervals();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _dirPathError = false;
+    super.dispose();
   }
 
   @override
@@ -141,6 +158,77 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                 LogTypeTag.info, 'Editor option was set to: $_newVal');
           },
         ),
+        VSeparators.small(),
+        const Text(
+          'Refresh Options',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        VSeparators.normal(),
+        Row(
+          children: <Widget>[
+            const Expanded(
+              child: Text(
+                'How often should we refresh your projects list.',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            HSeparators.normal(),
+            PopupMenuButton<dynamic>(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _refreshIntervals == 60
+                    ? const Text('Every 1 hour')
+                    : Text(
+                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}',
+                      ),
+              ),
+              tooltip: '',
+              itemBuilder: (_) {
+                return <PopupMenuEntry<dynamic>>[
+                  const PopupMenuItem<int>(
+                    value: 1,
+                    child: Text('1 minute'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 5,
+                    child: Text('5 minutes'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 10,
+                    child: Text('10 minutes'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 60,
+                    child: Text('1 hour'),
+                  ),
+                ];
+              },
+              onSelected: (dynamic val) async {
+                try {
+                  await SharedPref().pref.setInt(SPConst.projectRefresh, val);
+                  await logger.file(LogTypeTag.info,
+                      'Projects refresh intervals was set to: $val');
+                  setState(() => _refreshIntervals = val);
+                } catch (_, s) {
+                  await logger.file(LogTypeTag.error,
+                      'Couldn\'t set projects refresh interval',
+                      stackTraces: s);
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    snackBarTile(
+                      context,
+                      'Couldn\'t update your project refresh intervals.',
+                      type: SnackBarType.error,
+                      revert: true,
+                    ),
+                  );
+                }
+              },
+              initialValue: SharedPref().pref.getInt(SPConst.projectRefresh),
+            )
+          ],
+        ),
+        VSeparators.normal(),
       ],
     );
   }

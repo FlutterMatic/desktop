@@ -89,8 +89,8 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
         else
           Column(
             children: const <Widget>[
-              ContributorTile('35523357'), // Minnu
               ContributorTile('56755783'), // Ziyad
+              ContributorTile('35523357'), // Minnu
             ],
           ),
       ],
@@ -99,7 +99,6 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
 }
 
 // Just trying to get the data from the github api.
-
 class ContributorTile extends StatefulWidget {
   final String gitHubId;
 

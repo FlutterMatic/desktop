@@ -68,7 +68,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   final List<ProjectObject> _projects = <ProjectObject>[];
 
   bool _loadingSearch = false;
-  bool _projectsLoading = false;
+  bool _projectsLoading = true;
   bool _reloadingFromCache = false;
 
   static const int _buttonsOnRight = 2;
@@ -115,37 +115,60 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
     });
   }
 
-  Future<void> _loadProjects() async {
+  bool _loadProjectsCalled = false;
+
+  Future<void> _loadProjects([bool notFirstCall = false]) async {
     if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
-      setState(() => _projectsLoading = true);
+      if (notFirstCall) {
+        setState(() => _reloadingFromCache = true);
+      }
 
       Isolate _isolate =
           await Isolate.spawn(_getProjects, _loadProjectsPort.sendPort)
               .timeout(const Duration(minutes: 2));
 
-      _loadProjectsPort.listen((dynamic message) {
-        if (message is List) {
-          setState(() {
-            _projectsLoading = false;
-            _projects.clear();
-            _projects.addAll(message.first);
-            if (message[2] == true) {
-              _reloadingFromCache = true;
-            } else {
-              _reloadingFromCache = false;
+      if (!_loadProjectsCalled) {
+        _loadProjectsPort.listen((dynamic message) {
+          setState(() => _loadProjectsCalled = true);
+          if (message is List) {
+            setState(() {
+              _projectsLoading = false;
+              _projects.clear();
+              _projects.addAll(message.first);
+              if (message[2] == true) {
+                _reloadingFromCache = true;
+              } else {
+                _reloadingFromCache = false;
+              }
+            });
+            if (message[1] == true) {
+              _isolate.kill();
             }
-          });
-          if (message[1] == true) {
-            _isolate.kill();
           }
-        }
-      });
+        });
+      }
+    }
+  }
+
+  Future<void> _refreshMonitor() async {
+    if (SharedPref().pref.containsKey(SPConst.projectRefresh) &&
+        !_projectsLoading && // Make sure we are not already reloading from
+        // cache or initially fetching.
+        !_reloadingFromCache) {
+      while (mounted) {
+        await Future<void>.delayed(Duration(
+            minutes: SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1));
+        await _loadProjects(true);
+        await logger.file(
+            LogTypeTag.info, 'Reloaded project tab on project interval.');
+      }
     }
   }
 
   @override
   void initState() {
     _loadProjects();
+    _refreshMonitor();
     super.initState();
   }
 
@@ -313,26 +336,47 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                           textAlign: TextAlign.center,
                         ),
                         VSeparators.large(),
-                        RectangleButton(
-                          width: 200,
-                          height: 40,
-                          child: const Text('Add Path'),
-                          onPressed: () async {
-                            await showDialog(
-                              context: context,
-                              builder: (_) => const SettingDialog(
-                                goToPage: 'Projects',
-                              ),
-                            );
-                            await Navigator.pushReplacement(
-                              context,
-                              PageRouteBuilder<Route<dynamic>>(
-                                pageBuilder: (_, __, ___) =>
-                                    const HomeScreen(index: 1),
-                                transitionDuration: Duration.zero,
-                              ),
-                            );
-                          },
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            RectangleButton(
+                              width: 200,
+                              height: 40,
+                              child: const Text('Add Path'),
+                              onPressed: () async {
+                                await showDialog(
+                                  context: context,
+                                  builder: (_) => const SettingDialog(
+                                    goToPage: 'Projects',
+                                  ),
+                                );
+                                await Navigator.pushReplacement(
+                                  context,
+                                  PageRouteBuilder<Route<dynamic>>(
+                                    pageBuilder: (_, __, ___) =>
+                                        const HomeScreen(index: 1),
+                                    transitionDuration: Duration.zero,
+                                  ),
+                                );
+                              },
+                            ),
+                            HSeparators.normal(),
+                            RectangleButton(
+                              width: 40,
+                              height: 40,
+                              child: const Icon(Icons.refresh_rounded),
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageRouteBuilder<Route<dynamic>>(
+                                    pageBuilder: (_, __, ___) =>
+                                        const HomeScreen(index: 1),
+                                    transitionDuration: Duration.zero,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),

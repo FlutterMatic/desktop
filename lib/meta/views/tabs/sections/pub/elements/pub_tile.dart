@@ -34,10 +34,13 @@ class _PubPkgTileState extends State<PubPkgTile> {
   // otherwise false.
   final bool _nullSafe = false;
 
+  final PubClient _pub = PubClient();
+
   Future<void> _getPkgInfo() async {
-    PubPackage _info = await PubClient().packageInfo(widget.name);
-    PackageMetrics? _data = await PubClient().packageMetrics(widget.name);
-    PackagePublisher _author = await PubClient().packagePublisher(widget.name);
+    PubPackage _info = await _pub.packageInfo(widget.name);
+    PackageMetrics? _data = await _pub.packageMetrics(widget.name);
+    PackagePublisher _author = await _pub.packagePublisher(widget.name);
+
     setState(() {
       _package = _info;
       _metrics = _data;

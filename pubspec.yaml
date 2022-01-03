@@ -26,6 +26,7 @@ dependencies:
   http: ^0.13.3
   intl: ^0.17.0
   lottie: ^1.2.1
+  flutter_html: ^2.2.1
   path_provider: ^2.0.5
   process_run: ^0.12.2+1
   provider: ^6.0.1

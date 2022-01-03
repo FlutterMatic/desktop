@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:manager/meta/utils/extract_pubspec.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
@@ -93,17 +94,19 @@ class _HomePubSectionState extends State<HomePubSection> {
         .onError((_, __) => http.Response('', 300));
     if (_result.statusCode == 200 && mounted) {
       dynamic _packages = json.decode(_result.body)['packages'];
-      await PubClient().search('').then((SearchResults value) {
-        if (mounted) {
-          setState(() {
-            _pubs = _packages;
-            _pubFavorites.addAll(value.packages
-                .map((PackageResult e) => PubPackageObject(name: e.package)));
-            _loadedFlutterFavorites = true;
-            _errorPage = false;
-          });
-        }
-      });
+      SearchResults _search1 = await PubClient().search('', page: 1);
+      SearchResults _search2 = await PubClient().search('', page: 2);
+      if (mounted) {
+        setState(() {
+          _pubs = _packages;
+          _pubFavorites.addAll(<PackageResult>[
+            ..._search1.packages,
+            ..._search2.packages
+          ].map((PackageResult e) => PubPackageObject(name: e.package)));
+          _loadedFlutterFavorites = true;
+          _errorPage = false;
+        });
+      }
     } else if (mounted) {
       if (_pubs.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -422,7 +425,10 @@ class _HomePubSectionState extends State<HomePubSection> {
                                         : Colors.black,
                                   ),
                                 ),
-                                onPressed: _searchNode.requestFocus,
+                                onPressed: () {
+                                  _searchNode.requestFocus();
+                                  setState(() => _searchText = ' ');
+                                },
                               ),
                             ],
                           ),
@@ -463,10 +469,17 @@ class _HomePubSectionState extends State<HomePubSection> {
                         if (_searchResults.isEmpty && _loadingSearch) {
                           return const CustomLinearProgressIndicator();
                         } else if (_searchResults.isEmpty && !_loadingSearch) {
-                          return informationWidget(
-                            'There are no results for your search query. Try using another term instead.',
-                            type: InformationType.error,
-                          );
+                          if (removeSpaces(_searchText) == '') {
+                            return informationWidget(
+                              'Begin your research by typing something...',
+                              type: InformationType.info,
+                            );
+                          } else {
+                            return informationWidget(
+                              'There are no results for your search query. Try using another term instead.',
+                              type: InformationType.error,
+                            );
+                          }
                         } else {
                           return ListView.builder(
                             shrinkWrap: true,
