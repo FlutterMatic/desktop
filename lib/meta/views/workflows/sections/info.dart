@@ -1,4 +1,6 @@
 // 🐦 Flutter imports:
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -36,6 +38,9 @@ class SetProjectWorkflowInfo extends StatefulWidget {
 }
 
 class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
+  bool _nameExists = false;
+  bool _loadingExistingNames = false;
+
   int _selectedIndex = 0;
 
   @override
@@ -72,20 +77,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                     return;
                   }
 
-                  // Validate the name and description tag.
                   if (_selectedIndex == 1) {
-                    bool _isValidNameAndDescription =
-                        _validateNameAndDescription(
-                            context: context,
-                            descriptionController: widget.descriptionController,
-                            nameController: widget.nameController);
-                    if (_isValidNameAndDescription) {
-                      setState(() => _selectedIndex++);
-                      return;
-                    }
-                  }
-
-                  if (_selectedIndex == 2) {
                     // Validate the pubspec file.
                     if (widget.pubspecFile == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -116,9 +108,36 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       return;
                     }
 
-                    // Go to the next page that is handled by the parent.
-                    widget.onNext();
+                    setState(() => _selectedIndex++);
                     return;
+                  }
+
+                  // Validate the name and description tag.
+                  if (_selectedIndex == 2) {
+                    bool _isValidNameAndDescription =
+                        _validateNameAndDescription(
+                            context: context,
+                            descriptionController: widget.descriptionController,
+                            nameController: widget.nameController);
+                    if (_isValidNameAndDescription) {
+                      if (_nameExists || _loadingExistingNames) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'The workflow name you have chosen already exists. Please choose another workflow name.',
+                            type: SnackBarType.error,
+                            revert: true,
+                          ),
+                        );
+
+                        return;
+                      } else {
+                        // Go to the next page that is handled by the parent.
+                        widget.onNext();
+                        return;
+                      }
+                    }
                   }
                 },
               ),
@@ -139,29 +158,6 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
         ),
         Step(
           state: _getStepState(_selectedIndex, 1),
-          title: const Text('Workflow Information'),
-          subtitle:
-              const Text('Set up the name and description of your workflow.'),
-          content: Column(
-            children: <Widget>[
-              InputHoverAffect(
-                controller: widget.nameController,
-                hintText: 'Workflow name',
-                infoText: 'You can change the name later.',
-              ),
-              VSeparators.normal(),
-              InputHoverAffect(
-                controller: widget.descriptionController,
-                hintText: 'Workflow description',
-                infoText:
-                    'Describe what your workflow will do. This description will be shown in the workflow list.',
-                numLines: 4,
-              ),
-            ],
-          ),
-        ),
-        Step(
-          state: _getStepState(_selectedIndex, 2),
           title: const Text('Project pubspec.yaml file'),
           subtitle: const Text(
               'Add your app\'s pubspec.yaml file to continue integrating the workflow.'),
@@ -299,6 +295,62 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                   ),
                 ),
               VSeparators.xLarge(),
+            ],
+          ),
+        ),
+        Step(
+          state: _getStepState(_selectedIndex, 2),
+          title: const Text('Workflow Information'),
+          subtitle:
+              const Text('Set up the name and description of your workflow.'),
+          content: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: InputHoverAffect(
+                      controller: widget.nameController,
+                      hintText: 'Workflow name',
+                      infoText: 'You can change the name later.',
+                      onChanged: (String val) async {
+                        setState(() => _loadingExistingNames = true);
+                        File _file = File(widget.pubspecFile!.pathToPubspec!
+                                .replaceAll('\\pubspec.yaml', '') +
+                            '\\f_matic\\${widget.nameController.text}.json');
+
+                        if (await _file.exists()) {
+                          setState(() => _nameExists = true);
+                        } else {
+                          setState(() => _nameExists = false);
+                        }
+
+                        setState(() => _loadingExistingNames = false);
+                      },
+                    ),
+                  ),
+                  if (_loadingExistingNames)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Spinner(thickness: 2, size: 15),
+                    ),
+                  if (_nameExists)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Tooltip(
+                        message: 'This name already exists.',
+                        child: SvgPicture.asset(Assets.error, height: 20),
+                      ),
+                    ),
+                ],
+              ),
+              VSeparators.normal(),
+              InputHoverAffect(
+                controller: widget.descriptionController,
+                hintText: 'Workflow description',
+                infoText:
+                    'Describe what your workflow will do. This description will be shown in the workflow list.',
+                numLines: 4,
+              ),
             ],
           ),
         ),

@@ -12,6 +12,7 @@ class InputHoverAffect extends StatefulWidget {
   final int numLines;
   final TextEditingController controller;
   final List<TextInputFormatter>? inputFormatters;
+  final Function(String val)? onChanged;
 
   const InputHoverAffect({
     Key? key,
@@ -20,6 +21,7 @@ class InputHoverAffect extends StatefulWidget {
     this.numLines = 1,
     required this.controller,
     this.inputFormatters,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -43,6 +45,7 @@ class _InputHoverAffectState extends State<InputHoverAffect> {
               autofocus: true,
               hintText: widget.hintText,
               numLines: widget.numLines,
+              onChanged: widget.onChanged,
               controller: widget.controller,
               filterFormatters: widget.inputFormatters,
             ),

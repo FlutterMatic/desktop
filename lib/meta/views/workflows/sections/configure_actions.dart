@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_android.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_ios.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_web.dart';
@@ -30,6 +29,7 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final String defaultWebRenderer;
   final Function(String mode) onBuildWebModeChanged;
   final String defaultWebBuildMode;
+  final Function() onNext;
 
   const SetProjectWorkflowActionsConfiguration({
     Key? key,
@@ -47,6 +47,7 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
     required this.defaultWebRenderer,
     required this.onBuildWebModeChanged,
     required this.defaultWebBuildMode,
+    required this.onNext,
   }) : super(key: key);
 
   @override
@@ -159,16 +160,7 @@ class _SetProjectWorkflowActionsConfigurationState
             child: RectangleButton(
               width: 100,
               child: const Text('Next'),
-              onPressed: () {
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  snackBarTile(
-                    context,
-                    'NOT IMPLEMENTED YET...',
-                    type: SnackBarType.error,
-                  ),
-                );
-              },
+              onPressed: widget.onNext,
             ),
           ),
         ),
