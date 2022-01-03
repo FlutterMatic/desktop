@@ -32,7 +32,7 @@ class _TabViewWidgetState extends State<TabViewWidget> {
             return true;
           }
           return false;
-        });
+        }).toList();
       });
     }
     super.initState();

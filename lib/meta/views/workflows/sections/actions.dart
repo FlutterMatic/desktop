@@ -144,43 +144,44 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                   children: <WorkflowActionModel?>[
                     ..._addedWorkflows,
                     ...candidateItems
-                  ]
-                      .map(
-                        (WorkflowActionModel? e) => RoundContainer(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(e?.name ?? 'Unknown'),
-                              HSeparators.xSmall(),
-                              SquareButton(
-                                icon: const Icon(Icons.close, size: 10),
-                                size: 20,
-                                color: Colors.blueGrey.withOpacity(0.2),
-                                onPressed: () {
-                                  setState(() => _addedWorkflows.remove(e));
-                                  widget.onActionsUpdate(_addedWorkflows);
-                                  ScaffoldMessenger.of(context)
-                                      .clearSnackBars();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    snackBarTile(
-                                      context,
-                                      '${e?.name ?? 'Unknown'} workflow action has been removed.',
-                                      type: SnackBarType.warning,
-                                      revert: true,
-                                      action: snackBarAction(
-                                        text: 'Undo',
-                                        onPressed: () => setState(
-                                            () => _addedWorkflows.add(e!)),
-                                      ),
+                        .where((WorkflowActionModel? e) => e != null)
+                        .toList(),
+                  ].map(
+                    (WorkflowActionModel? e) {
+                      return RoundContainer(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(e?.name ?? 'err'),
+                            HSeparators.xSmall(),
+                            SquareButton(
+                              icon: const Icon(Icons.close, size: 10),
+                              size: 20,
+                              color: Colors.blueGrey.withOpacity(0.2),
+                              onPressed: () {
+                                setState(() => _addedWorkflows.remove(e));
+                                widget.onActionsUpdate(_addedWorkflows);
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    '${e?.name ?? '"err"'} workflow action has been removed.',
+                                    type: SnackBarType.warning,
+                                    revert: true,
+                                    action: snackBarAction(
+                                      text: 'Undo',
+                                      onPressed: () => setState(
+                                          () => _addedWorkflows.add(e!)),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      )
-                      .toList(),
+                      );
+                    },
+                  ).toList(),
                 ),
               );
             }

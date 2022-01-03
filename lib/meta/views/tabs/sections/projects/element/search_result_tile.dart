@@ -18,6 +18,7 @@ class ProjectSearchResultTile extends StatelessWidget {
     return RectangleButton(
       width: 500,
       height: 60,
+      onPressed: () {},
       padding: const EdgeInsets.all(5),
       child: Row(
         children: <Widget>[
@@ -55,30 +56,8 @@ class ProjectSearchResultTile extends StatelessWidget {
                       .withOpacity(0.5),
             ),
           ),
-          // RectangleButton(
-          //   width: 30,
-          //   height: 30,
-          //   padding: EdgeInsets.zero,
-          //   color: Colors.transparent,
-          //   hoverColor: Colors.blueGrey.withOpacity(0.2),
-          //   child: Icon(
-          //     Icons.arrow_forward_ios_rounded,
-          //     size: 13,
-          //     color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
-          //   ),
-          //   onPressed: () {
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       snackBarTile(
-          //         context,
-          //         'Not implemented...',
-          //         type: SnackBarType.error,
-          //       ),
-          //     );
-          //   },
-          // ),
         ],
       ),
-      onPressed: () {},
     );
   }
 }

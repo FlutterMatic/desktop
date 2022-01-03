@@ -1,37 +1,37 @@
 final List<WorkflowActionModel> workflowActionModels = <WorkflowActionModel>{
   const WorkflowActionModel(
-    id: 'analyze_dart_project',
+    id: WorkflowActionsIds.analyzeDartProject,
     name: 'Analyze',
     description:
         'Analyze the project for errors, warnings, and style recommendations.',
     type: WorkflowActionForType.both,
   ),
   const WorkflowActionModel(
-    id: 'run_project_tests',
+    id: WorkflowActionsIds.runProjectTests,
     name: 'Test',
     description: 'Test the project',
     type: WorkflowActionForType.both,
   ),
   const WorkflowActionModel(
-    id: 'build_project_for_ios',
+    id: WorkflowActionsIds.buildProjectForIOS,
     name: 'Build iOS',
     description: 'Build the project for iOS devices.',
     type: WorkflowActionForType.flutter,
   ),
   const WorkflowActionModel(
-    id: 'build_project_for_android',
+    id: WorkflowActionsIds.buildProjectForAndroid,
     name: 'Build Android',
     description: 'Build the project for Android devices.',
     type: WorkflowActionForType.flutter,
   ),
   const WorkflowActionModel(
-    id: 'build_project_for_web',
+    id: WorkflowActionsIds.buildProjectForWeb,
     name: 'Build Web',
     description: 'Build the project for Web.',
     type: WorkflowActionForType.flutter,
   ),
   const WorkflowActionModel(
-    id: 'deploy_project_web',
+    id: WorkflowActionsIds.deployProjectWeb,
     name: 'Deploy Web',
     description: 'Deploy the project web app with Firebase or npm command.',
     type: WorkflowActionForType.flutter,
@@ -39,6 +39,15 @@ final List<WorkflowActionModel> workflowActionModels = <WorkflowActionModel>{
 }.toList();
 
 enum WorkflowActionForType { flutter, dart, both }
+
+class WorkflowActionsIds {
+  static const String analyzeDartProject = 'analyze_dart_project';
+  static const String runProjectTests = 'run_project_tests';
+  static const String buildProjectForIOS = 'build_project_for_ios';
+  static const String buildProjectForAndroid = 'build_project_for_android';
+  static const String buildProjectForWeb = 'build_project_for_web';
+  static const String deployProjectWeb = 'deploy_project_web';
+}
 
 class WorkflowActionModel {
   final String id;

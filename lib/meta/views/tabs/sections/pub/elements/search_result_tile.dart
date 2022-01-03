@@ -1,35 +1,85 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:manager/components/widgets/ui/shimmer.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
+import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:pub_api_client/pub_api_client.dart';
 
 class PubPackageObject {
   final String name;
 
-  const PubPackageObject({required this.name});
+  const PubPackageObject({
+    required this.name,
+  });
 }
 
-class PubPackageSearchResultTile extends StatelessWidget {
+class PubPackageSearchResultTile extends StatefulWidget {
   final PubPackageObject package;
 
-  const PubPackageSearchResultTile({Key? key, required this.package}) : super(key: key);
+  const PubPackageSearchResultTile({Key? key, required this.package})
+      : super(key: key);
+
+  @override
+  State<PubPackageSearchResultTile> createState() =>
+      _PubPackageSearchResultTileState();
+}
+
+class _PubPackageSearchResultTileState
+    extends State<PubPackageSearchResultTile> {
+  PackagePublisher? _pkgInfo;
+
+  Future<void> _fetchPkgInfo() async {
+    try {
+      PackagePublisher _info = await PubClient()
+          .packagePublisher(widget.package.name)
+          .timeout(const Duration(seconds: 5));
+
+      if (mounted) {
+        setState(() => _pkgInfo = _info);
+      }
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Failed to get package info.',
+          stackTraces: s);
+    }
+  }
+
+  @override
+  void initState() {
+    _fetchPkgInfo();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pkgInfo = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return RectangleButton(
       width: 500,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (_) => PubPackageDialog(pkgName: widget.package.name),
+        );
+      },
       padding: const EdgeInsets.all(5),
       child: Row(
         children: <Widget>[
           HSeparators.xSmall(),
           Expanded(
             child: Text(
-              package.name,
+              widget.package.name,
               style: TextStyle(
-                color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
+                color:
+                    Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -40,14 +90,23 @@ class PubPackageSearchResultTile extends StatelessWidget {
                 child: Icon(Icons.verified, size: 15, color: kGreenColor),
               ),
               HSeparators.xSmall(),
-              Text(
-                'dart.dev',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13.5,
-                  color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+              if (_pkgInfo == null)
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Spinner(size: 8, thickness: 1),
+                )
+              else
+                Text(
+                  _pkgInfo!.publisherId ?? 'Unknown',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: (Theme.of(context).isDarkTheme
+                            ? Colors.white
+                            : Colors.black)
+                        .withOpacity(0.5),
+                  ),
                 ),
-              ),
               HSeparators.xSmall(),
               // Show a copy icon to copy the dependency directly on when
               // hovering to avoid UI distraction.
@@ -60,9 +119,13 @@ class PubPackageSearchResultTile extends StatelessWidget {
                 child: Icon(
                   Icons.content_copy,
                   size: 13,
-                  color: (Theme.of(context).isDarkTheme ? Colors.white : Colors.black).withOpacity(0.5),
+                  color: (Theme.of(context).isDarkTheme
+                          ? Colors.white
+                          : Colors.black)
+                      .withOpacity(0.5),
                 ),
                 onPressed: () {
+                  ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
                     snackBarTile(
                       context,
@@ -77,7 +140,6 @@ class PubPackageSearchResultTile extends StatelessWidget {
           ),
         ],
       ),
-      onPressed: () {},
     );
   }
 }

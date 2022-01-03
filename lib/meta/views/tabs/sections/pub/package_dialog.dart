@@ -168,6 +168,14 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                           return SingleChildScrollView(
                             child: html.Html(
                               data: _data,
+                              onImageError: (_, __) async {
+                                await logger.file(LogTypeTag.error,
+                                    'Failed to load README.md image for package ${widget.pkgName}',
+                                    stackTraces: __);
+                              },
+                              onMathError: (_, __, ___) {
+                                return const SizedBox.shrink();
+                              },
                               onLinkTap: (String? url, _, __, ___) async {
                                 if (url != null) {
                                   bool _canLaunch = await canLaunch(url);

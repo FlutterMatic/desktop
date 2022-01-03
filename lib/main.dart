@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:manager/core/libraries/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -176,38 +177,38 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                       return Stack(
                         children: <Widget>[
                           Center(child: child),
-                          // if (allowDevControls)
-                          //   Positioned(
-                          //     bottom: 10,
-                          //     right: 10,
-                          //     child: SquareButton(
-                          //       color: Colors.transparent,
-                          //       hoverColor: Colors.transparent,
-                          //       icon: Icon(
-                          //         context
-                          //                 .read<ThemeChangeNotifier>()
-                          //                 .isDarkTheme
-                          //             ? Icons.dark_mode
-                          //             : Icons.light_mode,
-                          //         color: context
-                          //                 .read<ThemeChangeNotifier>()
-                          //                 .isDarkTheme
-                          //             ? Colors.white
-                          //             : Colors.black,
-                          //       ),
-                          //       onPressed: () {
-                          //         context
-                          //             .read<ThemeChangeNotifier>()
-                          //             .updateTheme(context
-                          //                     .read<ThemeChangeNotifier>()
-                          //                     .isDarkTheme
-                          //                 ? Theme.of(context).brightness !=
-                          //                     Brightness.light
-                          //                 : Theme.of(context).brightness ==
-                          //                     Brightness.light);
-                          //       },
-                          //     ),
-                          //   ),
+                          if (allowDevControls)
+                            Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: SquareButton(
+                                color: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                icon: Icon(
+                                  context
+                                          .read<ThemeChangeNotifier>()
+                                          .isDarkTheme
+                                      ? Icons.dark_mode
+                                      : Icons.light_mode,
+                                  color: context
+                                          .read<ThemeChangeNotifier>()
+                                          .isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                onPressed: () {
+                                  context
+                                      .read<ThemeChangeNotifier>()
+                                      .updateTheme(context
+                                              .read<ThemeChangeNotifier>()
+                                              .isDarkTheme
+                                          ? Theme.of(context).brightness !=
+                                              Brightness.light
+                                          : Theme.of(context).brightness ==
+                                              Brightness.light);
+                                },
+                              ),
+                            ),
                         ],
                       );
                     },

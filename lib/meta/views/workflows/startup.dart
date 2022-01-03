@@ -333,36 +333,43 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       ? 1
                       : 0,
               child: _isSavingLocally
-                  ? Tooltip(
-                      message:
-                          'Saving your workflow data locally so you don\'t lose your work.',
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          const Spinner(size: 10, thickness: 1),
-                          HSeparators.small(),
-                          const Text(
-                            'Syncing workflow...',
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
-                          ),
-                        ],
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Tooltip(
+                        message:
+                            'Saving your workflow data locally so you don\'t lose your work.',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Spinner(size: 10, thickness: 1),
+                            HSeparators.small(),
+                            const Text(
+                              'Syncing workflow...',
+                              style:
+                                  TextStyle(fontSize: 10, color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   : _saveLocalError
-                      ? Tooltip(
-                          message:
-                              'Failed to save your workflow. Please try again. If the problem persists, file an issue.',
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              SvgPicture.asset(Assets.error, height: 10),
-                              HSeparators.small(),
-                              const Text(
-                                'Failed sync...',
-                                style:
-                                    TextStyle(fontSize: 10, color: Colors.grey),
-                              ),
-                            ],
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Tooltip(
+                            message:
+                                'Failed to save your workflow. Please try again. If the problem persists, file an issue.',
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                SvgPicture.asset(Assets.error, height: 10),
+                                HSeparators.small(),
+                                const Text(
+                                  'Failed sync...',
+                                  style: TextStyle(
+                                      fontSize: 10, color: Colors.grey),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       : const SizedBox.shrink(),

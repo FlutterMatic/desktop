@@ -10,7 +10,6 @@ import 'package:flutter/rendering.dart';
 /// * [ShimmerDirection.btt] bottom to top direction
 enum ShimmerDirection { ltr, rtl, ttb, btt }
 
-///
 /// A widget renders shimmer effect over [child] widget tree.
 ///
 /// [child] defines an area that shimmer effect blends on. You can build [child]

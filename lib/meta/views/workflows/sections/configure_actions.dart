@@ -60,26 +60,26 @@ class _SetProjectWorkflowActionsConfigurationState
   late String _androidBuildMode = widget.defaultAndroidBuildMode;
 
   bool get isDeployWeb => widget.workflowActions
-      .where(
-          (WorkflowActionModel element) => element.id == 'deploy_project_web')
+      .where((WorkflowActionModel element) =>
+          element.id == WorkflowActionsIds.deployProjectWeb)
       .toList()
       .isNotEmpty;
 
   bool get isBuildIOS => widget.workflowActions
       .where((WorkflowActionModel element) =>
-          element.id == 'build_project_for_ios')
+          element.id == WorkflowActionsIds.buildProjectForIOS)
       .toList()
       .isNotEmpty;
 
   bool get isBuildAndroid => widget.workflowActions
       .where((WorkflowActionModel element) =>
-          element.id == 'build_project_for_android')
+          element.id == WorkflowActionsIds.buildProjectForAndroid)
       .toList()
       .isNotEmpty;
 
   bool get isBuildWeb => widget.workflowActions
       .where((WorkflowActionModel element) =>
-          element.id == 'build_project_for_web')
+          element.id == WorkflowActionsIds.buildProjectForWeb)
       .toList()
       .isNotEmpty;
 
