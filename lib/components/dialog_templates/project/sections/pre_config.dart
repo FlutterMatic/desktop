@@ -73,7 +73,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           context,
                           'Please select your "google-services.json" file to setup Firebase.',
                           type: SnackBarType.error,
-                          revert: true,
                         ),
                       );
                       return;
@@ -86,7 +85,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           context,
                           'The file you selected is an invalid "google-services.json" file.',
                           type: SnackBarType.error,
-                          revert: true,
                         ),
                       );
                       return;
@@ -99,7 +97,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           context,
                           'Make sure that the file you selected is "google-services.json" file.',
                           type: SnackBarType.error,
-                          revert: true,
                         ),
                       );
                       return;
@@ -117,7 +114,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           context,
                           'Successfully uploaded your "google-services.json" file. Your Flutter project will be setup to use Firebase.',
                           type: SnackBarType.done,
-                          revert: true,
                         ),
                       );
                     } catch (err) {
@@ -126,7 +122,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           context,
                           'Failed to upload your "google-services.json" file. Please make sure that the file is valid and not modified.',
                           type: SnackBarType.error,
-                          revert: true,
                         ),
                       );
                       await logger.file(LogTypeTag.error,
@@ -160,7 +155,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                               context,
                               'Your Firebase project has been removed.',
                               type: SnackBarType.done,
-                              revert: true,
                               action: snackBarAction(
                                 text: 'Undo',
                                 onPressed: () =>

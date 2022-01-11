@@ -95,7 +95,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               context,
               'Please select appropriate platforms.',
               type: SnackBarType.error,
-              revert: true,
             ),
           );
         }
@@ -302,7 +301,6 @@ class ProjectCreatedDialog extends StatelessWidget {
                       snackBarTile(
                         context,
                         'You can still find your project in the Projects tab.',
-                        revert: true,
                       ),
                     );
                     Navigator.pop(context);

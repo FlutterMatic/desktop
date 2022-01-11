@@ -266,7 +266,6 @@ class _WelcomePageState extends State<WelcomePage> {
           },
           onEditorTypeChanged: (List<EditorType> val) {
             setState(() => _editor = val);
-            print(_editor);
           },
           isInstalling: _installing,
           doneInstalling: _completedInstall,

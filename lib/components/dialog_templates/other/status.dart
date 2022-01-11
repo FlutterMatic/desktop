@@ -92,7 +92,6 @@ class StatusDialog extends StatelessWidget {
           RectangleButton(
             onPressed: () => Navigator.pop(context),
             width: double.infinity,
-            color: customTheme.focusColor,
             child: Text(
               'Close',
               style: TextStyle(color: customTheme.textTheme.bodyText1!.color),

@@ -22,20 +22,9 @@ class ProjectsSettingsSection extends StatefulWidget {
 class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   // User Inputs
   String? _dirPath;
-  String? _editorOption;
   bool _dirPathError = false;
 
   int _refreshIntervals = 1;
-
-  Future<void> _getEditorOptions() async {
-    if (SharedPref().pref.containsKey(SPConst.editorOption)) {
-      setState(() =>
-          _editorOption = SharedPref().pref.getString(SPConst.editorOption));
-    } else {
-      setState(() => _editorOption = 'always_ask');
-      await SharedPref().pref.setString(SPConst.editorOption, 'always_ask');
-    }
-  }
 
   Future<void> _getProjectPath() async {
     if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
@@ -57,7 +46,6 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
 
   @override
   void initState() {
-    _getEditorOptions();
     _getProjectPath();
     _getProjectRefreshIntervals();
     super.initState();
@@ -134,35 +122,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
           ),
         ),
         VSeparators.large(),
-        const Text(
-          'Editor Options',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        VSeparators.normal(),
-        MultipleChoice(
-          options: const <String>[
-            'Always open projects in preferred editor',
-            'Ask me which editor to open with every time',
-          ],
-          defaultChoiceValue: _editorOption == 'always_ask'
-              ? 'Ask me which editor to open with every time'
-              : 'Always open projects in preferred editor',
-          onChanged: (String val) async {
-            String _newVal =
-                val == 'Ask me which editor to open with every time'
-                    ? 'always_ask'
-                    : 'preferred_editor';
-            setState(() => _editorOption = _newVal);
-            await SharedPref().pref.setString(SPConst.editorOption, _newVal);
-            await logger.file(
-                LogTypeTag.info, 'Editor option was set to: $_newVal');
-          },
-        ),
-        VSeparators.small(),
-        const Text(
-          'Refresh Options',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
+        const Text('Refresh Options'),
         VSeparators.normal(),
         Row(
           children: <Widget>[
@@ -219,7 +179,6 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                       context,
                       'Couldn\'t update your project refresh intervals.',
                       type: SnackBarType.error,
-                      revert: true,
                     ),
                   );
                 }

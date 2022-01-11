@@ -276,7 +276,7 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_buildWebIndex < _testCodeIndex) {
       _suggestions.add(
-        'Analyze the code before building web. This way we can make sure there are no syntax errors before attempting build.',
+        'Test the code before building web. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
@@ -292,7 +292,7 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_buildAndroidIndex < _testCodeIndex) {
       _suggestions.add(
-        'Analyze the code before building Android. This way we can make sure there are no syntax errors before attempting build.',
+        'Test the code before building Android. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
@@ -307,7 +307,58 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_buildIosIndex < _testCodeIndex) {
       _suggestions.add(
-        'Analyze the code before building iOS. This way we can make sure there are no syntax errors before attempting build.',
+        'Test the code before building iOS. This way we can make sure there are no syntax errors before attempting build.',
+      );
+    }
+  }
+
+  // If contains analyze and also a Web build.
+  if (_containsAnalyzeCode && _containsBuildWeb) {
+    int _analyzeCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.analyzeDartProject);
+
+    int _buildWebIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForWeb);
+
+    if (_analyzeCodeIndex > _buildWebIndex) {
+      _suggestions.add(
+        'Analyze the code before building the web. This way you can be sure there are no syntax errors before building the web.',
+      );
+    }
+  }
+
+  // If contains analyze and also an Android build.
+  if (_containsAnalyzeCode && _containsBuildAndroid) {
+    int _analyzeCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.analyzeDartProject);
+
+    int _buildAndroidIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForAndroid);
+
+    if (_analyzeCodeIndex > _buildAndroidIndex) {
+      _suggestions.add(
+        'Analyze the code before building the Android. This way you can be sure there are no syntax errors before building the Android.',
+      );
+    }
+  }
+
+  // If contains analyze and also an iOS build.
+  if (_containsAnalyzeCode && _containsBuildIos) {
+    int _analyzeCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.analyzeDartProject);
+
+    int _buildIosIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForIOS);
+
+    if (_analyzeCodeIndex > _buildIosIndex) {
+      _suggestions.add(
+        'Analyze the code before building the iOS. This way you can be sure there are no syntax errors before building the iOS.',
       );
     }
   }

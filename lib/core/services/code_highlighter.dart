@@ -169,7 +169,6 @@ class DartSyntaxHighlighter extends SyntaxHighlighter {
         return TextSpan(style: _style!.baseStyle, text: source);
       }
     } catch (e) {
-      print(e.toString());
       return TextSpan(style: _style!.baseStyle, text: source);
     }
   }

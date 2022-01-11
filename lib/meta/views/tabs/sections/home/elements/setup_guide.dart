@@ -7,7 +7,7 @@ import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/tabs/sections/home/elements/circle_chart.dart';
+import 'package:manager/meta/views/tabs/components/circle_chart.dart';
 
 class HomeSetupGuideTile extends StatefulWidget {
   const HomeSetupGuideTile({Key? key}) : super(key: key);

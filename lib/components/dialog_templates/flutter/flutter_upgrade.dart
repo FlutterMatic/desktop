@@ -42,11 +42,6 @@ class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
           VSeparators.small(),
           RectangleButton(
             width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
             onPressed: _upgradeFlutter,
             child: const Text('Upgrade Flutter'),
           ),

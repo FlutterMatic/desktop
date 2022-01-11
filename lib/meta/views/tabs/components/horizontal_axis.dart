@@ -28,10 +28,6 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
-
-    double _itemHeight = (_size.height - kToolbarHeight - 24) / 2;
-    double _itemWidth = _size.width / 2;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -60,13 +56,16 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                 child: Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 12,
-                  color: Theme.of(context).isDarkTheme ? Colors.grey : Colors.black,
+                  color: Theme.of(context).isDarkTheme
+                      ? Colors.grey
+                      : Colors.black,
                 ),
               ),
             HSeparators.small(),
             // Check if we are at the end of the list. If we are then we
             // don't want to show the right arrow.
-            if (_controller.hasClients && _controller.offset < _controller.position.maxScrollExtent)
+            if (_controller.hasClients &&
+                _controller.offset < _controller.position.maxScrollExtent)
               RectangleButton(
                 width: 30,
                 height: 30,
@@ -81,33 +80,25 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                 child: Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 12,
-                  color: Theme.of(context).isDarkTheme ? Colors.grey : Colors.black,
+                  color: Theme.of(context).isDarkTheme
+                      ? Colors.grey
+                      : Colors.black,
                 ),
               ),
-            HSeparators.small(),
-            RectangleButton(
-              height: 30,
-              width: 90,
-              padding: EdgeInsets.zero,
-              child: Text(
-                'Show more',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
-                ),
-              ),
-              onPressed: () {},
-            ),
           ],
         ),
         VSeparators.large(),
         if (widget.isVertical)
           GridView.count(
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: _size.width > 1200 ? 4 : 3,
+            crossAxisCount: _size.width > 1800
+                ? 5
+                : _size.width > 1100
+                    ? 4
+                    : 3,
             mainAxisSpacing: 15,
             crossAxisSpacing: 15,
-            childAspectRatio: (_itemWidth / _itemHeight) * 0.5,
+            childAspectRatio: 1,
             children: widget.content,
             shrinkWrap: true,
           )
@@ -118,7 +109,8 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
             child: Row(
                 children: widget.content.map(
               (Widget e) {
-                bool _isFinal = (widget.content.indexOf(e) + 1) == widget.content.length;
+                bool _isFinal =
+                    (widget.content.indexOf(e) + 1) == widget.content.length;
                 return Padding(
                   padding: EdgeInsets.only(right: _isFinal ? 0 : 15),
                   child: e,

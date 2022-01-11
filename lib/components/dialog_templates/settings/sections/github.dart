@@ -1,5 +1,7 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:manager/components/dialog_templates/dialog_header.dart';
+import 'package:manager/components/dialog_templates/logs/build_logs.dart';
 
 // 📦 Package imports:
 import 'package:url_launcher/url_launcher.dart';
@@ -23,9 +25,50 @@ class GitHubSettingsSection extends StatelessWidget {
               child: RectangleButton(
                 height: 100,
                 onPressed: () {
-                  Navigator.pop(context);
-                  launch(
-                      'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new');
+                  showDialog(
+                    context: context,
+                    builder: (_) => DialogTemplate(
+                      child: Column(
+                        children: <Widget>[
+                          const DialogHeader(title: 'Generate Report?'),
+                          informationWidget(
+                            'If you are reporting an issue, we recommend you generate a report with our built in report generation feature and upload the file it generates directly in the issue. This helps us resolve the issue quicker.',
+                            type: InformationType.info,
+                          ),
+                          VSeparators.normal(),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: RectangleButton(
+                                  child: const Text('Skip'),
+                                  onPressed: () async {
+                                    await launch(
+                                        'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new');
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                              HSeparators.normal(),
+                              Expanded(
+                                child: RectangleButton(
+                                  child: const Text('Generate'),
+                                  onPressed: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (_) => const BuildLogsDialog(),
+                                    );
+                                    await launch(
+                                        'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new');
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
                 child: Column(
                   children: <Widget>[

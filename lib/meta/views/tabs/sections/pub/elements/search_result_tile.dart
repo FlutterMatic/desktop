@@ -1,6 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/components/widgets/ui/shimmer.dart';
+import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
+
+// 📦 Package imports:
+import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/constants.dart';
@@ -8,18 +11,9 @@ import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:pub_api_client/pub_api_client.dart';
-
-class PubPackageObject {
-  final String name;
-
-  const PubPackageObject({
-    required this.name,
-  });
-}
 
 class PubPackageSearchResultTile extends StatefulWidget {
-  final PubPackageObject package;
+  final PkgViewData package;
 
   const PubPackageSearchResultTile({Key? key, required this.package})
       : super(key: key);
@@ -67,7 +61,7 @@ class _PubPackageSearchResultTileState
       onPressed: () {
         showDialog(
           context: context,
-          builder: (_) => PubPackageDialog(pkgName: widget.package.name),
+          builder: (_) => PubPackageDialog(pkgInfo: widget.package),
         );
       },
       padding: const EdgeInsets.all(5),
@@ -131,7 +125,6 @@ class _PubPackageSearchResultTileState
                       context,
                       'Dependency has been copied to your clipboard.',
                       type: SnackBarType.done,
-                      revert: true,
                     ),
                   );
                 },

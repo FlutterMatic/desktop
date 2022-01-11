@@ -8,10 +8,10 @@ import 'package:manager/meta/views/workflows/components/build_mode_selector.dart
 import 'package:manager/meta/views/workflows/components/expandable_tile.dart';
 
 class BuildWebWorkflowActionConfig extends StatefulWidget {
-  final String defaultRenderer;
-  final Function(String renderer) onRendererChanged;
-  final String defaultBuildMode;
-  final Function(String mode) onBuildModeChanged;
+  final WebRenderers defaultRenderer;
+  final Function(WebRenderers renderer) onRendererChanged;
+  final PlatformBuildModes defaultBuildMode;
+  final Function(PlatformBuildModes mode) onBuildModeChanged;
 
   const BuildWebWorkflowActionConfig({
     Key? key,
@@ -49,8 +49,8 @@ class _BuildWebWorkflowActionConfigState
             Expanded(
               child: selectBuildTypeTile(
                 context,
-                isSelected: widget.defaultRenderer == 'HTML',
-                onSelected: widget.onRendererChanged,
+                isSelected: widget.defaultRenderer == WebRenderers.html,
+                onSelected: (_) => widget.onRendererChanged(WebRenderers.html),
                 text: 'HTML',
               ),
             ),
@@ -58,8 +58,9 @@ class _BuildWebWorkflowActionConfigState
             Expanded(
               child: selectBuildTypeTile(
                 context,
-                isSelected: widget.defaultRenderer == 'CanvasKit',
-                onSelected: widget.onRendererChanged,
+                isSelected: widget.defaultRenderer == WebRenderers.canvaskit,
+                onSelected: (_) =>
+                    widget.onRendererChanged(WebRenderers.canvaskit),
                 text: 'CanvasKit',
               ),
             ),

@@ -7,11 +7,7 @@ enum WelcomeTab {
   restart,
 }
 
-enum EditorType {
-  vscode,
-  androidStudio,
-  none,
-}
+enum EditorType { vscode, androidStudio, none }
 
 enum Progress {
   none,
@@ -24,7 +20,7 @@ enum Progress {
   found,
 }
 
-enum Java {
-  jdk,
-  jre,
-}
+enum Java { jdk, jre }
+
+enum PlatformBuildModes { release, profile, debug }
+enum WebRenderers { html, canvaskit }

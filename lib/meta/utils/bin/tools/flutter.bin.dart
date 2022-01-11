@@ -9,7 +9,8 @@ import 'package:pub_semver/pub_semver.dart';
 String? _flutterExecutablePath;
 
 /// Resolved flutter path if found
-String? get flutterExecutablePath => _flutterExecutablePath ??= whichSync('flutter');
+String? get flutterExecutablePath =>
+    _flutterExecutablePath ??= whichSync('flutter');
 
 bool get isFlutterSupported => isFlutterSupportedSync;
 
@@ -22,16 +23,19 @@ Future<Version?> getFlutterVersion() => getFlutterBinVersion();
 /// Get flutter version.
 ///
 /// Returns null if flutter cannot be found in the path
-Future<Version?> getFlutterBinVersion() async => (await getFlutterBinInfo())?.version;
+Future<Version?> getFlutterBinVersion() async =>
+    (await getFlutterBinInfo())?.version;
 
 /// Get flutter channel. (dev, beta, master, stable)
 ///
 /// Returns null if flutter cannot be found in the path
-Future<String?> getFlutterBinChannel() async => (await getFlutterBinInfo())?.channel;
+Future<String?> getFlutterBinChannel() async =>
+    (await getFlutterBinInfo())?.channel;
 
 FlutterBinInfo? _flutterBinInfo;
 
-Future<FlutterBinInfo?> getFlutterBinInfo() async => _flutterBinInfo ??= await _getFlutterBinInfo();
+Future<FlutterBinInfo?> getFlutterBinInfo() async =>
+    _flutterBinInfo ??= await _getFlutterBinInfo();
 
 /// Parse flutter information
 abstract class FlutterBinInfo {
@@ -43,11 +47,12 @@ abstract class FlutterBinInfo {
   static FlutterBinInfo? parseVersionOutput(String resultOutput) {
     Version? version;
     String? channel;
-    Iterable<String> output = LineSplitter.split(resultOutput)
+    List<String> output = LineSplitter.split(resultOutput)
         .join(' ')
         .split(' ')
         .map((String word) => word.trim())
-        .where((String word) => word.isNotEmpty);
+        .where((String word) => word.isNotEmpty)
+        .toList();
     // Take the first version string after flutter
     bool foundFlutter = false;
     bool foundChannel = false;
@@ -64,7 +69,7 @@ abstract class FlutterBinInfo {
       } else if (channel == null) {
         if (foundChannel) {
           channel = word;
-          // done
+          // Done
           break;
         } else if (word.toLowerCase().contains('channel')) {
           foundChannel = true;
@@ -100,7 +105,8 @@ Future<FlutterBinInfo?> _getFlutterBinInfo() async {
   // Engine • revision fee001c93f
   // Tools • Dart 2.4.0
   try {
-    List<ProcessResult> results = await run('flutter --version', verbose: false);
+    List<ProcessResult> results =
+        await run('flutter --version', verbose: false);
     // Take from stderr first
     String resultOutput = results.first.stderr.toString().trim();
     if (resultOutput.isEmpty) {

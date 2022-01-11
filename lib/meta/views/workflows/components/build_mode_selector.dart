@@ -9,14 +9,14 @@ import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class WorkflowActionBuildModeSelector extends StatelessWidget {
-  final String defaultBuildMode;
-  final Function(String mode) onBuildModeChanged;
+  final PlatformBuildModes defaultBuildMode;
+  final Function(PlatformBuildModes mode) onBuildModeChanged;
 
-  const WorkflowActionBuildModeSelector(
-      {Key? key,
-      required this.defaultBuildMode,
-      required this.onBuildModeChanged})
-      : super(key: key);
+  const WorkflowActionBuildModeSelector({
+    Key? key,
+    required this.defaultBuildMode,
+    required this.onBuildModeChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +36,8 @@ class WorkflowActionBuildModeSelector extends StatelessWidget {
               child: selectBuildTypeTile(
                 context,
                 text: 'Debug',
-                onSelected: onBuildModeChanged,
-                isSelected: defaultBuildMode == 'Debug',
+                onSelected: (_) => onBuildModeChanged(PlatformBuildModes.debug),
+                isSelected: defaultBuildMode == PlatformBuildModes.debug,
               ),
             ),
             HSeparators.normal(),
@@ -45,8 +45,9 @@ class WorkflowActionBuildModeSelector extends StatelessWidget {
               child: selectBuildTypeTile(
                 context,
                 text: 'Profile',
-                onSelected: onBuildModeChanged,
-                isSelected: defaultBuildMode == 'Profile',
+                onSelected: (_) =>
+                    onBuildModeChanged(PlatformBuildModes.profile),
+                isSelected: defaultBuildMode == PlatformBuildModes.profile,
               ),
             ),
             HSeparators.normal(),
@@ -54,8 +55,9 @@ class WorkflowActionBuildModeSelector extends StatelessWidget {
               child: selectBuildTypeTile(
                 context,
                 text: 'Release',
-                onSelected: onBuildModeChanged,
-                isSelected: defaultBuildMode == 'Release',
+                onSelected: (_) =>
+                    onBuildModeChanged(PlatformBuildModes.release),
+                isSelected: defaultBuildMode == PlatformBuildModes.release,
               ),
             ),
           ],

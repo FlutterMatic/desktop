@@ -45,7 +45,6 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
                     snackBarTile(
                       context,
                       'Note that you cannot have any uppercase letters in your project name. We have lower-cased it for you.',
-                      revert: true,
                     ),
                   );
 

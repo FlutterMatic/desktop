@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/ui/round_container.dart';
+import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_android.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_ios.dart';
 import 'package:manager/meta/views/workflows/action_settings/build_web.dart';
@@ -19,16 +19,16 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final TextEditingController firebaseProjectName;
   final TextEditingController firebaseProjectIDController;
   final List<WorkflowActionModel> workflowActions;
-  final Function(String mode) onAndroidBuildModeChanged;
-  final Function(String mode) oniOSBuildModeChanged;
-  final String defaultAndroidBuildMode;
-  final String defaultIOSBuildMode;
+  final Function(PlatformBuildModes mode) onAndroidBuildModeChanged;
+  final Function(PlatformBuildModes mode) oniOSBuildModeChanged;
+  final PlatformBuildModes defaultAndroidBuildMode;
+  final PlatformBuildModes defaultIOSBuildMode;
   final Function(bool isFirebaseValidated) onFirebaseValidatedChanged;
   final bool isFirebaseValidated;
-  final Function(String renderer) onWebRendererChanged;
-  final String defaultWebRenderer;
-  final Function(String mode) onBuildWebModeChanged;
-  final String defaultWebBuildMode;
+  final Function(WebRenderers renderer) onWebRendererChanged;
+  final WebRenderers defaultWebRenderer;
+  final Function(PlatformBuildModes mode) onBuildWebModeChanged;
+  final PlatformBuildModes defaultWebBuildMode;
   final Function() onNext;
 
   const SetProjectWorkflowActionsConfiguration({
@@ -57,8 +57,8 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
 
 class _SetProjectWorkflowActionsConfigurationState
     extends State<SetProjectWorkflowActionsConfiguration> {
-  late String _iOSBuildMode = widget.defaultIOSBuildMode;
-  late String _androidBuildMode = widget.defaultAndroidBuildMode;
+  late PlatformBuildModes _iOSBuildMode = widget.defaultIOSBuildMode;
+  late PlatformBuildModes _androidBuildMode = widget.defaultAndroidBuildMode;
 
   bool get isDeployWeb => widget.workflowActions
       .where((WorkflowActionModel element) =>
@@ -89,6 +89,7 @@ class _SetProjectWorkflowActionsConfigurationState
       isDeployWeb,
       isBuildAndroid,
       isBuildIOS,
+      isBuildWeb,
     ];
   }
 
@@ -128,7 +129,7 @@ class _SetProjectWorkflowActionsConfigurationState
             firebaseProjectName: widget.firebaseProjectName,
             webUrlController: widget.webUrlController,
             isValidated: widget.isFirebaseValidated,
-            onValidate: widget.onFirebaseValidatedChanged,
+            onFirebaseValidated: widget.onFirebaseValidatedChanged,
           ),
         if (isBuildWeb)
           BuildWebWorkflowActionConfig(
@@ -140,7 +141,7 @@ class _SetProjectWorkflowActionsConfigurationState
         if (isBuildAndroid)
           BuildAndroidWorkflowActionConfig(
             defaultBuildMode: _androidBuildMode,
-            onBuildModeChanged: (String mode) {
+            onBuildModeChanged: (PlatformBuildModes mode) {
               widget.onAndroidBuildModeChanged(mode);
               setState(() => _androidBuildMode = mode);
             },
@@ -148,7 +149,7 @@ class _SetProjectWorkflowActionsConfigurationState
         if (isBuildIOS)
           BuildIOSWorkflowActionConfig(
             defaultBuildMode: _iOSBuildMode,
-            onBuildModeChanged: (String mode) {
+            onBuildModeChanged: (PlatformBuildModes mode) {
               widget.oniOSBuildModeChanged(mode);
               setState(() => _iOSBuildMode = mode);
             },

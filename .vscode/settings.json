@@ -1,7 +1,5 @@
 {
   "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-  "tabnine.experimentalAutoImports": true,
   "explorer.confirmDelete": false,
   "editor.tokenColorCustomizations": {
     "textMateRules": [
@@ -25,28 +23,12 @@
       }
     ]
   },
-  "logFileHighlighter.customPatterns": [
-    {
-      "pattern": "WARNING",
-      "foreground": "#ff9100"
-    },
-    {
-      "pattern": "ERROR",
-      "foreground": "#ff0000"
-    },
-    {
-      "pattern": "INFO\\w+",
-      "foreground": "#4be772"
-    },
-    {
-      "pattern": "\\[.*\\]",
-      "foreground": "#ffffff"
-    }
-  ],
   "[dart]": {
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
-    "editor.rulers": [80],
+    "editor.rulers": [
+      80
+    ],
     "editor.selectionHighlight": false,
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     "editor.suggestSelection": "first",
@@ -58,12 +40,11 @@
   "editor.formatOnPaste": true,
   "editor.defaultFormatter": "Dart-Code.dart-code",
   "editor.formatOnType": true,
-  "powershell.codeFormatting.autoCorrectAliases": true,
   "editor.formatOnSave": true,
-  "[yaml]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
 }

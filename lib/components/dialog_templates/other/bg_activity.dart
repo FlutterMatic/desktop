@@ -76,11 +76,6 @@ class _BgActivityDialogState extends State<BgActivityDialog> {
           VSeparators.large(),
           RectangleButton(
             width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
             onPressed: () => Navigator.pop(context),
             child: const Text('OK'),
           ),

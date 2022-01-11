@@ -13,7 +13,6 @@ SnackBar snackBarTile(
   String message, {
   SnackBarType? type,
   Duration? duration,
-  bool revert = false,
   SnackBarAction? action,
 }) {
   return SnackBar(
@@ -22,17 +21,13 @@ SnackBar snackBarTile(
     behavior: SnackBarBehavior.floating,
     width: 600,
     elevation: 0,
-    backgroundColor: revert
-        ? (type == null
-            ? Colors.white
-            : type == SnackBarType.error
-                ? kRedColor
-                : type == SnackBarType.warning
-                    ? kYellowColor
-                    : kGreenColor)
-        : (Theme.of(context).isDarkTheme
-            ? AppTheme.darkCardColor
-            : AppTheme.lightTheme.primaryColorLight),
+    backgroundColor: type == null
+        ? Colors.white
+        : type == SnackBarType.error
+            ? kRedColor
+            : type == SnackBarType.warning
+                ? kYellowColor
+                : kGreenColor,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     content: Row(
       children: <Widget>[
@@ -48,22 +43,14 @@ SnackBar snackBarTile(
                     : type == SnackBarType.warning
                         ? Assets.warn
                         : Assets.error,
-                color: revert
-                    ? AppTheme.darkBackgroundColor
-                    : (type == SnackBarType.done
-                        ? kGreenColor
-                        : type == SnackBarType.warning
-                            ? kYellowColor
-                            : kRedColor),
+                color: AppTheme.darkBackgroundColor,
               ),
             ),
           ),
         Flexible(
           child: Text(
             message,
-            style: Theme.of(context).isDarkTheme && !revert
-                ? AppTheme.darkTheme.textTheme.bodyText1
-                : AppTheme.lightTheme.textTheme.bodyText1,
+            style: AppTheme.lightTheme.textTheme.bodyText1,
           ),
         ),
       ],

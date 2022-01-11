@@ -1,5 +1,6 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:manager/components/dialog_templates/logs/build_logs.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/widgets.dart';
@@ -108,16 +109,32 @@ class _TroubleShootSettingsSectionState
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: RectangleButton(
-            width: 150,
-            onPressed: _startTroubleshoot,
-            child: Text(
-              'Start Troubleshoot',
-              style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+        Row(
+          children: <Widget>[
+            RectangleButton(
+              width: 150,
+              color: Colors.transparent,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => const BuildLogsDialog(),
+                );
+              },
+              child: Text(
+                'Generate Report',
+                style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+              ),
             ),
-          ),
+            const Spacer(),
+            RectangleButton(
+              width: 150,
+              onPressed: _startTroubleshoot,
+              child: Text(
+                'Start Troubleshoot',
+                style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -10,17 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
 import 'package:manager/components/widgets/buttons/square_button.dart';
 import 'package:manager/components/widgets/ui/dialog_template.dart';
 import 'package:manager/components/widgets/ui/snackbar_tile.dart';
 import 'package:manager/components/widgets/ui/spinner.dart';
+import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/meta/utils/extract_pubspec.dart';
 import 'package:manager/meta/views/workflows/actions.dart';
+import 'package:manager/meta/views/workflows/models/workflow.dart';
 import 'package:manager/meta/views/workflows/sections/actions.dart';
 import 'package:manager/meta/views/workflows/sections/configure_actions.dart';
 import 'package:manager/meta/views/workflows/sections/confirmation.dart';
@@ -52,16 +51,15 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   _InterfaceView _interfaceView = _InterfaceView.workflowInfo;
 
   // Actions Config
-  String _iOSBuildMode = 'Release';
-  String _androidBuildMode = 'Release';
+  PlatformBuildModes _iOSBuildMode = PlatformBuildModes.release;
+  PlatformBuildModes _androidBuildMode = PlatformBuildModes.release;
   bool _isFirebaseDeployVerified = false;
-  String _defaultWebRenderer = 'CanvasKit';
-  String _defaultWebBuildMode = 'Release';
+  WebRenderers _defaultWebRenderer = WebRenderers.canvaskit;
+  PlatformBuildModes _defaultWebBuildMode = PlatformBuildModes.release;
 
   // Utils
   bool _showInfoLast = false;
   bool _saveLocalError = false;
-
   bool _isSavingLocally = false;
 
   final ReceivePort _saveLocallyPort = ReceivePort();
@@ -72,23 +70,23 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   bool _syncStreamListening = false;
 
-  late final Map<String, dynamic> _pendingChanges = <String, dynamic>{
-    'name': _nameController.text,
-    'description': _descriptionController.text,
-    'web_url': _webUrlController.text,
-    'firebase_project_name': _firebaseProjectName.text,
-    'firebase_project_id': _firebaseProjectIDController.text,
-    'ios_build_mode': _iOSBuildMode,
-    'android_build_mode': _androidBuildMode,
-    'is_firebase_deploy_verified': _isFirebaseDeployVerified,
-    'default_web_renderer': _defaultWebRenderer,
-    'default_web_build_mode': _defaultWebBuildMode,
-    'workflow_actions':
-        _workflowActions.map((WorkflowActionModel e) => e.id).join(','),
-  };
-
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
+      Map<String, dynamic> _pendingChanges = WorkflowTemplate(
+        name: _nameController.text,
+        description: _descriptionController.text,
+        webUrl: _webUrlController.text,
+        firebaseProjectName: _firebaseProjectName.text,
+        firebaseProjectId: _firebaseProjectIDController.text,
+        iOSBuildMode: _iOSBuildMode,
+        androidBuildMode: _androidBuildMode,
+        isFirebaseDeployVerified: _isFirebaseDeployVerified,
+        defaultWebRenderer: _defaultWebRenderer,
+        defaultWebBuildMode: _defaultWebBuildMode,
+        workflowActions:
+            _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
+      ).toJson();
+
       List<bool> _stopConditions = <bool>[
         _pendingChanges == _lastSavedContent,
         _pubspecFile == null,
@@ -106,7 +104,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       setState(() => _isSavingLocally = true);
 
-      Isolate _isolate = await Isolate.spawn(_saveFormInPath, <dynamic>[
+      Isolate _isolate =
+          await Isolate.spawn(_saveWorkflowWithIsolate, <dynamic>[
         _saveLocallyPort.sendPort,
         _pubspecFile?.pathToPubspec ?? widget.pubspecPath,
         _pendingChanges,
@@ -144,48 +143,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
     }
   }
 
-  void _confirmCancel() {
-    showDialog(
-      context: context,
-      builder: (_) => DialogTemplate(
-        width: 450,
-        child: Column(
-          children: <Widget>[
-            const Text('Are you sure?',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            VSeparators.normal(),
-            const Text(
-              'If you exit then your workflow won\'t be saved. Complete setting up your workflow to avoid losing your work so far.',
-              textAlign: TextAlign.center,
-            ),
-            VSeparators.large(),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RectangleButton(
-                    child: const Text('Cancel Workflow'),
-                    hoverColor: AppTheme.errorColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                HSeparators.normal(),
-                Expanded(
-                  child: RectangleButton(
-                    child: const Text('Back'),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _initPubspec() async {
     try {
       String _path = widget.pubspecPath! + '\\pubspec.yaml';
@@ -201,12 +158,13 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           stackTraces: s);
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context,
-          'Couldn\'t read pubspec.yaml file. Invalid permissions set. Please try again.',
-          type: SnackBarType.error,
-          revert: true,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Couldn\'t read pubspec.yaml file. Invalid permissions set. Please try again.',
+            type: SnackBarType.error,
+          ),
+        );
         Navigator.pop(context);
       }
     }
@@ -231,11 +189,64 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _confirmCancel();
-        return false;
+        if (_pubspecFile == null || widget.pubspecPath == null) {
+          return true;
+        }
+
+        await _saveWorkflow(
+          context,
+          showAlerts: true,
+          pubspecInfo: _pubspecFile,
+          pubspecPath: widget.pubspecPath!,
+          template: WorkflowTemplate(
+            name: _nameController.text,
+            description: _descriptionController.text,
+            webUrl: _webUrlController.text,
+            firebaseProjectName: _firebaseProjectName.text,
+            firebaseProjectId: _firebaseProjectIDController.text,
+            iOSBuildMode: _iOSBuildMode,
+            androidBuildMode: _androidBuildMode,
+            isFirebaseDeployVerified: _isFirebaseDeployVerified,
+            defaultWebRenderer: _defaultWebRenderer,
+            defaultWebBuildMode: _defaultWebBuildMode,
+            workflowActions:
+                _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
+          ),
+        );
+
+        return true;
       },
       child: DialogTemplate(
-        onExit: _confirmCancel,
+        onExit: () async {
+          if (_pubspecFile == null || widget.pubspecPath == null) {
+            Navigator.pop(context);
+            return;
+          }
+
+          await _saveWorkflow(
+            context,
+            showAlerts: false,
+            pubspecInfo: _pubspecFile,
+            pubspecPath: widget.pubspecPath!,
+            template: WorkflowTemplate(
+              name: _nameController.text,
+              description: _descriptionController.text,
+              webUrl: _webUrlController.text,
+              firebaseProjectName: _firebaseProjectName.text,
+              firebaseProjectId: _firebaseProjectIDController.text,
+              iOSBuildMode: _iOSBuildMode,
+              androidBuildMode: _androidBuildMode,
+              isFirebaseDeployVerified: _isFirebaseDeployVerified,
+              defaultWebRenderer: _defaultWebRenderer,
+              defaultWebBuildMode: _defaultWebBuildMode,
+              workflowActions: _workflowActions
+                  .map((WorkflowActionModel e) => e.id)
+                  .toList(),
+            ),
+          );
+
+          Navigator.pop(context);
+        },
         width: 800,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +267,36 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       }),
                     )
                   : null,
-              onClose: _confirmCancel,
+              onClose: () async {
+                if (_pubspecFile == null || widget.pubspecPath == null) {
+                  Navigator.pop(context);
+                  return;
+                }
+
+                await _saveWorkflow(
+                  context,
+                  showAlerts: false,
+                  pubspecInfo: _pubspecFile,
+                  pubspecPath: widget.pubspecPath!,
+                  template: WorkflowTemplate(
+                    name: _nameController.text,
+                    description: _descriptionController.text,
+                    webUrl: _webUrlController.text,
+                    firebaseProjectName: _firebaseProjectName.text,
+                    firebaseProjectId: _firebaseProjectIDController.text,
+                    iOSBuildMode: _iOSBuildMode,
+                    androidBuildMode: _androidBuildMode,
+                    isFirebaseDeployVerified: _isFirebaseDeployVerified,
+                    defaultWebRenderer: _defaultWebRenderer,
+                    defaultWebBuildMode: _defaultWebBuildMode,
+                    workflowActions: _workflowActions
+                        .map((WorkflowActionModel e) => e.id)
+                        .toList(),
+                  ),
+                );
+
+                Navigator.pop(context);
+              },
             ),
             VSeparators.normal(),
             if (_interfaceView == _InterfaceView.workflowInfo)
@@ -267,12 +307,12 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     setState(() => _pubspecFile = pubspec),
                 onNext: () {
                   if (_pubspecFile == null) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       snackBarTile(
                         context,
                         'Please select your pubspec.yaml file to continue.',
                         type: SnackBarType.error,
-                        revert: true,
                       ),
                     );
                     return;
@@ -301,7 +341,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                         context,
                         'Please select at least one workflow action to continue.',
                         type: SnackBarType.error,
-                        revert: true,
                       ),
                     );
                     return;
@@ -326,10 +365,10 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 firebaseProjectName: _firebaseProjectName,
                 webUrlController: _webUrlController,
                 defaultIOSBuildMode: _iOSBuildMode,
-                oniOSBuildModeChanged: (String mode) =>
+                oniOSBuildModeChanged: (PlatformBuildModes mode) =>
                     setState(() => _iOSBuildMode = mode),
                 defaultAndroidBuildMode: _androidBuildMode,
-                onAndroidBuildModeChanged: (String mode) =>
+                onAndroidBuildModeChanged: (PlatformBuildModes mode) =>
                     setState(() => _androidBuildMode = mode),
                 isFirebaseValidated: _isFirebaseDeployVerified,
                 onFirebaseValidatedChanged: (bool isFirebaseValidated) =>
@@ -337,9 +376,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                         () => _isFirebaseDeployVerified = isFirebaseValidated),
                 defaultWebBuildMode: _defaultWebBuildMode,
                 defaultWebRenderer: _defaultWebRenderer,
-                onBuildWebModeChanged: (String mode) =>
+                onBuildWebModeChanged: (PlatformBuildModes mode) =>
                     setState(() => _defaultWebBuildMode = mode),
-                onWebRendererChanged: (String renderer) =>
+                onWebRendererChanged: (WebRenderers renderer) =>
                     setState(() => _defaultWebRenderer = renderer),
                 onNext: () {
                   if (_workflowActions.any((WorkflowActionModel e) =>
@@ -353,7 +392,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                           context,
                           'Please verify your Firebase project info to continue.',
                           type: SnackBarType.error,
-                          revert: true,
                         ),
                       );
                     }
@@ -368,44 +406,68 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 workflowName: _nameController.text,
                 workflowDescription: _descriptionController.text,
                 onSave: () async {
-                  // ignore: unawaited_futures
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (_) => const DialogTemplate(
-                      width: 150,
-                      height: 100,
-                      outerTapExit: false,
-                      child: Spinner(thickness: 2, size: 20),
+                  bool _hasSaved = await _saveWorkflow(
+                    context,
+                    showAlerts: true,
+                    pubspecInfo: _pubspecFile,
+                    pubspecPath: widget.pubspecPath!,
+                    template: WorkflowTemplate(
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      webUrl: _webUrlController.text,
+                      firebaseProjectName: _firebaseProjectName.text,
+                      firebaseProjectId: _firebaseProjectIDController.text,
+                      iOSBuildMode: _iOSBuildMode,
+                      androidBuildMode: _androidBuildMode,
+                      isFirebaseDeployVerified: _isFirebaseDeployVerified,
+                      defaultWebRenderer: _defaultWebRenderer,
+                      defaultWebBuildMode: _defaultWebBuildMode,
+                      workflowActions: _workflowActions
+                          .map((WorkflowActionModel e) => e.id)
+                          .toList(),
                     ),
                   );
 
-                  String? _dirPath =
-                      _pubspecFile?.pathToPubspec ?? widget.pubspecPath;
-
-                  _dirPath = (_dirPath.toString().split('\\')..removeLast())
-                      .join('\\');
-
-                  await File.fromUri(Uri.file(
-                          _dirPath + '\\f_matic\\${_nameController.text}.json'))
-                      .writeAsString(jsonEncode(_pendingChanges))
-                      .timeout(const Duration(seconds: 3));
-
-                  Navigator.of(context).pop();
-
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      'Workflow saved successfully. You can run this workflow from the projects tab.',
-                      type: SnackBarType.done,
-                      revert: true,
-                    ),
-                  );
-
-                  Navigator.of(context).pop();
+                  if (_hasSaved) {
+                    Navigator.pop(context);
+                  }
                 },
-                onSaveAndRun: () {},
+                onSaveAndRun: () async {
+                  bool _hasSaved = await _saveWorkflow(
+                    context,
+                    showAlerts: true,
+                    pubspecInfo: _pubspecFile,
+                    pubspecPath: widget.pubspecPath!,
+                    template: WorkflowTemplate(
+                      name: _nameController.text,
+                      description: _descriptionController.text,
+                      webUrl: _webUrlController.text,
+                      firebaseProjectName: _firebaseProjectName.text,
+                      firebaseProjectId: _firebaseProjectIDController.text,
+                      iOSBuildMode: _iOSBuildMode,
+                      androidBuildMode: _androidBuildMode,
+                      isFirebaseDeployVerified: _isFirebaseDeployVerified,
+                      defaultWebRenderer: _defaultWebRenderer,
+                      defaultWebBuildMode: _defaultWebBuildMode,
+                      workflowActions: _workflowActions
+                          .map((WorkflowActionModel e) => e.id)
+                          .toList(),
+                    ),
+                  );
+
+                  if (_hasSaved) {
+                    // TODO: Show the workflow runner.
+
+                    // We now want to run the workflow.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'Running workflows not yet supported/implemented. But workflow saved.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
+                },
               ),
             Align(
               alignment: Alignment.centerLeft,
@@ -472,7 +534,7 @@ enum _InterfaceView {
   done,
 }
 
-Future<void> _saveFormInPath(List<dynamic> data) async {
+Future<void> _saveWorkflowWithIsolate(List<dynamic> data) async {
   // The opened port we can communicate with.
   SendPort _port = data[0];
   Map<String, dynamic> _data = data[2];
@@ -488,17 +550,91 @@ Future<void> _saveFormInPath(List<dynamic> data) async {
 
     _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
 
-    Directory(_dirPath + '\\f_matic').createSync(recursive: true);
+    Directory(_dirPath + '\\fmatic').createSync(recursive: true);
 
-    await File.fromUri(Uri.file(_dirPath + '\\f_matic\\$_projName.json'))
+    await File.fromUri(Uri.file(_dirPath + '\\fmatic\\$_projName.json'))
         .writeAsString(jsonEncode(_data))
         .timeout(const Duration(seconds: 3));
 
     _port.send(_data);
   } catch (_, s) {
-    print(_);
     await logger.file(LogTypeTag.error, 'Couldn\'t sync workflow settings.',
         stackTraces: s);
     _port.send(<dynamic>[]);
+  }
+}
+
+/// Will save the workflow information locally on the user device. Will return
+/// either `true` or `false`. `true` means saved successfully. `false` means
+/// failed to save.
+///
+/// This expects a context so that it can show a snackbar if the save fails or
+/// succeeds and generally informs the user about the state of the save.
+Future<bool> _saveWorkflow(
+  BuildContext context, {
+  required bool showAlerts,
+  required String pubspecPath,
+  required WorkflowTemplate template,
+  required PubspecInfo? pubspecInfo,
+}) async {
+  try {
+    if (template.name.isEmpty) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      return true;
+    }
+
+    // ignore: unawaited_futures
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (_) => const DialogTemplate(
+        width: 150,
+        height: 100,
+        outerTapExit: false,
+        child: Spinner(thickness: 2, size: 20),
+      ),
+    );
+
+    String? _dirPath = pubspecInfo?.pathToPubspec ?? pubspecPath;
+
+    _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
+
+    await File.fromUri(Uri.file(_dirPath + '\\fmatic\\${template.name}.json'))
+        .writeAsString(jsonEncode(template.toJson()))
+        .timeout(const Duration(seconds: 3));
+
+    await logger.file(LogTypeTag.info,
+        'New workflow created at the following path: ${_dirPath + '\\fmatic\\${template.name}.json'}');
+
+    Navigator.of(context).pop();
+
+    if (showAlerts) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(
+          context,
+          'Workflow saved successfully.',
+          type: SnackBarType.done,
+        ),
+      );
+    }
+
+    return true;
+  } catch (_, s) {
+    await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow.',
+        stackTraces: s);
+
+    if (showAlerts) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(
+          context,
+          'Couldn\'t save your workflow. Please try again.',
+          type: SnackBarType.error,
+        ),
+      );
+    }
+
+    return false;
   }
 }

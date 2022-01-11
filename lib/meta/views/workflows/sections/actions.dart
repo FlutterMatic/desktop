@@ -167,7 +167,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                                     context,
                                     '${e?.name ?? '"err"'} workflow action has been removed.',
                                     type: SnackBarType.warning,
-                                    revert: true,
                                     action: snackBarAction(
                                       text: 'Undo',
                                       onPressed: () => setState(
@@ -202,7 +201,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                 context,
                 '${val.name} workflow action has been added.',
                 type: SnackBarType.done,
-                revert: true,
               ),
             );
           },
@@ -242,7 +240,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                           context,
                           '${e.name} workflow action has been added.',
                           type: SnackBarType.done,
-                          revert: true,
                         ),
                       );
                     },

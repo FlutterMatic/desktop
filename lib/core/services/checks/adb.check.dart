@@ -49,7 +49,7 @@ class ADBNotifier extends ChangeNotifier {
           'C:\\fluttermatic\\',
         );
         if (adbExtracted) {
-          await logger.file(LogTypeTag.info, 'ADB extraction was successfull');
+          await logger.file(LogTypeTag.info, 'ADB extraction was successful');
         } else {
           await logger.file(LogTypeTag.error, 'ADB extraction failed.');
         }

@@ -91,6 +91,7 @@ class DownloadNotifier extends ChangeNotifier {
     minsTime = Duration(seconds: secsTime).inMinutes;
     hoursTime = Duration(minutes: minsTime).inHours;
     daysTime = Duration(hours: hoursTime).inDays;
+
     if (secsTime > 60 && minsTime < 60 && hoursTime < 24) {
       _remainingTime = '$minsTime mins';
       notifyListeners();

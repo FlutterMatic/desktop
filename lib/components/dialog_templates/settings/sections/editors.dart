@@ -1,6 +1,3 @@
-// 🎯 Dart imports:
-import 'dart:io';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -52,7 +49,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
     return TabViewTabHeadline(
       title: 'Editors',
       content: <Widget>[
-        if (_defaultEditor == null)
+        if (_defaultEditor == null && !_askEditorAlways)
           Padding(
             padding: const EdgeInsets.only(bottom: 15),
             child: informationWidget(
@@ -89,7 +86,8 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                             Text(
                               'VS Code',
                               style: TextStyle(
-                                  color: customTheme.textTheme.bodyText1!.color),
+                                  color:
+                                      customTheme.textTheme.bodyText1!.color),
                             ),
                           ],
                         ),
@@ -120,7 +118,8 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                             Text(
                               'Android Studio',
                               style: TextStyle(
-                                  color: customTheme.textTheme.bodyText1!.color),
+                                  color:
+                                      customTheme.textTheme.bodyText1!.color),
                             ),
                           ],
                         ),
@@ -133,59 +132,22 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
           ),
         ),
         VSeparators.small(),
-        Row(
-          children: <Widget>[
-            if (Platform.isMacOS)
-              Expanded(
-                child: RoundContainer(
-                  borderWith: 2,
-                  borderColor: _defaultEditor == 'xcode'
-                      ? kGreenColor
-                      : Colors.transparent,
-                  padding: EdgeInsets.zero,
-                  child: RectangleButton(
-                    height: 100,
-                    onPressed: () async {
-                      setState(() => _defaultEditor = 'xcode');
-                      await SharedPref()
-                          .pref
-                          .setString(SPConst.defaultEditor, 'xcode');
-                    },
-                    child: Center(
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(child: Image.asset(Assets.xCode)),
-                          Text(
-                            'Xcode',
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            HSeparators.small(),
-            CheckBoxElement(
-              onChanged: (bool? val) async {
-                val = val ?? false; // Ensures not `null`.
+        CheckBoxElement(
+          onChanged: (bool? val) async {
+            val = val ?? false; // Ensures not `null`.
 
-                if (val) {
-                  setState(() => _askEditorAlways = true);
-                  await SharedPref().pref.setBool(SPConst.defaultEditor, true);
-                } else {
-                  setState(() => _askEditorAlways = false);
-                  await SharedPref().pref.setBool(SPConst.defaultEditor, false);
-                }
-              },
-              value: _askEditorAlways,
-              text: 'Always ask me which editor to use',
-            ),
-            HSeparators.small(),
-            const Spacer(),
-          ],
+            if (val) {
+              setState(() => _askEditorAlways = true);
+              await SharedPref().pref.setBool(SPConst.askEditorAlways, true);
+            } else {
+              setState(() => _askEditorAlways = false);
+              await SharedPref().pref.setBool(SPConst.askEditorAlways, false);
+            }
+          },
+          value: _askEditorAlways,
+          text: 'Always ask me which editor to use',
         ),
+        HSeparators.small(),
       ],
     );
   }

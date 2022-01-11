@@ -1,6 +1,3 @@
-// 🎯 Dart imports:
-import 'dart:io';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -36,40 +33,36 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
   final List<String> _editors = <String>[
     'code',
     'studio64',
-    'xcode',
   ];
 
   bool _showEditorSelection = false;
 
   Future<void> _loadProject() async {
     try {
+      if (SharedPref().pref.containsKey(SPConst.askEditorAlways)) {
+        if (SharedPref().pref.getBool(SPConst.askEditorAlways) == true) {
+          setState(() => _showEditorSelection = true);
+          return;
+        }
+      }
+
       if (!SharedPref().pref.containsKey(SPConst.defaultEditor) && mounted) {
         setState(() => _showEditorSelection = true);
         return;
       } else if (mounted) {
+        // TODO: Fix error with types: type 'bool' is not a subtype of type 'String?' in type cast
         if (_editors
                 .contains(SharedPref().pref.getString(SPConst.defaultEditor)) &&
             mounted) {
           switch (SharedPref().pref.getString(SPConst.defaultEditor)) {
-            case 'code':
-              await shell.cd(widget.path).run('code .');
-              Navigator.pop(context);
-              break;
             case 'studio64':
               ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(context,
-                    'Android Studio not supported yet. Select another editor instead.',
-                    type: SnackBarType.warning, revert: true),
-              );
-              setState(() => _showEditorSelection = true);
-              break;
-            case 'xcode':
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(context,
-                    'Xcode not supported yet. Select another editor instead.',
-                    type: SnackBarType.warning, revert: true),
+                snackBarTile(
+                  context,
+                  'Android Studio not supported yet. Select another editor instead.',
+                  type: SnackBarType.warning,
+                ),
               );
               setState(() => _showEditorSelection = true);
               break;
@@ -84,14 +77,12 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t open project',
           stackTraces: s);
-      print(_);
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
           context,
           'Couldn\'t open this project! Please report this issue on GitHub.',
           type: SnackBarType.error,
-          revert: true,
         ));
         Navigator.pop(context);
       }
@@ -172,37 +163,6 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
                     ),
                   ),
                 ),
-                if (Platform.isMacOS) HSeparators.normal(),
-                if (Platform.isMacOS)
-                  Expanded(
-                    child: RoundContainer(
-                      borderWith: 2,
-                      borderColor: _selectedEditor == 'xcode'
-                          ? kGreenColor
-                          : Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      child: RectangleButton(
-                        height: 100,
-                        onPressed: () =>
-                            setState(() => _selectedEditor = 'xcode'),
-                        child: Center(
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(child: Image.asset(Assets.xCode)),
-                              Text(
-                                'Xcode',
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
             VSeparators.normal(),
@@ -222,8 +182,10 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(
                       snackBarTile(
-                          context, 'Please select an editor before proceeding.',
-                          type: SnackBarType.error, revert: true),
+                        context,
+                        'Please select an editor before proceeding.',
+                        type: SnackBarType.error,
+                      ),
                     );
                     return;
                   }
@@ -242,18 +204,11 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
                     case 'studio64':
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        snackBarTile(context,
-                            'Android Studio not supported yet. Select another editor instead in settings.',
-                            type: SnackBarType.warning, revert: true),
-                      );
-                      Navigator.pop(context);
-                      break;
-                    case 'xcode':
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        snackBarTile(context,
-                            'Xcode not supported yet. Select another editor instead in settings.',
-                            type: SnackBarType.warning, revert: true),
+                        snackBarTile(
+                          context,
+                          'Android Studio not supported yet. Select another editor instead in settings.',
+                          type: SnackBarType.warning,
+                        ),
                       );
                       Navigator.pop(context);
                       break;

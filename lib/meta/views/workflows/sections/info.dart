@@ -1,7 +1,9 @@
-// 🐦 Flutter imports:
+// 🎯 Dart imports:
 import 'dart:io';
 
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file;
@@ -80,12 +82,12 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                   if (_selectedIndex == 1) {
                     // Validate the pubspec file.
                     if (widget.pubspecFile == null) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
                           'Please select a pubspec.yaml file to continue setting up workflow.',
                           type: SnackBarType.error,
-                          revert: true,
                         ),
                       );
                       return;
@@ -93,6 +95,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
 
                     // Make sure that the pubspec has the name and version tag.
                     if (!_validatePubspec(widget.pubspecFile!)) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -100,9 +103,9 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                           type: SnackBarType.error,
                           action: snackBarAction(
                             text: 'Learn more',
-                            onPressed: () {},
+                            onPressed:
+                                () {}, // TODO: Create documentation for this.
                           ),
-                          revert: true,
                         ),
                       );
                       return;
@@ -127,7 +130,6 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                             context,
                             'The workflow name you have chosen already exists. Please choose another workflow name.',
                             type: SnackBarType.error,
-                            revert: true,
                           ),
                         );
 
@@ -189,35 +191,35 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       onPressed: () async {
                         file.XFile? _file = await file.openFile();
                         if (_file == null && widget.pubspecFile != null) {
+                          ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(
                               context,
                               'You can still change this file if you changed your mind.',
-                              revert: true,
                             ),
                           );
                           return;
                         }
 
                         if (_file == null) {
+                          ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(
                               context,
                               'You must select a pubspec.yaml file to continue setting up this workflow.',
                               type: SnackBarType.error,
-                              revert: true,
                             ),
                           );
                           return;
                         }
 
                         if (!_file.path.endsWith('\\pubspec.yaml')) {
+                          ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(
                               context,
                               'Invalid file selected. The file must be named pubspec.yaml.',
                               type: SnackBarType.error,
-                              revert: true,
                             ),
                           );
                           return;
@@ -232,12 +234,12 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
 
                         widget.onPubspecUpdate(_pubspec);
 
+                        ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
                           snackBarTile(
                             context,
                             'Your pubspec.yaml file has been added successfully.',
                             type: SnackBarType.done,
-                            revert: true,
                           ),
                         );
                       },
@@ -312,11 +314,31 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       controller: widget.nameController,
                       hintText: 'Workflow name',
                       infoText: 'You can change the name later.',
+                      inputFormatters: <TextInputFormatter>[
+                        LengthLimitingTextInputFormatter(30),
+                        TextInputFormatter.withFunction(
+                          (TextEditingValue oldValue,
+                              TextEditingValue newValue) {
+                            // Only allow a-z, A-Z, 0-9, and spaces.
+                            if (RegExp(r'^[a-zA-Z0-9 _]+$')
+                                .hasMatch(newValue.text)) {
+                              return newValue.copyWith(
+                                text: newValue.text
+                                    .toLowerCase()
+                                    .replaceAll(' ', '_'),
+                                selection: newValue.selection,
+                              );
+                            } else {
+                              return oldValue;
+                            }
+                          },
+                        ),
+                      ],
                       onChanged: (String val) async {
                         setState(() => _loadingExistingNames = true);
                         File _file = File(widget.pubspecFile!.pathToPubspec!
                                 .replaceAll('\\pubspec.yaml', '') +
-                            '\\f_matic\\${widget.nameController.text}.json');
+                            '\\fmatic\\${widget.nameController.text}.json');
 
                         if (await _file.exists()) {
                           setState(() => _nameExists = true);
@@ -377,24 +399,24 @@ bool _validateNameAndDescription({
   required TextEditingController descriptionController,
 }) {
   if (nameController.text.isEmpty) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       snackBarTile(
         context,
         'You must enter a name for this workflow.',
         type: SnackBarType.error,
-        revert: true,
       ),
     );
     return false;
   }
 
   if (descriptionController.text.isEmpty) {
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       snackBarTile(
         context,
         'You must enter a description for this workflow.',
         type: SnackBarType.error,
-        revert: true,
       ),
     );
 

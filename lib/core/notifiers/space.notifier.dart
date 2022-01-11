@@ -47,8 +47,9 @@ class SpaceCheck extends ChangeNotifier {
           return;
         }
       }
-    } catch (e) {
-      await logger.file(LogTypeTag.error, e.toString());
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Failed to check disk space.',
+          stackTraces: s);
     }
   }
 }

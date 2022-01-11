@@ -50,9 +50,12 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
             icon:
                 const Icon(Icons.refresh_rounded, color: kGreenColor, size: 15),
             onPressed: () {
+              ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(context, 'Checking for new Dart updates...',
-                    revert: true),
+                snackBarTile(
+                  context,
+                  'Checking for new Dart updates...',
+                ),
               );
             },
           ),

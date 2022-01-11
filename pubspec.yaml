@@ -1,5 +1,5 @@
 name: manager
-description: Flutter manager helps managing your system's Flutter setup environment and makes development with Flutter even easier.
+description: FlutterMatic helps in managing your system's Flutter setup environment and makes development with Flutter easier.
 publish_to: none
 version: 0.0.1
 
@@ -47,12 +47,12 @@ dependencies:
       url: https://github.com/yahu1031/unix_disk_space.git
 
 msix_config:
-  display_name: Flutter Manager
+  display_name: FlutterMatic
   publisher_display_name: Fluttermatic
   msix_version: 0.0.0.2
   certificate_path: ./CERTIFICATE.pfx
   certificate_password: fluttermatic
-  identity_name: fluttermanager
+  identity_name: fluttermatic
   publisher: CN=FLUTTERMATIC, O=Fluttermatic
   icons_background_color: transparent
   architecture: x64

@@ -51,8 +51,12 @@ class _HomeFlutterVersionStateTile extends State<HomeJavaVersionTile> {
                 color: kGreenColor, size: 15),
             onPressed: () {
               // TODO(@yahu1031): Install Java
+              ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(context, 'Installing Java...', revert: true),
+                snackBarTile(
+                  context,
+                  'Installing Java...',
+                ),
               );
             },
           ),

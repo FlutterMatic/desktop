@@ -1,5 +1,9 @@
 // 🎯 Dart imports:
+import 'dart:convert';
 import 'dart:io';
+
+// 📦 Package imports:
+import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/shared_pref.dart';
@@ -9,6 +13,17 @@ import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/meta/utils/extract_pubspec.dart';
 
 class ProjectSearchUtils {
+  /// Returns the path where the projects cache is stored or where it should
+  /// be stored.
+  static Future<String> getProjectCachePath() async =>
+      (await getApplicationSupportDirectory()).path +
+      '\\cache\\project_cache.json';
+
+  /// Will return [true] if there is cache for the personal projects and [false]
+  /// if there isn't.
+  static Future<bool> hasCache() async =>
+      File(await getProjectCachePath()).exists();
+
   /// Gets all the project from the path stored in shared preferences.
   ///
   /// NOTE: This is a very performance impacting request and will freeze the
@@ -21,7 +36,7 @@ class ProjectSearchUtils {
   static Future<List<ProjectObject>> getProjectsFromPath() async {
     try {
       if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
-        List<ProjectObject> projects = <ProjectObject>[];
+        List<ProjectObject> _projects = <ProjectObject>[];
         String? _path = SharedPref().pref.getString(SPConst.projectsPath);
 
         // Gets all the files in the path
@@ -44,7 +59,7 @@ class ProjectSearchUtils {
           );
 
           if (_pubspec.isValid) {
-            projects.add(ProjectObject(
+            _projects.add(ProjectObject(
               path: file.parent.path,
               name: _parentName,
               description: _pubspec.description,
@@ -53,11 +68,15 @@ class ProjectSearchUtils {
           }
         }
 
-        // Sets the cache.
-        await SharedPref().pref.setStringList(SPConst.projectsCache,
-            projects.map((ProjectObject e) => e.path).toList());
+        // Sets the cache for the projects.
+        await File(await getProjectCachePath()).writeAsString(jsonEncode(
+            _projects.map((ProjectObject e) => e.toJson()).toList()));
 
-        return projects;
+        await SharedPref()
+            .pref
+            .setString(SPConst.lastProjectsReload, DateTime.now().toString());
+
+        return _projects;
       } else {
         await logger.file(LogTypeTag.info,
             'Tried to get projects when the projects directory is not set.');
@@ -70,34 +89,21 @@ class ProjectSearchUtils {
     }
   }
 
-  static Future<List<ProjectObject>> getProjectsCache() async {
+  static Future<List<ProjectObject>> getProjectsFromCache() async {
     try {
-      if (SharedPref().pref.containsKey(SPConst.projectsCache)) {
-        List<ProjectObject> projects = <ProjectObject>[];
+      if (await hasCache()) {
+        // Gets the projects from the cache.
+        List<ProjectObject> _projectsFromCache = (jsonDecode(
+          await File(await getProjectCachePath()).readAsString(),
+        ) as List<dynamic>)
+            // ignore: unnecessary_lambdas
+            .map((_) => ProjectObject.fromJson(_))
+            .toList();
 
-        List<String> _projectsFromCache =
-            SharedPref().pref.getStringList(SPConst.projectsCache)!;
-
-        for (String project in _projectsFromCache) {
-          File _file = File(project + '\\pubspec.yaml');
-          PubspecInfo _pubspec = extractPubspec(
-              lines: await _file.readAsLines(), path: _file.path);
-          String _parentName = _file.parent.path.split('\\').last;
-
-          projects.add(
-            ProjectObject(
-              name: _parentName,
-              modDate: _file.statSync().modified,
-              path: project,
-              description: _pubspec.description,
-            ),
-          );
-        }
-
-        return projects;
+        return _projectsFromCache;
       } else {
-        await logger.file(LogTypeTag.info,
-            'Tried to get projects when the projects cache is not set. Will request to fetch in background.');
+        await logger.file(LogTypeTag.warning,
+            'Tried to get projects when the projects cache is not set. Should request to fetch in background as an initial fetch.');
         return <ProjectObject>[];
       }
     } catch (_, s) {

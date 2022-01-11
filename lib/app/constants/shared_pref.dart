@@ -19,9 +19,7 @@ class SPConst {
   // Settings
   static String isDarkTheme = 'DARK_THEME';
   static String projectsPath = 'PROJECTS_PATH';
-  static String editorOption = 'EDITOR_OPTION';
   static String defaultEditor = 'DEFAULT_EDITOR';
-  static String pubFastSearch = 'PUB_FAST_SEARCH';
 
   // Flutter Setup
   static String flutterPath = 'FLUTTER_PATH';
@@ -45,7 +43,7 @@ class SPConst {
   static String vscVersion = 'VISUAL_CODE_VERSION';
 
   // Projects Services
-  static String projectsCache = 'PROJECTS_CACHE';
   static String askEditorAlways = 'ASK_EDITOR_ALWAYS';
+  static String lastProjectsReload = 'LAST_PROJECTS_RELOAD';
   static String projectRefresh = 'PROJECT_REFRESH_INTERVALS';
 }

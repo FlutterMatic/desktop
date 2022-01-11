@@ -9,7 +9,7 @@ import 'package:provider/src/provider.dart';
 import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
-AnimatedOpacity windowControls(BuildContext context, {bool disabled = false}) {
+Widget windowControls(BuildContext context, {bool disabled = false}) {
   return AnimatedOpacity(
     duration: const Duration(milliseconds: 300),
     opacity: disabled ? 0.2 : 1,
@@ -45,13 +45,17 @@ AnimatedOpacity windowControls(BuildContext context, {bool disabled = false}) {
 }
 
 Widget _control(BuildContext context,
-    {required IconData icon, required VoidCallback onPressed, _HoverType hoverType = _HoverType.normal}) {
+    {required IconData icon,
+    required VoidCallback onPressed,
+    _HoverType hoverType = _HoverType.normal}) {
   return SizedBox(
     width: 40,
     child: MaterialButton(
       splashColor: Colors.transparent,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      hoverColor: hoverType == _HoverType.normal ? Colors.white.withOpacity(0.2) : Colors.red,
+      hoverColor: hoverType == _HoverType.normal
+          ? Colors.white.withOpacity(0.2)
+          : Colors.red,
       onPressed: onPressed,
       child: Icon(
         icon,

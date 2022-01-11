@@ -12,7 +12,7 @@ import 'package:manager/core/libraries/services.dart';
 
 /// This function will download the files.
 ///
-/// **EG:**
+/// **Example:**
 /// ```dart
 /// bool extracted = await unzip(
 ///   'C:\\Users\\user\\Downloads\\Example.zip',

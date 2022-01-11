@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:manager/core/libraries/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +19,7 @@ import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
+import 'package:manager/core/libraries/widgets.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +28,7 @@ void main() {
     appWindow.minSize = const Size(750, 600);
     appWindow.maximize();
     appWindow.alignment = Alignment.center;
-    appWindow.title = 'Flutter Manager';
+    appWindow.title = 'FlutterMatic';
     appWindow.show();
   });
 }
@@ -41,96 +41,121 @@ class FlutterMaticMain extends StatefulWidget {
 }
 
 class _FlutterMaticMainState extends State<FlutterMaticMain> {
-  bool isChecking = true;
+  bool _isChecking = true;
 
   Future<void> _initDataFetch() async {
-    await SpaceCheck().checkSpace();
+    try {
+      await SpaceCheck().checkSpace();
 
-    /// Application supporting Directory
-    Directory dir = await getApplicationSupportDirectory();
+      /// Application supporting Directory
+      Directory _dir = await getApplicationSupportDirectory();
 
-    /// Check for temporary Directory to download files
-    bool tmpDir = await Directory('${dir.path}\\tmp').exists();
-    bool appDir = await Directory('C:\\fluttermatic').exists();
+      /// Check for temporary Directory to download files
+      bool _tmpDir = await Directory('${_dir.path}\\tmp').exists();
+      bool _cacheDir = await Directory(_dir.path + '\\cache').exists();
+      bool _logsDir = await Directory(_dir.path + '\\logs').exists();
 
-    await SharedPref.init();
+      await SharedPref.init();
 
-    // if (kDebugMode) await SharedPref().pref.clear();
+      if (kDebugMode) await SharedPref().pref.clear();
 
-    appVersion = const String.fromEnvironment('current-version');
-    await SharedPref()
-        .pref
-        .setString(SPConst.appVersion, appVersion.toString());
-    appBuild = const String.fromEnvironment('release-type');
-    await SharedPref().pref.setString(SPConst.appBuild, appBuild.toString());
-    if (SharedPref().pref.containsKey(SPConst.completedSetup) &&
-        !SharedPref().pref.containsKey(SPConst.setupTab)) {
-      completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
-    } else {
-      await SharedPref().pref.setBool(SPConst.completedSetup, false);
-      completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
-    }
-    if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
-      List<ProcessResult?>? platformData;
-      if (Platform.isWindows) {
-        platformData = await shell
-            .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"');
+      appVersion = const String.fromEnvironment('current-version');
+
+      await SharedPref()
+          .pref
+          .setString(SPConst.appVersion, appVersion.toString());
+
+      appBuild = const String.fromEnvironment('release-type');
+
+      await SharedPref().pref.setString(SPConst.appBuild, appBuild.toString());
+
+      if (SharedPref().pref.containsKey(SPConst.completedSetup) &&
+          !SharedPref().pref.containsKey(SPConst.setupTab)) {
+        completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
       } else {
-        platformData = null;
+        await SharedPref().pref.setBool(SPConst.completedSetup, false);
+        completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
       }
-      await SharedPref()
-          .pref
-          .setString(SPConst.sysPlatform, Platform.operatingSystem)
-          .then((_) =>
-              platform = SharedPref().pref.getString(SPConst.sysPlatform));
-      platform = SharedPref().pref.getString(SPConst.sysPlatform);
-      await SharedPref()
-          .pref
-          .setString(
-              SPConst.osName,
-              platformData![0]!
-                  .stdout
-                  .split('\n')[0]
-                  .replaceAll('  ', '')
-                  .replaceAll('OS Name: ', '')
-                  .replaceAll('\\r', '')
-                  .trim())
-          .then((_) => osName = SharedPref().pref.getString(SPConst.osName));
-      osName = SharedPref().pref.getString(SPConst.osName);
-      await SharedPref().pref.setString(
-          SPConst.osVersion,
-          platformData[0]!
-              .stdout
-              .split('\n')[1]
-              .replaceAll('  ', '')
-              .replaceAll('OS Version', '')
-              .replaceAll(':', '')
-              .split('N/A')[0]
-              .trim());
-      osVersion = SharedPref().pref.getString(SPConst.osVersion);
-    } else {
-      platform = SharedPref().pref.getString(SPConst.sysPlatform);
-      osName = SharedPref().pref.getString(SPConst.osName);
-      osVersion = SharedPref().pref.getString(SPConst.osVersion);
-      appTemp = SharedPref().pref.getString(SPConst.appTempDir);
-      appMainDir = SharedPref().pref.getString(SPConst.appMainDir);
-      appVersion = SharedPref().pref.getString(SPConst.appVersion);
-      appBuild = SharedPref().pref.getString(SPConst.appBuild);
-    }
 
-    /// If tmpDir is false, then create a temporary directory.
-    if (!tmpDir) {
-      await Directory('${dir.path}\\tmp').create();
-      await logger.file(LogTypeTag.info, 'Created tmp directory.');
-    }
+      if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
+        List<ProcessResult?>? platformData;
 
-    /// If appDir is false, then create a app directory.
-    if (!appDir) {
-      await Directory('C:\\fluttermatic').create();
-      await logger.file(LogTypeTag.info, 'Created fluttermatic directory.');
-    }
+        if (Platform.isWindows) {
+          platformData = await shell
+              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"');
+        } else {
+          platformData = null;
+        }
 
-    setState(() => isChecking = false);
+        await SharedPref()
+            .pref
+            .setString(SPConst.sysPlatform, Platform.operatingSystem)
+            .then((_) =>
+                platform = SharedPref().pref.getString(SPConst.sysPlatform));
+
+        platform = SharedPref().pref.getString(SPConst.sysPlatform);
+
+        await SharedPref()
+            .pref
+            .setString(
+                SPConst.osName,
+                platformData![0]!
+                    .stdout
+                    .split('\n')[0]
+                    .replaceAll('  ', '')
+                    .replaceAll('OS Name: ', '')
+                    .replaceAll('\\r', '')
+                    .trim())
+            .then((_) => osName = SharedPref().pref.getString(SPConst.osName));
+
+        osName = SharedPref().pref.getString(SPConst.osName);
+
+        await SharedPref().pref.setString(
+            SPConst.osVersion,
+            platformData[0]!
+                .stdout
+                .split('\n')[1]
+                .replaceAll('  ', '')
+                .replaceAll('OS Version', '')
+                .replaceAll(':', '')
+                .split('N/A')[0]
+                .trim());
+
+        osVersion = SharedPref().pref.getString(SPConst.osVersion);
+      } else {
+        platform = SharedPref().pref.getString(SPConst.sysPlatform);
+        osName = SharedPref().pref.getString(SPConst.osName);
+        osVersion = SharedPref().pref.getString(SPConst.osVersion);
+        appTemp = SharedPref().pref.getString(SPConst.appTempDir);
+        appMainDir = SharedPref().pref.getString(SPConst.appMainDir);
+        appVersion = SharedPref().pref.getString(SPConst.appVersion);
+        appBuild = SharedPref().pref.getString(SPConst.appBuild);
+      }
+
+      /// If tmpDir is false, then create a temporary directory.
+      if (!_tmpDir) {
+        await Directory(_dir.path + '\\tmp').create();
+        await logger.file(LogTypeTag.info, 'Created tmp directory.');
+      }
+
+      // If cacheDir is false, then create a cache directory.
+      if (!_cacheDir) {
+        await Directory(_dir.path + '\\cache').create();
+        await logger.file(LogTypeTag.info, 'Created cache directory.');
+      }
+
+      // If _logsDir is false, then create a cache directory.
+      if (!_logsDir) {
+        await Directory(_dir.path + '\\logs').create();
+        await logger.file(LogTypeTag.info, 'Created logs directory.');
+      }
+
+      setState(() => _isChecking = false);
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch.',
+          stackTraces: s);
+      setState(() => _isChecking = false);
+    }
   }
 
   @override
@@ -212,7 +237,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         ],
                       );
                     },
-                    home: isChecking
+                    home: _isChecking
                         ? const Scaffold(
                             body: Center(child: Spinner(thickness: 2)))
                         : !completedSetup!

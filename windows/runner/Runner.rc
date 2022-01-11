@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "Flutter Manager" "\0"
+            VALUE "CompanyName", "FlutterMatic" "\0"
             VALUE "FileDescription", "Flutter App Manager" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "fluttermatic" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2021 Flutter Manager. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright © 2022 FlutterMatic. All rights reserved. Flutter is a trademark of Google Inc. All other trademarks are the property of their respective owners." "\0"
             VALUE "OriginalFilename", "fluttermatic.exe" "\0"
             VALUE "ProductName", "fluttermatic" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
