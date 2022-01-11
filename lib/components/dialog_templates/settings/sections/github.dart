@@ -1,13 +1,13 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/logs/build_logs.dart';
 
 // 📦 Package imports:
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/components/dialog_templates/dialog_header.dart';
+import 'package:manager/components/dialog_templates/logs/build_logs.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class GitHubSettingsSection extends StatelessWidget {

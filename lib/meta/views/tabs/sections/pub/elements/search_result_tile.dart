@@ -1,6 +1,5 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 // 📦 Package imports:
 import 'package:pub_api_client/pub_api_client.dart';
@@ -11,6 +10,7 @@ import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class PubPackageSearchResultTile extends StatefulWidget {
   final PkgViewData package;

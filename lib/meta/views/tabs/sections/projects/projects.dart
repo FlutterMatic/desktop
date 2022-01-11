@@ -35,35 +35,45 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   final ReceivePort _loadProjectsPort = ReceivePort('find_projects_isolate');
 
   Future<void> _loadProjects([bool notFirstCall = false]) async {
-    if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
-      if (notFirstCall) {
-        setState(() => _reloadingFromCache = true);
-      }
+    try {
+      if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
+        if (notFirstCall) {
+          setState(() => _reloadingFromCache = true);
+        }
 
-      Isolate _isolate =
-          await Isolate.spawn(ProjectServicesModel.getProjectsIsolate, _loadProjectsPort.sendPort)
-              .timeout(const Duration(minutes: 2));
+        Isolate _isolate = await Isolate.spawn(
+          ProjectServicesModel.getProjectsIsolate,
+          _loadProjectsPort.sendPort,
+        ).timeout(const Duration(minutes: 2));
 
-      if (!_loadProjectsCalled) {
-        _loadProjectsPort.listen((dynamic message) {
-          setState(() => _loadProjectsCalled = true);
-          if (message is List) {
-            setState(() {
-              _projectsLoading = false;
-              _projects.clear();
-              _projects.addAll(message.first);
-              if (message[2] == true) {
-                _reloadingFromCache = true;
-              } else {
-                _reloadingFromCache = false;
+        if (!_loadProjectsCalled) {
+          _loadProjectsPort.listen((dynamic message) {
+            setState(() => _loadProjectsCalled = true);
+            if (message is List) {
+              setState(() {
+                _projectsLoading = false;
+                _projects.clear();
+                _projects.addAll(message.first);
+                if (message[2] == true) {
+                  _reloadingFromCache = true;
+                } else {
+                  _reloadingFromCache = false;
+                }
+              });
+              if (message[1] == true) {
+                _isolate.kill();
               }
-            });
-            if (message[1] == true) {
-              _isolate.kill();
             }
-          }
-        });
+          });
+        }
       }
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Couldn\'t load projects from cache',
+          stackTraces: s);
+      setState(() {
+        _projectsLoading = false;
+        _reloadingFromCache = false;
+      });
     }
   }
 

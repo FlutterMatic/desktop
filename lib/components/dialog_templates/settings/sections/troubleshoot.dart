@@ -1,8 +1,8 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:manager/components/dialog_templates/logs/build_logs.dart';
 
 // 🌎 Project imports:
+import 'package:manager/components/dialog_templates/logs/build_logs.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {

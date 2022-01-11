@@ -1,13 +1,19 @@
+// 🎯 Dart imports:
 import 'dart:io';
 import 'dart:isolate';
 
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:file_selector/file_selector.dart' as file_selector;
+import 'package:path_provider/path_provider.dart';
+
+// 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// Expects the following data:
 /// [<String> filePath, <String> fileName, <SendPort> port]

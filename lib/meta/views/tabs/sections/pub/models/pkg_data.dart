@@ -1,11 +1,15 @@
+// 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:manager/core/services/logs.dart';
+// 📦 Package imports:
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_api_client/pub_api_client.dart';
-import 'package:http/http.dart' as http;
+
+// 🌎 Project imports:
+import 'package:manager/core/services/logs.dart';
 
 class PkgViewData {
   final String name;

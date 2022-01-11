@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 // 🌎 Project imports:
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class HomePubSection extends StatefulWidget {
   const HomePubSection({Key? key}) : super(key: key);
