@@ -4,12 +4,15 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/services.dart';
+import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/workflows/confirm_delete.dart';
 import 'package:manager/meta/views/workflows/models/workflow.dart';
 import 'package:manager/meta/views/workflows/startup.dart';
 
@@ -28,6 +31,9 @@ class ShowExistingWorkflows extends StatefulWidget {
 class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
   bool _errorWorkflows = false;
   bool _loadingWorkflows = true;
+
+  // Workflow Info
+  final List<String> _workflowPaths = <String>[];
   final List<WorkflowTemplate> _workflows = <WorkflowTemplate>[];
 
   Future<void> _loadWorkflows() async {
@@ -55,6 +61,7 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
 
       _files.where((FileSystemEntity e) => e.path.endsWith('.json'));
 
+      List<String> _paths = <String>[];
       List<WorkflowTemplate> _templates = <WorkflowTemplate>[];
 
       for (FileSystemEntity e in _files) {
@@ -84,19 +91,16 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
             continue;
           }
 
+          _paths.add(e.path);
           _templates.add(WorkflowTemplate.fromJson(_map));
         }
-
-        Map<String, dynamic> _workflow =
-            jsonDecode(await File(e.path).readAsString());
-
-        _templates.add(WorkflowTemplate.fromJson(
-            _workflow)); // TODO: this causes an error to be thrown.
       }
 
-      _workflows.addAll(_templates);
-
-      setState(() => _loadingWorkflows = false);
+      setState(() {
+        _workflows.addAll(_templates);
+        _workflowPaths.addAll(_paths);
+        _loadingWorkflows = false;
+      });
     } catch (_, s) {
       await logger.file(LogTypeTag.error,
           'Couldn\'t load workflows for project at path: ${widget.pubspecPath}',
@@ -112,6 +116,12 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
   void initState() {
     _loadWorkflows();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _workflows.clear();
+    super.dispose();
   }
 
   @override
@@ -145,7 +155,14 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
                   bool _isLast = i == _workflows.length - 1;
                   return Padding(
                     padding: EdgeInsets.only(bottom: _isLast ? 0 : 5),
-                    child: _WorkflowTile(template: _workflows[i]),
+                    child: _WorkflowTile(
+                      template: _workflows[i],
+                      path: _workflowPaths[i],
+                      onDelete: () => setState(() {
+                        _workflows.removeAt(i);
+                        _workflowPaths.removeAt(i);
+                      }),
+                    ),
                   );
                 },
               ),
@@ -184,10 +201,15 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
 }
 
 class _WorkflowTile extends StatefulWidget {
+  final String path;
   final WorkflowTemplate template;
+  final Function() onDelete;
+
   const _WorkflowTile({
     Key? key,
     required this.template,
+    required this.path,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -205,7 +227,107 @@ class __WorkflowTileState extends State<_WorkflowTile> {
       onExit: (_) => setState(() => _isHovering = false),
       child: RoundContainer(
         color: Colors.blueGrey.withOpacity(0.2),
-        child: Text(widget.template.name),
+        padding: EdgeInsets.zero,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(widget.template.name),
+              ),
+            ),
+            if (!widget.template.isSaved)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Tooltip(
+                  message:
+                      'This workflow is not completed yet. You can edit it, but you will need to save it before you can run it.',
+                  child: SvgPicture.asset(Assets.warn, height: 20),
+                ),
+              ),
+            HSeparators.normal(),
+            if (_isHovering)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Row(
+                  children: <Widget>[
+                    Tooltip(
+                      message: 'Preview',
+                      waitDuration: const Duration(seconds: 1),
+                      child: RectangleButton(
+                        width: 30,
+                        height: 30,
+                        padding: const EdgeInsets.all(2),
+                        child: const Icon(Icons.preview_rounded, size: 12),
+                        onPressed: () {}, // TODO: Open preview
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Tooltip(
+                        message: 'Edit',
+                        waitDuration: const Duration(seconds: 1),
+                        child: RectangleButton(
+                          width: 30,
+                          height: 30,
+                          padding: const EdgeInsets.all(2),
+                          child: const Icon(Icons.edit_rounded, size: 12),
+                          onPressed: () {}, // TODO: Open edit view
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Tooltip(
+                        message: 'Delete',
+                        waitDuration: const Duration(seconds: 1),
+                        child: RectangleButton(
+                          width: 30,
+                          height: 30,
+                          padding: const EdgeInsets.all(2),
+                          child: const Icon(Icons.delete_forever,
+                              color: AppTheme.errorColor, size: 12),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => ConfirmWorkflowDelete(
+                                path: widget.path,
+                                onClose: (bool d) {
+                                  if (d) {
+                                    return widget.onDelete();
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    if (widget.template.isSaved)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Tooltip(
+                          message: 'Run',
+                          waitDuration: const Duration(seconds: 1),
+                          child: RectangleButton(
+                            width: 30,
+                            height: 30,
+                            padding: const EdgeInsets.all(2),
+                            child: const Icon(
+                              Icons.play_arrow_rounded,
+                              size: 12,
+                              color: kGreenColor,
+                            ),
+                            onPressed:
+                                () {}, // TODO: Run workflow with run viewer
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

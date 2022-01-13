@@ -14,6 +14,7 @@ class WorkflowTemplate {
   final WebRenderers defaultWebRenderer;
   final PlatformBuildModes defaultWebBuildMode;
   final List<String> workflowActions;
+  final bool isSaved;
 
   const WorkflowTemplate({
     required this.name,
@@ -27,6 +28,7 @@ class WorkflowTemplate {
     required this.defaultWebRenderer,
     required this.defaultWebBuildMode,
     required this.workflowActions,
+    required this.isSaved,
   });
 
   // Ability to convert to a JSON
@@ -43,6 +45,7 @@ class WorkflowTemplate {
       'defaultWebRenderer': defaultWebRenderer.toString(),
       'defaultWebBuildMode': defaultWebBuildMode.toString(),
       'workflowActions': workflowActions,
+      'isSaved': isSaved,
     };
   }
 
@@ -65,7 +68,10 @@ class WorkflowTemplate {
         defaultWebBuildMode: PlatformBuildModes.values.firstWhere(
             (PlatformBuildModes e) =>
                 e.toString() == json['defaultWebBuildMode']),
-        workflowActions: json['workflowActions'] as List<String>,
+        workflowActions: (json['workflowActions'] as List<dynamic>)
+            .map((dynamic e) => e.toString())
+            .toList(),
+        isSaved: json['isSaved'] as bool,
       );
     } catch (_, s) {
       logger.file(LogTypeTag.error,

@@ -85,6 +85,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
         defaultWebBuildMode: _defaultWebBuildMode,
         workflowActions:
             _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
+        isSaved: false,
       ).toJson();
 
       List<bool> _stopConditions = <bool>[
@@ -211,6 +212,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             defaultWebBuildMode: _defaultWebBuildMode,
             workflowActions:
                 _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
+            isSaved: false,
           ),
         );
 
@@ -242,6 +244,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               workflowActions: _workflowActions
                   .map((WorkflowActionModel e) => e.id)
                   .toList(),
+              isSaved: false,
             ),
           );
 
@@ -292,6 +295,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     workflowActions: _workflowActions
                         .map((WorkflowActionModel e) => e.id)
                         .toList(),
+                    isSaved: false,
                   ),
                 );
 
@@ -425,6 +429,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       workflowActions: _workflowActions
                           .map((WorkflowActionModel e) => e.id)
                           .toList(),
+                      isSaved: true,
                     ),
                   );
 
@@ -452,6 +457,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       workflowActions: _workflowActions
                           .map((WorkflowActionModel e) => e.id)
                           .toList(),
+                      isSaved: true,
                     ),
                   );
 
