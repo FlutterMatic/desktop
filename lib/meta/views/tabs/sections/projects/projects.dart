@@ -244,6 +244,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                             e.description ?? 'No project description found.',
                             style: const TextStyle(color: Colors.grey),
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
                           ),
                         ),
                         VSeparators.normal(),

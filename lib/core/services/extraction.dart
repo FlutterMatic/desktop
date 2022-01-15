@@ -32,10 +32,12 @@ Future<bool> unzip(String source, String destination, {String? sw}) async {
       await logger.file(LogTypeTag.info, 'Created $destination directory.');
     } else {
       if (destination.split('\\').length > 2) {
-        bool checkDestination = await checkDir('C:\\fluttermatic\\', subDirName: destination.split('\\').last);
+        bool checkDestination = await checkDir('C:\\fluttermatic\\',
+            subDirName: destination.split('\\').last);
         if (!checkDestination) {
           await Directory(destination).create(recursive: true);
-          await logger.file(LogTypeTag.info, 'Created ${destination.split('\\').last} directory.');
+          await logger.file(LogTypeTag.info,
+              'Created ${destination.split('\\').last} directory.');
         }
       }
     }
@@ -52,29 +54,26 @@ Future<bool> unzip(String source, String destination, {String? sw}) async {
     await File(source).delete(recursive: true);
     await logger.file(LogTypeTag.error, 'Cleaned ${source.split('\\').last}');
     return true;
-  } on OSError catch (osError) {
+  } on OSError catch (osError, s) {
     await File(source).delete(recursive: true);
     await logger.file(LogTypeTag.error, 'Extracting failed - OS Error',
-        stackTraces: null);
+        stackTraces: s);
     await logger.file(LogTypeTag.error, osError.message.toString());
-    return false;
-  } on ShellException catch (shellException) {
+  } on ShellException catch (shellException, s) {
     await File(source).delete(recursive: true);
     await logger.file(LogTypeTag.error, 'Extracting failed - Shell Exception',
-        stackTraces: null);
+        stackTraces: s);
     await logger.file(LogTypeTag.error, shellException.message.toString());
-    return false;
-  } on FileSystemException catch (fileException) {
+  } on FileSystemException catch (fileException, s) {
     await File(source).delete(recursive: true);
     await logger.file(
         LogTypeTag.error, 'Extracting failed - File System Exception',
-        stackTraces: null);
+        stackTraces: s);
     await logger.file(LogTypeTag.error, fileException.message.toString());
-    return false;
-  } catch (e) {
+  } catch (_, s) {
     await File(source).delete(recursive: true);
-    await logger.file(LogTypeTag.error, 'Extracting failed - ${e.toString()}',
-        stackTraces: null);
-    return false;
+    await logger.file(LogTypeTag.error, 'Extracting failed - ${_.toString()}',
+        stackTraces: s);
   }
+  return false;
 }

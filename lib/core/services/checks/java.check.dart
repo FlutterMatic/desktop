@@ -1,5 +1,4 @@
 // 🎯 Dart imports:
-import 'dart:developer' as console;
 import 'dart:io';
 
 // 🐦 Flutter imports:
@@ -46,29 +45,33 @@ class JavaNotifier extends ChangeNotifier {
       notifyListeners();
 
       /// Application supporting Directory
-      Directory dir = await getApplicationSupportDirectory();
+      Directory _dir = await getApplicationSupportDirectory();
 
       /// Checking for Java path,
       /// returns path to java or null if it doesn't exist.
-      String? javaPath = await which('java');
+      String? _javaPath = await which('java');
 
       /// Check if path is null, if so, we need to download it.
-      if (javaPath == null) {
+      if (_javaPath == null) {
         await logger.file(
             LogTypeTag.warning, 'Java not installed in the system.');
         _progress = Progress.downloading;
         notifyListeners();
-        bool javaDir = await checkDir('C:\\fluttermatic\\', subDirName: 'Java');
-        if (!javaDir) {
+
+        bool _javaDir =
+            await checkDir('C:\\fluttermatic\\', subDirName: 'Java');
+
+        if (!_javaDir) {
           await Directory('C:\\fluttermatic\\Java').create(recursive: true);
         }
+
         await logger.file(LogTypeTag.info, 'Downloading Java');
 
         /// Downloading JDK.
         await context.read<DownloadNotifier>().downloadFile(
               api!.data!['java']['JDK'][platform],
               'jdk.$archiveType',
-              dir.path + '\\tmp',
+              _dir.path + '\\tmp',
             );
 
         _progress = Progress.extracting;
@@ -76,12 +79,11 @@ class JavaNotifier extends ChangeNotifier {
         notifyListeners();
 
         /// Extract java from compressed file.
-        bool jdkExtracted = await unzip(
-          dir.path + '\\tmp\\' + 'jdk.$archiveType',
-          'C:\\fluttermatic\\Java\\',
-        );
+        bool _jdkExtracted = await unzip(
+            _dir.path + '\\tmp\\' + 'jdk.$archiveType',
+            'C:\\fluttermatic\\Java\\');
 
-        if (jdkExtracted) {
+        if (_jdkExtracted) {
           await logger.file(LogTypeTag.info, 'JDK extraction was successful');
           await for (FileSystemEntity e
               in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
@@ -91,14 +93,14 @@ class JavaNotifier extends ChangeNotifier {
                 await e.rename('C:\\fluttermatic\\Java\\jdk');
                 await logger.file(
                     LogTypeTag.info, 'Extracted folder rename successful');
-              } on FileSystemException catch (fileSystemException) {
-                console.log(fileSystemException.message);
+              } on FileSystemException catch (fileSystemException, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed');
-              } catch (e) {
-                console.log(e.toString());
+                    LogTypeTag.error, 'Extracted folder rename failed',
+                    stackTraces: s);
+              } catch (_, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed');
+                    LogTypeTag.error, 'Extracted folder rename failed',
+                    stackTraces: s);
               }
             }
           }
@@ -109,9 +111,10 @@ class JavaNotifier extends ChangeNotifier {
         }
 
         /// Appending path to env
-        bool isJDKPathSet =
-            await setPath('C:\\fluttermatic\\Java\\jdk\\bin', dir.path);
-        if (isJDKPathSet) {
+        bool _isJDKPathSet =
+            await setPath('C:\\fluttermatic\\Java\\jdk\\bin', _dir.path);
+
+        if (_isJDKPathSet) {
           await logger.file(LogTypeTag.info, 'JDK set to path');
         } else {
           _progress = Progress.failed;
@@ -128,7 +131,7 @@ class JavaNotifier extends ChangeNotifier {
         await context.read<DownloadNotifier>().downloadFile(
               api.data!['java']['JRE'][platform],
               'jre.$archiveType',
-              dir.path + '\\tmp',
+              _dir.path + '\\tmp',
             );
 
         _progress = Progress.extracting;
@@ -136,11 +139,12 @@ class JavaNotifier extends ChangeNotifier {
         notifyListeners();
 
         /// Extract java from compressed file.
-        bool jreExtracted = await unzip(
-          dir.path + '\\tmp\\' + 'jre.$archiveType',
+        bool _jreExtracted = await unzip(
+          _dir.path + '\\tmp\\' + 'jre.$archiveType',
           'C:\\fluttermatic\\Java\\',
         );
-        if (jreExtracted) {
+
+        if (_jreExtracted) {
           await logger.file(LogTypeTag.info, 'JDK extraction was successful');
           await for (FileSystemEntity e
               in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
@@ -150,14 +154,14 @@ class JavaNotifier extends ChangeNotifier {
                 await e.rename('C:\\fluttermatic\\Java\\jre');
                 await logger.file(
                     LogTypeTag.info, 'Extracted folder rename successful');
-              } on FileSystemException catch (fileSystemException) {
-                console.log(fileSystemException.message);
+              } on FileSystemException catch (fileSystemException, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed');
-              } catch (e) {
-                console.log(e.toString());
+                    LogTypeTag.error, 'Extracted folder rename failed',
+                    stackTraces: s);
+              } catch (_, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed');
+                    LogTypeTag.error, 'Extracted folder rename failed',
+                    stackTraces: s);
               }
             }
           }
@@ -168,9 +172,10 @@ class JavaNotifier extends ChangeNotifier {
         }
 
         /// Appending path to env
-        bool isJREPathSet =
-            await setPath('C:\\fluttermatic\\Java\\jre\\bin', dir.path);
-        if (isJREPathSet) {
+        bool _isJREPathSet =
+            await setPath('C:\\fluttermatic\\Java\\jre\\bin', _dir.path);
+
+        if (_isJREPathSet) {
           await logger.file(LogTypeTag.info, 'JRE set to path');
           _progress = Progress.done;
           notifyListeners();
@@ -186,8 +191,8 @@ class JavaNotifier extends ChangeNotifier {
           !SharedPref().pref.containsKey(SPConst.javaVersion)) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.info, 'Java found at - $javaPath');
-        await SharedPref().pref.setString(SPConst.javaPath, javaPath);
+        await logger.file(LogTypeTag.info, 'Java found at - $_javaPath');
+        await SharedPref().pref.setString(SPConst.javaPath, _javaPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -200,23 +205,22 @@ class JavaNotifier extends ChangeNotifier {
       } else {
         await logger.file(
             LogTypeTag.info, 'Loading Java details from shared preferences');
-        javaPath = SharedPref().pref.getString(SPConst.javaPath);
-        await logger.file(LogTypeTag.info, 'Java found at - $javaPath');
+        _javaPath = SharedPref().pref.getString(SPConst.javaPath);
+        await logger.file(LogTypeTag.info, 'Java found at - $_javaPath');
         versions.java = SharedPref().pref.getString(SPConst.javaVersion);
         await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException) {
+    } on ShellException catch (shellException, s) {
       _progress = Progress.failed;
       notifyListeners();
-      console.log(shellException.message);
-      await logger.file(LogTypeTag.error, shellException.message);
-    } catch (err) {
+      await logger.file(LogTypeTag.error, shellException.message,
+          stackTraces: s);
+    } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      console.log(err.toString());
-      await logger.file(LogTypeTag.error, err.toString());
+      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     }
   }
 }

@@ -41,9 +41,9 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     if (SharedPref().pref.containsKey(SPConst.setupTab)) {
-      _tab = WelcomeTab.restart;
+      setState(() => _tab = WelcomeTab.restart);
     } else {
-      _tab = WelcomeTab.gettingStarted;
+      setState(() => _tab = WelcomeTab.gettingStarted);
     }
     super.initState();
   }
@@ -115,12 +115,14 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                         onPressed: kReleaseMode
                             ? () {}
-                            : () async {
-                                await Navigator.push(
-                                    context,
-                                    MaterialPageRoute<Widget>(
-                                        builder: (_) =>
-                                            const SystemRequirementsScreen()));
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<Widget>(
+                                    builder: (_) =>
+                                        const SystemRequirementsScreen(),
+                                  ),
+                                );
                               },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -174,21 +176,22 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           if (allowDevControls)
-            Positioned(
-              top: 20,
-              right: 20,
-              child: IconButton(
-                splashRadius: 1,
-                icon: const Icon(Icons.skip_next),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute<Widget>(
-                        builder: (_) => const HomeScreen()),
-                  );
-                },
-              ),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: IconButton(
+              splashRadius: 1,
+              icon: const Icon(Icons.skip_next),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute<Widget>(
+                    builder: (_) => const HomeScreen(),
+                  ),
+                );
+              },
             ),
+          ),
         ],
       ),
     );
@@ -321,7 +324,7 @@ class _WelcomePageState extends State<WelcomePage> {
             _tab = WelcomeTab.restart;
           }),
           onContinue: () async {
-            await SharedPref().pref.setString(SPConst.setupTab, 'restart');
+            await SharedPref().pref.setString(SPConst.setupTab, 'RESTART');
             setState(() => _tab = WelcomeTab.restart);
           },
           isInstalling: _installing,

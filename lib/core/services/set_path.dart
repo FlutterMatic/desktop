@@ -64,35 +64,33 @@ Future<bool> setPath(String? path, [String? appDir]) async {
       await logger.file(LogTypeTag.info,
           '$path was set to ${Platform.operatingSystem}\'s env.');
       return true;
-    } on OSError catch (osError) {
+    } on OSError catch (osError, s) {
       await logger.file(LogTypeTag.error, 'Path appending failed - OS Error');
-      await logger.file(LogTypeTag.error, osError.message.toString());
-      return false;
-    } on ShellException catch (shellException) {
+      await logger.file(LogTypeTag.error, osError.message.toString(),
+          stackTraces: s);
+    } on ShellException catch (shellException, s) {
       await logger.file(
           LogTypeTag.error, 'Path appending failed - Shell Exception');
-      await logger.file(LogTypeTag.error, shellException.message.toString());
-      return false;
-    } on FileSystemException catch (fileException) {
+      await logger.file(LogTypeTag.error, shellException.message.toString(),
+          stackTraces: s);
+    } on FileSystemException catch (fileException, s) {
       await logger.file(
           LogTypeTag.error, 'Path appending failed - File System Exception');
-      await logger.file(LogTypeTag.error, fileException.message.toString());
-      return false;
-    } catch (e) {
+      await logger.file(LogTypeTag.error, fileException.message.toString(),
+          stackTraces: s);
+    } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Path appending failed - Exception');
-      await logger.file(LogTypeTag.error, e.toString());
-      return false;
+      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     }
-  }
-
-  /// Else log a warning stating path was not provided.
-  else {
+    return false;
+  } else {
+    /// Else log a warning stating path was not provided.
     await logger.file(LogTypeTag.warning, 'Path was not provided');
     return false;
   }
 }
 
-/// [pathDownload] is a function to download tha path appened script.
+/// [pathDownload] is a function to download tha path append script.
 Future<void> pathDownload(String? scriptLink, String? script,
     {String? appDir}) async {
   try {
@@ -106,9 +104,11 @@ Future<void> pathDownload(String? scriptLink, String? script,
             'Response code is ${response.statusCode} for downloading script.');
       }
     });
-  } on FileSystemException catch (fileException) {
-    await logger.file(LogTypeTag.error, fileException.message.toString());
-  } catch (e) {
-    await logger.file(LogTypeTag.error, 'Exception : ${e.toString()}');
+  } on FileSystemException catch (fileException, s) {
+    await logger.file(LogTypeTag.error, fileException.message.toString(),
+        stackTraces: s);
+  } catch (_, s) {
+    await logger.file(LogTypeTag.error, 'Exception: ${_.toString()}',
+        stackTraces: s);
   }
 }

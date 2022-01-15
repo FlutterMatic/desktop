@@ -1,5 +1,4 @@
 // 🎯 Dart imports:
-import 'dart:developer' as console;
 import 'dart:io';
 
 // 🐦 Flutter imports:
@@ -36,7 +35,7 @@ class VSCodeNotifier extends ChangeNotifier {
       _progress = Progress.started;
       notifyListeners();
 
-      /// Make a fake delay of 1 second such that UI looks cool.
+      /// Make a fake delay of 1 second for UI purposes.
       await Future<dynamic>.delayed(const Duration(seconds: 1));
       _progress = Progress.checking;
       notifyListeners();
@@ -59,32 +58,37 @@ class VSCodeNotifier extends ChangeNotifier {
         _progress = Progress.downloading;
         notifyListeners();
 
-        /// Downloading VSCode.
-        kDebugMode || kProfileMode
-            ? await context.read<DownloadNotifier>().downloadFile(
-                  'https://sample-videos.com/zip/50mb.zip',
-                  'code.$archiveType',
-                  dir.path + '\\tmp',
-                )
-            : await context.read<DownloadNotifier>().downloadFile(
-                  platform == 'windows'
-                      ? 'https://az764295.vo.msecnd.net/stable/$sha/VSCode-win32-x64-$tagName.zip'
-                      : platform == 'mac'
-                          ? api!.data!['vscode'][platform]['universal']
-                          : api!.data!['vscode'][platform]['TarGZ'],
-                  platform == 'linux' ? 'code.tar.gz' : 'code.zip',
-                  dir.path + '\\tmp',
-                );
+        /// Downloading VSCode. In debug mode, it will download a fake video
+        /// file that is 50mb (for testing purposes).
+        if (kDebugMode || kProfileMode) {
+          await context.read<DownloadNotifier>().downloadFile(
+                'https://sample-videos.com/zip/50mb.zip',
+                'code.$archiveType',
+                dir.path + '\\tmp',
+              );
+        } else {
+          await context.read<DownloadNotifier>().downloadFile(
+                platform == 'windows'
+                    ? 'https://az764295.vo.msecnd.net/stable/$sha/VSCode-win32-x64-$tagName.zip'
+                    : platform == 'mac'
+                        ? api!.data!['vscode'][platform]['universal']
+                        : api!.data!['vscode'][platform]['TarGZ'],
+                platform == 'linux' ? 'code.tar.gz' : 'code.zip',
+                dir.path + '\\tmp',
+              );
+        }
+
         _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
         notifyListeners();
 
         /// Extract java from compressed file.
-        bool vscExtracted = await unzip(
+        bool _vscExtracted = await unzip(
           dir.path + '\\tmp\\code.zip',
           'C:\\fluttermatic\\code',
         );
-        if (vscExtracted) {
+
+        if (_vscExtracted) {
           await logger.file(
               LogTypeTag.info, 'VSCode extraction was successful');
         } else {
@@ -94,12 +98,13 @@ class VSCodeNotifier extends ChangeNotifier {
         }
 
         /// Appending path to env
-        bool isVSCPathSet =
+        bool _isVSCPathSet =
             await setPath('C:\\fluttermatic\\code\\bin', dir.path);
-        if (isVSCPathSet) {
+
+        if (_isVSCPathSet) {
           await SharedPref()
               .pref
-              .setString('VSC_path', 'C:\\fluttermatic\\code\\bin');
+              .setString(SPConst.vscPath, 'C:\\fluttermatic\\code\\bin');
           await logger.file(LogTypeTag.info, 'VSCode set to path');
           _progress = Progress.done;
           notifyListeners();
@@ -134,14 +139,13 @@ class VSCodeNotifier extends ChangeNotifier {
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException) {
-      console.log(shellException.message);
-      await logger.file(LogTypeTag.error, shellException.message);
+    } on ShellException catch (shellException, s) {
+      await logger.file(LogTypeTag.error, shellException.message,
+          stackTraces: s);
       _progress = Progress.failed;
       notifyListeners();
-    } catch (err) {
-      console.log(err.toString());
-      await logger.file(LogTypeTag.error, err.toString());
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
       _progress = Progress.failed;
       notifyListeners();
     }

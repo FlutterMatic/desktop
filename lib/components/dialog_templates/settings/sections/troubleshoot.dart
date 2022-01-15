@@ -19,31 +19,31 @@ class _TroubleShootSettingsSectionState
   bool _requireTruShoot = false;
 
   //Troubleshoot
-  bool truShootFullApp = false;
-  bool truShootFlutter = false;
-  bool truShootStudio = false;
-  bool truShootVSC = false;
+  bool _all = false;
+  bool _flutter = false;
+  bool _studio = false;
+  bool _vsc = false;
 
   void _checkTroubleShoot() {
     setState(() => _requireTruShoot = false);
-    if (truShootFullApp) {
+    if (_all) {
       setState(() {
-        truShootFlutter = false;
-        truShootStudio = false;
-        truShootVSC = false;
+        _flutter = false;
+        _studio = false;
+        _vsc = false;
       });
     }
   }
 
   void _startTroubleshoot() {
     setState(() => _requireTruShoot = false);
-    if (truShootFlutter == false &&
-        truShootFullApp == false &&
-        truShootStudio == false &&
-        truShootVSC == false) {
+    List<bool> _troubleshoot = <bool>[_all, _flutter, _studio, _vsc];
+    if (!_troubleshoot.contains(true)) {
       setState(() => _requireTruShoot = true);
     } else {
-      // TODO: Start troubleshooting for the selected service(s).
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(context, 'This feature is not yet implemented'));
     }
   }
 
@@ -54,80 +54,87 @@ class _TroubleShootSettingsSectionState
       title: 'Troubleshoot',
       allowContentScroll: false,
       content: <Widget>[
-        if (_requireTruShoot)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: informationWidget(
-              'You need to choose at least one troubleshoot option.',
-              type: InformationType.error,
-            ),
-          ),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              CheckBoxElement(
-                onChanged: (bool? val) {
-                  setState(() => truShootFullApp = !truShootFullApp);
-                  _checkTroubleShoot();
-                },
-                value: truShootFullApp,
-                text: 'All Applications',
-              ),
-              CheckBoxElement(
-                onChanged: (bool? val) {
-                  setState(() {
-                    truShootFlutter = !truShootFlutter;
-                    truShootFullApp = false;
-                  });
-                  _checkTroubleShoot();
-                },
-                value: truShootFlutter,
-                text: 'Flutter',
-              ),
-              CheckBoxElement(
-                onChanged: (bool? val) {
-                  setState(() {
-                    truShootStudio = !truShootStudio;
-                    truShootFullApp = false;
-                  });
-                  _checkTroubleShoot();
-                },
-                value: truShootStudio,
-                text: 'Android Studio',
-              ),
-              CheckBoxElement(
-                onChanged: (bool? val) {
-                  setState(() {
-                    truShootVSC = !truShootVSC;
-                    truShootFullApp = false;
-                  });
-                  _checkTroubleShoot();
-                },
-                value: truShootVSC,
-                text: 'Visual Studio Code',
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                if (_requireTruShoot)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: informationWidget(
+                      'You need to choose at least one troubleshoot option.',
+                      type: InformationType.error,
+                    ),
+                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    CheckBoxElement(
+                      onChanged: (bool? val) {
+                        setState(() => _all = !_all);
+                        _checkTroubleShoot();
+                      },
+                      value: _all,
+                      text: 'All Applications',
+                    ),
+                    CheckBoxElement(
+                      onChanged: (bool? val) {
+                        setState(() {
+                          _flutter = !_flutter;
+                          _all = false;
+                        });
+                        _checkTroubleShoot();
+                      },
+                      value: _flutter,
+                      text: 'Flutter',
+                    ),
+                    CheckBoxElement(
+                      onChanged: (bool? val) {
+                        setState(() {
+                          _studio = !_studio;
+                          _all = false;
+                        });
+                        _checkTroubleShoot();
+                      },
+                      value: _studio,
+                      text: 'Android Studio',
+                    ),
+                    CheckBoxElement(
+                      onChanged: (bool? val) {
+                        setState(() {
+                          _vsc = !_vsc;
+                          _all = false;
+                        });
+                        _checkTroubleShoot();
+                      },
+                      value: _vsc,
+                      text: 'Visual Studio Code',
+                    ),
+                  ],
+                ),
+                VSeparators.normal(),
+                ActionOptions(
+                  actions: <ActionOptionsObject>[
+                    ActionOptionsObject(
+                      'Generate Report',
+                      () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const BuildLogsDialog(),
+                        );
+                      },
+                    ),
+                    ActionOptionsObject(
+                      'Flutter Doctor',
+                      () {}, // TODO: Show flutter doctor result. Run doctor to get result.
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-        ActionOptions(
-          actions: <ActionOptionsObject>[
-            ActionOptionsObject(
-              'Generate Report',
-              () {
-                showDialog(
-                  context: context,
-                  builder: (_) => const BuildLogsDialog(),
-                );
-              },
-            ),
-            ActionOptionsObject(
-              'Flutter Doctor',
-              () {}, // TODO: Show flutter doctor result. Run doctor to get result.
-            ),
-          ],
-        ),
-        VSeparators.normal(),
+        VSeparators.xSmall(),
         Align(
           alignment: Alignment.centerRight,
           child: RectangleButton(

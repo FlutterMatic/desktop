@@ -31,16 +31,14 @@ class DownloadNotifier extends ChangeNotifier {
 
     HttpClient httpClient = HttpClient();
     try {
-      HttpClientRequest request = await httpClient.getUrl(
-        Uri.parse(uri),
-      );
+      HttpClientRequest request = await httpClient.getUrl(Uri.parse(uri));
       HttpClientResponse response = await request.close();
       if (response.statusCode == 200) {
         _progress = Progress.downloading;
         notifyListeners();
         await logger.file(LogTypeTag.info, 'Started downloading $fileName.');
-        bool wtf = await checkFile(dir + '\\', fileName!);
-        if (!wtf) {
+        bool _exists = await checkFile(dir + '\\', fileName!);
+        if (!_exists) {
           IOSink openFile = File(dir + '\\' + fileName).openWrite();
           if (dProgress > 100) {
             dProgress = 0;
@@ -75,10 +73,10 @@ class DownloadNotifier extends ChangeNotifier {
         await logger.file(LogTypeTag.error,
             'Error code while downloading $fileName - ${response.statusCode}');
       }
-    } catch (e) {
+    } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, e.toString());
+      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     }
   }
 

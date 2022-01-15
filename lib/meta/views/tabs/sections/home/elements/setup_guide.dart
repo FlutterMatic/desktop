@@ -8,6 +8,7 @@ import 'package:manager/components/dialog_templates/settings/settings.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/views/tabs/components/circle_chart.dart';
+import 'package:manager/meta/views/workflows/startup.dart';
 
 class HomeSetupGuideTile extends StatefulWidget {
   const HomeSetupGuideTile({Key? key}) : super(key: key);
@@ -39,8 +40,7 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
       _doneHashes.clear();
       _doneHashes.addAll(SharedPref()
           .pref
-          .getString(SPConst.guideFinishedHashes)!
-          .split(',')
+          .getStringList(SPConst.guideFinishedHashes)!
           .map(int.parse)
           .toList());
 
@@ -145,17 +145,17 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
 
                             double _totalAdd = 1 / _guides.length;
 
-                            if (_guides.last == e) {
-                              setState(() => _percent = 1);
-                            } else if (_percent + _totalAdd <= 1) {
+                            if (_percent + _totalAdd <= 1) {
                               setState(() => _percent += _totalAdd);
                             }
 
                             e.onPressed(context);
 
-                            await SharedPref().pref.setString(
+                            await SharedPref().pref.setStringList(
                                 SPConst.guideFinishedHashes,
-                                _doneHashes.join(','));
+                                _doneHashes
+                                    .map((int e) => e.toString())
+                                    .toList());
                           }
                         },
                       );
@@ -168,36 +168,72 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
               Positioned(
                 top: 5,
                 right: 5,
-                child: SquareButton(
-                  size: 25,
-                  color: Colors.transparent,
-                  icon: Icon(
-                    Icons.close_rounded,
-                    size: 15,
-                    color: Colors.grey.withOpacity(0.6),
-                  ),
-                  onPressed: () async {
-                    setState(() => _showGuide = false);
-                    await SharedPref()
-                        .pref
-                        .setBool(SPConst.homeShowGuide, false);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Dismissed guide successfully. You can bring it back in settings.',
-                        type: SnackBarType.done,
-                        action: snackBarAction(
-                          text: 'Undo',
+                child: Row(
+                  children: <Widget>[
+                    if (allowDevControls)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 2),
+                        child: SquareButton(
+                          size: 25,
+                          color: Colors.transparent,
+                          tooltip: 'Clear all',
+                          icon: Icon(
+                            Icons.clear_all,
+                            size: 15,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
                           onPressed: () async {
-                            setState(() => _showGuide = true);
                             await SharedPref()
                                 .pref
-                                .setBool(SPConst.homeShowGuide, true);
+                                .remove(SPConst.guideFinishedHashes);
+                            setState(() {
+                              _doneHashes.clear();
+                              _percent = 0;
+                            });
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Guide has been reset. Let\'s start over!',
+                                type: SnackBarType.done,
+                              ),
+                            );
                           },
                         ),
                       ),
-                    );
-                  },
+                    SquareButton(
+                      size: 25,
+                      color: Colors.transparent,
+                      tooltip: 'Dismiss Guide',
+                      icon: Icon(
+                        Icons.close_rounded,
+                        size: 15,
+                        color: Colors.grey.withOpacity(0.6),
+                      ),
+                      onPressed: () async {
+                        setState(() => _showGuide = false);
+                        await SharedPref()
+                            .pref
+                            .setBool(SPConst.homeShowGuide, false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Dismissed guide successfully. You can bring it back in settings.',
+                            type: SnackBarType.done,
+                            action: snackBarAction(
+                              text: 'Undo',
+                              onPressed: () async {
+                                setState(() => _showGuide = true);
+                                await SharedPref()
+                                    .pref
+                                    .setBool(SPConst.homeShowGuide, true);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
           ],
@@ -314,6 +350,7 @@ final List<_GuideModel> _guides = <_GuideModel>[
   _GuideModel(
     text:
         'Automate your Flutter workspace by setting up workflows. This helps you setup commands to run for projects when you press run.',
-    onPressed: (_) {},
+    onPressed: (_) =>
+        showDialog(context: _, builder: (_) => const StartUpWorkflow()),
   ),
 ];

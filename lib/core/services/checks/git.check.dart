@@ -40,13 +40,14 @@ class GitNotifier extends ChangeNotifier {
 
       /// Make a fake delay of 1 second such that UI looks cool.
       await Future<dynamic>.delayed(const Duration(seconds: 1));
-      Directory dir = await getApplicationSupportDirectory();
+      Directory _dir = await getApplicationSupportDirectory();
       _progress = Progress.checking;
       notifyListeners();
-      String? gitPath = await which('git');
-      if (gitPath == null) {
+      String? _gitPath = await which('git');
+      if (_gitPath == null) {
         await logger.file(
             LogTypeTag.warning, 'Git not installed in the system.');
+
         await logger.file(LogTypeTag.info, 'Downloading Git');
         if (Platform.isWindows) {
           /// Application supporting Directory
@@ -81,28 +82,27 @@ class GitNotifier extends ChangeNotifier {
 
           /// Downloading Git.
           await context.read<DownloadNotifier>().downloadFile(
-                gitDownloadLink!,
-                'git.tar.bz2',
-                dir.path + '\\tmp',
-              );
+              gitDownloadLink!, 'git.tar.bz2', _dir.path + '\\tmp');
+
           _progress = Progress.extracting;
           notifyListeners();
 
           /// Extract java from compressed file.
-          bool gitExtracted = await unzip(
-            dir.path + '\\tmp\\' + 'git.tar.bz2',
+          bool _gitExtracted = await unzip(
+            _dir.path + '\\tmp\\' + 'git.tar.bz2',
             'C:\\fluttermatic\\git',
           );
-          if (gitExtracted) {
+          if (_gitExtracted) {
             await logger.file(LogTypeTag.info, 'Git extraction was successful');
           } else {
             await logger.file(LogTypeTag.error, 'Git extraction failed.');
           }
 
           /// Appending path to env
-          bool isGitPathSet =
-              await setPath('C:\\fluttermatic\\git\\bin', dir.path);
-          if (isGitPathSet) {
+          bool _isGitPathSet =
+              await setPath('C:\\fluttermatic\\git\\bin', _dir.path);
+
+          if (_isGitPathSet) {
             await SharedPref()
                 .pref
                 .setString(SPConst.gitPath, 'C:\\fluttermatic\\git\\bin');
@@ -136,8 +136,8 @@ class GitNotifier extends ChangeNotifier {
           !SharedPref().pref.containsKey(SPConst.gitVersion)) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.info, 'Git found at - $gitPath');
-        await SharedPref().pref.setString(SPConst.gitPath, gitPath);
+        await logger.file(LogTypeTag.info, 'Git found at - $_gitPath');
+        await SharedPref().pref.setString(SPConst.gitPath, _gitPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -150,21 +150,22 @@ class GitNotifier extends ChangeNotifier {
       } else {
         await logger.file(
             LogTypeTag.info, 'Loading git details from shared preferences');
-        gitPath = SharedPref().pref.getString(SPConst.gitPath);
-        await logger.file(LogTypeTag.info, 'Git found at - $gitPath');
+        _gitPath = SharedPref().pref.getString(SPConst.gitPath);
+        await logger.file(LogTypeTag.info, 'Git found at - $_gitPath');
         versions.git = SharedPref().pref.getString(SPConst.gitVersion);
         await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException) {
+    } on ShellException catch (shellException, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, shellException.message);
-    } catch (err) {
+      await logger.file(LogTypeTag.error, shellException.message,
+          stackTraces: s);
+    } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, err.toString());
+      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     }
   }
 }

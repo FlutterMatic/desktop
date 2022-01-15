@@ -1,4 +1,6 @@
 // 🐦 Flutter imports:
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -11,8 +13,6 @@ import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
-
-enum Editor { atom, sublime, vscode }
 
 class OpenProjectOnEditor extends StatefulWidget {
   final String path;
@@ -39,22 +39,24 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
 
   Future<void> _loadProject() async {
     try {
-      if (SharedPref().pref.containsKey(SPConst.askEditorAlways)) {
-        if (SharedPref().pref.getBool(SPConst.askEditorAlways) == true) {
-          setState(() => _showEditorSelection = true);
-          return;
-        }
+      if (SharedPref().pref.containsKey(SPConst.askEditorAlways) &&
+          SharedPref().pref.getBool(SPConst.askEditorAlways) == true) {
+        setState(() => _showEditorSelection = true);
+        return;
       }
 
-      if (!SharedPref().pref.containsKey(SPConst.defaultEditor) && mounted) {
+      if (!SharedPref().pref.containsKey(SPConst.defaultEditor)) {
         setState(() => _showEditorSelection = true);
         return;
       } else if (mounted) {
-        // TODO: Fix error with types: type 'bool' is not a subtype of type 'String?' in type cast
         if (_editors
                 .contains(SharedPref().pref.getString(SPConst.defaultEditor)) &&
             mounted) {
           switch (SharedPref().pref.getString(SPConst.defaultEditor)) {
+            case 'code':
+              await shell.cd(widget.path).run('code .');
+              Navigator.pop(context);
+              break;
             case 'studio64':
               ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -66,7 +68,15 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
               );
               setState(() => _showEditorSelection = true);
               break;
+            default:
+              setState(() => _showEditorSelection = true);
+              await SharedPref().pref.remove(SPConst.defaultEditor);
+              await SharedPref().pref.remove(SPConst.askEditorAlways);
+              await logger.file(LogTypeTag.warning,
+                  'Found editor choice conflicts with settings choice.');
+              break;
           }
+
           return;
         } else if (mounted) {
           await SharedPref().pref.remove(SPConst.defaultEditor);
@@ -77,15 +87,13 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t open project',
           stackTraces: s);
-      if (mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context,
-          'Couldn\'t open this project! Please report this issue on GitHub.',
-          type: SnackBarType.error,
-        ));
-        Navigator.pop(context);
-      }
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Couldn\'t open this project! Please report this issue on GitHub.',
+        type: SnackBarType.error,
+      ));
+      Navigator.pop(context);
     }
   }
 
@@ -229,4 +237,26 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
       ),
     );
   }
+}
+
+int directorySize(String dirPath) {
+  int _totalSize = 0;
+  Directory _dir = Directory(dirPath);
+
+  try {
+    if (_dir.existsSync()) {
+      _dir
+          .listSync(recursive: true, followLinks: false)
+          .forEach((FileSystemEntity entity) {
+        if (entity is File) {
+          _totalSize += entity.lengthSync();
+        }
+      });
+    }
+  } catch (_, s) {
+    logger.file(LogTypeTag.error, 'Failed to compute directory size: $_',
+        stackTraces: s);
+  }
+
+  return _totalSize;
 }
