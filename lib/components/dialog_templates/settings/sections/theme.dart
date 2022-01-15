@@ -23,18 +23,23 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
     return TabViewTabHeadline(
       title: 'Themes',
       content: <Widget>[
-        _themeTiles(context, !Theme.of(context).isDarkTheme, 'Light Mode',
-            'Get a bright and shining desktop', () {
-          if (Theme.of(context).isDarkTheme) {
-            context
-                .read<ThemeChangeNotifier>()
-                .updateTheme(Theme.of(context).brightness == Brightness.light);
-          }
-        }),
+        _themeTiles(
+          context,
+          !Theme.of(context).isDarkTheme &&
+              !ThemeChangeNotifier().isSystemTheme,
+          'Light Mode',
+          'Get a bright and shining desktop',
+          () {
+            if (Theme.of(context).isDarkTheme) {
+              context.read<ThemeChangeNotifier>().updateTheme(
+                  Theme.of(context).brightness == Brightness.light);
+            }
+          },
+        ),
         VSeparators.small(),
         _themeTiles(
           context,
-          Theme.of(context).isDarkTheme,
+          Theme.of(context).isDarkTheme && !ThemeChangeNotifier().isSystemTheme,
           'Dark Mode',
           'For dark and nighty appearance',
           () {

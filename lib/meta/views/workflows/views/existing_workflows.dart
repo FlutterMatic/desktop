@@ -4,6 +4,8 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
@@ -12,9 +14,10 @@ import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/workflows/confirm_delete.dart';
 import 'package:manager/meta/views/workflows/models/workflow.dart';
+import 'package:manager/meta/views/workflows/runner/runner.dart';
 import 'package:manager/meta/views/workflows/startup.dart';
+import 'package:manager/meta/views/workflows/views/confirm_delete.dart';
 
 class ShowExistingWorkflows extends StatefulWidget {
   final String pubspecPath;
@@ -251,52 +254,22 @@ class __WorkflowTileState extends State<_WorkflowTile> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   children: <Widget>[
-                    Tooltip(
-                      message: 'Preview',
-                      waitDuration: const Duration(seconds: 1),
-                      child: RectangleButton(
-                        width: 30,
-                        height: 30,
-                        padding: const EdgeInsets.all(2),
-                        child: const Icon(Icons.preview_rounded, size: 12),
-                        onPressed: () {}, // TODO: Open preview
-                      ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 5),
                       child: Tooltip(
-                        message: 'Edit',
+                        message: 'Options',
                         waitDuration: const Duration(seconds: 1),
                         child: RectangleButton(
                           width: 30,
                           height: 30,
                           padding: const EdgeInsets.all(2),
-                          child: const Icon(Icons.edit_rounded, size: 12),
-                          onPressed: () {}, // TODO: Open edit view
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: Tooltip(
-                        message: 'Delete',
-                        waitDuration: const Duration(seconds: 1),
-                        child: RectangleButton(
-                          width: 30,
-                          height: 30,
-                          padding: const EdgeInsets.all(2),
-                          child: const Icon(Icons.delete_forever,
-                              color: AppTheme.errorColor, size: 12),
+                          child: const Icon(Icons.more_vert_rounded, size: 12),
                           onPressed: () {
                             showDialog(
                               context: context,
-                              builder: (_) => ConfirmWorkflowDelete(
-                                path: widget.path,
-                                onClose: (bool d) {
-                                  if (d) {
-                                    return widget.onDelete();
-                                  }
-                                },
+                              builder: (_) => _ShowWorkflowTileOptions(
+                                workflowPath: widget.path,
+                                onDelete: widget.onDelete,
                               ),
                             );
                           },
@@ -318,8 +291,14 @@ class __WorkflowTileState extends State<_WorkflowTile> {
                               size: 12,
                               color: kGreenColor,
                             ),
-                            onPressed:
-                                () {}, // TODO: Run workflow with run viewer
+                            onPressed: () {
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context,
+                                builder: (_) => WorkflowRunnerDialog(
+                                    workflowPath: widget.path),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -328,6 +307,91 @@ class __WorkflowTileState extends State<_WorkflowTile> {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ShowWorkflowTileOptions extends StatelessWidget {
+  final String workflowPath;
+  final Function() onDelete;
+
+  const _ShowWorkflowTileOptions({
+    Key? key,
+    required this.workflowPath,
+    required this.onDelete,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        children: <Widget>[
+          const DialogHeader(title: 'Options'),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RectangleButton(
+                  height: 80,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(
+                          child: Icon(Icons.preview_rounded, size: 20)),
+                      VSeparators.small(),
+                      const Text('Preview'),
+                    ],
+                  ),
+                  // TODO: Open preview
+                  onPressed: () {},
+                ),
+              ),
+              HSeparators.small(),
+              Expanded(
+                child: RectangleButton(
+                  height: 80,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(child: Icon(Icons.edit_rounded, size: 20)),
+                      VSeparators.small(),
+                      const Text('Edit'),
+                    ],
+                  ),
+                  onPressed: () {}, // TODO: Open edit view
+                ),
+              ),
+              HSeparators.small(),
+              Expanded(
+                child: RectangleButton(
+                  height: 80,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(
+                        child: Icon(Icons.delete_forever,
+                            color: AppTheme.errorColor, size: 20),
+                      ),
+                      VSeparators.small(),
+                      const Text('Delete'),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (_) => ConfirmWorkflowDelete(
+                        path: workflowPath,
+                        onClose: (bool d) {
+                          if (d) {
+                            return onDelete();
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

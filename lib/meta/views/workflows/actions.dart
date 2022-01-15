@@ -30,12 +30,13 @@ final List<WorkflowActionModel> workflowActionModels = <WorkflowActionModel>{
     description: 'Build the project for Web.',
     type: WorkflowActionForType.flutter,
   ),
-  const WorkflowActionModel(
-    id: WorkflowActionsIds.deployProjectWeb,
-    name: 'Deploy Web',
-    description: 'Deploy the project web app with Firebase or npm command.',
-    type: WorkflowActionForType.flutter,
-  ),
+  // const WorkflowActionModel(
+  //   id: WorkflowActionsIds.deployProjectWeb,
+  //   name: 'Deploy Web',
+  //   description: 'Deploy the project web app with Firebase or npm command.',
+  //   type: WorkflowActionForType.flutter,
+  //   commands: <String>[],
+  // ),
 }.toList();
 
 enum WorkflowActionForType { flutter, dart, both }

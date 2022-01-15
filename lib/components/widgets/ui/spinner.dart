@@ -6,7 +6,7 @@ class Spinner extends StatelessWidget {
   final Color? color;
   final double thickness;
 
-  const Spinner({Key? key, this.color, this.thickness = 4, this.size = 30})
+  const Spinner({Key? key, this.color, this.thickness = 3, this.size = 30})
       : super(key: key);
 
   @override

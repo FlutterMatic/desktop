@@ -33,12 +33,8 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData currentTheme = Theme.of(context);
     if (_data == null) {
-      return RoundContainer(
-        color: currentTheme.colorScheme.secondary.withOpacity(0.2),
-        child: const Center(child: Spinner()),
-      );
+      return const Center(child: Spinner());
     } else {
       return SingleChildScrollView(
         child: SizedBox(

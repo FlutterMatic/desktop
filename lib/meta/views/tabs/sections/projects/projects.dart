@@ -15,7 +15,7 @@ import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/views/dialogs/open_project.dart';
 import 'package:manager/meta/views/tabs/sections/projects/models/projects.services.dart';
-import 'package:manager/meta/views/workflows/existing_workflows.dart';
+import 'package:manager/meta/views/workflows/views/existing_workflows.dart';
 
 class HomeProjectsSection extends StatefulWidget {
   const HomeProjectsSection({Key? key}) : super(key: key);
@@ -234,12 +234,16 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                         Text(
                           e.name,
                           style: const TextStyle(fontSize: 18),
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
                         ),
                         VSeparators.normal(),
                         Expanded(
                           child: Text(
                             e.description ?? 'No project description found.',
                             style: const TextStyle(color: Colors.grey),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         VSeparators.normal(),

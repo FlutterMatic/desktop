@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:manager/components/dialog_templates/logs/build_logs.dart';
+import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
@@ -53,6 +54,14 @@ class _TroubleShootSettingsSectionState
       title: 'Troubleshoot',
       allowContentScroll: false,
       content: <Widget>[
+        if (_requireTruShoot)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: informationWidget(
+              'You need to choose at least one troubleshoot option.',
+              type: InformationType.error,
+            ),
+          ),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,43 +107,37 @@ class _TroubleShootSettingsSectionState
                 value: truShootVSC,
                 text: 'Visual Studio Code',
               ),
-              if (_requireTruShoot)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
-                  child: informationWidget(
-                    'You need to choose at least one troubleshoot option.',
-                    type: InformationType.error,
-                  ),
-                ),
             ],
           ),
         ),
-        Row(
-          children: <Widget>[
-            RectangleButton(
-              width: 150,
-              color: Colors.transparent,
-              onPressed: () {
+        ActionOptions(
+          actions: <ActionOptionsObject>[
+            ActionOptionsObject(
+              'Generate Report',
+              () {
                 showDialog(
                   context: context,
                   builder: (_) => const BuildLogsDialog(),
                 );
               },
-              child: Text(
-                'Generate Report',
-                style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-              ),
             ),
-            const Spacer(),
-            RectangleButton(
-              width: 150,
-              onPressed: _startTroubleshoot,
-              child: Text(
-                'Start Troubleshoot',
-                style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
-              ),
+            ActionOptionsObject(
+              'Flutter Doctor',
+              () {}, // TODO: Show flutter doctor result. Run doctor to get result.
             ),
           ],
+        ),
+        VSeparators.normal(),
+        Align(
+          alignment: Alignment.centerRight,
+          child: RectangleButton(
+            width: 150,
+            onPressed: _startTroubleshoot,
+            child: Text(
+              'Start Troubleshoot',
+              style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+            ),
+          ),
         ),
       ],
     );

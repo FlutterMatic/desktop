@@ -41,6 +41,7 @@ class SetProjectWorkflowInfo extends StatefulWidget {
 
 class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
   bool _nameExists = false;
+  bool _descriptionTooLong = false;
   bool _loadingExistingNames = false;
 
   int _selectedIndex = 0;
@@ -103,8 +104,8 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                           type: SnackBarType.error,
                           action: snackBarAction(
                             text: 'Learn more',
-                            onPressed:
-                                () {}, // TODO: Create documentation for this.
+                            onPressed: () {},
+                            // TODO: Create documentation for this.
                           ),
                         ),
                       );
@@ -123,7 +124,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                             descriptionController: widget.descriptionController,
                             nameController: widget.nameController);
                     if (_isValidNameAndDescription) {
-                      if (_nameExists || _loadingExistingNames) {
+                      if (_nameExists) {
                         ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
                           snackBarTile(
@@ -134,6 +135,24 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                         );
 
                         return;
+                      } else if (_loadingExistingNames) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Hold up while we confirm that the workflow name you have chosen is available.',
+                            type: SnackBarType.warning,
+                          ),
+                        );
+                      } else if (_descriptionTooLong) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'The description you have chosen is too long. Please choose a shorter description.',
+                            type: SnackBarType.error,
+                          ),
+                        );
                       } else {
                         // Go to the next page that is handled by the parent.
                         widget.onNext();
@@ -366,12 +385,42 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                 ],
               ),
               VSeparators.normal(),
-              InputHoverAffect(
-                controller: widget.descriptionController,
-                hintText: 'Workflow description',
-                infoText:
-                    'Describe what your workflow will do. This description will be shown in the workflow list.',
-                numLines: 4,
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: InputHoverAffect(
+                      controller: widget.descriptionController,
+                      hintText: 'Workflow description',
+                      inputFormatters: <TextInputFormatter>[
+                        TextInputFormatter.withFunction(
+                            (TextEditingValue oldValue,
+                                TextEditingValue newValue) {
+                          if (newValue.text.length < 100) {
+                            if (_descriptionTooLong) {
+                              setState(() => _descriptionTooLong = false);
+                            }
+                            return newValue;
+                          } else {
+                            setState(() => _descriptionTooLong = true);
+                            return oldValue;
+                          }
+                        }),
+                      ],
+                      infoText:
+                          'Describe what your workflow will do. This description will be shown in the workflow list.',
+                      numLines: 4,
+                    ),
+                  ),
+                  if (_descriptionTooLong)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Tooltip(
+                        message:
+                            'Description length must be less than 100 characters.',
+                        child: SvgPicture.asset(Assets.error, height: 20),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),

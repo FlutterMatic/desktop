@@ -2,7 +2,6 @@
 import 'dart:io';
 
 // 🐦 Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -57,7 +56,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
       await SharedPref.init();
 
-      if (kDebugMode) await SharedPref().pref.clear();
+      // if (kDebugMode) await SharedPref().pref.clear();
 
       appVersion = const String.fromEnvironment('current-version');
 

@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 bool _failedRequest = false;
@@ -196,8 +197,11 @@ class _ContributorTileState extends State<ContributorTile> {
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios_rounded,
-                        color: customTheme.indicatorColor, size: 18),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.blueGrey.withOpacity(0.4),
+                      size: 18,
+                    ),
                   ],
                 ),
         ),

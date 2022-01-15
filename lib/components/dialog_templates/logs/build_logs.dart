@@ -92,53 +92,69 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
   bool _isListening = false;
 
   Future<void> _generateReport() async {
-    await Isolate.spawn(_generateReportOnIsolate,
-        <dynamic>[_savePath, _fileName, _generatePort.sendPort]);
+    try {
+      await Isolate.spawn(_generateReportOnIsolate,
+          <dynamic>[_savePath, _fileName, _generatePort.sendPort]);
 
-    if (mounted && !_isListening) {
-      _generatePort.asBroadcastStream(onListen: (_) {
-        setState(() => _isListening = true);
-      }).listen((dynamic message) async {
-        if (message is bool == false) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(
-              context,
-              'Something really weird is happening. Trust me!',
-              type: SnackBarType.error,
-            ),
-          );
-          return;
-        }
-
-        if (message) {
-          Navigator.pop(context);
-          // Opens file viewer app to show the output.
-          if (Platform.isWindows) {
-            await shell.run('explorer ' + _savePath!);
-          } else if (Platform.isMacOS) {
-            await shell.run('open ' + _savePath!);
-          } else if (Platform.isLinux) {
-            await shell.run('xdg-open ' + _savePath!);
+      if (mounted && !_isListening) {
+        _generatePort.asBroadcastStream(onListen: (_) {
+          if (mounted) {
+            setState(() => _isListening = true);
           }
-          await Future<void>.delayed(const Duration(seconds: 5));
-          Navigator.pop(context);
-          _generatePort.close();
-          return;
-        } else {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(
-              context,
-              'Failed to generate issue report. Please try again.',
-              type: SnackBarType.error,
-            ),
-          );
+        }).listen((dynamic message) async {
+          if (message is bool == false && mounted) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(
+                context,
+                'Something really weird is happening, and you need to report it!',
+                type: SnackBarType.error,
+              ),
+            );
+            return;
+          }
 
-          setState(() => _savePath = null);
-          return;
-        }
-      });
+          if (message && mounted) {
+            Navigator.pop(context);
+            // Opens file viewer app to show the output.
+            if (Platform.isWindows) {
+              await shell.run('explorer ' + _savePath!);
+            } else if (Platform.isMacOS) {
+              await shell.run('open ' + _savePath!);
+            } else if (Platform.isLinux) {
+              await shell.run('xdg-open ' + _savePath!);
+            }
+            await Future<void>.delayed(const Duration(seconds: 5));
+            Navigator.pop(context);
+            _generatePort.close();
+            return;
+          } else if (mounted) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(
+                context,
+                'Failed to generate issue report. Please try again.',
+                type: SnackBarType.error,
+              ),
+            );
+
+            setState(() => _savePath = null);
+            return;
+          }
+        });
+      }
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Failed to generate issue report.',
+          stackTraces: s);
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(
+          context,
+          'Failed to generate issue report. Please try again.',
+          type: SnackBarType.error,
+        ),
+      );
+      setState(() => _savePath = null);
     }
   }
 
@@ -218,7 +234,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
           VSeparators.normal(),
           RectangleButton(
             width: double.infinity,
-            child: const Text('OK'),
+            child: const Text('Cancel'),
             onPressed: () {
               Navigator.of(context).pop();
             },

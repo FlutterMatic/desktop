@@ -17,9 +17,10 @@ class SPConst {
   static String sysPlatform = 'SYS_PLATFORM';
 
   // Settings
-  static String isDarkTheme = 'DARK_THEME';
+  static String isDarkTheme = 'USE_DARK_THEME';
   static String projectsPath = 'PROJECTS_PATH';
   static String defaultEditor = 'DEFAULT_EDITOR';
+  static String isSystemTheme = 'USE_SYSTEM_THEME';
 
   // Flutter Setup
   static String flutterPath = 'FLUTTER_PATH';
