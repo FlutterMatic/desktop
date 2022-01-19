@@ -43,7 +43,7 @@ class _HomePubSectionState extends State<HomePubSection> {
 
     // ignore: unawaited_futures
     Future<void>.delayed(const Duration(seconds: 5)).then((_) {
-      if (_loadingPackages) {
+      if (_loadingPackages && mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           snackBarTile(
@@ -92,6 +92,11 @@ class _HomePubSectionState extends State<HomePubSection> {
   void initState() {
     _getInitialPackages();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
