@@ -33,13 +33,14 @@ class _WelcomePageState extends State<WelcomePage> {
   bool _completedInstall = false;
 
   // Editor(s) to install.
-  List<EditorType> _editor = <EditorType>[
+  final List<EditorType> _editor = <EditorType>[
     EditorType.androidStudio,
     EditorType.vscode,
   ];
 
   @override
   void initState() {
+    // setState(() => _tab = WelcomeTab.installEditor);
     if (SharedPref().pref.containsKey(SPConst.setupTab)) {
       setState(() => _tab = WelcomeTab.restart);
     } else {
@@ -113,17 +114,20 @@ class _WelcomePageState extends State<WelcomePage> {
                           backgroundColor: MaterialStateProperty.all<Color>(
                               Colors.transparent),
                         ),
-                        onPressed: kReleaseMode
-                            ? () {}
-                            : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<Widget>(
-                                    builder: (_) =>
-                                        const SystemRequirementsScreen(),
-                                  ),
-                                );
-                              },
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const SetupDocsScreen(),
+                          );
+                          // Navigator.push(
+                          //   context,
+                          //   PageRouteBuilder<Route<dynamic>>(
+                          //     pageBuilder: (_, __, ___) =>
+                          //         const SetupDocsScreen(),
+                          //     transitionDuration: Duration.zero,
+                          //   ),
+                          // );
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
@@ -176,147 +180,138 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           if (allowDevControls)
-          Positioned(
-            top: 20,
-            right: 20,
-            child: IconButton(
-              splashRadius: 1,
-              icon: const Icon(Icons.skip_next),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute<Widget>(
-                    builder: (_) => const HomeScreen(),
-                  ),
-                );
-              },
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                splashRadius: 1,
+                icon: const Icon(Icons.skip_next),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute<Widget>(
+                      builder: (_) => const HomeScreen(),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
         ],
       ),
     );
   }
 
   Widget _getCurrentPage(BuildContext context) {
-    /// TODO: Add ADB check. This is optional.
     switch (_tab) {
       case WelcomeTab.gettingStarted:
         return WelcomeGettingStarted(
-          () => setState(() => _tab = WelcomeTab.installFlutter),
+          onContinue: () {
+            setState(() {
+              _installing = false;
+              _completedInstall = false;
+              _tab = WelcomeTab.installFlutter;
+            });
+          },
         );
       case WelcomeTab.installFlutter:
         return installFlutter(
           context,
           onInstall: () async {
-            if (_completedInstall) {
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            } else {
-              setState(() => _installing = true);
+            setState(() => _installing = true);
 
-              await context
-                  .read<FlutterNotifier>()
-                  .checkFlutter(context, sdkData);
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            }
+            // Install Flutter on the system.
+            await context
+                .read<FlutterNotifier>()
+                .checkFlutter(context, sdkData);
+
+            setState(() {
+              _installing = false;
+              _completedInstall = true;
+            });
           },
-          onContinue: () => setState(() => _tab = WelcomeTab.installEditor),
+          onContinue: () => setState(() {
+            _completedInstall = false;
+            _tab = WelcomeTab.installEditor;
+          }),
         );
       case WelcomeTab.installEditor:
         return WelcomeInstallEditor(
           onInstall: () async {
-            if (_completedInstall) {
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            } else {
-              setState(() => _installing = true);
+            setState(() => _installing = true);
 
-              if (_editor.contains(EditorType.none)) {
-                // None will be skipped and next page will be shown.
-                setState(() {
-                  _editor.clear();
-                  _tab = WelcomeTab.installGit;
-                });
-              }
-              if (_editor.contains(EditorType.androidStudio)) {
-                // Installs Android Studio.
-                await context
-                    .read<AndroidStudioNotifier>()
-                    .checkAStudio(context, apiData);
-                _editor.remove(EditorType.androidStudio);
-              }
-              if (_editor.contains(EditorType.vscode)) {
-                // Installs VSCode.
-                await context
-                    .read<VSCodeNotifier>()
-                    .checkVSCode(context, apiData);
-                // After completing, we will remove the item from the list.
-                _editor.remove(EditorType.vscode);
-              }
-
+            // None will be skipped and next page will be shown.
+            if (_editor.contains(EditorType.none)) {
               setState(() {
-                _installing = false;
-                _completedInstall = false;
+                _editor.clear();
+                _tab = WelcomeTab.installGit;
               });
             }
+
+            // Installs Android Studio.
+            if (_editor.contains(EditorType.androidStudio)) {
+              await context
+                  .read<AndroidStudioNotifier>()
+                  .checkAStudio(context, apiData);
+              setState(() => _editor.remove(EditorType.androidStudio));
+            }
+
+            // Installs VSCode.
+            if (_editor.contains(EditorType.vscode)) {
+              await context
+                  .read<VSCodeNotifier>()
+                  .checkVSCode(context, apiData);
+              // After completing, we will remove the item from the list.
+              setState(() => _editor.remove(EditorType.vscode));
+            }
+
+            setState(() {
+              _installing = false;
+              _completedInstall = true;
+            });
           },
-          onEditorTypeChanged: (List<EditorType> val) {
-            setState(() => _editor = val);
-          },
+          onEditorTypeChanged: (List<EditorType> val) =>
+              setState(() => _editor.addAll(val)),
           isInstalling: _installing,
           doneInstalling: _completedInstall,
-          onContinue: () => setState(() => _tab = WelcomeTab.installGit),
+          onContinue: () => setState(() {
+            _completedInstall = false;
+            _tab = WelcomeTab.installGit;
+          }),
         );
       case WelcomeTab.installGit:
         return installGit(
           context,
           onInstall: () async {
-            if (_completedInstall) {
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            } else {
-              setState(() {
-                _installing = true;
-              });
-              await context.read<GitNotifier>().checkGit(context, apiData);
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            }
+            setState(() => _installing = true);
+
+            // Install Git on the system.
+            await context.read<GitNotifier>().checkGit(context, apiData);
+
+            setState(() {
+              _installing = false;
+              _completedInstall = true;
+            });
           },
           isInstalling: _installing,
           doneInstalling: _completedInstall,
-          onContinue: () => setState(() => _tab = WelcomeTab.installJava),
+          onContinue: () => setState(() {
+            _completedInstall = false;
+            _tab = WelcomeTab.installJava;
+          }),
         );
       case WelcomeTab.installJava:
         return installJava(
           context,
           onInstall: () async {
-            if (_completedInstall) {
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            } else {
-              setState(() {
-                _installing = true;
-              });
-              await context.read<JavaNotifier>().checkJava(context, apiData);
-              setState(() {
-                _installing = false;
-                _completedInstall = false;
-              });
-            }
+            setState(() => _installing = true);
+
+            // Install Java on the system.
+            await context.read<JavaNotifier>().checkJava(context, apiData);
+
+            setState(() {
+              _installing = false;
+              _completedInstall = true;
+            });
           },
           onSkip: () => setState(() {
             _installing = false;

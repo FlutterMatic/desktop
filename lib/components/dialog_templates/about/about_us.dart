@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:manager/components/dialog_templates/about/sections/about.dart';
 import 'package:manager/components/dialog_templates/about/sections/changelog.dart';
 import 'package:manager/components/dialog_templates/about/sections/contributors.dart';
+import 'package:manager/components/dialog_templates/about/sections/report.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
@@ -24,6 +25,7 @@ class AboutUsDialog extends StatelessWidget {
               TabViewObject('About', AboutSection()),
               TabViewObject('Contributors', ContributorsAboutSection()),
               TabViewObject('Changelog', ChangelogAboutSection()),
+              TabViewObject('Report', ReportAboutSection()),
             ],
           ),
         ],

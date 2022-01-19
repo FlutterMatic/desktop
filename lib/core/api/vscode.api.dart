@@ -29,6 +29,7 @@ class VSCodeAPINotifier with ChangeNotifier {
           'https://api.github.com/repos/microsoft/vscode/releases/latest'),
       headers: _header,
     );
+
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       _vscMap = VSCodeAPI.fromJson(
@@ -44,11 +45,8 @@ class VSCodeAPINotifier with ChangeNotifier {
           headers: _header);
       if (gitResponse.statusCode == 200) {
         // If the server did return a 200 OK response,
-        VSCodeAPI _gitVscMap = VSCodeAPI.fromJson(
-          gitContent: jsonDecode(
-            gitResponse.body,
-          ),
-        );
+        VSCodeAPI _gitVscMap =
+            VSCodeAPI.fromJson(gitContent: jsonDecode(gitResponse.body));
         _sha = _gitVscMap.gitData!['object']['sha'];
         notifyListeners();
       }

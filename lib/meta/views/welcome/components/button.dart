@@ -6,6 +6,13 @@ import 'package:manager/app/constants/enum.dart';
 import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/utils/app_theme.dart';
 
+const List<Progress> _disabledProgresses = <Progress>[
+  Progress.extracting,
+  Progress.downloading,
+  Progress.checking,
+  Progress.started,
+];
+
 class WelcomeButton extends StatelessWidget {
   final Progress progress;
   final VoidCallback? onContinue;
@@ -24,10 +31,7 @@ class WelcomeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _disabled = progress == Progress.extracting ||
-        progress == Progress.downloading ||
-        progress == Progress.checking ||
-        progress == Progress.started;
+    bool _disabled = _disabledProgresses.contains(progress);
     return SizedBox(
       width: 210,
       height: 50,

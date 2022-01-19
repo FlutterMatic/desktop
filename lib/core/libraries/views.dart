@@ -9,4 +9,4 @@ export '../../meta/views/tabs/sections/pub/pub.dart';
 export '../../meta/views/tabs/sections/pub/elements/pub_tile.dart';
 export '../../meta/views/tabs/components/horizontal_axis.dart';
 export '../../meta/views/tabs/sections/pub/elements/search_result_tile.dart';
-export '../../meta/views/welcome/screens/docs_tutorials.dart';
+export '../../meta/views/welcome/screens/setup_docs.dart';

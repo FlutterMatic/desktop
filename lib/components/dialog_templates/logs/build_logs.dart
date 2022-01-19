@@ -65,8 +65,7 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
 
     _port.send(true);
   } catch (_, s) {
-    print(_);
-    await logger.file(LogTypeTag.error, 'Failed to generate issue report.',
+    await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
         stackTraces: s);
     _port.send(false);
   }
@@ -144,7 +143,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
         });
       }
     } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to generate issue report.',
+      await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
           stackTraces: s);
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(

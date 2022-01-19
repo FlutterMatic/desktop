@@ -2,16 +2,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// 📦 Package imports:
+import 'package:file_selector/file_selector.dart' as file_selector;
+
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/app/constants/shared_pref.dart';
+import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class ProjectNameSection extends StatefulWidget {
+  final String? path;
+  final Function(String path) onPathUpdate;
   final TextEditingController controller;
 
   const ProjectNameSection({
     Key? key,
     required this.controller,
+    required this.path,
+    required this.onPathUpdate,
   }) : super(key: key);
 
   @override
@@ -118,7 +127,64 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
               ),
             ),
         infoWidget(context,
-            'Your project name can only include lower-case English letters (a-z) and underscores (_).')
+            'Your project name can only include lower-case English letters (a-z) and underscores (_).'),
+        VSeparators.normal(),
+        RoundContainer(
+          color: Colors.blueGrey.withOpacity(0.2),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                        'Select the path where you want to save your project.'),
+                    VSeparators.xSmall(),
+                    Tooltip(
+                      waitDuration: const Duration(milliseconds: 500),
+                      message: widget.path ??
+                          SharedPref().pref.getString(SPConst.projectsPath) ??
+                          '',
+                      child: Text(
+                        widget.path ??
+                            SharedPref().pref.getString(SPConst.projectsPath) ??
+                            'No path selected',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              HSeparators.normal(),
+              RectangleButton(
+                width: 100,
+                child:
+                    Text(widget.path == null ? 'Select Path' : 'Change path'),
+                onPressed: () async {
+                  String? _path = await file_selector.getDirectoryPath();
+
+                  if (_path == null) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'Please select a path.',
+                        type: widget.path == null
+                            ? SnackBarType.error
+                            : SnackBarType.warning,
+                      ),
+                    );
+                    return;
+                  }
+
+                  widget.onPathUpdate(_path);
+                },
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

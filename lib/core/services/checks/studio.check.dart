@@ -95,13 +95,13 @@ class AndroidStudioNotifier extends ChangeNotifier {
           !SharedPref().pref.containsKey(SPConst.aStudioVersion)) {
         await SharedPref().pref.setString(SPConst.aStudioPath, studioPath);
         await logger.file(LogTypeTag.info,
-            'Android Studio found at - ${studioPath.trim()}'.trim());
+            'Android Studio found at: ${studioPath.trim()}'.trim());
 
         /// Fetch the version of Android Studio.
         studioVersion = await getAStudioBinVersion();
         versions.studio = studioVersion.toString();
         await logger.file(
-            LogTypeTag.info, 'Android Studio version : ${versions.studio}');
+            LogTypeTag.info, 'Android Studio version: ${versions.studio}');
         await SharedPref()
             .pref
             .setString(SPConst.aStudioVersion, versions.studio!);
@@ -113,12 +113,12 @@ class AndroidStudioNotifier extends ChangeNotifier {
         studioPath = SharedPref().pref.getString(SPConst.aStudioPath);
         await logger.file(
             LogTypeTag.info,
-            'Android Studio found at - ${studioPath!.trim()}'
+            'Android Studio found at: ${studioPath!.trim()}'
                 .trim()
                 .replaceAll('"', ''));
         versions.studio = SharedPref().pref.getString(SPConst.aStudioVersion);
         await logger.file(
-            LogTypeTag.info, 'Studio version : ${versions.studio}');
+            LogTypeTag.info, 'Studio version: ${versions.studio}');
         _progress = Progress.done;
         notifyListeners();
       }
@@ -178,9 +178,9 @@ class AndroidStudioNotifier extends ChangeNotifier {
 
   /// This function will check if the Android Studio
   /// is installed in the JetBrains directory.
-  Future<bool> checkJetBrains(String? jetBrainsDir, {String? appDir}) async {
+  Future<bool> checkJetBrains(String jetBrainsDir, {String? appDir}) async {
     await logger.file(LogTypeTag.info, 'Checking JetBrains');
-    Directory _jetBrainsDir = Directory(jetBrainsDir!);
+    Directory _jetBrainsDir = Directory(jetBrainsDir);
     if (await _jetBrainsDir.exists()) {
       await logger.file(LogTypeTag.info, 'JetBrains Directory Exists');
       await logger.file(
@@ -211,17 +211,15 @@ class AndroidStudioNotifier extends ChangeNotifier {
     /// Downloading Android studio.
     if (kDebugMode || kProfileMode) {
       await context.read<DownloadNotifier>().downloadFile(
-            'https://sample-videos.com/zip/50mb.zip',
-            'studio.$archiveType',
-            appDir + '\\tmp',
-          );
+          'https://sample-videos.com/zip/50mb.zip',
+          'studio.$archiveType',
+          appDir + '\\tmp');
     } else {
       await context.read<DownloadNotifier>().downloadFile(
-            api!.data!['android_studio'][platform]
-                [archiveType!.replaceAll('.', '')],
-            'studio.$archiveType',
-            appDir + '\\tmp',
-          );
+          api!.data!['android_studio'][platform]
+              [archiveType!.replaceAll('.', '')],
+          'studio.$archiveType',
+          appDir + '\\tmp');
     }
 
     await Future<dynamic>.delayed(const Duration(seconds: 1));
@@ -231,20 +229,26 @@ class AndroidStudioNotifier extends ChangeNotifier {
     notifyListeners();
 
     /// Extract Android studio from compressed file.
-    bool studioExtracted =
+    bool _studioExtracted =
         await unzip(appDir + '\\tmp\\studio.zip', 'C:\\fluttermatic\\');
 
-    if (studioExtracted) {
+    if (_studioExtracted) {
       await Future<dynamic>.delayed(const Duration(seconds: 1));
       await logger.file(
           LogTypeTag.info, 'Android studio extraction was successful');
       if (await checkDir('C:\\fluttermatic\\', subDirName: 'android-studio')) {
-        await Directory('C:\\fluttermatic\\android-studio')
-            .rename('C:\\fluttermatic\\AndroidStudio');
+        Directory _renameDir = Directory('C:\\fluttermatic\\android-studio');
+
+        if (await _renameDir.exists()) {
+          await _renameDir.rename('C:\\fluttermatic\\AndroidStudio');
+          await logger.file(
+              LogTypeTag.info, 'Renamed android-studio to AndroidStudio');
+        }
 
         /// Appending path to env
         bool _isASPathSet =
             await setPath('C:\\fluttermatic\\AndroidStudio\\bin', appDir);
+
         if (_isASPathSet) {
           await SharedPref()
               .pref

@@ -17,7 +17,7 @@ class SquareButton extends StatelessWidget {
     required this.icon,
     required this.onPressed,
     this.size = 40,
-    this.color = Colors.grey,
+    this.color,
     this.hoverColor,
     this.tooltip,
     this.loading = false,
@@ -53,11 +53,7 @@ class SquareButton extends StatelessWidget {
               child: Center(
                 child: loading
                     ? const Spinner(size: 20, thickness: 3)
-                    : SizedBox(
-                        height: size,
-                        width: size,
-                        child: icon,
-                      ),
+                    : SizedBox(height: size, width: size, child: icon),
               ),
             ),
           ),

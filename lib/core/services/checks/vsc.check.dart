@@ -83,10 +83,8 @@ class VSCodeNotifier extends ChangeNotifier {
         notifyListeners();
 
         /// Extract java from compressed file.
-        bool _vscExtracted = await unzip(
-          dir.path + '\\tmp\\code.zip',
-          'C:\\fluttermatic\\code',
-        );
+        bool _vscExtracted =
+            await unzip(dir.path + '\\tmp\\code.zip', 'C:\\fluttermatic\\code');
 
         if (_vscExtracted) {
           await logger.file(
@@ -117,7 +115,7 @@ class VSCodeNotifier extends ChangeNotifier {
           !SharedPref().pref.containsKey(SPConst.vscVersion)) {
         /// Make a fake delay of 1 second such that UI looks cool.
         await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
+        await logger.file(LogTypeTag.info, 'VS Code found at: $vscPath');
         await SharedPref().pref.setString(SPConst.vscPath, vscPath);
 
         /// Make a fake delay of 1 second such that UI looks cool.
@@ -125,7 +123,7 @@ class VSCodeNotifier extends ChangeNotifier {
         vscVersion = await getVSCBinVersion();
         versions.vsCode = vscVersion.toString();
         await logger.file(
-            LogTypeTag.info, 'VS Code version : ${versions.vsCode}');
+            LogTypeTag.info, 'VS Code version: ${versions.vsCode}');
         await SharedPref().pref.setString(SPConst.vscVersion, versions.vsCode!);
         _progress = Progress.done;
         notifyListeners();
@@ -133,9 +131,10 @@ class VSCodeNotifier extends ChangeNotifier {
         await logger.file(
             LogTypeTag.info, 'Loading VS Code details from shared preferences');
         vscPath = SharedPref().pref.getString(SPConst.vscPath);
-        await logger.file(LogTypeTag.info, 'VS Code found at - $vscPath');
+        await logger.file(LogTypeTag.info, 'VS Code found at: $vscPath');
         versions.vsCode = SharedPref().pref.getString(SPConst.vscVersion);
-        await logger.file(LogTypeTag.info, 'VS Code version : ${versions.git}');
+        await logger.file(
+            LogTypeTag.info, 'VS Code version: ${versions.vsCode}');
         _progress = Progress.done;
         notifyListeners();
       }

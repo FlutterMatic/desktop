@@ -18,18 +18,15 @@ class FlutterMaticAPINotifier with ChangeNotifier {
   Progress _progress = Progress.none;
   Progress get progress => _progress;
   Future<void> fetchAPIData() async {
-    await logger.file(LogTypeTag.info, 'Fetching Fluttermatic API data - Might be exponential back-off request.');
+    await logger.file(LogTypeTag.info,
+        'Fetching Fluttermatic API data - Might be exponential back-off request.');
     _progress = Progress.downloading;
     notifyListeners();
     http.Response response = await http
         .get(Uri.parse('https://fluttermatic.herokuapp.com/api/data'));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
-      _apiMap = FluttermaticAPI.fromJson(
-        jsonDecode(
-          response.body,
-        ),
-      );
+      _apiMap = FluttermaticAPI.fromJson(jsonDecode(response.body));
       _progress = Progress.done;
       notifyListeners();
     } else {

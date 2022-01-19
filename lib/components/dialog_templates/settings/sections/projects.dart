@@ -145,22 +145,11 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
               tooltip: '',
               itemBuilder: (_) {
                 return <PopupMenuEntry<dynamic>>[
+                  const PopupMenuItem<int>(value: 1, child: Text('1 minute')),
+                  const PopupMenuItem<int>(value: 5, child: Text('5 minutes')),
                   const PopupMenuItem<int>(
-                    value: 1,
-                    child: Text('1 minute'),
-                  ),
-                  const PopupMenuItem<int>(
-                    value: 5,
-                    child: Text('5 minutes'),
-                  ),
-                  const PopupMenuItem<int>(
-                    value: 10,
-                    child: Text('10 minutes'),
-                  ),
-                  const PopupMenuItem<int>(
-                    value: 60,
-                    child: Text('1 hour'),
-                  ),
+                      value: 10, child: Text('10 minutes')),
+                  const PopupMenuItem<int>(value: 60, child: Text('1 hour')),
                 ];
               },
               onSelected: (dynamic val) async {
@@ -171,7 +160,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   setState(() => _refreshIntervals = val);
                 } catch (_, s) {
                   await logger.file(LogTypeTag.error,
-                      'Couldn\'t set projects refresh interval',
+                      'Couldn\'t set projects refresh interval: $_',
                       stackTraces: s);
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(

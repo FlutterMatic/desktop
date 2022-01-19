@@ -47,4 +47,20 @@ class SPConst {
   static String askEditorAlways = 'ASK_EDITOR_ALWAYS';
   static String lastProjectsReload = 'LAST_PROJECTS_RELOAD';
   static String projectRefresh = 'PROJECT_REFRESH_INTERVALS';
+
+  // Last Check Updates
+  static String lastGitUpdateCheck = 'LAST_GIT_UPDATE_CHECK';
+  static String lastJavaUpdateCheck = 'LAST_JAVA_UPDATE_CHECK';
+  static String lastDartUpdateCheck = 'LAST_DART_UPDATE_CHECK';
+  static String lastFlutterUpdateCheck = 'LAST_FLUTTER_UPDATE_CHECK';
+  static String lastVSCodeUpdateCheck = 'LAST_VISUAL_CODE_UPDATE_CHECK';
+  static String lastAndroidStudioUpdateCheck = 'LAST_STUDIO_UPDATE_CHECK';
+
+  // Last Update
+  static String lastGitUpdate = 'LAST_GIT_UPDATE';
+  static String lastJavaUpdate = 'LAST_JAVA_UPDATE';
+  static String lastDartUpdate = 'LAST_DART_UPDATE';
+  static String lastFlutterUpdate = 'LAST_FLUTTER_UPDATE';
+  static String lastVSCodeUpdate = 'LAST_VISUAL_CODE_UPDATE';
+  static String lastAndroidStudioUpdate = 'LAST_STUDIO_UPDATE';
 }

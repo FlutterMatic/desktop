@@ -85,7 +85,7 @@ flutter:
     - assets/images/logos/
     - assets/images/icons/
     - assets/images/placeholders/
-    - assets/markdown/
+    - assets/markdown/setup_docs/
     - assets/lottie/
     - changelog.md
 
@@ -94,13 +94,3 @@ flutter:
       fonts:
         - asset: assets/fonts/NotoSans/NotoSans-Regular.ttf
         - asset: assets/fonts/NotoSans/NotoSans-Bold.ttf
-    - family: VictorMono
-      fonts:
-        - asset: assets/fonts/VictorMono/VictorMono-SemiBold.ttf
-        - asset: assets/fonts/VictorMono/VictorMono-SemiBoldItalic.ttf
-          style: italic
-    - family: LexendDeca
-      fonts:
-        - asset: assets/fonts/LexendDeca/LexendDeca-Bold.ttf
-        - asset: assets/fonts/LexendDeca/LexendDeca-SemiBold.ttf
-        - asset: assets/fonts/LexendDeca/LexendDeca-Medium.ttf

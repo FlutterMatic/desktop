@@ -21,7 +21,7 @@ import 'package:manager/core/libraries/services.dart';
 /// ```
 ///
 /// This will return the file `path` after downloading.
-Future<bool> unzip(String source, String destination, {String? sw}) async {
+Future<bool> unzip(String source, String destination) async {
   try {
     /// Check for temporary Directory to download files
     bool destinationDir = await checkDir('C:\\', subDirName: 'fluttermatic');

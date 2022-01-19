@@ -24,27 +24,32 @@ Widget installFlutter(
           'You will need to install Flutter in your device to start using Flutter.',
         ),
         VSeparators.xLarge(),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15.0),
-          child: (flutterNotifier.progress == Progress.started ||
-                  flutterNotifier.progress == Progress.checking)
-              ? hLoadingIndicator(context: context)
-              : flutterNotifier.progress == Progress.downloading
-                  ? const CustomProgressIndicator()
-                  : (flutterNotifier.progress == Progress.extracting)
-                      ? hLoadingIndicator(context: context)
-                      : flutterNotifier.progress == Progress.done
-                          ? welcomeToolInstalled(
-                              context,
-                              title: 'Flutter Installed',
-                              message:
-                                  'Flutter was installed successfully on your device. Continue to the next step.',
-                            )
-                          : flutterNotifier.progress == Progress.none
-                              ? infoWidget(context, 'We will check if you have Flutter installed or not and install it for you if you don\'t.')
-                              : hLoadingIndicator(context: context),
+        Builder(
+          builder: (_) {
+            if (flutterNotifier.progress == Progress.started ||
+                flutterNotifier.progress == Progress.checking) {
+              return hLoadingIndicator(context: context);
+            } else if (flutterNotifier.progress == Progress.downloading) {
+              return const CustomProgressIndicator();
+            } else if (flutterNotifier.progress == Progress.extracting) {
+              return hLoadingIndicator(context: context);
+            } else if (flutterNotifier.progress == Progress.none) {
+              return infoWidget(context,
+                  'We will check if you have Flutter installed or not and install it for you if you don\'t.');
+            } else if (flutterNotifier.progress == Progress.done) {
+              return welcomeToolInstalled(
+                context,
+                title:
+                    'Flutter Installed - v${flutterNotifier.flutterVersion ?? 'Unknown'}',
+                message:
+                    'Flutter was installed successfully on your device. Continue to the next step.',
+              );
+            } else {
+              return hLoadingIndicator(context: context);
+            }
+          },
         ),
-        VSeparators.small(),
+        VSeparators.normal(),
         WelcomeButton(
           onInstall: onInstall,
           onContinue: onContinue,

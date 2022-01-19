@@ -20,13 +20,11 @@ class AboutSection extends StatelessWidget {
           type: InformationType.green,
         ),
         VSeparators.small(),
-        infoWidget(
-          context,
-          'This project is completely open-source and can be found on GitHub.',
-        ),
+        infoWidget(context,
+            'This project is completely open-source and can be found on GitHub.'),
         VSeparators.small(),
         informationWidget(
-          'Version: ${SharedPref().pref.getString(SPConst.appVersion)} (${SharedPref().pref.getString(SPConst.appBuild)!.toUpperCase()}) \n$osName - $osVersion',
+          'Version: ${SharedPref().pref.getString(SPConst.appVersion) ?? 'Unknown app version'} (${SharedPref().pref.getString(SPConst.appBuild)?.toUpperCase() ?? 'Unknown app build'}) \n${osName ?? 'Unknown OS'} - ${osVersion ?? 'Unknown OS version'}',
           showIcon: false,
           type: InformationType.info,
         )

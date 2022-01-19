@@ -1,6 +1,3 @@
-// 🎯 Dart imports:
-import 'dart:developer';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -167,14 +164,6 @@ class ConfirmChannelChangeDialog extends StatelessWidget {
       // First make sure that the requested channel is not the same as
       // the same channel the user is currently in.
 
-      // Before starting, add the current activity of switching the channels
-      // so the user can see the activity fo switching the channels.
-      BgActivityTile _activityElement = BgActivityTile(
-        title: 'Changing to $channelName channel',
-        activityId: 'channel_switch_$channelName${Timeline.now}',
-      );
-      bgActivities.add(_activityElement);
-      bgActivities.remove(_activityElement);
       Navigator.pop(context);
     }
 

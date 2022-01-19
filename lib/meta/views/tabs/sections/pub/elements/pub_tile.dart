@@ -84,6 +84,9 @@ class _PubPkgTileState extends State<PubPkgTile> {
                     Expanded(
                       child: Text(
                         widget.data!.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
                         style: TextStyle(
                           color: Theme.of(context).isDarkTheme
                               ? Colors.white
@@ -95,32 +98,36 @@ class _PubPkgTileState extends State<PubPkgTile> {
                     // Show a copy icon to copy the dependency directly on when
                     // hovering to avoid UI distraction.
                     if (_isHovering)
-                      RectangleButton(
-                        width: 22,
-                        height: 22,
-                        padding: EdgeInsets.zero,
-                        color: Colors.transparent,
-                        child: Icon(
-                          Icons.content_copy,
-                          size: 14,
-                          color: (Theme.of(context).isDarkTheme
-                                  ? Colors.white
-                                  : Colors.black)
-                              .withOpacity(0.5),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: RectangleButton(
+                          width: 22,
+                          height: 22,
+                          padding: EdgeInsets.zero,
+                          radius: BorderRadius.circular(2),
+                          color: Colors.transparent,
+                          child: Icon(
+                            Icons.content_copy,
+                            size: 14,
+                            color: (Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black)
+                                .withOpacity(0.5),
+                          ),
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(
+                                text: widget.data!.name +
+                                    ': ^${widget.data!.info.version}'));
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Dependency has been copied to your clipboard.',
+                                type: SnackBarType.done,
+                              ),
+                            );
+                          },
                         ),
-                        onPressed: () {
-                          Clipboard.setData(ClipboardData(
-                              text: widget.data!.name +
-                                  ': ^${widget.data!.info.version}'));
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Dependency has been copied to your clipboard.',
-                              type: SnackBarType.done,
-                            ),
-                          );
-                        },
                       ),
                   ],
                 ),
@@ -129,6 +136,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                   child: Text(
                     widget.data?.info.description ??
                         'No package description provided.',
+                    maxLines: _isHovering ? null : 3,
                     style: TextStyle(
                       color: Theme.of(context).isDarkTheme
                           ? Colors.white

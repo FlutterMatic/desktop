@@ -183,6 +183,17 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                             color: Colors.grey.withOpacity(0.6),
                           ),
                           onPressed: () async {
+                            if (_doneHashes.isEmpty) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(context,
+                                    'Begin setting up FlutterMatic by clicking on some of the items below.',
+                                    type: SnackBarType.warning),
+                              );
+
+                              return;
+                            }
+
                             await SharedPref()
                                 .pref
                                 .remove(SPConst.guideFinishedHashes);
@@ -205,16 +216,14 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                       size: 25,
                       color: Colors.transparent,
                       tooltip: 'Dismiss Guide',
-                      icon: Icon(
-                        Icons.close_rounded,
-                        size: 15,
-                        color: Colors.grey.withOpacity(0.6),
-                      ),
+                      icon: Icon(Icons.close_rounded,
+                          color: Colors.grey.withOpacity(0.6), size: 15),
                       onPressed: () async {
                         setState(() => _showGuide = false);
                         await SharedPref()
                             .pref
                             .setBool(SPConst.homeShowGuide, false);
+                        ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
                           snackBarTile(
                             context,

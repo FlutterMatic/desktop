@@ -116,7 +116,7 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           type: SnackBarType.done,
                         ),
                       );
-                    } catch (err) {
+                    } catch (_) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -125,7 +125,7 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                         ),
                       );
                       await logger.file(LogTypeTag.error,
-                          'Couldn\'t upload "google-services.json" file.');
+                          'Couldn\'t upload "google-services.json" file. $_');
                     }
                   },
                 ),

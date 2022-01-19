@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/meta/views/tabs/sections/home/elements/dart_version.dart';
 import 'package:manager/meta/views/tabs/sections/home/elements/flutter_version.dart';
-import 'package:manager/meta/views/tabs/sections/home/elements/java_version.dart';
 import 'package:manager/meta/views/tabs/sections/home/elements/setup_guide.dart';
 
 class HomeMainSection extends StatefulWidget {
@@ -32,14 +31,14 @@ class _HomeMainSectionState extends State<HomeMainSection> {
                 const Expanded(child: HomeDartVersionTile()),
               ],
             ),
-            VSeparators.normal(),
-            Row(
-              children: <Widget>[
-                const Expanded(child: HomeJavaVersionTile()),
-                HSeparators.normal(),
-                const Spacer(),
-              ],
-            ),
+            // VSeparators.normal(),
+            // Row(
+            //   children: <Widget>[
+            //     const Expanded(child: HomeJavaVersionTile()),
+            //     HSeparators.normal(),
+            //     const Spacer(),
+            //   ],
+            // ),
           ],
         ),
       ),

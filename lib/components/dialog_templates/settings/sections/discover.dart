@@ -24,7 +24,7 @@ class DiscoverSettingsSection extends StatelessWidget {
           actions: <ActionOptionsObject>[
             ActionOptionsObject(
               'GitHub',
-              () => launch('https://github.com/FlutterMatic/FlutterMatic-desktop'),
+              () => launch('https://github.com/FlutterMatic/desktop'),
               icon: SvgPicture.asset(
                 Assets.github,
                 height: 14,

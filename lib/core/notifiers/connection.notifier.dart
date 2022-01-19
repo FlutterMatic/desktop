@@ -45,9 +45,9 @@ class ConnectionNotifier with ChangeNotifier {
         _isOnline = true;
         notifyListeners();
       }
-    } on PlatformException catch (platformException) {
-      await logger.file(LogTypeTag.error,
-          'PlatformException : ' + platformException.message.toString());
+    } on PlatformException catch (_) {
+      await logger.file(
+          LogTypeTag.error, 'PlatformException: $_');
     } catch (e) {
       await logger.file(LogTypeTag.error, e.toString());
     }
@@ -62,12 +62,13 @@ class ConnectionNotifier with ChangeNotifier {
       } else {
         return false;
       }
-    } on SocketException catch (socketException) {
-      await logger.file(LogTypeTag.error,
-          'SocketException : ' + socketException.message.toString());
+    } on SocketException catch (_) {
+      await logger.file(LogTypeTag.error, 'SocketException: $_');
       return false;
-    } catch (e) {
-      await logger.file(LogTypeTag.error, e.toString());
+    } catch (_, s) {
+      await logger.file(
+          LogTypeTag.error, 'Failed to update connection status $_',
+          stackTraces: s);
       return false;
     }
   }

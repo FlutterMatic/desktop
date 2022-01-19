@@ -16,8 +16,11 @@ import 'package:manager/core/libraries/constants.dart';
 import 'package:manager/core/libraries/services.dart';
 
 class WelcomeGettingStarted extends StatefulWidget {
-  const WelcomeGettingStarted(this.onContinue, {Key? key}) : super(key: key);
   final Function() onContinue;
+  const WelcomeGettingStarted({
+    Key? key,
+    required this.onContinue,
+  }) : super(key: key);
 
   @override
   _WelcomeGettingStartedState createState() => _WelcomeGettingStartedState();
@@ -32,15 +35,18 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
 
   Future<String> _initCalls() async {
     try {
+      // ignore: unused_local_variable
       String _result = 'success';
       await _options.retry(
         () async {
           if (apiData == null) {
             await context.read<FlutterMaticAPINotifier>().fetchAPIData();
             apiData = context.read<FlutterMaticAPINotifier>().apiMap;
+            await logger.file(LogTypeTag.info,
+                'Fetched FlutterMatic API data: ${apiData?.data.toString().substring(0, 50)}...');
           }
         },
-        onRetry: (Exception e) async {
+        onRetry: (_) async {
           _totalAttempts++;
           if (_totalAttempts == _options.maxAttempts) {
             await logger.file(LogTypeTag.info,
@@ -49,16 +55,18 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             return;
           }
         },
-        retryIf: (Exception e) => e is SocketException || e is TimeoutException,
+        retryIf: (_) => _ is SocketException || _ is TimeoutException,
       );
       await _options.retry(
         () async {
           if (sdkData == null) {
             await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
             sdkData = context.read<FlutterSDKNotifier>().sdkMap;
+            await logger.file(LogTypeTag.info,
+                'Fetched Flutter SDK data: ${sdkData?.data.toString().substring(0, 50)}...');
           }
         },
-        onRetry: (Exception e) async {
+        onRetry: (_) async {
           _totalAttempts++;
           if (_totalAttempts == _options.maxAttempts) {
             await logger.file(LogTypeTag.info,
@@ -67,7 +75,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             return;
           }
         },
-        retryIf: (Exception e) => e is SocketException || e is TimeoutException,
+        retryIf: (_) => _ is SocketException || _ is TimeoutException,
       );
       await _options.retry(
         () async {
@@ -75,9 +83,13 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             await context.read<VSCodeAPINotifier>().fetchVscAPIData();
             tagName = context.read<VSCodeAPINotifier>().tagName;
             sha = context.read<VSCodeAPINotifier>().sha;
+            await logger.file(LogTypeTag.info,
+                'Fetched VSC tag name data: ${tagName.toString()}');
+            await logger.file(
+                LogTypeTag.info, 'Fetched VSC sha data: ${sha.toString()}');
           }
         },
-        onRetry: (Exception e) async {
+        onRetry: (_) async {
           _totalAttempts++;
           if (_totalAttempts == _options.maxAttempts) {
             await logger.file(LogTypeTag.info,
@@ -86,11 +98,14 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             return;
           }
         },
-        retryIf: (Exception e) => e is SocketException || e is TimeoutException,
+        retryIf: (_) => _ is SocketException || _ is TimeoutException,
       );
 
       return _result;
-    } catch (_) {
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error,
+          'Couldn\'t request to make FlutterMatic API calls initially for setup. $_',
+          stackTraces: s);
       return 'error';
     }
   }
@@ -104,8 +119,8 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
           children: <Widget>[
             welcomeHeaderTitle(
               Assets.flutter,
-              Install.flutter,
-              InstallContent.welcome,
+              'Install Flutter',
+              'Welcome to FlutterMatic. You will be guided through the steps necessary to setup and install Flutter in your device.',
               iconHeight: 50,
             ),
             VSeparators.large(),
@@ -115,8 +130,10 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
                 type: InformationType.error,
               )
             else if (snapshot.hasData && snapshot.data == 'success')
-              infoWidget(context,
-                  'Please make sure you have a good internet connection for the setup to go as smooth as possible.')
+              informationWidget(
+                'Please make sure you have a good internet connection for the setup to go as smooth as possible.',
+                type: InformationType.green,
+              )
             else if (!snapshot.hasData)
               hLoadingIndicator(context: context),
             VSeparators.large(),

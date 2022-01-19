@@ -2,6 +2,7 @@
 import 'dart:io';
 
 // 🐦 Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -19,6 +20,7 @@ import 'package:manager/core/libraries/services.dart';
 import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/views.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,13 +52,13 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       Directory _dir = await getApplicationSupportDirectory();
 
       /// Check for temporary Directory to download files
-      bool _tmpDir = await Directory('${_dir.path}\\tmp').exists();
+      bool _tmpDir = await Directory(_dir.path + '\\tmp').exists();
       bool _cacheDir = await Directory(_dir.path + '\\cache').exists();
       bool _logsDir = await Directory(_dir.path + '\\logs').exists();
 
       await SharedPref.init();
 
-      // if (kDebugMode) await SharedPref().pref.clear();
+      if (kDebugMode) await SharedPref().pref.clear();
 
       appVersion = const String.fromEnvironment('current-version');
 
@@ -100,6 +102,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                 SPConst.osName,
                 platformData![0]!
                     .stdout
+                    .toString()
                     .split('\n')[0]
                     .replaceAll('  ', '')
                     .replaceAll('OS Name: ', '')
@@ -125,8 +128,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
         platform = SharedPref().pref.getString(SPConst.sysPlatform);
         osName = SharedPref().pref.getString(SPConst.osName);
         osVersion = SharedPref().pref.getString(SPConst.osVersion);
-        appTemp = SharedPref().pref.getString(SPConst.appTempDir);
-        appMainDir = SharedPref().pref.getString(SPConst.appMainDir);
         appVersion = SharedPref().pref.getString(SPConst.appVersion);
         appBuild = SharedPref().pref.getString(SPConst.appBuild);
       }
@@ -150,8 +151,12 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       }
 
       setState(() => _isChecking = false);
+
+      await PkgViewData.getInitialPackages();
+      await logger.file(LogTypeTag.info,
+          'Background fetched the pub list for performance improvements.');
     } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch.',
+      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch. $_',
           stackTraces: s);
       setState(() => _isChecking = false);
     }

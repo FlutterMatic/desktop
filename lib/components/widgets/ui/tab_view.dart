@@ -6,12 +6,14 @@ import 'package:manager/app/constants/constants.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 class TabViewWidget extends StatefulWidget {
+  final double? height;
   final String? defaultPage;
   final List<TabViewObject> tabs;
 
   const TabViewWidget({
     Key? key,
     required this.tabs,
+    this.height,
     this.defaultPage,
   }) : super(key: key);
 
@@ -59,7 +61,10 @@ class _TabViewWidgetState extends State<TabViewWidget> {
         ),
         HSeparators.small(),
         Expanded(
-          child: SizedBox(height: 330, child: widget.tabs[_index].widget),
+          child: SizedBox(
+            height: widget.height ?? 330,
+            child: widget.tabs[_index].widget,
+          ),
         ),
       ],
     );

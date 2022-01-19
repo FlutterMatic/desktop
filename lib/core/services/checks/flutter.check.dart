@@ -27,6 +27,7 @@ class FlutterNotifier extends ChangeNotifier {
   /// Get flutter version.
   Version? flutterVersion;
   Progress _progress = Progress.none;
+  String channel = '...';
   Progress get progress => _progress;
 
   /// Function checks whether Flutter-SDK exists in the system or not.
@@ -34,7 +35,6 @@ class FlutterNotifier extends ChangeNotifier {
     try {
       _progress = Progress.started;
       notifyListeners();
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
 
       /// stable/windows/flutter_windows_2.2.3-stable.zip
       String? _archive = context.read<FlutterSDKNotifier>().sdk;
@@ -73,16 +73,14 @@ class FlutterNotifier extends ChangeNotifier {
         /// Downloading flutter
         if (kDebugMode || kProfileMode) {
           await context.read<DownloadNotifier>().downloadFile(
-                'https://sample-videos.com/zip/50mb.zip',
-                'flutter.$_archiveType',
-                _dir.path + '\\tmp',
-              );
+              'https://sample-videos.com/zip/50mb.zip',
+              'flutter.$_archiveType',
+              _dir.path + '\\tmp');
         } else {
           await context.read<DownloadNotifier>().downloadFile(
-                sdk!.data!['base_url'] + '/' + _archive,
-                'flutter.$_archiveType',
-                _dir.path + '\\tmp',
-              );
+              sdk!.data!['base_url'] + '/' + _archive,
+              'flutter.$_archiveType',
+              _dir.path + '\\tmp');
         }
 
         _progress = Progress.extracting;
@@ -125,10 +123,9 @@ class FlutterNotifier extends ChangeNotifier {
       else if (!SharedPref().pref.containsKey(SPConst.flutterPath) ||
           !SharedPref().pref.containsKey(SPConst.flutterVersion) ||
           !SharedPref().pref.containsKey(SPConst.flutterChannel)) {
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         await SharedPref().pref.setString(SPConst.flutterPath, _flutterPath);
         await logger.file(
-            LogTypeTag.info, 'Flutter-SDK found at - $_flutterPath');
+            LogTypeTag.info, 'Flutter-SDK found at: $_flutterPath');
 
         /// Sample output(for reference)
         /// $ flutter --version
@@ -136,19 +133,18 @@ class FlutterNotifier extends ChangeNotifier {
         /// Framework • revision 20e59316b8 (8 weeks ago) • 2019-07-18 20:04:33 -0700
         /// Engine • revision fee001c93f
         /// Tools • Dart 2.4.0
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
-        // value = 'Fetching flutter version';
         flutterVersion = await fb.getFlutterVersion();
         versions.flutter = flutterVersion.toString();
         await logger.file(
-            LogTypeTag.info, 'Flutter version : ${versions.flutter}');
+            LogTypeTag.info, 'Flutter version: ${versions.flutter}');
         await SharedPref()
             .pref
             .setString(SPConst.flutterVersion, versions.flutter!);
-        await Future<dynamic>.delayed(const Duration(seconds: 2));
         versions.channel = await fb.getFlutterBinChannel();
         await logger.file(
-            LogTypeTag.info, 'Flutter channel : ${versions.channel}');
+            LogTypeTag.info, 'Flutter channel: ${versions.channel}');
+        channel = versions.channel!;
+        notifyListeners();
         await SharedPref()
             .pref
             .setString(SPConst.flutterChannel, versions.channel!);
@@ -159,21 +155,20 @@ class FlutterNotifier extends ChangeNotifier {
             LogTypeTag.info, 'Loading flutter details from shared preferences');
         _flutterPath = SharedPref().pref.getString(SPConst.flutterPath);
         await logger.file(
-            LogTypeTag.info, 'Flutter-SDK found at - $_flutterPath');
+            LogTypeTag.info, 'Flutter-SDK found at: $_flutterPath');
         versions.flutter = SharedPref().pref.getString(SPConst.flutterVersion);
         await logger.file(
-            LogTypeTag.info, 'Flutter version : ${versions.flutter}');
+            LogTypeTag.info, 'Flutter version: ${versions.flutter}');
         versions.channel = SharedPref().pref.getString(SPConst.flutterChannel);
         await logger.file(
-            LogTypeTag.info, 'Flutter channel : ${versions.channel}');
+            LogTypeTag.info, 'Flutter channel: ${versions.channel}');
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException, s) {
+    } on ShellException catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, shellException.message,
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
     } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();

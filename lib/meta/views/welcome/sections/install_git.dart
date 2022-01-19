@@ -16,39 +16,41 @@ Widget installGit(
   required bool isInstalling,
   required bool doneInstalling,
 }) {
-  return Consumer<GitNotifier>(builder: (BuildContext context, GitNotifier gitNotifier, _) {
+  return Consumer<GitNotifier>(
+      builder: (BuildContext context, GitNotifier gitNotifier, _) {
     return Column(
       children: <Widget>[
         welcomeHeaderTitle(
           Assets.git,
-          Install.git,
-          InstallContent.git,
+          'Install Git',
+          'Flutter relies on Git to get and install dependencies and other tools.',
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: (gitNotifier.progress == Progress.started || gitNotifier.progress == Progress.checking)
-              ? hLoadingIndicator(context: context)
-              : gitNotifier.progress == Progress.downloading
-                  ? const CustomProgressIndicator()
-                  : gitNotifier.progress == Progress.extracting
-                      ? hLoadingIndicator(context: context)
-                      : gitNotifier.progress == Progress.done
-                          ? welcomeToolInstalled(
-                              context,
-                              title: 'Git Installed',
-                              message: 'Git installed successfully on your device. Continue to the next step.',
-                            )
-                          : gitNotifier.progress == Progress.none
-                              ? infoWidget(context,
-                                  'Git will be used to provide services such as Pub and other tools that Flutter & Dart uses.')
-                              : hLoadingIndicator(context: context),
+        VSeparators.normal(),
+        Builder(
+          builder: (_) {
+            if (gitNotifier.progress == Progress.started ||
+                gitNotifier.progress == Progress.checking) {
+              return hLoadingIndicator(context: context);
+            } else if (gitNotifier.progress == Progress.downloading) {
+              return const CustomProgressIndicator();
+            } else if (gitNotifier.progress == Progress.extracting) {
+              return hLoadingIndicator(context: context);
+            } else if (gitNotifier.progress == Progress.none) {
+              return infoWidget(context,
+                  'Git will be used to provide services such as Pub and other tools that Flutter & Dart uses.');
+            } else if (gitNotifier.progress == Progress.done) {
+              return welcomeToolInstalled(
+                context,
+                title:
+                    'Git Installed - v${gitNotifier.gitVersion ?? 'Unknown'}',
+                message:
+                    'You have successfully installed Git. Click next to continue.',
+              );
+            } else {
+              return hLoadingIndicator(context: context);
+            }
+          },
         ),
-        if (doneInstalling)
-          welcomeToolInstalled(
-            context,
-            title: 'Git Installed',
-            message: 'You have successfully installed Git.',
-          ),
         VSeparators.normal(),
         WelcomeButton(
           onContinue: onContinue,

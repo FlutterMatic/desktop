@@ -1,18 +1,22 @@
 // 🎯 Dart imports:
-import 'dart:developer';
+import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
+import 'package:manager/app/constants/shared_pref.dart';
 import 'package:manager/components/dialog_templates/dialog_header.dart';
 import 'package:manager/components/dialog_templates/project/sections/description.dart';
 import 'package:manager/components/dialog_templates/project/sections/name.dart';
 import 'package:manager/components/dialog_templates/project/sections/org_name.dart';
 import 'package:manager/components/dialog_templates/project/sections/platforms.dart';
 import 'package:manager/components/dialog_templates/project/sections/pre_config.dart';
+import 'package:manager/core/libraries/services.dart';
+import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
+import 'package:manager/meta/views/dialogs/open_project.dart';
 
 class NewProjectDialog extends StatefulWidget {
   const NewProjectDialog({Key? key}) : super(key: key);
@@ -45,6 +49,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       _nameController.text.startsWith(RegExp('[a-zA-Z]')) &&
       !_nameController.text.contains(RegExp('[0-9]'));
 
+  bool _projectPathCondition() =>
+      _path != null && Directory(_path!).existsSync();
+
   bool _validateOrgName() =>
       _orgController.text != '' &&
       _orgController.text.contains('.') &&
@@ -55,6 +62,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   // Dart & Flutter Config
   bool _isNullSafety = true;
 
+  String? _path = SharedPref().pref.getString(SPConst.projectsPath);
+  String? _currentActivity;
+
   // Pre Config
   Map<String, dynamic>? _firebaseJson;
 
@@ -63,9 +73,23 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       // Name
       if (_index == _NewProjectSections.projectName &&
           _projectNameCondition()) {
-        setState(
-            () => _nameController.text = _nameController.text.toLowerCase());
-        setState(() => _index = _NewProjectSections.projectDescription);
+        if (!_projectPathCondition()) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'Please select a valid path to save project to.',
+              type: SnackBarType.error,
+            ),
+          );
+
+          return;
+        }
+
+        setState(() {
+          _nameController.text = _nameController.text.toLowerCase();
+          _index = _NewProjectSections.projectDescription;
+        });
       }
       // Description
       else if (_index == _NewProjectSections.projectDescription) {
@@ -98,26 +122,46 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             ),
           );
         }
-      }
-      // Creating project page.
-      else if (_index == _NewProjectSections.preConfigProject) {
+      } else if (_index == _NewProjectSections.preConfigProject) {
         try {
           setState(() => _index = _NewProjectSections.creatingProject);
-          BgActivityTile _activityElement = BgActivityTile(
-            title: 'Creating new Flutter project',
-            activityId: Timeline.now.toString(),
-          );
-          bgActivities.add(_activityElement);
-          // TODO: Create a new Flutter project based on the user input.
-          bgActivities.remove(_activityElement);
+
+          String _cmd =
+              '''flutter create ${_nameController.text} --description "${_descriptionController.text}" --org ${_orgController.text} --platforms ${<String?>[
+            _ios ? 'ios' : null,
+            _android ? 'android' : null,
+            _web ? 'web' : null,
+            _windows ? 'windows' : null,
+            _macos ? 'macos' : null,
+            _linux ? 'linux' : null,
+          ].where((String? e) => e != null).join(',')}''';
+
+          print(_cmd);
+
+          await shell
+              .cd(_path!)
+              .run(_cmd)
+              .asStream()
+              .listen((List<ProcessResult> line) => setState(
+                  () => _currentActivity = line.last.stdout.toString()))
+              .asFuture();
+
+          // TODO: Add pre-config to project if any.
+
           Navigator.pop(context);
-          await showDialog(
-            context: context,
-            builder: (_) => ProjectCreatedDialog(
-              projectName: _nameController.text,
-            ),
-          );
-        } catch (_) {
+          if (_path != null) {
+            await showDialog(
+              context: context,
+              builder: (_) => ProjectCreatedDialog(
+                projectName: _nameController.text,
+                projectPath: _path!,
+              ),
+            );
+          }
+        } catch (_, s) {
+          await logger.file(
+              LogTypeTag.error, 'Failed to create new Flutter project: $_',
+              stackTraces: s);
           ScaffoldMessenger.of(context).showSnackBar(
             snackBarTile(
               context,
@@ -125,7 +169,11 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               type: SnackBarType.error,
             ),
           );
-          Navigator.pop(context);
+          setState(() {
+            _currentActivity = null;
+            _index = _NewProjectSections
+                .values[_NewProjectSections.values.length - 2];
+          });
         }
       }
     }
@@ -134,124 +182,154 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
   @override
   Widget build(BuildContext context) {
     ThemeData customTheme = Theme.of(context);
-    return DialogTemplate(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          DialogHeader(
-            leading: _index != _NewProjectSections.projectName &&
-                    _index != _NewProjectSections.creatingProject
-                ? SquareButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios_rounded,
-                      color: customTheme.textTheme.bodyText1!.color,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: DialogTemplate(
+        outerTapExit: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            DialogHeader(
+              leading: _index != _NewProjectSections.projectName &&
+                      _index != _NewProjectSections.creatingProject
+                  ? SquareButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_rounded,
+                        color: customTheme.textTheme.bodyText1!.color,
+                      ),
+                      color: Colors.transparent,
+                      onPressed: () => setState(() => _index =
+                          _NewProjectSections.values[_index.index - 1]),
+                    )
+                  : null,
+              title: 'New Project',
+              onClose: () {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  snackBarTile(
+                    context,
+                    'Click confirm to confirm dismiss.',
+                    type: SnackBarType.warning,
+                    action: snackBarAction(
+                      text: 'Confirm',
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    color: Colors.transparent,
-                    onPressed: () => setState(() =>
-                        _index = _NewProjectSections.values[_index.index - 1]),
-                  )
-                : null,
-            title: 'New Project',
-          ),
-          Form(
-            key: _createProjectFormKey,
-            child: Column(
-              children: <Widget>[
-                // Project Name
-                if (_index == _NewProjectSections.projectName)
-                  ProjectNameSection(controller: _nameController),
-                // Project Description
-                if (_index == _NewProjectSections.projectDescription)
-                  ProjectDescriptionSection(controller: _descriptionController),
-                // Project Org Name
-                if (_index == _NewProjectSections.projectOrgName)
-                  ProjectOrgNameSection(
-                    projName: _nameController.text,
-                    controller: _orgController,
                   ),
-                // Project Platforms
-                if (_index == _NewProjectSections.projectPlatforms)
-                  ProjectPlatformsSection(
-                    isNullSafety: _isNullSafety,
-                    ios: _ios,
-                    android: _android,
-                    windows: _windows,
-                    macos: _macos,
-                    linux: _linux,
-                    web: _web,
-                    onChanged: ({
-                      bool ios = true,
-                      bool android = true,
-                      bool web = true,
-                      bool windows = true,
-                      bool macos = true,
-                      bool linux = true,
-                      bool isNullSafety = true,
-                    }) {
-                      setState(() {
-                        _ios = ios;
-                        _android = android;
-                        _web = web;
-                        _windows = windows;
-                        _macos = macos;
-                        _linux = linux;
-                        _isNullSafety = isNullSafety;
-                      });
-                    },
-                  ),
-                if (_index == _NewProjectSections.preConfigProject)
-                  ProjectPreConfigSection(
-                    firebaseJson: _firebaseJson,
-                    onFirebaseUpload: (Map<String, dynamic>? json) {
-                      setState(() => _firebaseJson = json);
-                    },
-                  ),
-              ],
+                );
+              },
             ),
-          ),
-          // Creating Project Indicator
-          if (_index == _NewProjectSections.creatingProject)
-            Padding(
-              padding: const EdgeInsets.only(left: 50, right: 50, top: 20),
+            Form(
+              key: _createProjectFormKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const CustomLinearProgressIndicator(),
-                  VSeparators.xLarge(),
-                  const Text('Creating new project. Hold on tight.'),
+                  // Project Name
+                  if (_index == _NewProjectSections.projectName)
+                    ProjectNameSection(
+                      path: _path,
+                      controller: _nameController,
+                      onPathUpdate: (String path) =>
+                          setState(() => _path = path),
+                    ),
+                  // Project Description
+                  if (_index == _NewProjectSections.projectDescription)
+                    ProjectDescriptionSection(
+                        controller: _descriptionController),
+                  // Project Org Name
+                  if (_index == _NewProjectSections.projectOrgName)
+                    ProjectOrgNameSection(
+                      projName: _nameController.text,
+                      controller: _orgController,
+                    ),
+                  // Project Platforms
+                  if (_index == _NewProjectSections.projectPlatforms)
+                    ProjectPlatformsSection(
+                      isNullSafety: _isNullSafety,
+                      ios: _ios,
+                      android: _android,
+                      windows: _windows,
+                      macos: _macos,
+                      linux: _linux,
+                      web: _web,
+                      onChanged: ({
+                        bool ios = true,
+                        bool android = true,
+                        bool web = true,
+                        bool windows = true,
+                        bool macos = true,
+                        bool linux = true,
+                        bool isNullSafety = true,
+                      }) {
+                        setState(() {
+                          _ios = ios;
+                          _android = android;
+                          _web = web;
+                          _windows = windows;
+                          _macos = macos;
+                          _linux = linux;
+                          _isNullSafety = isNullSafety;
+                        });
+                      },
+                    ),
+                  if (_index == _NewProjectSections.preConfigProject)
+                    ProjectPreConfigSection(
+                      firebaseJson: _firebaseJson,
+                      onFirebaseUpload: (Map<String, dynamic>? json) {
+                        setState(() => _firebaseJson = json);
+                      },
+                    ),
                 ],
               ),
             ),
-          VSeparators.small(),
-          // Cancel & Next Buttons
-          if (_index != _NewProjectSections.creatingProject)
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: Text('Cancel'),
-                  ),
+            // Creating Project Indicator
+            if (_index == _NewProjectSections.creatingProject)
+              Padding(
+                padding: const EdgeInsets.only(left: 50, right: 50, top: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    const CustomLinearProgressIndicator(),
+                    VSeparators.xLarge(),
+                    Text(
+                      _currentActivity ??
+                          'Creating new project. Hold on tight.',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                RectangleButton(
-                  radius: BorderRadius.circular(5),
-                  onPressed: _createNewProject,
-                  width: 120,
-                  child: Text(
-                    _index == _NewProjectSections.preConfigProject
-                        ? 'Create'
-                        : 'Next',
-                    style: TextStyle(
-                      color: customTheme.textTheme.bodyText1!.color,
+              ),
+            VSeparators.small(),
+            // Cancel & Next Buttons
+            if (_index != _NewProjectSections.creatingProject)
+              Row(
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Text('Cancel'),
                     ),
                   ),
-                ),
-              ],
-            ),
-        ],
+                  const Spacer(),
+                  RectangleButton(
+                    radius: BorderRadius.circular(5),
+                    onPressed: _createNewProject,
+                    width: 120,
+                    child: Text(
+                      _index == _NewProjectSections.preConfigProject
+                          ? 'Create'
+                          : 'Next',
+                      style: TextStyle(
+                        color: customTheme.textTheme.bodyText1!.color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -268,9 +346,13 @@ enum _NewProjectSections {
 
 class ProjectCreatedDialog extends StatelessWidget {
   final String projectName;
+  final String projectPath;
 
-  const ProjectCreatedDialog({Key? key, required this.projectName})
-      : super(key: key);
+  const ProjectCreatedDialog({
+    Key? key,
+    required this.projectName,
+    required this.projectPath,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -291,11 +373,6 @@ class ProjectCreatedDialog extends StatelessWidget {
               Expanded(
                 child: RectangleButton(
                   width: double.infinity,
-                  color: Colors.blueGrey,
-                  splashColor: Colors.blueGrey.withOpacity(0.5),
-                  focusColor: Colors.blueGrey.withOpacity(0.5),
-                  hoverColor: Colors.grey.withOpacity(0.5),
-                  highlightColor: Colors.blueGrey.withOpacity(0.5),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       snackBarTile(
@@ -312,16 +389,13 @@ class ProjectCreatedDialog extends StatelessWidget {
               Expanded(
                 child: RectangleButton(
                   width: double.infinity,
-                  color: Colors.blueGrey,
-                  splashColor: Colors.blueGrey.withOpacity(0.5),
-                  focusColor: Colors.blueGrey.withOpacity(0.5),
-                  hoverColor: Colors.grey.withOpacity(0.5),
-                  highlightColor: Colors.blueGrey.withOpacity(0.5),
                   onPressed: () async {
-                    // TODO: Open project in the editor.
-                    Navigator.pop(context);
+                    await showDialog(
+                      context: context,
+                      builder: (_) => OpenProjectOnEditor(path: projectPath),
+                    );
                   },
-                  child: const Text('Open in Preferred Editor'),
+                  child: const Text('Open in Editor'),
                 ),
               ),
             ],

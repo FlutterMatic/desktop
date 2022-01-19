@@ -43,7 +43,7 @@ class GitHubSettingsSection extends StatelessWidget {
                                   child: const Text('Skip'),
                                   onPressed: () async {
                                     await launch(
-                                        'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new');
+                                        'https://github.com/FlutterMatic/desktop/issues/new');
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -58,7 +58,7 @@ class GitHubSettingsSection extends StatelessWidget {
                                       builder: (_) => const BuildLogsDialog(),
                                     );
                                     await launch(
-                                        'https://github.com/FlutterMatic/FlutterMatic-desktop/issues/new');
+                                        'https://github.com/FlutterMatic/desktop/issues/new');
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -92,7 +92,7 @@ class GitHubSettingsSection extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                   launch(
-                      'https://github.com/FlutterMatic/FlutterMatic-desktop/pulls');
+                      'https://github.com/FlutterMatic/desktop/pulls');
                 },
                 child: Column(
                   children: <Widget>[

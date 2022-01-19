@@ -57,33 +57,35 @@ class _HomePubSectionState extends State<HomePubSection> {
 
     GetPkgResponseModel _result = await PkgViewData.getInitialPackages();
 
-    switch (_result.response) {
-      case GetPkgResponse.done:
-        setState(() => _pubPackages.addAll(_result.packages));
-        break;
-      case GetPkgResponse.error:
-        setState(() {
-          _errorPage = true;
-          _pubPackages.clear();
-        });
-        break;
-      case GetPkgResponse.network:
-        setState(() {
-          _errorPage = false;
-          _pubPackages.clear();
-        });
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTile(
-            context,
-            'There appears to be a problem with the network. Please check your connection try again.',
-            type: SnackBarType.error,
-          ),
-        );
-        break;
-    }
+    if (mounted) {
+      switch (_result.response) {
+        case GetPkgResponse.done:
+          setState(() => _pubPackages.addAll(_result.packages));
+          break;
+        case GetPkgResponse.error:
+          setState(() {
+            _errorPage = true;
+            _pubPackages.clear();
+          });
+          break;
+        case GetPkgResponse.network:
+          setState(() {
+            _errorPage = false;
+            _pubPackages.clear();
+          });
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'There appears to be a problem with the network. Please check your connection try again.',
+              type: SnackBarType.error,
+            ),
+          );
+          break;
+      }
 
-    setState(() => _loadingPackages = false);
+      setState(() => _loadingPackages = false);
+    }
   }
 
   @override

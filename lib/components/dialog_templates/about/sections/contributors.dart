@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/utils.dart';
 import 'package:manager/core/libraries/widgets.dart';
 
 bool _failedRequest = false;
@@ -54,7 +53,7 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
                 hoverColor: customTheme.hoverColor,
                 width: 90,
                 onPressed: () => launch(
-                    'https://github.com/FlutterMatic/FlutterMatic-desktop'),
+                    'https://github.com/FlutterMatic/desktop'),
                 child: Text(
                   'Get Started',
                   style:

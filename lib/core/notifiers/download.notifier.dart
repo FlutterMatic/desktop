@@ -29,9 +29,9 @@ class DownloadNotifier extends ChangeNotifier {
     dProgress = 0;
     notifyListeners();
 
-    HttpClient httpClient = HttpClient();
+    HttpClient _httpClient = HttpClient();
     try {
-      HttpClientRequest request = await httpClient.getUrl(Uri.parse(uri));
+      HttpClientRequest request = await _httpClient.getUrl(Uri.parse(uri));
       HttpClientResponse response = await request.close();
       if (response.statusCode == 200) {
         _progress = Progress.downloading;
@@ -50,13 +50,22 @@ class DownloadNotifier extends ChangeNotifier {
           if (buffer != null && buffer!.isNotEmpty) {
             buffer = null;
           }
+
+          // Keep track of the time taken so we can calculate the remaining time.
+          Stopwatch _elapsed = Stopwatch()..start();
+
           await for (buffer in response) {
             openFile.add(buffer!);
             downloadedLength += buffer!.length;
             dProgress = downloadedLength / response.contentLength * 100;
             notifyListeners();
-            await calculateSpeed(downloadedLength, response.contentLength);
+            calculateTimeRemaining(
+                downloadLength: downloadedLength,
+                contentLength: response.contentLength,
+                elapsed: _elapsed);
           }
+
+          _elapsed.stop();
           await logger.file(LogTypeTag.info, 'Flushing the buffer...');
           await openFile.flush();
           await logger.file(LogTypeTag.info, 'Closing the buffer...');
@@ -76,32 +85,48 @@ class DownloadNotifier extends ChangeNotifier {
     } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Failed to use download notifier: $_',
+          stackTraces: s);
     }
   }
 
-  Future<void> calculateSpeed(int downLength, int totalLength) async {
-    secsTime = Duration(
-            seconds:
-                (((perTime.inMilliseconds * totalLength) / downLength) - 500)
-                    .toInt())
-        .inSeconds;
-    minsTime = Duration(seconds: secsTime).inMinutes;
-    hoursTime = Duration(minutes: minsTime).inHours;
-    daysTime = Duration(hours: hoursTime).inDays;
+  void calculateTimeRemaining({
+    required int downloadLength,
+    required int contentLength,
+    required Stopwatch elapsed,
+  }) {
+    // Completed the download process.
+    if (downloadLength == contentLength) {
+      _remainingTime = '0s';
+      notifyListeners();
+      return;
+    }
 
-    if (secsTime > 60 && minsTime < 60 && hoursTime < 24) {
-      _remainingTime = '$minsTime mins';
+    // Still didn't download anything.
+    if (downloadLength == 0) {
+      _remainingTime = 'calculating...';
       notifyListeners();
-    } else if (secsTime > 60 && minsTime > 60 && hoursTime < 24) {
-      _remainingTime = '$hoursTime hours';
-      notifyListeners();
-    } else if (secsTime > 60 && minsTime > 60 && hoursTime > 24) {
-      _remainingTime = '$daysTime days';
-      notifyListeners();
-    } else if (secsTime < 60 && minsTime < 60 && hoursTime < 24) {
-      _remainingTime = '$secsTime secs';
+      return;
+    }
+
+    // Calculate the time remaining
+    if (downloadLength < contentLength) {
+      int _remaining = contentLength - downloadLength;
+      int _elapsed = elapsed.elapsed.inMilliseconds;
+      double _speed = downloadLength / _elapsed * 1000;
+      int _time = _remaining ~/ _speed;
+      int _secs = _time % 60;
+      int _mins = (_time ~/ 60) % 60;
+      int _hours = (_time ~/ 3600) % 24;
+      int _days = _time ~/ 86400;
+      if (_secs < 10) {
+        _remainingTime = '$_days:0$_hours:0$_mins:0$_secs';
+      } else {
+        _remainingTime = '$_days:$_hours:$_mins:$_secs';
+      }
       notifyListeners();
     }
+
+    return;
   }
 }
