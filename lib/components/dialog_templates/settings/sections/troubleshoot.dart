@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/dialog_templates/logs/build_logs.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
   const TroubleShootSettingsSection({Key? key}) : super(key: key);

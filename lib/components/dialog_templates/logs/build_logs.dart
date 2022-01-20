@@ -10,10 +10,10 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 /// Expects the following data:
 /// [<String> filePath, <String> fileName, <SendPort> port]

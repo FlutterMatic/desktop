@@ -6,18 +6,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/project/new_project.dart';
-import 'package:manager/components/dialog_templates/settings/settings.dart';
-import 'package:manager/core/libraries/models.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/views.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/app_theme.dart';
-import 'package:manager/meta/views/tabs/sections/home/home.dart';
-import 'package:manager/meta/views/tabs/sections/projects/elements/search_result_tile.dart';
-import 'package:manager/meta/views/tabs/sections/workflows/workflow.dart';
-import 'package:manager/meta/views/workflows/startup.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
+import 'package:fluttermatic/core/libraries/models.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/search_result_tile.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/workflows/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class HomeScreen extends StatefulWidget {
   final int? index;

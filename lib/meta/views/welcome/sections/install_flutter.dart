@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/checks.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/checks.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
 
 Widget installFlutter(
   BuildContext context, {

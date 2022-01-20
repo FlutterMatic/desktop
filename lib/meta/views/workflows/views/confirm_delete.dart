@@ -5,15 +5,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/inputs/text_field.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
 
 class ConfirmWorkflowDelete extends StatefulWidget {
   final String path;

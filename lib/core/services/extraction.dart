@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/services.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
 
 // import 'package:process_run/shell.dart';
 

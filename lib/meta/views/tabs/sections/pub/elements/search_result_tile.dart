@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/views.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class PubPackageSearchResultTile extends StatefulWidget {
   final PkgViewData package;

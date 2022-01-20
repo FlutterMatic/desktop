@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class WorkflowActionBuildModeSelector extends StatelessWidget {
   final PlatformBuildModes defaultBuildMode;

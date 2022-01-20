@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class SquareButton extends StatelessWidget {
   final double size;

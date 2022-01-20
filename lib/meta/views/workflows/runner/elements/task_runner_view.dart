@@ -6,13 +6,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/workflows/actions.dart';
-import 'package:manager/meta/views/workflows/models/workflow.dart';
-import 'package:manager/meta/views/workflows/runner/models/write_log.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/workflows/actions.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 
 class TaskRunnerView extends StatefulWidget {
   final File logFile;

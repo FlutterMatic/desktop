@@ -6,8 +6,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
 
 class MarkdownBlock extends StatefulWidget {
   final String? data;

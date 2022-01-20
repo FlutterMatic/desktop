@@ -8,9 +8,9 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/models/flutter_sdk.model.dart';
-import 'package:manager/core/models/fluttermatic.model.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/models/flutter_sdk.model.dart';
+import 'package:fluttermatic/core/models/fluttermatic.model.dart';
 
 class FlutterSDKNotifier with ChangeNotifier {
   FlutterSDK? _sdkMap;

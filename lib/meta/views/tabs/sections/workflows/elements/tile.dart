@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 
 class WorkflowInfoTile extends StatefulWidget {
   const WorkflowInfoTile({Key? key}) : super(key: key);

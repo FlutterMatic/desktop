@@ -12,13 +12,13 @@ import 'package:pub_api_client/pub_api_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/widgets/ui/shimmer.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
+import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class PubPackageDialog extends StatefulWidget {
   final PkgViewData pkgInfo;

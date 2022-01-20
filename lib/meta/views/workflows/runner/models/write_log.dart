@@ -2,7 +2,7 @@
 import 'dart:io';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
 
 Future<void> writeWorkflowSessionLog(
     File file, LogTypeTag type, String message) async {

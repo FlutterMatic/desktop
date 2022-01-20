@@ -1,4 +1,6 @@
 // 🐦 Flutter imports:
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -6,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/models.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/libraries/models.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 // Shell global reference
 final Shell shell = Shell(
@@ -42,9 +44,9 @@ String? sha;
 List<BgActivityTile> bgActivityTiles = <BgActivityTile>[];
 
 // OS
-String platform = 'Unknown Platform';
-String osName = 'Unknown OS Name';
-String osVersion = 'Unknown OS Version';
+String platform = Platform.operatingSystem;
+String osName = Platform.operatingSystem;
+String osVersion = Platform.operatingSystemVersion;
 String appVersion = 'Unknown App Version';
 String appBuild = 'Unknown App Build';
 

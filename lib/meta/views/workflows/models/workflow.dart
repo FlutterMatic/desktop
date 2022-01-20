@@ -1,6 +1,6 @@
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
 
 class WorkflowTemplate {
   final String name;

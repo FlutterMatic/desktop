@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/meta/views/workflows/action_settings/build_android.dart';
-import 'package:manager/meta/views/workflows/action_settings/build_ios.dart';
-import 'package:manager/meta/views/workflows/action_settings/build_web.dart';
-import 'package:manager/meta/views/workflows/action_settings/deploy_web.dart';
-import 'package:manager/meta/views/workflows/actions.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/build_android.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/build_ios.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/build_web.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/deploy_web.dart';
+import 'package:fluttermatic/meta/views/workflows/actions.dart';
 
 class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final TextEditingController webUrlController;

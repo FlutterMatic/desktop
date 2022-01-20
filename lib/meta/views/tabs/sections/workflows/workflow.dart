@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/meta/views/tabs/sections/workflows/elements/tile.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/workflows/elements/tile.dart';
 
 class HomeWorkflowSections extends StatefulWidget {
   const HomeWorkflowSections({Key? key}) : super(key: key);

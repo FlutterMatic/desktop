@@ -1,4 +1,4 @@
-name: manager
+name: fluttermatic
 description: FlutterMatic helps in managing your system's Flutter setup environment and makes development with Flutter easier.
 publish_to: none
 version: 0.0.1

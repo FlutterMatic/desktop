@@ -6,9 +6,9 @@ import 'dart:io';
 import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/models/check_response.model.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/models/check_response.model.dart';
 
 class CheckServices {
   /// Function checks whether Dart exists in the system or not.

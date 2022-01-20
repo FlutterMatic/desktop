@@ -10,10 +10,10 @@ import 'package:file_selector/file_selector.dart' as file;
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/extract_pubspec.dart';
-import 'package:manager/meta/views/workflows/components/input_hover.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 
 class SetProjectWorkflowInfo extends StatefulWidget {
   final Function() onNext;

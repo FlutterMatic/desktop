@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
 
 class ConfigureExpandableTile extends StatelessWidget {
   final String title;

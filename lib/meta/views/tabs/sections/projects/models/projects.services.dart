@@ -2,11 +2,11 @@
 import 'dart:isolate';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/models.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/meta/utils/bin/utils/projects.search.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/libraries/models.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
 
 class ProjectServicesModel {
   /// If we have cache, we will use it to improve performance. After we send to

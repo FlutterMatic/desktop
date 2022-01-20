@@ -2,14 +2,14 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/settings/sections/discover.dart';
-import 'package:manager/components/dialog_templates/settings/sections/editors.dart';
-import 'package:manager/components/dialog_templates/settings/sections/github.dart';
-import 'package:manager/components/dialog_templates/settings/sections/projects.dart';
-import 'package:manager/components/dialog_templates/settings/sections/theme.dart';
-import 'package:manager/components/dialog_templates/settings/sections/troubleshoot.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/discover.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/editors.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/github.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/projects.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/theme.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/troubleshoot.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class SettingDialog extends StatelessWidget {
   final String? goToPage;

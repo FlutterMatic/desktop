@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/models.dart';
+import 'package:fluttermatic/core/libraries/models.dart';
 
 class VSCodeAPINotifier with ChangeNotifier {
   VSCodeAPI? _vscMap;

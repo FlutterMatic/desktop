@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class TabViewWidget extends StatefulWidget {
   final double? height;

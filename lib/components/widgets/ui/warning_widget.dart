@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
-Widget informationWidget(String text, {InformationType type = InformationType.warning, bool showIcon = true}) {
+Widget informationWidget(String text,
+    {InformationType type = InformationType.warning, bool showIcon = true}) {
   return RoundContainer(
     color: _getColor(type).withOpacity(0.1),
     borderColor: _getColor(type),

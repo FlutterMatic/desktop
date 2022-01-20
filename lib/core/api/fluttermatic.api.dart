@@ -8,9 +8,9 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/models/fluttermatic.model.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/models/fluttermatic.model.dart';
 
 class FlutterMaticAPINotifier with ChangeNotifier {
   FluttermaticAPI? _apiMap;
