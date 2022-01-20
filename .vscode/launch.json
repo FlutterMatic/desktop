@@ -12,18 +12,12 @@
             "flutterMode": "debug",
             "args": [
                 "-d",
-                "windows",
+                "macos",
                 "--dart-define",
                 "release-type=ALPHA",
                 "--dart-define",
                 "current-version=0.0.1"
             ]
-        },
-        {
-            "name": "Dart",
-            "type": "dart",
-            "request": "launch",
-            "program": "bin/main.dart"
         },
     ]
 }
