@@ -9,11 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum LogTypeTag {
-  info,
-  warning,
-  error,
-}
+enum LogTypeTag { info, warning, error }
 
 Logger logger = Logger();
 

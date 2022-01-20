@@ -29,17 +29,16 @@ class AndroidStudioNotifier extends ChangeNotifier {
   Directory? jetBrainStudioDir;
   Progress _progress = Progress.none;
   Progress get progress => _progress;
+
   Future<void> checkAStudio(BuildContext context, FluttermaticAPI? api) async {
     _progress = Progress.started;
     notifyListeners();
 
     /// The compressed archive type.
     String? archiveType = Platform.isLinux ? 'tar.gz' : 'zip';
-    try {
-      /// Make a fake delay of 1 second such that UI looks cool.
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
-      _progress = Progress.checking;
 
+    try {
+      _progress = Progress.checking;
       notifyListeners();
 
       String? studioPath = await which('studio');
@@ -87,10 +86,9 @@ class AndroidStudioNotifier extends ChangeNotifier {
               archiveType: archiveType,
             );
           }
-
-          _progress = Progress.done;
-          notifyListeners();
         }
+        _progress = Progress.done;
+        notifyListeners();
       } else if (!SharedPref().pref.containsKey(SPConst.aStudioPath) ||
           !SharedPref().pref.containsKey(SPConst.aStudioVersion)) {
         await SharedPref().pref.setString(SPConst.aStudioPath, studioPath);
@@ -149,7 +147,6 @@ class AndroidStudioNotifier extends ChangeNotifier {
         if (studio64PFPath != null) {
           await logger.file(
               LogTypeTag.info, 'Studio64.exe found in Program Files');
-          await Future<dynamic>.delayed(const Duration(seconds: 1));
           await SharedPref()
               .pref
               .setString(SPConst.aStudioPath, studio64PFPath);
@@ -189,7 +186,6 @@ class AndroidStudioNotifier extends ChangeNotifier {
       if (_studio64JBPath != null) {
         paths.studio = _studio64JBPath;
         await logger.file(LogTypeTag.info, 'Studio64.exe found in JetBrains');
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         await setPath(_studio64JBPath, appDir);
         await SharedPref().pref.setString(SPConst.aStudioPath, paths.studio!);
         return true;
@@ -204,10 +200,12 @@ class AndroidStudioNotifier extends ChangeNotifier {
   }
 
   /// Install the Android Studio.
-  Future<void> installAndroidStudio(BuildContext context,
-      {FluttermaticAPI? api,
-      required String appDir,
-      String? archiveType}) async {
+  Future<void> installAndroidStudio(
+    BuildContext context, {
+    FluttermaticAPI? api,
+    required String appDir,
+    String? archiveType,
+  }) async {
     /// Downloading Android studio.
     if (kDebugMode || kProfileMode) {
       await context.read<DownloadNotifier>().downloadFile(
@@ -222,8 +220,6 @@ class AndroidStudioNotifier extends ChangeNotifier {
           appDir + '\\tmp');
     }
 
-    await Future<dynamic>.delayed(const Duration(seconds: 1));
-
     _progress = Progress.extracting;
     context.read<DownloadNotifier>().dProgress = 0;
     notifyListeners();
@@ -233,7 +229,6 @@ class AndroidStudioNotifier extends ChangeNotifier {
         await unzip(appDir + '\\tmp\\studio.zip', 'C:\\fluttermatic\\');
 
     if (_studioExtracted) {
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
       await logger.file(
           LogTypeTag.info, 'Android studio extraction was successful');
       if (await checkDir('C:\\fluttermatic\\', subDirName: 'android-studio')) {
@@ -253,26 +248,22 @@ class AndroidStudioNotifier extends ChangeNotifier {
           await SharedPref()
               .pref
               .setString('Studio_path', 'C:\\fluttermatic\\AndroidStudio\\bin');
-          await Future<dynamic>.delayed(const Duration(seconds: 1));
           await logger.file(LogTypeTag.info, 'Android studio set to path');
         } else {
           _progress = Progress.failed;
           notifyListeners();
 
-          await Future<dynamic>.delayed(const Duration(seconds: 1));
           await logger.file(
               LogTypeTag.info, 'Android studio set to path failed');
         }
       } else {
         _progress = Progress.failed;
         notifyListeners();
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.error, 'Android studio renaming failed.');
       }
     } else {
       _progress = Progress.failed;
       notifyListeners();
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
       await logger.file(LogTypeTag.error, 'Android studio extraction failed.');
     }
   }

@@ -1,6 +1,6 @@
 library views;
 
-export '../../meta/views/dialogs/storage_full.dart';
+export '../../meta/views/dialogs/low_drive_storage.dart';
 
 export '../../meta/views/tabs/tabs.dart';
 export '../../meta/views/tabs/sections/projects/projects.dart';
