@@ -39,7 +39,6 @@ abstract class JavaBinInfo {
       if (javaVersion == null) {
         if (foundJava) {
           try {
-            print(word);
             javaVersion = Version.parse(word.replaceAll('"', ''));
           } catch (_, s) {
             logger.file(
