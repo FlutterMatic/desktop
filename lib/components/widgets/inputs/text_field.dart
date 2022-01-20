@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText;

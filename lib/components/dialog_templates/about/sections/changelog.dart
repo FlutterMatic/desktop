@@ -7,8 +7,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ChangelogAboutSection extends StatefulWidget {
   const ChangelogAboutSection({Key? key}) : super(key: key);

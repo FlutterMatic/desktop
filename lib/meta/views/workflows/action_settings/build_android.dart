@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/meta/views/workflows/components/build_mode_selector.dart';
-import 'package:manager/meta/views/workflows/components/expandable_tile.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
+import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 
 class BuildAndroidWorkflowActionConfig extends StatelessWidget {
   final PlatformBuildModes defaultBuildMode;

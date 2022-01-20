@@ -10,21 +10,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/square_button.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/utils/extract_pubspec.dart';
-import 'package:manager/meta/views/workflows/actions.dart';
-import 'package:manager/meta/views/workflows/models/workflow.dart';
-import 'package:manager/meta/views/workflows/sections/actions.dart';
-import 'package:manager/meta/views/workflows/sections/configure_actions.dart';
-import 'package:manager/meta/views/workflows/sections/confirmation.dart';
-import 'package:manager/meta/views/workflows/sections/info.dart';
-import 'package:manager/meta/views/workflows/sections/reorder_actions.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/views/workflows/actions.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/sections/actions.dart';
+import 'package:fluttermatic/meta/views/workflows/sections/configure_actions.dart';
+import 'package:fluttermatic/meta/views/workflows/sections/confirmation.dart';
+import 'package:fluttermatic/meta/views/workflows/sections/info.dart';
+import 'package:fluttermatic/meta/views/workflows/sections/reorder_actions.dart';
 
 class StartUpWorkflow extends StatefulWidget {
   final String? pubspecPath;

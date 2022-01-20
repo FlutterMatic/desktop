@@ -6,10 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/checks.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/checks.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
 
 class WelcomeInstallEditor extends StatefulWidget {
   final VoidCallback onInstall;

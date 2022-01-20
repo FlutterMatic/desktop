@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/dialog_templates/logs/build_logs.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/tab_view.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/core/libraries/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
 
 class ReportAboutSection extends StatelessWidget {
   const ReportAboutSection({Key? key}) : super(key: key);

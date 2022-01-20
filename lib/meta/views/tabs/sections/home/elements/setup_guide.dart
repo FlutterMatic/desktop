@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/components/dialog_templates/settings/settings.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/tabs/components/circle_chart.dart';
-import 'package:manager/meta/views/workflows/startup.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/tabs/components/circle_chart.dart';
+import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class HomeSetupGuideTile extends StatefulWidget {
   const HomeSetupGuideTile({Key? key}) : super(key: key);

@@ -9,8 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 bool _failedRequest = false;
 
@@ -52,8 +52,8 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
                 color: customTheme.colorScheme.secondary.withOpacity(0.2),
                 hoverColor: customTheme.hoverColor,
                 width: 90,
-                onPressed: () => launch(
-                    'https://github.com/FlutterMatic/desktop'),
+                onPressed: () =>
+                    launch('https://github.com/FlutterMatic/desktop'),
                 child: Text(
                   'Get Started',
                   style:

@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 const List<Progress> _disabledProgresses = <Progress>[
   Progress.extracting,

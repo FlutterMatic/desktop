@@ -11,19 +11,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/app/providers/multi_providers.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/views.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/providers/multi_providers.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
+import 'package:path/path.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Directory _basePath = await getApplicationSupportDirectory();
+  debugPrint('📂 Logs path: ${join(_basePath.path, 'logs')}');
   runApp(const MultiProviders(FlutterMaticMain()));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
@@ -95,10 +98,10 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
             .setString(SPConst.sysPlatform, Platform.operatingSystem)
             .then((_) => platform =
                 SharedPref().pref.getString(SPConst.sysPlatform) ??
-                    'Unknown Platform');
+                    Platform.operatingSystem);
 
         platform = SharedPref().pref.getString(SPConst.sysPlatform) ??
-            'Unknown Platform';
+            Platform.operatingSystem;
 
         await SharedPref()
             .pref
@@ -113,10 +116,10 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                     .replaceAll('\\r', '')
                     .trim())
             .then((_) => osName = SharedPref().pref.getString(SPConst.osName) ??
-                'Unknown OS Name');
+                Platform.operatingSystem);
 
-        osName =
-            SharedPref().pref.getString(SPConst.osName) ?? 'Unknown OS Name';
+        osName = SharedPref().pref.getString(SPConst.osName) ??
+            Platform.operatingSystem;
 
         await SharedPref().pref.setString(
             SPConst.osVersion,
@@ -131,14 +134,14 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                 .trim());
 
         osVersion = SharedPref().pref.getString(SPConst.osVersion) ??
-            'Unknown OS Version';
+            Platform.operatingSystemVersion;
       } else {
         platform = SharedPref().pref.getString(SPConst.sysPlatform) ??
-            'Unknown Platform';
-        osName =
-            SharedPref().pref.getString(SPConst.osName) ?? 'Unknown OS Name';
+            Platform.operatingSystem;
+        osName = SharedPref().pref.getString(SPConst.osName) ??
+            Platform.operatingSystem;
         osVersion = SharedPref().pref.getString(SPConst.osVersion) ??
-            'Unknown OS Version';
+            Platform.operatingSystemVersion;
         appVersion = SharedPref().pref.getString(SPConst.appVersion) ??
             'Unknown App Version';
         appBuild = SharedPref().pref.getString(SPConst.appBuild) ??

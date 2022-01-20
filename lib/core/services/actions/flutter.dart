@@ -1,5 +1,5 @@
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
 
 class FlutterActionServices {
   static Future<void> createNewProject(NewFlutterProjectInfo project) async {

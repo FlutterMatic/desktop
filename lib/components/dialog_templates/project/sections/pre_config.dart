@@ -9,9 +9,9 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class ProjectPreConfigSection extends StatefulWidget {
   final Map<String, dynamic>? firebaseJson;

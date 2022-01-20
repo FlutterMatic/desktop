@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class FlutterRequirementsDialog extends StatelessWidget {
   const FlutterRequirementsDialog({Key? key}) : super(key: key);
@@ -82,11 +82,16 @@ Widget _windowsTemplate() {
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      const BulletPoint('Flutter depends on these tools being available in your environment.'),
+      const BulletPoint(
+          'Flutter depends on these tools being available in your environment.'),
       VSeparators.small(),
-      const BulletPoint('Windows PowerShell 5.0 or newer (this is pre-installed with Windows)', 2),
+      const BulletPoint(
+          'Windows PowerShell 5.0 or newer (this is pre-installed with Windows)',
+          2),
       VSeparators.small(),
-      const BulletPoint('Git for Windows 2.x, with the Use Git from the Windows Command Prompt option.', 2),
+      const BulletPoint(
+          'Git for Windows 2.x, with the Use Git from the Windows Command Prompt option.',
+          2),
       VSeparators.normal(),
       const Text(
           'If Git for Windows is already installed, make sure you can run git commands from the command prompt or PowerShell.'),
@@ -134,16 +139,20 @@ Widget _linuxTemplate() {
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      const BulletPoint('Flutter depends on these command-line tools being available in your environment.'),
+      const BulletPoint(
+          'Flutter depends on these command-line tools being available in your environment.'),
       VSeparators.small(),
-      const BulletPoint('bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils and zip', 2),
+      const BulletPoint(
+          'bash, curl, file, git 2.x, mkdir, rm, unzip, which, xz-utils and zip',
+          2),
       VSeparators.normal(),
       const Text(
         'Shared libraries',
         style: TextStyle(fontWeight: FontWeight.w600),
       ),
       VSeparators.small(),
-      const BulletPoint('"Flutter test" command depends on this library being available in your environment.'),
+      const BulletPoint(
+          '"Flutter test" command depends on this library being available in your environment.'),
       VSeparators.small(),
       const BulletPoint(
           '"libGLU.so.1" - provided by mesa packages such as "libglu1-mesa" on Ubuntu/Debian and "mesa-libGLU" on Fedora.',

@@ -13,14 +13,14 @@ import 'package:provider/provider.dart';
 import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/api.dart';
-import 'package:manager/core/libraries/models.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/utils/bin/tools/flutter.bin.dart' as fb;
-import 'package:manager/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/libraries/api.dart';
+import 'package:fluttermatic/core/libraries/models.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/meta/utils/bin/tools/flutter.bin.dart' as fb;
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 /// [FlutterNotifier] is a [ValueNotifier].
 class FlutterNotifier extends ChangeNotifier {

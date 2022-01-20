@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/views.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/dialogs/open_project.dart';
-import 'package:manager/meta/views/workflows/views/existing_workflows.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
+import 'package:fluttermatic/meta/views/workflows/views/existing_workflows.dart';
 
 class ProjectInfoTile extends StatelessWidget {
   final String name;

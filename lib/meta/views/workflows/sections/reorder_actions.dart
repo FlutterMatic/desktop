@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/workflows/actions.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/workflows/actions.dart';
 
 class SetProjectWorkflowActionsOrder extends StatefulWidget {
   final String workflowName;
@@ -318,9 +318,8 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildWebIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.buildProjectForWeb);
+    int _buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.buildProjectForWeb);
 
     if (_analyzeCodeIndex > _buildWebIndex) {
       _suggestions.add(
@@ -352,9 +351,8 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildIosIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.buildProjectForIOS);
+    int _buildIosIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.buildProjectForIOS);
 
     if (_analyzeCodeIndex > _buildIosIndex) {
       _suggestions.add(

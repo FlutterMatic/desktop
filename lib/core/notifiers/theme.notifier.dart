@@ -6,9 +6,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/services/logs.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class ThemeChangeNotifier with ChangeNotifier {
   /// [_isDarkTheme] boolean value that indicates

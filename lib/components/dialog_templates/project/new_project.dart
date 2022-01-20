@@ -5,18 +5,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/project/sections/description.dart';
-import 'package:manager/components/dialog_templates/project/sections/name.dart';
-import 'package:manager/components/dialog_templates/project/sections/org_name.dart';
-import 'package:manager/components/dialog_templates/project/sections/platforms.dart';
-import 'package:manager/components/dialog_templates/project/sections/pre_config.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/dialogs/open_project.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/project/sections/description.dart';
+import 'package:fluttermatic/components/dialog_templates/project/sections/name.dart';
+import 'package:fluttermatic/components/dialog_templates/project/sections/org_name.dart';
+import 'package:fluttermatic/components/dialog_templates/project/sections/platforms.dart';
+import 'package:fluttermatic/components/dialog_templates/project/sections/pre_config.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
 
 class NewProjectDialog extends StatefulWidget {
   const NewProjectDialog({Key? key}) : super(key: key);

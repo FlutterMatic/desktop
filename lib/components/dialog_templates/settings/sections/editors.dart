@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class EditorsSettingsSection extends StatefulWidget {
   const EditorsSettingsSection({Key? key}) : super(key: key);

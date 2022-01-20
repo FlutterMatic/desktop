@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/dialog_templates/logs/build_logs.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class GitHubSettingsSection extends StatelessWidget {
   const GitHubSettingsSection({Key? key}) : super(key: key);
@@ -91,8 +91,7 @@ class GitHubSettingsSection extends StatelessWidget {
                 height: 100,
                 onPressed: () {
                   Navigator.pop(context);
-                  launch(
-                      'https://github.com/FlutterMatic/desktop/pulls');
+                  launch('https://github.com/FlutterMatic/desktop/pulls');
                 },
                 child: Column(
                   children: <Widget>[

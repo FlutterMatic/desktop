@@ -7,13 +7,13 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/components/widgets/ui/tab_view.dart';
-import 'package:manager/core/libraries/services.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
 
 class SetupDocsScreen extends StatefulWidget {
   const SetupDocsScreen({Key? key}) : super(key: key);

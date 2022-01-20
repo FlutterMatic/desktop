@@ -5,8 +5,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/utils.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
 
 enum ArcType { half, full }
 
@@ -150,7 +150,8 @@ class CircularPercentIndicator extends StatefulWidget {
 
     assert(startAngle >= 0.0);
     if (percent < 0.0 || percent > 1.0) {
-      throw Exception('Percent value must be a double between 0.0 and 1.0. Current is $percent');
+      throw Exception(
+          'Percent value must be a double between 0.0 and 1.0. Current is $percent');
     }
 
     if (arcType == null && arcBackgroundColor != null) {

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/main.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/main.dart';
 
 class LowDriveSpaceDialog extends StatefulWidget {
   const LowDriveSpaceDialog({Key? key}) : super(key: key);

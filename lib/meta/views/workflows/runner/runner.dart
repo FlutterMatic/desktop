@@ -10,21 +10,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/enum.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/dialog_template.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/components/widgets/ui/spinner.dart';
-import 'package:manager/components/widgets/ui/warning_widget.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/views/workflows/actions.dart';
-import 'package:manager/meta/views/workflows/models/workflow.dart';
-import 'package:manager/meta/views/workflows/runner/elements/task_runner_view.dart';
-import 'package:manager/meta/views/workflows/runner/logs.dart';
-import 'package:manager/meta/views/workflows/runner/models/write_log.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/meta/views/workflows/actions.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/elements/task_runner_view.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 
 class WorkflowRunnerDialog extends StatefulWidget {
   final String workflowPath;
@@ -223,7 +223,9 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                         if (_currentActionRunning == _workflowActions.last &&
                             _workflowActions.length ==
                                 _completedActions.length) {
-                          await writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.info,
+                          await writeWorkflowSessionLog(
+                              _workflowSessionLogs,
+                              LogTypeTag.info,
                               'Workflow running session completed.');
                           if (mounted) {
                             setState(() {
@@ -233,7 +235,9 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                           }
                           _stopwatch.stop();
                         } else {
-                          await writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.info,
+                          await writeWorkflowSessionLog(
+                              _workflowSessionLogs,
+                              LogTypeTag.info,
                               'Moving to next workflow action: ${_workflowActions[i + 1]}');
                           setState(() =>
                               _currentActionRunning = _workflowActions[i + 1]);
@@ -286,15 +290,16 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                           width: 100,
                           child: const Text('Close'),
                           onPressed: () {
-                            writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.info,
-                                'Workflow session closed.');
+                            writeWorkflowSessionLog(_workflowSessionLogs,
+                                LogTypeTag.info, 'Workflow session closed.');
                             Navigator.of(context).pop();
                           },
                         ),
                       ],
                     ),
                   ),
-                ] else if (_resultType == WorkflowActionStatus.done) ...<Widget>[
+                ] else if (_resultType ==
+                    WorkflowActionStatus.done) ...<Widget>[
                   VSeparators.normal(),
                   SvgPicture.asset(Assets.done, color: kGreenColor),
                   VSeparators.normal(),
@@ -340,8 +345,8 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                           width: 100,
                           child: const Text('Close'),
                           onPressed: () {
-                            writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.info,
-                                'Workflow session closed.');
+                            writeWorkflowSessionLog(_workflowSessionLogs,
+                                LogTypeTag.info, 'Workflow session closed.');
                             Navigator.of(context).pop();
                           },
                         ),

@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/checks.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/sections.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/views.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/libraries/checks.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/libraries/sections.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);

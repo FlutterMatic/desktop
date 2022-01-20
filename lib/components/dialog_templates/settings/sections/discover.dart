@@ -6,10 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class DiscoverSettingsSection extends StatelessWidget {
   const DiscoverSettingsSection({Key? key}) : super(key: key);
@@ -91,7 +91,8 @@ class DiscoverSettingsSection extends StatelessWidget {
                 },
                 child: Text(
                   'About',
-                  style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                  style:
+                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
                 ),
               ),
             ],
