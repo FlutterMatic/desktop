@@ -39,7 +39,11 @@ abstract class ADBBinInfo {
         if (foundADB) {
           try {
             adbVersion = Version.parse(word);
-          } catch (_) {}
+          } catch (_, s) {
+            logger.file(
+                LogTypeTag.error, 'Failed to parse ADB version: $word: $_',
+                stackTraces: s);
+          }
         } else if (word.toLowerCase().contains('bridge')) {
           foundADB = true;
         }

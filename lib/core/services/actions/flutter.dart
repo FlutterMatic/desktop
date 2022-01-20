@@ -1,5 +1,6 @@
 // 🌎 Project imports:
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/services.dart';
 
 class FlutterActionServices {
   static Future<void> createNewProject(NewFlutterProjectInfo project) async {
@@ -15,13 +16,14 @@ class FlutterActionServices {
     // Make sure that [_platforms] is not empty (meaning there is at least
     // one platform selected).
     if (_platforms.isEmpty) {
+      await logger.file(LogTypeTag.warning,
+          'Selected no platform(s) but tried to create a project');
       throw ArgumentError('At least one platform must be selected.');
     }
 
     // Create the project.
-    await shell.cd('').run(
-          // TODO(@ZiyadF296): Use the project path.
-          'flutter create --template=app ${project.projectName} --org=${project.orgName} --android=${project.android} --ios=${project.iOS} --web=${project.web} --macos=${project.macos} --windows=${project.windows} --linux=${project.linux}',
+    await shell.cd(project.projectPath).run(
+          'flutter create --template=app ${project.projectName} --org ${project.orgName} --platforms $_platforms',
         );
   }
 }

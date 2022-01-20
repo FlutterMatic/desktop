@@ -64,20 +64,17 @@ Future<bool> setPath(String? path, [String? appDir]) async {
       await logger.file(LogTypeTag.info,
           '$path was set to ${Platform.operatingSystem}\'s env.');
       return true;
-    } on OSError catch (osError, s) {
+    } on OSError catch (_, s) {
       await logger.file(LogTypeTag.error, 'Path appending failed - OS Error');
-      await logger.file(LogTypeTag.error, osError.message.toString(),
-          stackTraces: s);
-    } on ShellException catch (shellException, s) {
+      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
+    } on ShellException catch (_, s) {
       await logger.file(
           LogTypeTag.error, 'Path appending failed - Shell Exception');
-      await logger.file(LogTypeTag.error, shellException.message.toString(),
-          stackTraces: s);
-    } on FileSystemException catch (fileException, s) {
+      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
+    } on FileSystemException catch (_, s) {
       await logger.file(
           LogTypeTag.error, 'Path appending failed - File System Exception');
-      await logger.file(LogTypeTag.error, fileException.message.toString(),
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Path appending failed - Exception');
       await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);

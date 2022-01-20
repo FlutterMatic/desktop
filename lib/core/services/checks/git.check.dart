@@ -38,8 +38,6 @@ class GitNotifier extends ChangeNotifier {
       _progress = Progress.started;
       notifyListeners();
 
-      /// Make a fake delay of 1 second such that UI looks cool.
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
       Directory _dir = await getApplicationSupportDirectory();
       _progress = Progress.checking;
       notifyListeners();
@@ -49,16 +47,13 @@ class GitNotifier extends ChangeNotifier {
             LogTypeTag.warning, 'Git not installed in the system.');
 
         await logger.file(LogTypeTag.info, 'Downloading Git');
+
         if (Platform.isWindows) {
           /// Application supporting Directory
           http.Response response = await http.get(Uri.parse(api!.data!['git']));
           if (response.statusCode == 200) {
             // If the server did return a 200 OK response,
-            GitAPI gitData = GitAPI.fromJson(
-              jsonDecode(
-                response.body,
-              ),
-            );
+            GitAPI gitData = GitAPI.fromJson(jsonDecode(response.body));
             gitData.data!['assets'].forEach((dynamic asset) {
               if (asset['content_type'] == 'application/x-bzip2' &&
                   asset['name'].contains('64-bit.')) {
@@ -69,14 +64,6 @@ class GitNotifier extends ChangeNotifier {
             throw Exception('Failed to Fetch data - ${response.statusCode}');
           }
 
-          /// Check for git Directory to extract Git files
-          // bool gitDir = await checkDir('C:\\fluttermatic', subDirName: 'git');
-
-          /// If [gitDir] is false, then create a temporary directory.
-          // if (!gitDir) {
-          //   await Directory('C:\\fluttermatic\\git').create(recursive: true);
-          //   await logger.file(LogTypeTag.info, 'Created git directory.');
-          // }
           _progress = Progress.downloading;
           notifyListeners();
 
@@ -89,9 +76,7 @@ class GitNotifier extends ChangeNotifier {
 
           /// Extract java from compressed file.
           bool _gitExtracted = await unzip(
-            _dir.path + '\\tmp\\' + 'git.tar.bz2',
-            'C:\\fluttermatic\\git',
-          );
+              _dir.path + '\\tmp\\' + 'git.tar.bz2', 'C:\\fluttermatic\\git');
           if (_gitExtracted) {
             await logger.file(LogTypeTag.info, 'Git extraction was successful');
           } else {
@@ -134,13 +119,9 @@ class GitNotifier extends ChangeNotifier {
       /// Else we need to get version information.
       else if (!SharedPref().pref.containsKey(SPConst.gitPath) ||
           !SharedPref().pref.containsKey(SPConst.gitVersion)) {
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'Git found at - $_gitPath');
         await SharedPref().pref.setString(SPConst.gitPath, _gitPath);
 
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
         await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');

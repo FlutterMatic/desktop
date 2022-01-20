@@ -41,8 +41,13 @@ abstract class JavaBinInfo {
       if (javaVersion == null) {
         if (foundJava) {
           try {
-            javaVersion = Version.parse(word);
-          } catch (_) {}
+            print(word);
+            javaVersion = Version.parse(word.replaceAll('"', ''));
+          } catch (_, s) {
+            logger.file(
+                LogTypeTag.error, 'Failed to parse Java version: $word: $_',
+                stackTraces: s);
+          }
         } else if (word.toLowerCase().contains('java')) {
           foundJava = true;
         }

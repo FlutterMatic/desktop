@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 // 📦 Package imports:
+import 'package:manager/core/libraries/services.dart';
 import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -62,7 +63,11 @@ abstract class FlutterBinInfo {
         if (foundFlutter) {
           try {
             version = Version.parse(word);
-          } catch (_) {}
+          } catch (_, s) {
+            logger.file(
+                LogTypeTag.error, 'Failed to parse Flutter version: $word: $_',
+                stackTraces: s);
+          }
         } else if (word.toLowerCase().contains('flutter')) {
           foundFlutter = true;
         }

@@ -120,10 +120,10 @@ class AndroidStudioNotifier extends ChangeNotifier {
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException, s) {
+    } on ShellException catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, shellException.message,
+      await logger.file(LogTypeTag.error, _.message,
           stackTraces: s);
     } catch (_, s) {
       _progress = Progress.failed;
@@ -160,11 +160,11 @@ class AndroidStudioNotifier extends ChangeNotifier {
       } else {
         return false;
       }
-    } on FileSystemException catch (fileException, s) {
+    } on FileSystemException catch (_, s) {
       await logger.file(
           LogTypeTag.error, 'Extracting failed - File System Exception',
-          stackTraces: null);
-      await logger.file(LogTypeTag.error, fileException.message.toString(),
+          stackTraces: s);
+      await logger.file(LogTypeTag.error, _.message.toString(),
           stackTraces: s);
       return false;
     } catch (_, s) {

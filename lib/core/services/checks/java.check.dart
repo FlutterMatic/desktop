@@ -36,9 +36,6 @@ class JavaNotifier extends ChangeNotifier {
       _progress = Progress.started;
       notifyListeners();
 
-      /// Make a fake delay of 1 second such that UI looks cool.
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
-
       /// The compressed archive type.
       String? archiveType = Platform.isLinux ? 'tar.gz' : 'zip';
       _progress = Progress.checking;
@@ -69,10 +66,9 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Downloading JDK.
         await context.read<DownloadNotifier>().downloadFile(
-              api!.data!['java']['JDK'][platform],
-              'jdk.$archiveType',
-              _dir.path + '\\tmp',
-            );
+            api!.data!['java']['JDK'][platform],
+            'jdk.$archiveType',
+            _dir.path + '\\tmp');
 
         _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
@@ -129,10 +125,9 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Downloading JRE
         await context.read<DownloadNotifier>().downloadFile(
-              api.data!['java']['JRE'][platform],
-              'jre.$archiveType',
-              _dir.path + '\\tmp',
-            );
+            api.data!['java']['JRE'][platform],
+            'jre.$archiveType',
+            _dir.path + '\\tmp');
 
         _progress = Progress.extracting;
         context.read<DownloadNotifier>().dProgress = 0;
@@ -140,9 +135,8 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Extract java from compressed file.
         bool _jreExtracted = await unzip(
-          _dir.path + '\\tmp\\' + 'jre.$archiveType',
-          'C:\\fluttermatic\\Java\\',
-        );
+            _dir.path + '\\tmp\\' + 'jre.$archiveType',
+            'C:\\fluttermatic\\Java\\');
 
         if (_jreExtracted) {
           await logger.file(LogTypeTag.info, 'JDK extraction was successful');
@@ -154,13 +148,13 @@ class JavaNotifier extends ChangeNotifier {
                 await e.rename('C:\\fluttermatic\\Java\\jre');
                 await logger.file(
                     LogTypeTag.info, 'Extracted folder rename successful');
-              } on FileSystemException catch (fileSystemException, s) {
+              } on FileSystemException catch (_, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed',
+                    LogTypeTag.error, 'Extracted folder rename failed: $_',
                     stackTraces: s);
               } catch (_, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed',
+                    LogTypeTag.error, 'Extracted folder rename failed: $_',
                     stackTraces: s);
               }
             }
@@ -189,16 +183,12 @@ class JavaNotifier extends ChangeNotifier {
       /// Else we need to get version information.
       else if (!SharedPref().pref.containsKey(SPConst.javaPath) ||
           !SharedPref().pref.containsKey(SPConst.javaVersion)) {
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
-        await logger.file(LogTypeTag.info, 'Java found at - $_javaPath');
+        await logger.file(LogTypeTag.info, 'Java found at: $_javaPath');
         await SharedPref().pref.setString(SPConst.javaPath, _javaPath);
 
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         javaVersion = await getJavaBinVersion();
         versions.java = javaVersion.toString();
-        await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
+        await logger.file(LogTypeTag.info, 'Java version: ${versions.java}');
         await SharedPref().pref.setString(SPConst.javaVersion, versions.java!);
         _progress = Progress.done;
         notifyListeners();
@@ -206,17 +196,16 @@ class JavaNotifier extends ChangeNotifier {
         await logger.file(
             LogTypeTag.info, 'Loading Java details from shared preferences');
         _javaPath = SharedPref().pref.getString(SPConst.javaPath);
-        await logger.file(LogTypeTag.info, 'Java found at - $_javaPath');
+        await logger.file(LogTypeTag.info, 'Java found at: $_javaPath');
         versions.java = SharedPref().pref.getString(SPConst.javaVersion);
-        await logger.file(LogTypeTag.info, 'Java version : ${versions.java}');
+        await logger.file(LogTypeTag.info, 'Java version: ${versions.java}');
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException, s) {
+    } on ShellException catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, shellException.message,
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
     } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();

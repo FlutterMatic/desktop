@@ -27,8 +27,6 @@ class ADBNotifier extends ChangeNotifier {
     /// Application supporting Directory
     Directory _dir = await getApplicationSupportDirectory();
     try {
-      /// Make a fake delay of 1 second such that UI looks cool.
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
       String? _adbPath = await which('adb');
 
       if (_adbPath == null) {
@@ -60,12 +58,8 @@ class ADBNotifier extends ChangeNotifier {
           await logger.file(LogTypeTag.error, 'Flutter-SDK set to path failed');
         }
       } else {
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'ADB found at - $_adbPath');
 
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         adbVersion = await getADBBinVersion();
         versions.adb = adbVersion.toString();
         await logger.file(LogTypeTag.info, 'ADB version : ${versions.adb}');

@@ -26,11 +26,11 @@ Future<bool> checkFile(String dirPath, String fileName) async {
     }
     await logger.file(LogTypeTag.info, '$fileName file not found.');
     return false;
-  } on FileSystemException catch (fileException) {
-    await logger.file(LogTypeTag.error, fileException.message.toString());
+  } on FileSystemException catch (_, s) {
+    await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
     return false;
-  } catch (e) {
-    await logger.file(LogTypeTag.error, e.toString());
+  } catch (_, s) {
+    await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     return false;
   }
 }
@@ -77,11 +77,11 @@ Future<String?> getFilePath(String dirPath, String fileName) async {
     }
     await logger.file(LogTypeTag.info, '$fileName file not found.');
     return null;
-  } on FileSystemException catch (fileException) {
-    await logger.file(LogTypeTag.error, fileException.message.toString());
+  } on FileSystemException catch (_, s) {
+    await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
     return null;
-  } catch (e) {
-    await logger.file(LogTypeTag.error, e.toString());
+  } catch (_, s) {
+    await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     return null;
   }
 }

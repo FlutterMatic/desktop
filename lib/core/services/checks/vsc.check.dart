@@ -61,20 +61,18 @@ class VSCodeNotifier extends ChangeNotifier {
         /// file that is 50mb (for testing purposes).
         if (kDebugMode || kProfileMode) {
           await context.read<DownloadNotifier>().downloadFile(
-                'https://sample-videos.com/zip/50mb.zip',
-                'code.$archiveType',
-                dir.path + '\\tmp',
-              );
+              'https://sample-videos.com/zip/50mb.zip',
+              'code.$archiveType',
+              dir.path + '\\tmp');
         } else {
           await context.read<DownloadNotifier>().downloadFile(
-                platform == 'windows'
-                    ? 'https://az764295.vo.msecnd.net/stable/$sha/VSCode-win32-x64-$tagName.zip'
-                    : platform == 'mac'
-                        ? api!.data!['vscode'][platform]['universal']
-                        : api!.data!['vscode'][platform]['TarGZ'],
-                platform == 'linux' ? 'code.tar.gz' : 'code.zip',
-                dir.path + '\\tmp',
-              );
+              platform == 'windows'
+                  ? 'https://az764295.vo.msecnd.net/stable/$sha/VSCode-win32-x64-$tagName.zip'
+                  : platform == 'mac'
+                      ? api!.data!['vscode'][platform]['universal']
+                      : api!.data!['vscode'][platform]['TarGZ'],
+              platform == 'linux' ? 'code.tar.gz' : 'code.zip',
+              dir.path + '\\tmp');
         }
 
         _progress = Progress.extracting;
@@ -133,9 +131,8 @@ class VSCodeNotifier extends ChangeNotifier {
         _progress = Progress.done;
         notifyListeners();
       }
-    } on ShellException catch (shellException, s) {
-      await logger.file(LogTypeTag.error, shellException.message,
-          stackTraces: s);
+    } on ShellException catch (_, s) {
+      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
       _progress = Progress.failed;
       notifyListeners();
     } catch (_, s) {

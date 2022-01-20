@@ -72,8 +72,8 @@ Future<VSCBinInfo?> _getVSCBinInfo() async {
   }
 
   /// On [ShellException], Catch the error data to the logs file.
-  on ShellException catch (shellException) {
-    await logger.file(LogTypeTag.error, shellException.message);
+  on ShellException catch (_, s) {
+    await logger.file(LogTypeTag.error, _.message, stackTraces: s);
   }
 
   /// On any other error, Catch the error data to the logs file.

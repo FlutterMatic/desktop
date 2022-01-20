@@ -26,12 +26,11 @@ Future<bool> checkDir(String dirPath, {required String subDirName}) async {
     }
     await logger.file(LogTypeTag.info, '$subDirName directory not found.');
     return false;
-  } on FileSystemException catch (fileException, s) {
-    await logger.file(LogTypeTag.error, fileException.message.toString(),
-        stackTraces: s);
+  } on FileSystemException catch (_, s) {
+    await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
     return false;
-  } catch (e, s) {
-    await logger.file(LogTypeTag.error, e.toString(), stackTraces: s);
+  } catch (_, s) {
+    await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
     return false;
   }
 }

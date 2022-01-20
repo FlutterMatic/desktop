@@ -76,15 +76,18 @@ class Logger {
           );
           break;
       }
-    } on FileSystemException catch (fileSystemException) {
-      console.log(fileSystemException.message +
-          '\n- This occurred when trying to write a log.');
-    } on OSError catch (osError) {
-      console.log(
-          osError.message + '\n- This occurred when trying to write a log.');
-    } catch (_) {
-      console
-          .log(_.toString() + '\n- This occurred when trying to write a log.');
+    } on FileSystemException catch (_, s) {
+      console.log(_.message +
+          '\n- This occurred when trying to write a log.' +
+          '\n- StackTraces: $s');
+    } on OSError catch (_, s) {
+      console.log(_.message +
+          '\n- This occurred when trying to write a log.' +
+          '\n- StackTraces: $s');
+    } catch (_, s) {
+      console.log(_.toString() +
+          '\n- This occurred when trying to write a log.' +
+          '\n- StackTraces: $s');
     }
   }
 }

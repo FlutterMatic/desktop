@@ -42,7 +42,11 @@ abstract class GitBinInfo {
               word = word.split('.windows')[0];
             }
             gitVersion = Version.parse(word);
-          } catch (_) {}
+          } catch (_, s) {
+            logger.file(
+                LogTypeTag.error, 'Failed to parse Git version: $word: $_',
+                stackTraces: s);
+          }
         } else if (word.toLowerCase().contains('git')) {
           foundGit = true;
         }

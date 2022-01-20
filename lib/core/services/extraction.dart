@@ -54,22 +54,22 @@ Future<bool> unzip(String source, String destination) async {
     await File(source).delete(recursive: true);
     await logger.file(LogTypeTag.error, 'Cleaned ${source.split('\\').last}');
     return true;
-  } on OSError catch (osError, s) {
+  } on OSError catch (_, s) {
     await File(source).delete(recursive: true);
-    await logger.file(LogTypeTag.error, 'Extracting failed - OS Error',
+    await logger.file(LogTypeTag.error, 'Extracting failed - OS Error: $_',
         stackTraces: s);
-    await logger.file(LogTypeTag.error, osError.message.toString());
-  } on ShellException catch (shellException, s) {
+    await logger.file(LogTypeTag.error, _.message.toString());
+  } on ShellException catch (_, s) {
     await File(source).delete(recursive: true);
-    await logger.file(LogTypeTag.error, 'Extracting failed - Shell Exception',
+    await logger.file(LogTypeTag.error, 'Extracting failed - Shell Exception: $_',
         stackTraces: s);
-    await logger.file(LogTypeTag.error, shellException.message.toString());
-  } on FileSystemException catch (fileException, s) {
+    await logger.file(LogTypeTag.error, _.message.toString());
+  } on FileSystemException catch (_, s) {
     await File(source).delete(recursive: true);
     await logger.file(
-        LogTypeTag.error, 'Extracting failed - File System Exception',
+        LogTypeTag.error, 'Extracting failed - File System Exception: $_',
         stackTraces: s);
-    await logger.file(LogTypeTag.error, fileException.message.toString());
+    await logger.file(LogTypeTag.error, _.message.toString());
   } catch (_, s) {
     await File(source).delete(recursive: true);
     await logger.file(LogTypeTag.error, 'Extracting failed - ${_.toString()}',
