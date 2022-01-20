@@ -43,7 +43,18 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
         Isolate _isolate = await Isolate.spawn(
           ProjectServicesModel.getProjectsIsolate,
           _loadProjectsPort.sendPort,
-        ).timeout(const Duration(minutes: 2));
+        ).timeout(const Duration(minutes: 2)).onError((_, StackTrace s) async {
+          await logger.file(LogTypeTag.error, 'Failed to get projects: $_',
+              stackTraces: s);
+
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(context, 'Couldn\'t get the projects.',
+                type: SnackBarType.error),
+          );
+
+          return Isolate.current;
+        });
 
         if (!_loadProjectsCalled) {
           _loadProjectsPort.listen((dynamic message) {

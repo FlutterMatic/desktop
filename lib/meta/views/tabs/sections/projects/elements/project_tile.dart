@@ -8,7 +8,7 @@ import 'package:manager/core/libraries/widgets.dart';
 import 'package:manager/meta/views/dialogs/open_project.dart';
 import 'package:manager/meta/views/workflows/views/existing_workflows.dart';
 
-class ProjectInfoTile extends StatelessWidget {
+class ProjectInfoTile extends StatefulWidget {
   final String name;
   final String? description;
   final DateTime modDate;
@@ -22,8 +22,12 @@ class ProjectInfoTile extends StatelessWidget {
     required this.path,
   }) : super(key: key);
 
-  // TODO: Show top right menu on hover to delete, and other project options.
+  @override
+  State<ProjectInfoTile> createState() => _ProjectInfoTileState();
+}
 
+class _ProjectInfoTileState extends State<ProjectInfoTile> {
+  bool _isHovering = true;
   @override
   Widget build(BuildContext context) {
     return RoundContainer(
@@ -31,7 +35,7 @@ class ProjectInfoTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            name,
+            widget.name,
             style: const TextStyle(fontSize: 18),
             maxLines: 1,
             overflow: TextOverflow.fade,
@@ -40,7 +44,7 @@ class ProjectInfoTile extends StatelessWidget {
           VSeparators.normal(),
           Expanded(
             child: Text(
-              description ?? 'No project description found.',
+              widget.description ?? 'No project description found.',
               style: const TextStyle(color: Colors.grey),
               overflow: TextOverflow.ellipsis,
               maxLines: 3,
@@ -48,7 +52,7 @@ class ProjectInfoTile extends StatelessWidget {
           ),
           VSeparators.normal(),
           Text(
-            'Modified date: ${toMonth(modDate.month)} ${modDate.day}, ${modDate.year}',
+            'Modified date: ${toMonth(widget.modDate.month)} ${widget.modDate.day}, ${widget.modDate.year}',
             maxLines: 2,
             overflow: TextOverflow.fade,
             softWrap: false,
@@ -57,9 +61,9 @@ class ProjectInfoTile extends StatelessWidget {
           VSeparators.normal(),
           Tooltip(
             waitDuration: const Duration(milliseconds: 500),
-            message: path,
+            message: widget.path,
             child: Text(
-              path,
+              widget.path,
               maxLines: 1,
               overflow: TextOverflow.fade,
               softWrap: false,
@@ -75,7 +79,7 @@ class ProjectInfoTile extends StatelessWidget {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) => OpenProjectOnEditor(path: path),
+                      builder: (_) => OpenProjectOnEditor(path: widget.path),
                     );
                   },
                 ),
@@ -90,7 +94,8 @@ class ProjectInfoTile extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (_) => ShowExistingWorkflows(pubspecPath: path),
+                    builder: (_) =>
+                        ShowExistingWorkflows(pubspecPath: widget.path),
                   );
                 },
               ),
