@@ -24,7 +24,7 @@ class AboutSection extends StatelessWidget {
             'This project is completely open-source and can be found on GitHub.'),
         VSeparators.small(),
         informationWidget(
-          'Version: ${SharedPref().pref.getString(SPConst.appVersion) ?? 'Unknown app version'} (${SharedPref().pref.getString(SPConst.appBuild)?.toUpperCase() ?? 'Unknown app build'}) \n${osName ?? 'Unknown OS'} - ${osVersion ?? 'Unknown OS version'}',
+          'Version: ${SharedPref().pref.getString(SPConst.appVersion) ?? 'Unknown app version'} (${SharedPref().pref.getString(SPConst.appBuild)?.toUpperCase() ?? 'Unknown app build'}) \n$osName - $osVersion',
           showIcon: false,
           type: InformationType.info,
         )

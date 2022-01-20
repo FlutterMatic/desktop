@@ -12,7 +12,7 @@
             "flutterMode": "debug",
             "args": [
                 "-d",
-                "macos",
+                "windows",
                 "--dart-define",
                 "release-type=ALPHA",
                 "--dart-define",

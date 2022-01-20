@@ -28,6 +28,7 @@ class VSCodeNotifier extends ChangeNotifier {
   Version? vscVersion;
   Progress _progress = Progress.none;
   Progress get progress => _progress;
+
   Future<void> checkVSCode(BuildContext context, FluttermaticAPI? api) async {
     Directory dir = await getApplicationSupportDirectory();
     String archiveType = platform == 'linux' ? 'tar.gz' : 'zip';
@@ -35,8 +36,6 @@ class VSCodeNotifier extends ChangeNotifier {
       _progress = Progress.started;
       notifyListeners();
 
-      /// Make a fake delay of 1 second for UI purposes.
-      await Future<dynamic>.delayed(const Duration(seconds: 1));
       _progress = Progress.checking;
       notifyListeners();
       String? vscPath = await which('code');
@@ -113,13 +112,9 @@ class VSCodeNotifier extends ChangeNotifier {
         }
       } else if (!SharedPref().pref.containsKey(SPConst.vscPath) ||
           !SharedPref().pref.containsKey(SPConst.vscVersion)) {
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         await logger.file(LogTypeTag.info, 'VS Code found at: $vscPath');
         await SharedPref().pref.setString(SPConst.vscPath, vscPath);
 
-        /// Make a fake delay of 1 second such that UI looks cool.
-        await Future<dynamic>.delayed(const Duration(seconds: 1));
         vscVersion = await getVSCBinVersion();
         versions.vsCode = vscVersion.toString();
         await logger.file(

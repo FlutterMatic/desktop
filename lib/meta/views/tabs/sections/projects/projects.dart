@@ -99,7 +99,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
       onPressed: () {
         Navigator.pushReplacement(
           context,
-          PageRouteBuilder<Route<dynamic>>(
+          PageRouteBuilder<Widget>(
             pageBuilder: (_, __, ___) => const HomeScreen(index: 1),
             transitionDuration: Duration.zero,
           ),

@@ -1,6 +1,3 @@
-// 🎯 Dart imports:
-import 'dart:async';
-
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +37,6 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   void initState() {
-    // setState(() => _tab = WelcomeTab.installEditor);
     if (SharedPref().pref.containsKey(SPConst.setupTab)) {
       setState(() => _tab = WelcomeTab.restart);
     } else {
@@ -119,14 +115,6 @@ class _WelcomePageState extends State<WelcomePage> {
                             context: context,
                             builder: (_) => const SetupDocsScreen(),
                           );
-                          // Navigator.push(
-                          //   context,
-                          //   PageRouteBuilder<Route<dynamic>>(
-                          //     pageBuilder: (_, __, ___) =>
-                          //         const SetupDocsScreen(),
-                          //     transitionDuration: Duration.zero,
-                          //   ),
-                          // );
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -189,8 +177,9 @@ class _WelcomePageState extends State<WelcomePage> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute<Widget>(
-                      builder: (_) => const HomeScreen(),
+                    PageRouteBuilder<Widget>(
+                      pageBuilder: (_, __, ___) => const HomeScreen(),
+                      transitionDuration: Duration.zero,
                     ),
                   );
                 },
@@ -252,6 +241,7 @@ class _WelcomePageState extends State<WelcomePage> {
               await context
                   .read<AndroidStudioNotifier>()
                   .checkAStudio(context, apiData);
+
               setState(() => _editor.remove(EditorType.androidStudio));
             }
 
@@ -260,6 +250,7 @@ class _WelcomePageState extends State<WelcomePage> {
               await context
                   .read<VSCodeNotifier>()
                   .checkVSCode(context, apiData);
+
               // After completing, we will remove the item from the list.
               setState(() => _editor.remove(EditorType.vscode));
             }
@@ -341,10 +332,10 @@ class _WelcomePageState extends State<WelcomePage> {
             await Future<void>.delayed(Duration(seconds: _restartSeconds));
 
             // Restart the system only if it's compiled for release. Prevent
-            // restart otherwise.
+            // restart otherwise for testing purposes.
             if (kReleaseMode) {
               await logger.file(LogTypeTag.info,
-                  'Restarting device to continue Flutter setup');
+                  'Restarting device to continue Flutter setup.');
               // Restart the device immediately. There is no need to schedule
               // the restart since we are already having a timer above.
               await shell.run('shutdown /r /f /t');

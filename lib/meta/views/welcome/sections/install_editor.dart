@@ -32,8 +32,6 @@ class WelcomeInstallEditor extends StatefulWidget {
 }
 
 class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
-  bool _showEditorSelector = true;
-
   List<EditorType> _editorTypes = <EditorType>[
     EditorType.androidStudio,
     EditorType.vscode,
@@ -44,7 +42,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
     return Consumer2<VSCodeNotifier, AndroidStudioNotifier>(
       builder: (BuildContext context, VSCodeNotifier vsCodeNotifier,
           AndroidStudioNotifier androidStudioNotifier, _) {
-        Progress _getActivityProgress() {
+        Progress _getProgress() {
           if (_editorTypes.contains(EditorType.none)) {
             return Progress.done;
           } else if (_editorTypes.contains(EditorType.vscode)) {
@@ -92,7 +90,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                   type: InformationType.warning,
                 ),
               ),
-            if (_showEditorSelector)
+            if (!widget.isInstalling && !widget.doneInstalling)
               Row(
                 children: <Widget>[
                   _selectEditor(
@@ -187,7 +185,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                   } else if (vsCodeNotifier.progress == Progress.extracting ||
                       androidStudioNotifier.progress == Progress.extracting) {
                     return hLoadingIndicator(context: context);
-                  } else if (vsCodeNotifier.progress == Progress.done ||
+                  } else if (vsCodeNotifier.progress == Progress.done &&
                       androidStudioNotifier.progress == Progress.done) {
                     return welcomeToolInstalled(
                       context,
@@ -203,14 +201,10 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
               ),
             VSeparators.normal(),
             WelcomeButton(
-              buttonText:
-                  _getActivityProgress() == Progress.done ? 'Continue' : null,
-              onInstall: () {
-                setState(() => _showEditorSelector = false);
-                widget.onInstall();
-              },
+              buttonText: _getProgress() == Progress.done ? 'Continue' : null,
+              onInstall: widget.onInstall,
               onContinue: widget.onContinue,
-              progress: _getActivityProgress(),
+              progress: _getProgress(),
             ),
           ],
         );

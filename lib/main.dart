@@ -72,10 +72,12 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
       if (SharedPref().pref.containsKey(SPConst.completedSetup) &&
           !SharedPref().pref.containsKey(SPConst.setupTab)) {
-        completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
+        completedSetup =
+            SharedPref().pref.getBool(SPConst.completedSetup) ?? false;
       } else {
         await SharedPref().pref.setBool(SPConst.completedSetup, false);
-        completedSetup = SharedPref().pref.getBool(SPConst.completedSetup);
+        completedSetup =
+            SharedPref().pref.getBool(SPConst.completedSetup) ?? false;
       }
 
       if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
@@ -91,10 +93,12 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
         await SharedPref()
             .pref
             .setString(SPConst.sysPlatform, Platform.operatingSystem)
-            .then((_) =>
-                platform = SharedPref().pref.getString(SPConst.sysPlatform));
+            .then((_) => platform =
+                SharedPref().pref.getString(SPConst.sysPlatform) ??
+                    'Unknown Platform');
 
-        platform = SharedPref().pref.getString(SPConst.sysPlatform);
+        platform = SharedPref().pref.getString(SPConst.sysPlatform) ??
+            'Unknown Platform';
 
         await SharedPref()
             .pref
@@ -108,14 +112,17 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                     .replaceAll('OS Name: ', '')
                     .replaceAll('\\r', '')
                     .trim())
-            .then((_) => osName = SharedPref().pref.getString(SPConst.osName));
+            .then((_) => osName = SharedPref().pref.getString(SPConst.osName) ??
+                'Unknown OS Name');
 
-        osName = SharedPref().pref.getString(SPConst.osName);
+        osName =
+            SharedPref().pref.getString(SPConst.osName) ?? 'Unknown OS Name';
 
         await SharedPref().pref.setString(
             SPConst.osVersion,
             platformData[0]!
                 .stdout
+                .toString()
                 .split('\n')[1]
                 .replaceAll('  ', '')
                 .replaceAll('OS Version', '')
@@ -123,13 +130,19 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                 .split('N/A')[0]
                 .trim());
 
-        osVersion = SharedPref().pref.getString(SPConst.osVersion);
+        osVersion = SharedPref().pref.getString(SPConst.osVersion) ??
+            'Unknown OS Version';
       } else {
-        platform = SharedPref().pref.getString(SPConst.sysPlatform);
-        osName = SharedPref().pref.getString(SPConst.osName);
-        osVersion = SharedPref().pref.getString(SPConst.osVersion);
-        appVersion = SharedPref().pref.getString(SPConst.appVersion);
-        appBuild = SharedPref().pref.getString(SPConst.appBuild);
+        platform = SharedPref().pref.getString(SPConst.sysPlatform) ??
+            'Unknown Platform';
+        osName =
+            SharedPref().pref.getString(SPConst.osName) ?? 'Unknown OS Name';
+        osVersion = SharedPref().pref.getString(SPConst.osVersion) ??
+            'Unknown OS Version';
+        appVersion = SharedPref().pref.getString(SPConst.appVersion) ??
+            'Unknown App Version';
+        appBuild = SharedPref().pref.getString(SPConst.appBuild) ??
+            'Unknown App Build';
       }
 
       /// If tmpDir is false, then create a temporary directory.
@@ -170,90 +183,116 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
-          Widget? child) {
-        return Directionality(
-          textDirection: TextDirection.ltr,
-          child: ColoredBox(
-            color: themeChangeNotifier.isDarkTheme
-                ? AppTheme.darkBackgroundColor
-                : AppTheme.lightBackgroundColor,
-            child: Column(
-              children: <Widget>[
-                WindowTitleBarBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Image.asset(Assets.appLogo),
-                      ),
-                      Expanded(child: MoveWindow()),
-                      windowControls(context)
-                    ],
+    return RestartWidget(
+      child: Consumer<ThemeChangeNotifier>(
+        builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
+            Widget? child) {
+          return Directionality(
+            textDirection: TextDirection.ltr,
+            child: ColoredBox(
+              color: themeChangeNotifier.isDarkTheme
+                  ? AppTheme.darkBackgroundColor
+                  : AppTheme.lightBackgroundColor,
+              child: Column(
+                children: <Widget>[
+                  WindowTitleBarBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Image.asset(Assets.appLogo),
+                        ),
+                        Expanded(child: MoveWindow()),
+                        windowControls(context)
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: MaterialApp(
-                    theme: AppTheme.lightTheme,
-                    darkTheme: AppTheme.darkTheme,
-                    themeMode: themeChangeNotifier.isDarkTheme
-                        ? ThemeMode.dark
-                        : ThemeMode.light,
-                    debugShowCheckedModeBanner: false,
-                    builder: (_, Widget? child) {
-                      return Stack(
-                        children: <Widget>[
-                          Center(child: child),
-                          if (allowDevControls)
-                            Positioned(
-                              bottom: 10,
-                              right: 10,
-                              child: SquareButton(
-                                color: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                icon: Icon(
-                                  context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
-                                      ? Icons.dark_mode
-                                      : Icons.light_mode,
-                                  color: context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
-                                      ? Colors.white
-                                      : Colors.black,
+                  Expanded(
+                    child: MaterialApp(
+                      theme: AppTheme.lightTheme,
+                      darkTheme: AppTheme.darkTheme,
+                      themeMode: themeChangeNotifier.isDarkTheme
+                          ? ThemeMode.dark
+                          : ThemeMode.light,
+                      debugShowCheckedModeBanner: false,
+                      builder: (_, Widget? child) {
+                        return Stack(
+                          children: <Widget>[
+                            Center(child: child),
+                            if (allowDevControls)
+                              Positioned(
+                                bottom: 10,
+                                right: 10,
+                                child: SquareButton(
+                                  color: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  icon: Icon(
+                                    context
+                                            .read<ThemeChangeNotifier>()
+                                            .isDarkTheme
+                                        ? Icons.dark_mode
+                                        : Icons.light_mode,
+                                    color: context
+                                            .read<ThemeChangeNotifier>()
+                                            .isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    context
+                                        .read<ThemeChangeNotifier>()
+                                        .updateTheme(context
+                                                .read<ThemeChangeNotifier>()
+                                                .isDarkTheme
+                                            ? Theme.of(context).brightness !=
+                                                Brightness.light
+                                            : Theme.of(context).brightness ==
+                                                Brightness.light);
+                                  },
                                 ),
-                                onPressed: () {
-                                  context
-                                      .read<ThemeChangeNotifier>()
-                                      .updateTheme(context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Theme.of(context).brightness !=
-                                              Brightness.light
-                                          : Theme.of(context).brightness ==
-                                              Brightness.light);
-                                },
                               ),
-                            ),
-                        ],
-                      );
-                    },
-                    home: _isChecking
-                        ? const Scaffold(
-                            body: Center(child: Spinner(thickness: 2)))
-                        : !completedSetup!
-                            ? const WelcomePage()
-                            : const HomeScreen(),
+                          ],
+                        );
+                      },
+                      home: _isChecking
+                          ? const Scaffold(
+                              body: Center(child: Spinner(thickness: 2)))
+                          : !completedSetup
+                              ? const WelcomePage()
+                              : const HomeScreen(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
+  }
+}
+
+class RestartWidget extends StatefulWidget {
+  final Widget child;
+
+  const RestartWidget({required this.child, Key? key}) : super(key: key);
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() => setState(() => key = UniqueKey());
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(key: key, child: widget.child);
   }
 }

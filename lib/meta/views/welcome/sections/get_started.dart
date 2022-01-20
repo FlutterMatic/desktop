@@ -13,7 +13,9 @@ import 'package:retry/retry.dart';
 import 'package:manager/core/libraries/api.dart';
 import 'package:manager/core/libraries/components.dart';
 import 'package:manager/core/libraries/constants.dart';
+import 'package:manager/core/libraries/notifiers.dart';
 import 'package:manager/core/libraries/services.dart';
+import 'package:manager/meta/views/dialogs/low_drive_storage.dart';
 
 class WelcomeGettingStarted extends StatefulWidget {
   final Function() onContinue;
@@ -101,6 +103,14 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         retryIf: (_) => _ is SocketException || _ is TimeoutException,
       );
 
+      if (context.read<SpaceCheck>().lowDriveSpace) {
+        await showDialog(
+          context: context,
+          builder: (_) => const LowDriveSpaceDialog(),
+          barrierDismissible: false,
+        );
+      }
+
       return _result;
     } catch (_, s) {
       await logger.file(LogTypeTag.error,
@@ -120,7 +130,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             welcomeHeaderTitle(
               Assets.flutter,
               'Install Flutter',
-              'Welcome to FlutterMatic. You will be guided through the steps necessary to setup and install Flutter in your device.',
+              'Welcome to FlutterMatic. You will be guided through the steps necessary to setup and install Flutter on your device.',
               iconHeight: 50,
             ),
             VSeparators.large(),

@@ -17,7 +17,7 @@ final Shell shell = Shell(
   verbose: false,
 );
 
-bool? completedSetup;
+bool completedSetup = false;
 
 /// Whether or not to show the dev controls.
 bool _showDevControls = true;
@@ -42,11 +42,11 @@ String? sha;
 List<BgActivityTile> bgActivityTiles = <BgActivityTile>[];
 
 // OS
-String? platform;
-String? osName;
-String? osVersion;
-String? appVersion;
-String? appBuild;
+String platform = 'Unknown Platform';
+String osName = 'Unknown OS Name';
+String osVersion = 'Unknown OS Version';
+String appVersion = 'Unknown App Version';
+String appBuild = 'Unknown App Build';
 
 const String _placeholderBase = 'assets/images/placeholders/';
 const String _imagesIconsBase = 'assets/images/icons/';
