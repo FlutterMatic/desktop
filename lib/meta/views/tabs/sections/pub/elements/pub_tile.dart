@@ -6,12 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/widgets/ui/shimmer.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/views.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/tabs/sections/pub/models/pkg_data.dart';
+import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class PubPkgTile extends StatefulWidget {
   final PkgViewData? data;

@@ -2,12 +2,11 @@
 import 'dart:io';
 
 // 📦 Package imports:
+import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-// 🌎 Project imports:
-import 'package:manager/core/services/logs.dart';
 
 Future<Version?> getAStudioVersion() => getAStudioBinVersion();
 

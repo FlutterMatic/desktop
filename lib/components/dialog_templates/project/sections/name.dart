@@ -6,10 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart' as file_selector;
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class ProjectNameSection extends StatefulWidget {
   final String? path;

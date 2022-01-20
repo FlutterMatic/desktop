@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/meta/views/tabs/sections/home/elements/dart_version.dart';
-import 'package:manager/meta/views/tabs/sections/home/elements/flutter_version.dart';
-import 'package:manager/meta/views/tabs/sections/home/elements/setup_guide.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/elements/dart_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/elements/flutter_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/elements/setup_guide.dart';
 
 class HomeMainSection extends StatefulWidget {
   const HomeMainSection({Key? key}) : super(key: key);

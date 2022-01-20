@@ -2,7 +2,7 @@
 import 'dart:io';
 
 // 🌎 Project imports:
-import 'package:manager/core/services/logs.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 /// Checks whether the directory exists in the path provided or not.
 ///

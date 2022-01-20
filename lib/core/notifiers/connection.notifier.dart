@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
 
 class ConnectionNotifier with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
@@ -46,8 +46,7 @@ class ConnectionNotifier with ChangeNotifier {
         notifyListeners();
       }
     } on PlatformException catch (_) {
-      await logger.file(
-          LogTypeTag.error, 'PlatformException: $_');
+      await logger.file(LogTypeTag.error, 'PlatformException: $_');
     } catch (e) {
       await logger.file(LogTypeTag.error, e.toString());
     }

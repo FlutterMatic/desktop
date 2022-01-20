@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 import '../dialog_header.dart';
 
 class UpgradeFlutterDialog extends StatefulWidget {
@@ -105,7 +105,8 @@ Future<String> getRepoCommitHash({
   try {
     _cmdResult = await shell.run(_cmd);
   } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Could not get commit hash from $url: $_',
+    await logger.file(
+        LogTypeTag.error, 'Could not get commit hash from $url: $_',
         stackTraces: s);
     return 'unknown';
   }

@@ -2,12 +2,14 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 
 Widget infoWidget(BuildContext context, String text) {
   return RoundContainer(
-    color: Theme.of(context).isDarkTheme ? Colors.blueGrey.withOpacity(0.2) : AppTheme.lightCardColor,
+    color: Theme.of(context).isDarkTheme
+        ? Colors.blueGrey.withOpacity(0.2)
+        : AppTheme.lightCardColor,
     radius: 5,
     child: Row(
       children: <Widget>[

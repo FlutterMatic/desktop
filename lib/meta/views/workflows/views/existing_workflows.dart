@@ -9,15 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/components/dialog_templates/dialog_header.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/core/libraries/utils.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/meta/views/workflows/models/workflow.dart';
-import 'package:manager/meta/views/workflows/runner/runner.dart';
-import 'package:manager/meta/views/workflows/startup.dart';
-import 'package:manager/meta/views/workflows/views/confirm_delete.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
+import 'package:fluttermatic/meta/views/workflows/startup.dart';
+import 'package:fluttermatic/meta/views/workflows/views/confirm_delete.dart';
 
 class ShowExistingWorkflows extends StatefulWidget {
   final String pubspecPath;

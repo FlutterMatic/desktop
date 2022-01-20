@@ -6,8 +6,8 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 Widget windowControls(BuildContext context, {bool disabled = false}) {
   return AnimatedOpacity(

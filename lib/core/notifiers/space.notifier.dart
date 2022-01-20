@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:universal_disk_space/universal_disk_space.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
 
 class SpaceCheck extends ChangeNotifier {
   // The main drive to be used.

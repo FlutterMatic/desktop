@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 
 Widget hLoadingIndicator(
     {BuildContext? context, double? value, Animation<Color?>? valueColor}) {

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/components/widgets/ui/round_container.dart';
-import 'package:manager/components/widgets/ui/snackbar_tile.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 
 class HomeJavaVersionTile extends StatefulWidget {
   const HomeJavaVersionTile({Key? key}) : super(key: key);

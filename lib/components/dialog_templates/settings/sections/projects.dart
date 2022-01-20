@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart' as file_selector;
 
 // 🌎 Project imports:
-import 'package:manager/app/constants/constants.dart';
-import 'package:manager/app/constants/shared_pref.dart';
-import 'package:manager/core/libraries/widgets.dart';
-import 'package:manager/core/services/logs.dart';
-import 'package:manager/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
   const ProjectsSettingsSection({Key? key}) : super(key: key);

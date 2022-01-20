@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:manager/components/widgets/buttons/rectangle_button.dart';
-import 'package:manager/core/libraries/constants.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
 
 class SetProjectWorkflowConfirmation extends StatelessWidget {
   final String projectName;

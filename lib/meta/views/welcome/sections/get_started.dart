@@ -10,12 +10,12 @@ import 'package:provider/provider.dart';
 import 'package:retry/retry.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/libraries/api.dart';
-import 'package:manager/core/libraries/components.dart';
-import 'package:manager/core/libraries/constants.dart';
-import 'package:manager/core/libraries/notifiers.dart';
-import 'package:manager/core/libraries/services.dart';
-import 'package:manager/meta/views/dialogs/low_drive_storage.dart';
+import 'package:fluttermatic/core/libraries/api.dart';
+import 'package:fluttermatic/core/libraries/components.dart';
+import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/meta/views/dialogs/low_drive_storage.dart';
 
 class WelcomeGettingStarted extends StatefulWidget {
   final Function() onContinue;

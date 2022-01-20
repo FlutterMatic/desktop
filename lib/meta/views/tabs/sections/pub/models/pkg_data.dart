@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
-import 'package:manager/core/services/logs.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class PkgViewData {
   final String name;
