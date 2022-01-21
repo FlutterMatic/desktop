@@ -117,7 +117,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
     return DialogTemplate(
-      width: 800,
+      width: 1000,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -133,8 +133,8 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
             children: <Widget>[
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  minWidth: _size.width > 1000 ? 500 : 450,
-                  maxWidth: _size.width > 1000 ? 500 : 450,
+                  minWidth: _size.width > 1000 ? 700 : 450,
+                  maxWidth: _size.width > 1000 ? 700 : 450,
                   maxHeight: 450,
                 ),
                 child: Builder(
@@ -149,10 +149,14 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                         if (!_shouldDisplay) {
                           return Shimmer.fromColors(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Wrap(
                                   spacing: 15,
                                   runSpacing: 15,
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  runAlignment: WrapAlignment.start,
+                                  alignment: WrapAlignment.start,
                                   children: const <Widget>[
                                     RoundContainer(
                                       child: SizedBox.shrink(),
@@ -181,14 +185,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   ],
                                 ),
                                 VSeparators.normal(),
-                                const Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      'Loading documentation...',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                ),
+                                const Expanded(child: Center(child: Spinner())),
                               ],
                             ),
                           );

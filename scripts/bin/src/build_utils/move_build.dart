@@ -25,7 +25,6 @@ Future<void> moveBuildOutput(String buildOutputPath, String outputPath) async {
 
     print(infoPen('You can find the build output in $outputPath'));
   } catch (_) {
-    print(_);
     print(errorPen('Error moving build output'));
     exit(1);
   }

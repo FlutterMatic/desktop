@@ -1,7 +1,11 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:provider/provider.dart';
+
 // 🌎 Project imports:
+import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 
 class RectangleButton extends StatelessWidget {
@@ -57,7 +61,9 @@ class RectangleButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: radius ?? BorderRadius.circular(5),
       ),
-      color: color ?? Colors.blueGrey.withOpacity(0.2),
+      color: color ??
+          Colors.blueGrey.withOpacity(
+              context.read<ThemeChangeNotifier>().isDarkTheme ? 0.2 : 0.1),
       disabledColor: disableColor,
       elevation: 0,
       disabledElevation: 0,

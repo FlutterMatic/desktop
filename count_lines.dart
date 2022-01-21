@@ -4,7 +4,8 @@ import 'dart:io';
 
 void main(List<String> args) {
   // Counts how many lines in total of all files in the current directory.
-  List<FileSystemEntity> _files = Directory.current.listSync(recursive: true);
+  List<FileSystemEntity> _files =
+      Directory(Directory.current.path + '\\lib').listSync(recursive: true);
   int _totalLines = 0;
   int _totalLinesSkipped = 0;
 

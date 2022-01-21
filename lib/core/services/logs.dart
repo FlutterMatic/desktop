@@ -14,9 +14,10 @@ enum LogTypeTag { info, warning, error }
 Logger logger = Logger();
 
 class Logger {
-  static Future<String> _localPath() async {
+  static Future<String> _localPath(Directory? dir) async {
     try {
-      Directory _applicationDirectory = await getApplicationSupportDirectory();
+      Directory _applicationDirectory;
+      _applicationDirectory = dir ?? await getApplicationSupportDirectory();
       return _applicationDirectory.path + '\\logs';
     } on FileSystemException catch (_, s) {
       console.log(_.message + '\n STACKTRACES: ' + s.toString());
@@ -30,8 +31,8 @@ class Logger {
     }
   }
 
-  static Future<File> _localFile() async {
-    String _path = await _localPath();
+  static Future<File> _localFile(Directory? dir) async {
+    String _path = await _localPath(dir);
     String _date = DateFormat('yyyy-MM-dd').format(DateTime.now());
     if (kDebugMode || kProfileMode) {
       return File(_path + '\\fm-${Platform.operatingSystem}-debug-$_date.log');
@@ -47,8 +48,9 @@ class Logger {
     LogTypeTag tag,
     String? message, {
     StackTrace? stackTraces,
+    Directory? logDir,
   }) async {
-    File _file = await _localFile();
+    File _file = await _localFile(logDir);
     DateTime _now = DateTime.now();
     String _baseData =
         '[${_now.hour}:${_now.minute}:${_now.second}] - $message\n';

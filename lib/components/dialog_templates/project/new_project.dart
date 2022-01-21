@@ -126,29 +126,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
         try {
           setState(() => _index = _NewProjectSections.creatingProject);
 
-          String _cmd =
-              '''flutter create ${_nameController.text} --description "${_descriptionController.text}" --org ${_orgController.text} --platforms ${<String?>[
-            _ios ? 'ios' : null,
-            _android ? 'android' : null,
-            _web ? 'web' : null,
-            _windows ? 'windows' : null,
-            _macos ? 'macos' : null,
-            _linux ? 'linux' : null,
-          ].where((String? e) => e != null).join(',')}''';
+          // TODO: Create project and add pre-config to project if any.
 
-          print(_cmd);
-
-          await shell
-              .cd(_path!)
-              .run(_cmd)
-              .asStream()
-              .listen((List<ProcessResult> line) => setState(
-                  () => _currentActivity = line.last.stdout.toString()))
-              .asFuture();
-
-          // TODO: Add pre-config to project if any.
-
-          Navigator.pop(context);
+          // Navigator.pop(context);
           if (_path != null) {
             await showDialog(
               context: context,
@@ -203,20 +183,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     )
                   : null,
               title: 'New Project',
-              onClose: () {
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  snackBarTile(
-                    context,
-                    'Click confirm to confirm dismiss.',
-                    type: SnackBarType.warning,
-                    action: snackBarAction(
-                      text: 'Confirm',
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                );
-              },
             ),
             Form(
               key: _createProjectFormKey,

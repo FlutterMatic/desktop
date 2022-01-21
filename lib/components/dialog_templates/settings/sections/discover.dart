@@ -25,20 +25,15 @@ class DiscoverSettingsSection extends StatelessWidget {
             ActionOptionsObject(
               'GitHub',
               () => launch('https://github.com/FlutterMatic/desktop'),
-              icon: SvgPicture.asset(
-                Assets.github,
-                height: 14,
-                color: Theme.of(context).isDarkTheme ? null : Colors.black,
-              ),
+              icon: SvgPicture.asset(Assets.github,
+                  color: Theme.of(context).isDarkTheme ? null : Colors.black,
+                  height: 14),
             ),
             ActionOptionsObject(
               'Twitter',
               () => launch('https://twitter.com/FlutterMatic'),
-              icon: SvgPicture.asset(
-                Assets.twitter,
-                height: 14,
-                color: Theme.of(context).isDarkTheme ? null : Colors.black,
-              ),
+              icon: SvgPicture.asset(Assets.twitter,
+                  height: 14, color: Colors.blue),
             ),
             ActionOptionsObject(
               'DartPad',
@@ -48,20 +43,14 @@ class DiscoverSettingsSection extends StatelessWidget {
             ActionOptionsObject(
               'Flutter Docs',
               () => launch('https://flutter.dev/docs'),
-              icon: SvgPicture.asset(
-                Assets.flutter,
-                height: 14,
-                color: Theme.of(context).isDarkTheme ? null : Colors.black,
-              ),
+              icon: SvgPicture.asset(Assets.flutter, height: 14),
             ),
             ActionOptionsObject(
               'Our Docs',
               () {}, // TODO: Navigate to our documentation.
-              icon: SvgPicture.asset(
-                Assets.doc,
-                height: 14,
-                color: Theme.of(context).isDarkTheme ? null : Colors.black,
-              ),
+              icon: SvgPicture.asset(Assets.doc,
+                  color: Theme.of(context).isDarkTheme ? null : Colors.black,
+                  height: 14),
             ),
           ],
         ),

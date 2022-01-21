@@ -2,27 +2,22 @@
 import 'dart:convert';
 import 'dart:io';
 
-// 📦 Package imports:
-import 'package:path_provider/path_provider.dart';
-
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/core/libraries/models.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
 class ProjectSearchUtils {
   /// Returns the path where the projects cache is stored or where it should
   /// be stored.
-  static Future<String> getProjectCachePath() async =>
-      (await getApplicationSupportDirectory()).path +
-      '\\cache\\project_cache.json';
+  static String getProjectCachePath(String applicationSupportDir) =>
+      applicationSupportDir + '\\cache\\project_cache.json';
 
   /// Will return [true] if there is cache for the personal projects and [false]
   /// if there isn't.
-  static Future<bool> hasCache() async =>
-      File(await getProjectCachePath()).exists();
+  static Future<bool> hasCache(String supportDir) async =>
+      File(getProjectCachePath(supportDir)).exists();
 
   /// Gets all the project from the path stored in shared preferences.
   ///
@@ -33,14 +28,15 @@ class ProjectSearchUtils {
   /// Avoid calling this function too many times as they could be a reason the
   /// user will delete this app because of performance issues. Use clever
   /// caching algorithms that self merge when new changes are found.
-  static Future<List<ProjectObject>> getProjectsFromPath() async {
+  static Future<List<ProjectObject>> getProjectsFromPath(
+      {required ProjectCacheResult cache, required String supportDir}) async {
     try {
-      if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
+      if (cache.projectsPath != null) {
         List<ProjectObject> _projects = <ProjectObject>[];
-        String? _path = SharedPref().pref.getString(SPConst.projectsPath);
 
         // Gets all the files in the path
-        List<FileSystemEntity> files = Directory.fromUri(Uri.file(_path!))
+        List<FileSystemEntity> files = Directory.fromUri(
+                Uri.file(cache.projectsPath!))
             .listSync(recursive: true)
             .where((FileSystemEntity e) => e.path.endsWith('\\pubspec.yaml'))
             .toList();
@@ -54,9 +50,7 @@ class ProjectSearchUtils {
           }
 
           PubspecInfo _pubspec = extractPubspec(
-            lines: await File(file.path).readAsLines(),
-            path: file.path,
-          );
+              lines: await File(file.path).readAsLines(), path: file.path);
 
           if (_pubspec.isValid) {
             _projects.add(ProjectObject(
@@ -69,32 +63,39 @@ class ProjectSearchUtils {
         }
 
         // Sets the cache for the projects.
-        await File(await getProjectCachePath()).writeAsString(jsonEncode(
-            _projects.map((ProjectObject e) => e.toJson()).toList()));
+        await File(getProjectCachePath(supportDir)).writeAsString(
+            jsonEncode(_projects.map((_) => _.toJson()).toList()));
 
-        await SharedPref()
-            .pref
-            .setString(SPConst.lastProjectsReload, DateTime.now().toString());
+        await ProjectServicesModel.updateProjectCache(
+          cache: ProjectCacheResult(
+            projectsPath: null,
+            refreshIntervals: null,
+            lastReload: DateTime.now(),
+          ),
+          supportDir: supportDir,
+        );
 
         return _projects;
       } else {
         await logger.file(LogTypeTag.info,
-            'Tried to get projects when the projects directory is not set.');
+            'Tried to get projects when the projects directory is not set.',
+            logDir: Directory(supportDir));
         return <ProjectObject>[];
       }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t fetch projects from path',
-          stackTraces: s);
+          stackTraces: s, logDir: Directory(supportDir));
       return <ProjectObject>[];
     }
   }
 
-  static Future<List<ProjectObject>> getProjectsFromCache() async {
+  static Future<List<ProjectObject>> getProjectsFromCache(
+      String supportDir) async {
     try {
-      if (await hasCache()) {
+      if (await hasCache(supportDir)) {
         // Gets the projects from the cache.
         List<ProjectObject> _projectsFromCache = (jsonDecode(
-          await File(await getProjectCachePath()).readAsString(),
+          await File(getProjectCachePath(supportDir)).readAsString(),
         ) as List<dynamic>)
             // ignore: unnecessary_lambdas
             .map((_) => ProjectObject.fromJson(_))
@@ -103,12 +104,13 @@ class ProjectSearchUtils {
         return _projectsFromCache;
       } else {
         await logger.file(LogTypeTag.warning,
-            'Tried to get projects when the projects cache is not set. Should request to fetch in background as an initial fetch.');
+            'Tried to get projects when the projects cache is not set. Should request to fetch in background as an initial fetch.',
+            logDir: Directory(supportDir));
         return <ProjectObject>[];
       }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t fetch from projects cache',
-          stackTraces: s);
+          stackTraces: s, logDir: Directory(supportDir));
       return <ProjectObject>[];
     }
   }

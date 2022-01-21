@@ -34,13 +34,17 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
   bool get _doneLoading => _version != null && _channel != '...';
 
   Future<void> _load() async {
-    ServiceCheckResponse _result = await CheckServices.checkFlutter();
+    while (mounted) {
+      ServiceCheckResponse _result = await CheckServices.checkFlutter();
 
-    if (mounted) {
-      setState(() {
-        _version = _result.version;
-        _channel = _result.channel ?? '...';
-      });
+      if (mounted) {
+        setState(() {
+          _version = _result.version;
+          _channel = _result.channel ?? '...';
+        });
+      }
+
+      await Future<void>.delayed(const Duration(minutes: 30));
     }
   }
 

@@ -15,6 +15,7 @@ import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/project_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HomeProjectsSection extends StatefulWidget {
   const HomeProjectsSection({Key? key}) : super(key: key);
@@ -40,9 +41,21 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           setState(() => _reloadingFromCache = true);
         }
 
+        await ProjectServicesModel.updateProjectCache(
+          cache: ProjectCacheResult(
+            projectsPath: SharedPref().pref.getString(SPConst.projectsPath),
+            refreshIntervals: null,
+            lastReload: null,
+          ),
+          supportDir: (await getApplicationSupportDirectory()).path,
+        );
+
         Isolate _isolate = await Isolate.spawn(
           ProjectServicesModel.getProjectsIsolate,
-          _loadProjectsPort.sendPort,
+          <dynamic>[
+            _loadProjectsPort.sendPort,
+            (await getApplicationSupportDirectory()).path
+          ],
         ).timeout(const Duration(minutes: 2)).onError((_, StackTrace s) async {
           await logger.file(LogTypeTag.error, 'Failed to get projects: $_',
               stackTraces: s);
@@ -78,7 +91,8 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
         }
       }
     } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Couldn\'t load projects from cache',
+      await logger.file(
+          LogTypeTag.error, 'Couldn\'t load projects from cache: $_',
           stackTraces: s);
       setState(() {
         _projectsLoading = false;

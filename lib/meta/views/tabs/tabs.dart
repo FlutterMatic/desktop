@@ -7,17 +7,13 @@ import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
-import 'package:fluttermatic/core/libraries/models.dart';
 import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/tabs/search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/search_result_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/workflow.dart';
-import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class HomeScreen extends StatefulWidget {
   final int? index;
@@ -29,15 +25,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late HomeTabObject _selectedTab;
-
-  static const int _buttonsOnRight = 2;
-
-  String _searchText = '';
-  final bool _loadingSearch = false;
-
-  final List<ProjectObject> _searchResults = <ProjectObject>[];
-
-  final FocusNode _searchNode = FocusNode();
 
   late final List<HomeTabObject> _tabs = const <HomeTabObject>[
     HomeTabObject('Home', Assets.home, HomeMainSection()),
@@ -172,210 +159,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Stack(
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                          child: Center(
-                            child: Row(
-                              children: <Widget>[
-                                if (_buttonsOnRight > 0)
-                                  const SizedBox(
-                                      width: (40 * _buttonsOnRight) +
-                                          ((_buttonsOnRight - 1) * 10)),
-                                const Spacer(),
-                                SizedBox(
-                                  width:
-                                      (MediaQuery.of(context).size.width > 1000)
-                                          ? 500
-                                          : 400,
-                                  height: 40,
-                                  child: RoundContainer(
-                                    padding: EdgeInsets.zero,
-                                    borderColor:
-                                        Colors.blueGrey.withOpacity(0.2),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 8,
-                                            right: _searchText == '' ||
-                                                    !_searchNode.hasFocus
-                                                ? 8
-                                                : 5),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: TextFormField(
-                                                focusNode: _searchNode,
-                                                style: TextStyle(
-                                                  color: (Theme.of(context)
-                                                              .isDarkTheme
-                                                          ? Colors.white
-                                                          : Colors.black)
-                                                      .withOpacity(0.8),
-                                                ),
-                                                cursorRadius:
-                                                    const Radius.circular(5),
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    color: (Theme.of(context)
-                                                                .isDarkTheme
-                                                            ? Colors.white
-                                                            : Colors.black)
-                                                        .withOpacity(0.6),
-                                                    fontSize: 14,
-                                                  ),
-                                                  hintText:
-                                                      'Search projects, packages, workflows...',
-                                                  border: InputBorder.none,
-                                                  isCollapsed: true,
-                                                ),
-                                                onChanged: (String val) {
-                                                  if (val.isEmpty) {
-                                                    setState(() =>
-                                                        _searchText = val);
-                                                    // _startSearch();
-                                                  } else {
-                                                    setState(() =>
-                                                        _searchText = val);
-                                                    // _startSearch();
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                            HSeparators.xSmall(),
-                                            if (_searchText.isEmpty ||
-                                                !_searchNode.hasFocus)
-                                              const Icon(Icons.search_rounded,
-                                                  size: 16)
-                                            else
-                                              RectangleButton(
-                                                width: 30,
-                                                height: 30,
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                child: Icon(
-                                                  Icons.close_rounded,
-                                                  size: 13,
-                                                  color: Theme.of(context)
-                                                          .isDarkTheme
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                                onPressed: () {
-                                                  _searchNode.unfocus();
-                                                  setState(() {
-                                                    // _searchResults.clear();
-                                                    _searchText = '';
-                                                  });
-                                                },
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const Spacer(),
-                                RectangleButton(
-                                  width: 40,
-                                  height: 40,
-                                  child: const Icon(Icons.play_arrow_rounded,
-                                      size: 20, color: kGreenColor),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (_) => const StartUpWorkflow(),
-                                    );
-                                  },
-                                ),
-                                HSeparators.small(),
-                                RectangleButton(
-                                  width: 40,
-                                  height: 40,
-                                  child:
-                                      const Icon(Icons.add_rounded, size: 20),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (_) => const NewProjectDialog(),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: _selectedTab.child,
-                          ),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 60),
+                      child: _selectedTab.child,
                     ),
-                    // Show the search results in realtime if the user has typed
-                    // anything to search for.
-                    if (_searchText != '')
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 60),
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              maxWidth: 500,
-                              maxHeight: 300,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).isDarkTheme
-                                  ? const Color(0xff262F34)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: Colors.blueGrey.withOpacity(0.4),
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: _searchResults.isEmpty
-                                    ? <Widget>[
-                                        if (_loadingSearch)
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: LinearProgressIndicator(
-                                              backgroundColor:
-                                                  Colors.blue.withOpacity(0.1),
-                                            ),
-                                          )
-                                        else
-                                          informationWidget(
-                                            'There are no results for your search query. Try using another term instead.',
-                                            type: InformationType.error,
-                                          ),
-                                      ]
-                                    : _searchResults.map((ProjectObject e) {
-                                        double _pad =
-                                            _searchResults.indexOf(e) ==
-                                                    _searchResults.length - 1
-                                                ? 0
-                                                : 5;
-                                        return Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: _pad),
-                                          child: ProjectSearchResultTile(
-                                              project: e),
-                                        );
-                                      }).toList(),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    const HomeSearchComponent(),
                   ],
                 ),
               ),

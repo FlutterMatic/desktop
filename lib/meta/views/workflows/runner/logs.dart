@@ -139,7 +139,6 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
                       ),
                     );
                   } catch (_, s) {
-                    print(_);
                     logger.file(LogTypeTag.error,
                         'Failed to parse workflow log line message for line $i',
                         stackTraces: s);

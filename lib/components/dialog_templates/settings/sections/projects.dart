@@ -26,7 +26,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
 
   int _refreshIntervals = 1;
 
-  Future<void> _getProjectPath() async {
+  void _getProjectPath() {
     if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
       setState(
           () => _dirPath = SharedPref().pref.getString(SPConst.projectsPath));
@@ -67,7 +67,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: informationWidget(
-              'Couldn\'t fetch your projects path. Try settings your projects path.',
+              'Your projects path isn\'t set. Try settings your projects path.',
               type: InformationType.error,
             ),
           ),
@@ -79,44 +79,48 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                 child: Text(
                   _dirPath ??
                       (_dirPathError
-                          ? 'Couldn\'t fetch your projects path. Try settings your path'
-                          : 'Fetching your preferred project directory'),
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
+                          ? 'Please set your projects path...'
+                          : 'Fetching your preferred project directory...'),
+                  maxLines: 2,
                 ),
               ),
+              HSeparators.normal(),
               if (_dirPath == null && !_dirPathError)
                 const Spinner(size: 15, thickness: 2)
               else
-                IconButton(
-                  color: Colors.transparent,
-                  icon: Icon(
-                    Icons.edit_outlined,
-                    color: customTheme.textTheme.bodyText1!.color,
-                  ),
-                  onPressed: () async {
-                    String? _projectsDirectory;
-                    String? _directoryPath =
-                        await file_selector.getDirectoryPath(
-                      initialDirectory: _projectsDirectory,
-                      confirmButtonText: 'Confirm',
-                    );
-                    if (_directoryPath != null) {
-                      setState(() {
-                        _dirPathError = false;
-                        _dirPath = _directoryPath;
-                      });
-                      await SharedPref()
-                          .pref
-                          .setString(SPConst.projectsPath, _directoryPath);
+                Tooltip(
+                  waitDuration: const Duration(seconds: 1),
+                  message: _dirPath == null ? 'Select Path' : 'Change Path',
+                  child: IconButton(
+                    color: Colors.transparent,
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: customTheme.textTheme.bodyText1!.color,
+                    ),
+                    onPressed: () async {
+                      String? _projectsDirectory;
+                      String? _directoryPath =
+                          await file_selector.getDirectoryPath(
+                        initialDirectory: _projectsDirectory,
+                        confirmButtonText: 'Confirm',
+                      );
+                      if (_directoryPath != null) {
+                        setState(() {
+                          _dirPathError = false;
+                          _dirPath = _directoryPath;
+                        });
+                        await SharedPref()
+                            .pref
+                            .setString(SPConst.projectsPath, _directoryPath);
 
-                      await logger.file(LogTypeTag.info,
-                          'Projects path was set to: $_directoryPath');
-                    } else {
-                      await logger.file(
-                          LogTypeTag.warning, 'Projects path was not chosen');
-                    }
-                  },
+                        await logger.file(LogTypeTag.info,
+                            'Projects path was set to: $_directoryPath');
+                      } else {
+                        await logger.file(
+                            LogTypeTag.warning, 'Projects path was not chosen');
+                      }
+                    },
+                  ),
                 ),
             ],
           ),
