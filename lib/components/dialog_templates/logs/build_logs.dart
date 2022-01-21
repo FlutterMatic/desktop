@@ -21,9 +21,10 @@ import 'package:fluttermatic/core/libraries/widgets.dart';
 /// Returns:
 /// True if the file was successfully sent, false otherwise.
 Future<void> _generateReportOnIsolate(List<dynamic> data) async {
-  String _filePath = data[0];
-  String _fileName = data[1];
-  SendPort _port = data[2];
+  String _basePath = data[0];
+  String _filePath = data[1];
+  String _fileName = data[2];
+  SendPort _port = data[3];
 
   try {
     // Will go to the support directory then to the "logs" directory. Will then
@@ -34,9 +35,7 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
     // The first line will contain information such as the date and time of the
     // report generation.
 
-    Directory _basePath = await getApplicationSupportDirectory();
-
-    String _dir = _basePath.path + '\\logs';
+    String _dir = _basePath + '\\logs';
 
     List<FileSystemEntity> _logsDir = Directory(_dir)
         .listSync(recursive: true)
@@ -92,8 +91,12 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
   Future<void> _generateReport() async {
     try {
-      await Isolate.spawn(_generateReportOnIsolate,
-          <dynamic>[_savePath, _fileName, _generatePort.sendPort]);
+      await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
+        (await getApplicationSupportDirectory()).path,
+        _savePath,
+        _fileName,
+        _generatePort.sendPort
+      ]);
 
       if (mounted && !_isListening) {
         _generatePort.asBroadcastStream(onListen: (_) {

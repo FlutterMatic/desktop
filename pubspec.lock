@@ -23,21 +23,21 @@ packages:
     source: hosted
     version: "2.0.1"
   archive:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: archive
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.1.9"
   args:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: args
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.3.0"
   async:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: async
       url: "https://pub.flutter-io.cn"
@@ -210,7 +210,7 @@ packages:
       name: connectivity_plus
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.4.0"
+    version: "2.2.0"
   connectivity_plus_linux:
     dependency: transitive
     description:
@@ -548,13 +548,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.2"
-  lottie:
-    dependency: "direct main"
-    description:
-      name: lottie
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.2.1"
   markdown:
     dependency: transitive
     description:

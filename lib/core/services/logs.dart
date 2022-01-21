@@ -18,15 +18,15 @@ class Logger {
     try {
       Directory _applicationDirectory = await getApplicationSupportDirectory();
       return _applicationDirectory.path + '\\logs';
-    } on FileSystemException catch (fileSystemException) {
-      console.log(fileSystemException.message);
-      throw fileSystemException.message;
-    } on OSError catch (osError) {
-      console.log(osError.message);
-      throw osError.message;
-    } catch (error) {
-      console.log(error.toString());
-      throw error.toString();
+    } on FileSystemException catch (_, s) {
+      console.log(_.message + '\n STACKTRACES: ' + s.toString());
+      throw _.message;
+    } on OSError catch (_, s) {
+      console.log(_.message + '\n STACKTRACES: ' + s.toString());
+      throw _.message;
+    } catch (_, s) {
+      console.log(_.toString() + '\n STACKTRACES: ' + s.toString());
+      throw _.toString();
     }
   }
 

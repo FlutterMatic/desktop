@@ -35,7 +35,7 @@ class ReportAboutSection extends StatelessWidget {
                 builder: (_) => const BuildLogsDialog(),
               );
 
-              await launch('https://github.com/FlutterMatic/desktop/issues');
+              await launch('https://github.com/FlutterMatic/desktop/issues/new/choose');
               Navigator.pop(context);
             },
           ),

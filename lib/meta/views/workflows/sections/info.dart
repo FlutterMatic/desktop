@@ -195,7 +195,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                 children: <Widget>[
                   const Expanded(
                     child: Text(
-                      'Select your Flutter or Dart project pubspec.yaml file. We will use this to make sure it\'s a valid project. Workflow config information will be set in a new file called fm_config.json.',
+                      'Select your Flutter or Dart project pubspec.yaml file. We will use this to make sure it\'s a valid project. Workflow config information will be set in a new directory called fmatic.',
                     ),
                   ),
                   HSeparators.normal(),

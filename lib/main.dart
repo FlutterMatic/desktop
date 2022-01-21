@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,6 @@ import 'package:fluttermatic/core/libraries/utils.dart';
 import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
-import 'package:path/path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,17 +49,37 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
   Future<void> _initDataFetch() async {
     try {
-      await SpaceCheck().checkSpace();
-
       /// Application supporting Directory
       Directory _dir = await getApplicationSupportDirectory();
 
       /// Check for temporary Directory to download files
-      bool _tmpDir = await Directory(_dir.path + '\\tmp').exists();
-      bool _cacheDir = await Directory(_dir.path + '\\cache').exists();
       bool _logsDir = await Directory(_dir.path + '\\logs').exists();
+      bool _cacheDir = await Directory(_dir.path + '\\cache').exists();
+      bool _tmpDir = await Directory(_dir.path + '\\tmp').exists();
 
+      // If _logsDir is false, then create a cache directory.
+      if (!_logsDir) {
+        await Directory(_dir.path + '\\logs').create();
+        await logger.file(LogTypeTag.info, 'Created logs directory.');
+      }
+
+      // If cacheDir is false, then create a cache directory.
+      if (!_cacheDir) {
+        await Directory(_dir.path + '\\cache').create();
+        await logger.file(LogTypeTag.info, 'Created cache directory.');
+      }
+
+      /// If tmpDir is false, then create a temporary directory.
+      if (!_tmpDir) {
+        await Directory(_dir.path + '\\tmp').create();
+        await logger.file(LogTypeTag.info, 'Created tmp directory.');
+      }
+
+      // Initialize shared preference.
       await SharedPref.init();
+
+      // Calculate the space on the disk(s).
+      await SpaceCheck().checkSpace();
 
       if (kDebugMode) await SharedPref().pref.clear();
 
@@ -146,24 +166,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
             'Unknown App Version';
         appBuild = SharedPref().pref.getString(SPConst.appBuild) ??
             'Unknown App Build';
-      }
-
-      /// If tmpDir is false, then create a temporary directory.
-      if (!_tmpDir) {
-        await Directory(_dir.path + '\\tmp').create();
-        await logger.file(LogTypeTag.info, 'Created tmp directory.');
-      }
-
-      // If cacheDir is false, then create a cache directory.
-      if (!_cacheDir) {
-        await Directory(_dir.path + '\\cache').create();
-        await logger.file(LogTypeTag.info, 'Created cache directory.');
-      }
-
-      // If _logsDir is false, then create a cache directory.
-      if (!_logsDir) {
-        await Directory(_dir.path + '\\logs').create();
-        await logger.file(LogTypeTag.info, 'Created logs directory.');
       }
 
       setState(() => _isChecking = false);
