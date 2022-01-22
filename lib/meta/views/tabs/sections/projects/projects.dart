@@ -4,6 +4,9 @@ import 'dart:isolate';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:path_provider/path_provider.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
@@ -15,7 +18,6 @@ import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/project_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
-import 'package:path_provider/path_provider.dart';
 
 class HomeProjectsSection extends StatefulWidget {
   const HomeProjectsSection({Key? key}) : super(key: key);

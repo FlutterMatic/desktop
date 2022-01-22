@@ -15,6 +15,11 @@ Future<void> moveBuildOutput(String buildOutputPath, String outputPath) async {
       exit(1);
     }
 
+    // If the release folder already exists from a previous build, delete it.
+    if (await _outputDir.exists()) {
+      await _outputDir.delete(recursive: true);
+    }
+
     // Create the output directory if it doesn't exist
     await _outputDir.create(recursive: true);
 

@@ -83,13 +83,13 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
       if (kDebugMode) await SharedPref().pref.clear();
 
-      appVersion = const String.fromEnvironment('current-version');
+      appVersion = const String.fromEnvironment('CURRENT_VERSION');
 
       await SharedPref()
           .pref
           .setString(SPConst.appVersion, appVersion.toString());
 
-      appBuild = const String.fromEnvironment('release-type');
+      appBuild = const String.fromEnvironment('RELEASE_TYPE');
 
       await SharedPref().pref.setString(SPConst.appBuild, appBuild.toString());
 
