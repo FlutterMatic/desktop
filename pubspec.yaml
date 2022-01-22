@@ -79,7 +79,7 @@ flutter:
     - assets/images/placeholders/
     - assets/markdown/setup_docs/
     - assets/lottie/
-    - changelog.md
+    - CHANGELOG.md
 
   fonts:
     - family: NotoSans
