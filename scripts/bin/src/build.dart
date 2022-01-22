@@ -41,7 +41,11 @@ Future<void> buildAppWithMode(BuildMode mode) async {
   print(infoPen('Building... This might take a while.'));
 
   // Build the app in release mode.
-  await buildWithMode(mode, Platform.operatingSystem);
+  await buildWithMode(
+    mode,
+    Version.fromString(_version),
+    Platform.operatingSystem,
+  );
 
   // Capitalize the first letter of the mode.
   String _mode =

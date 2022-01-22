@@ -3,28 +3,41 @@ import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class FlutterActionServices {
-  static Future<void> createNewProject(NewFlutterProjectInfo project) async {
-    String _platforms = <String>[
-      if (project.android) 'android',
-      if (project.iOS) 'ios',
-      if (project.web) 'web',
-      if (project.macos) 'macos',
-      if (project.windows) 'windows',
-      if (project.linux) 'linux',
-    ].join(',');
+  static Future<String> createNewProject(NewFlutterProjectInfo project) async {
+    try {
+      if (project.projectPath.isEmpty) {
+        return 'Project path is empty. Please provide a valid path.';
+      }
 
-    // Make sure that [_platforms] is not empty (meaning there is at least
-    // one platform selected).
-    if (_platforms.isEmpty) {
-      await logger.file(LogTypeTag.warning,
-          'Selected no platform(s) but tried to create a project');
-      throw ArgumentError('At least one platform must be selected.');
+      String _platforms = <String>[
+        if (project.android) 'android',
+        if (project.iOS) 'ios',
+        if (project.web) 'web',
+        if (project.macos) 'macos',
+        if (project.windows) 'windows',
+        if (project.linux) 'linux',
+      ].join(',');
+
+      // Make sure that [_platforms] is not empty (meaning there is at least
+      // one platform selected).
+      if (_platforms.isEmpty) {
+        await logger.file(LogTypeTag.warning,
+            'Selected no platform(s) but tried to create a project');
+        return 'At least one platform must be selected.';
+      }
+
+      // Create the project.
+      await shell.cd(project.projectPath).run(
+            'flutter create --template=app ${project.projectName} --org ${project.orgName} --platforms $_platforms',
+          );
+
+      return 'success';
+    } catch (_, s) {
+      await logger.file(
+          LogTypeTag.error, 'Failed to create new Flutter project: $_',
+          stackTraces: s);
+      return 'Failed to create new Flutter project. Please try again or report this issue.';
     }
-
-    // Create the project.
-    await shell.cd(project.projectPath).run(
-          'flutter create --template=app ${project.projectName} --org ${project.orgName} --platforms $_platforms',
-        );
   }
 }
 
@@ -40,7 +53,6 @@ class NewFlutterProjectInfo {
   final bool windows;
   final bool macos;
   final bool linux;
-  final bool nullSafety;
 
   const NewFlutterProjectInfo({
     required this.projectName,
@@ -54,6 +66,5 @@ class NewFlutterProjectInfo {
     required this.windows,
     required this.macos,
     required this.linux,
-    required this.nullSafety,
   });
 }

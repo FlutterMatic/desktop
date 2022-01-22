@@ -137,18 +137,17 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
               ),
             ),
             HSeparators.normal(),
-            PopupMenuButton<dynamic>(
+            PopupMenuButton<int>(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: _refreshIntervals == 60
                     ? const Text('Every 1 hour')
                     : Text(
-                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}',
-                      ),
+                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}'),
               ),
               tooltip: '',
               itemBuilder: (_) {
-                return <PopupMenuEntry<dynamic>>[
+                return <PopupMenuEntry<int>>[
                   const PopupMenuItem<int>(value: 1, child: Text('1 minute')),
                   const PopupMenuItem<int>(value: 5, child: Text('5 minutes')),
                   const PopupMenuItem<int>(
@@ -156,7 +155,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   const PopupMenuItem<int>(value: 60, child: Text('1 hour')),
                 ];
               },
-              onSelected: (dynamic val) async {
+              onSelected: (int val) async {
                 try {
                   await SharedPref().pref.setInt(SPConst.projectRefresh, val);
                   await logger.file(LogTypeTag.info,

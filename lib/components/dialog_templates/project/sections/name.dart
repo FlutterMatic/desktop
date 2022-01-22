@@ -63,9 +63,7 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
                     text: newValue.text.replaceAll(' ', '_').toLowerCase());
               }
             }),
-            FilteringTextInputFormatter.allow(
-              RegExp('[a-zA-Z-_0-9 ]'),
-            ),
+            FilteringTextInputFormatter.allow(RegExp('[a-zA-Z-_0-9 ]')),
           ],
           onChanged: (_) => setState(() {}),
           validator: (String? val) => val!.isEmpty

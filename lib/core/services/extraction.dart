@@ -2,7 +2,10 @@
 import 'dart:io';
 
 // 📦 Package imports:
+import 'package:flutter/cupertino.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:process_run/shell.dart';
+import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -21,10 +24,11 @@ import 'package:fluttermatic/core/libraries/services.dart';
 /// ```
 ///
 /// This will return the file `path` after downloading.
-Future<bool> unzip(String source, String destination) async {
+Future<bool> unzip(BuildContext context, String source, String destination) async {
   try {
+    String _drive = context.read<SpaceCheck>().drive;
     /// Check for temporary Directory to download files
-    bool destinationDir = await checkDir('C:\\', subDirName: 'fluttermatic');
+    bool destinationDir = await checkDir('$_drive:\\', subDirName: 'fluttermatic');
 
     /// If tmpDir is false, then create a temporary directory.
     if (!destinationDir) {
@@ -32,7 +36,7 @@ Future<bool> unzip(String source, String destination) async {
       await logger.file(LogTypeTag.info, 'Created $destination directory.');
     } else {
       if (destination.split('\\').length > 2) {
-        bool checkDestination = await checkDir('C:\\fluttermatic\\',
+        bool checkDestination = await checkDir('$_drive:\\fluttermatic\\',
             subDirName: destination.split('\\').last);
         if (!checkDestination) {
           await Directory(destination).create(recursive: true);

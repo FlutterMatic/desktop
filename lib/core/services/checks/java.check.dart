@@ -33,6 +33,8 @@ class JavaNotifier extends ChangeNotifier {
   /// Check java exists in the system or not.
   Future<void> checkJava(BuildContext context, FluttermaticAPI? api) async {
     try {
+      String _drive = context.read<SpaceCheck>().drive;
+
       _progress = Progress.started;
       notifyListeners();
 
@@ -56,10 +58,11 @@ class JavaNotifier extends ChangeNotifier {
         notifyListeners();
 
         bool _javaDir =
-            await checkDir('C:\\fluttermatic\\', subDirName: 'Java');
+            await checkDir('$_drive:\\fluttermatic\\', subDirName: 'Java');
 
         if (!_javaDir) {
-          await Directory('C:\\fluttermatic\\Java').create(recursive: true);
+          await Directory('$_drive:\\fluttermatic\\Java')
+              .create(recursive: true);
         }
 
         await logger.file(LogTypeTag.info, 'Downloading Java');
@@ -76,17 +79,19 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Extract java from compressed file.
         bool _jdkExtracted = await unzip(
+            context,
             _dir.path + '\\tmp\\' + 'jdk.$archiveType',
-            'C:\\fluttermatic\\Java\\');
+            '$_drive:\\fluttermatic\\Java\\');
 
         if (_jdkExtracted) {
           await logger.file(LogTypeTag.info, 'JDK extraction was successful');
           await for (FileSystemEntity e
-              in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
+              in Directory('$_drive:\\fluttermatic\\Java\\')
+                  .list(recursive: true)) {
             if (e.path.split('\\')[3].startsWith('openlogic') &&
                 e.path.contains('openjdk-8u2')) {
               try {
-                await e.rename('C:\\fluttermatic\\Java\\jdk');
+                await e.rename('$_drive:\\fluttermatic\\Java\\jdk');
                 await logger.file(
                     LogTypeTag.info, 'Extracted folder rename successful');
               } on FileSystemException catch (fileSystemException, s) {
@@ -108,7 +113,7 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Appending path to env
         bool _isJDKPathSet =
-            await setPath('C:\\fluttermatic\\Java\\jdk\\bin', _dir.path);
+            await setPath('$_drive:\\fluttermatic\\Java\\jdk\\bin', _dir.path);
 
         if (_isJDKPathSet) {
           await logger.file(LogTypeTag.info, 'JDK set to path');
@@ -135,17 +140,19 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Extract java from compressed file.
         bool _jreExtracted = await unzip(
+            context,
             _dir.path + '\\tmp\\' + 'jre.$archiveType',
-            'C:\\fluttermatic\\Java\\');
+            '$_drive:\\fluttermatic\\Java\\');
 
         if (_jreExtracted) {
           await logger.file(LogTypeTag.info, 'JDK extraction was successful');
           await for (FileSystemEntity e
-              in Directory('C:\\fluttermatic\\Java\\').list(recursive: true)) {
+              in Directory('$_drive:\\fluttermatic\\Java\\')
+                  .list(recursive: true)) {
             if (e.path.split('\\')[3].startsWith('openlogic') &&
                 e.path.contains('openjdk-jre-8u2')) {
               try {
-                await e.rename('C:\\fluttermatic\\Java\\jre');
+                await e.rename('$_drive:\\fluttermatic\\Java\\jre');
                 await logger.file(
                     LogTypeTag.info, 'Extracted folder rename successful');
               } on FileSystemException catch (_, s) {
@@ -167,7 +174,7 @@ class JavaNotifier extends ChangeNotifier {
 
         /// Appending path to env
         bool _isJREPathSet =
-            await setPath('C:\\fluttermatic\\Java\\jre\\bin', _dir.path);
+            await setPath('$_drive:\\fluttermatic\\Java\\jre\\bin', _dir.path);
 
         if (_isJREPathSet) {
           await logger.file(LogTypeTag.info, 'JRE set to path');

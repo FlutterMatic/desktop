@@ -2,6 +2,7 @@
 import 'dart:io';
 
 // 🐦 Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
@@ -16,6 +17,7 @@ import 'package:fluttermatic/components/dialog_templates/project/sections/pre_co
 import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/core/libraries/utils.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/core/services/actions/flutter.dart';
 import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
 
 class NewProjectDialog extends StatefulWidget {
@@ -59,9 +61,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
       !_orgController.text.endsWith('.') &&
       !_orgController.text.endsWith('_');
 
-  // Dart & Flutter Config
-  bool _isNullSafety = true;
-
   String? _path = SharedPref().pref.getString(SPConst.projectsPath);
   String? _currentActivity;
 
@@ -79,6 +78,20 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             snackBarTile(
               context,
               'Please select a valid path to save project to.',
+              type: SnackBarType.error,
+            ),
+          );
+
+          return;
+        }
+
+        // Make sure that there is no directory with the same name
+        if (Directory(_path! + '/' + _nameController.text).existsSync()) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'There is already a directory with the same name. Please choose another name.',
               type: SnackBarType.error,
             ),
           );
@@ -126,18 +139,44 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
         try {
           setState(() => _index = _NewProjectSections.creatingProject);
 
-          // TODO: Create project and add pre-config to project if any.
+          String _result = await FlutterActionServices.createNewProject(
+            NewFlutterProjectInfo(
+              projectPath: _path ?? '',
+              projectName: _nameController.text,
+              description: _descriptionController.text,
+              orgName: _orgController.text,
+              firebaseJson: _firebaseJson ?? <String, dynamic>{},
+              iOS: _ios,
+              android: _android,
+              web: _web,
+              windows: _windows,
+              macos: _macos,
+              linux: _linux,
+            ),
+          );
 
-          // Navigator.pop(context);
-          if (_path != null) {
+          if (_result == 'success') {
+            Navigator.pop(context);
+
             await showDialog(
               context: context,
               builder: (_) => ProjectCreatedDialog(
                 projectName: _nameController.text,
-                projectPath: _path!,
+                projectPath: _path! + '\\' + _nameController.text,
               ),
             );
+
+            return;
           }
+
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              _result,
+              type: SnackBarType.error,
+            ),
+          );
         } catch (_, s) {
           await logger.file(
               LogTypeTag.error, 'Failed to create new Flutter project: $_',
@@ -183,6 +222,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     )
                   : null,
               title: 'New Project',
+              canClose: _index != _NewProjectSections.creatingProject,
             ),
             Form(
               key: _createProjectFormKey,
@@ -209,7 +249,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                   // Project Platforms
                   if (_index == _NewProjectSections.projectPlatforms)
                     ProjectPlatformsSection(
-                      isNullSafety: _isNullSafety,
                       ios: _ios,
                       android: _android,
                       windows: _windows,
@@ -232,7 +271,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                           _windows = windows;
                           _macos = macos;
                           _linux = linux;
-                          _isNullSafety = isNullSafety;
                         });
                       },
                     ),
@@ -284,7 +322,9 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                     onPressed: _createNewProject,
                     width: 120,
                     child: Text(
-                      _index == _NewProjectSections.preConfigProject
+                      _index ==
+                              _NewProjectSections
+                                  .values[_NewProjectSections.values.length - 2]
                           ? 'Create'
                           : 'Next',
                       style: TextStyle(
@@ -356,6 +396,7 @@ class ProjectCreatedDialog extends StatelessWidget {
                 child: RectangleButton(
                   width: double.infinity,
                   onPressed: () async {
+                    Navigator.pop(context);
                     await showDialog(
                       context: context,
                       builder: (_) => OpenProjectOnEditor(path: projectPath),

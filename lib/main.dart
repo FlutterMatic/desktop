@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -26,8 +25,8 @@ import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Directory _basePath = await getApplicationSupportDirectory();
-  debugPrint('📂 Logs path: ${join(_basePath.path, 'logs')}');
-  runApp(const MultiProviders(FlutterMaticMain()));
+  debugPrint('📂 AppData path: ${_basePath.path}');
+  runApp(const RestartWidget(child: MultiProviders(FlutterMaticMain())));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
     appWindow.maximize();
@@ -188,92 +187,90 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
   @override
   Widget build(BuildContext context) {
-    return RestartWidget(
-      child: Consumer<ThemeChangeNotifier>(
-        builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
-            Widget? child) {
-          return Directionality(
-            textDirection: TextDirection.ltr,
-            child: ColoredBox(
-              color: themeChangeNotifier.isDarkTheme
-                  ? AppTheme.darkBackgroundColor
-                  : AppTheme.lightBackgroundColor,
-              child: Column(
-                children: <Widget>[
-                  WindowTitleBarBox(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Image.asset(Assets.appLogo),
-                        ),
-                        Expanded(child: MoveWindow()),
-                        windowControls(context)
-                      ],
-                    ),
+    return Consumer<ThemeChangeNotifier>(
+      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
+          Widget? child) {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: ColoredBox(
+            color: themeChangeNotifier.isDarkTheme
+                ? AppTheme.darkBackgroundColor
+                : AppTheme.lightBackgroundColor,
+            child: Column(
+              children: <Widget>[
+                WindowTitleBarBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Image.asset(Assets.appLogo),
+                      ),
+                      Expanded(child: MoveWindow()),
+                      windowControls(context)
+                    ],
                   ),
-                  Expanded(
-                    child: MaterialApp(
-                      theme: AppTheme.lightTheme,
-                      darkTheme: AppTheme.darkTheme,
-                      themeMode: themeChangeNotifier.isDarkTheme
-                          ? ThemeMode.dark
-                          : ThemeMode.light,
-                      debugShowCheckedModeBanner: false,
-                      builder: (_, Widget? child) {
-                        return Stack(
-                          children: <Widget>[
-                            Center(child: child),
-                            if (allowDevControls)
-                              Positioned(
-                                bottom: 10,
-                                right: 10,
-                                child: SquareButton(
-                                  color: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  icon: Icon(
-                                    context
-                                            .read<ThemeChangeNotifier>()
-                                            .isDarkTheme
-                                        ? Icons.dark_mode
-                                        : Icons.light_mode,
-                                    color: context
-                                            .read<ThemeChangeNotifier>()
-                                            .isDarkTheme
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                  onPressed: () {
-                                    context
-                                        .read<ThemeChangeNotifier>()
-                                        .updateTheme(context
-                                                .read<ThemeChangeNotifier>()
-                                                .isDarkTheme
-                                            ? Theme.of(context).brightness !=
-                                                Brightness.light
-                                            : Theme.of(context).brightness ==
-                                                Brightness.light);
-                                  },
+                ),
+                Expanded(
+                  child: MaterialApp(
+                    theme: AppTheme.lightTheme,
+                    darkTheme: AppTheme.darkTheme,
+                    themeMode: themeChangeNotifier.isDarkTheme
+                        ? ThemeMode.dark
+                        : ThemeMode.light,
+                    debugShowCheckedModeBanner: false,
+                    builder: (_, Widget? child) {
+                      return Stack(
+                        children: <Widget>[
+                          Center(child: child),
+                          if (allowDevControls)
+                            Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: SquareButton(
+                                color: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                icon: Icon(
+                                  context
+                                          .read<ThemeChangeNotifier>()
+                                          .isDarkTheme
+                                      ? Icons.dark_mode
+                                      : Icons.light_mode,
+                                  color: context
+                                          .read<ThemeChangeNotifier>()
+                                          .isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
+                                onPressed: () {
+                                  context
+                                      .read<ThemeChangeNotifier>()
+                                      .updateTheme(context
+                                              .read<ThemeChangeNotifier>()
+                                              .isDarkTheme
+                                          ? Theme.of(context).brightness !=
+                                              Brightness.light
+                                          : Theme.of(context).brightness ==
+                                              Brightness.light);
+                                },
                               ),
-                          ],
-                        );
-                      },
-                      home: _isChecking
-                          ? const Scaffold(
-                              body: Center(child: Spinner(thickness: 2)))
-                          : !completedSetup
-                              ? const WelcomePage()
-                              : const HomeScreen(),
-                    ),
+                            ),
+                        ],
+                      );
+                    },
+                    home: _isChecking
+                        ? const Scaffold(
+                            body: Center(child: Spinner(thickness: 2)))
+                        : !completedSetup
+                            ? const WelcomePage()
+                            : const HomeScreen(),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

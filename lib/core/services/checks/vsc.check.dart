@@ -33,6 +33,8 @@ class VSCodeNotifier extends ChangeNotifier {
     Directory dir = await getApplicationSupportDirectory();
     String archiveType = platform == 'linux' ? 'tar.gz' : 'zip';
     try {
+      String _drive = context.read<SpaceCheck>().drive;
+
       _progress = Progress.started;
       notifyListeners();
 
@@ -45,11 +47,13 @@ class VSCodeNotifier extends ChangeNotifier {
         await logger.file(LogTypeTag.info, 'Downloading VS Code');
 
         /// Check for code Directory to extract files
-        bool codeDir = await checkDir('C:\\fluttermatic\\', subDirName: 'code');
+        bool codeDir =
+            await checkDir('$_drive:\\fluttermatic\\', subDirName: 'code');
 
         /// If tmpDir is false, then create a temporary directory.
         if (!codeDir) {
-          await Directory('C:\\fluttermatic\\code').create(recursive: true);
+          await Directory('$_drive:\\fluttermatic\\code')
+              .create(recursive: true);
           await logger.file(LogTypeTag.info,
               'Created code directory for extracting vscode files');
         }
@@ -80,8 +84,8 @@ class VSCodeNotifier extends ChangeNotifier {
         notifyListeners();
 
         /// Extract java from compressed file.
-        bool _vscExtracted =
-            await unzip(dir.path + '\\tmp\\code.zip', 'C:\\fluttermatic\\code');
+        bool _vscExtracted = await unzip(context, dir.path + '\\tmp\\code.zip',
+            '$_drive:\\fluttermatic\\code');
 
         if (_vscExtracted) {
           await logger.file(
@@ -94,12 +98,12 @@ class VSCodeNotifier extends ChangeNotifier {
 
         /// Appending path to env
         bool _isVSCPathSet =
-            await setPath('C:\\fluttermatic\\code\\bin', dir.path);
+            await setPath('$_drive:\\fluttermatic\\code\\bin', dir.path);
 
         if (_isVSCPathSet) {
           await SharedPref()
               .pref
-              .setString(SPConst.vscPath, 'C:\\fluttermatic\\code\\bin');
+              .setString(SPConst.vscPath, '$_drive:\\fluttermatic\\code\\bin');
           await logger.file(LogTypeTag.info, 'VSCode set to path');
           _progress = Progress.done;
           notifyListeners();

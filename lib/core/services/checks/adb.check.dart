@@ -24,9 +24,12 @@ class ADBNotifier extends ChangeNotifier {
   Version? adbVersion;
 
   Future<void> checkADB(BuildContext context, FluttermaticAPI? api) async {
-    /// Application supporting Directory
-    Directory _dir = await getApplicationSupportDirectory();
     try {
+      /// Application supporting Directory
+      Directory _dir = await getApplicationSupportDirectory();
+
+      String _drive = context.read<SpaceCheck>().drive;
+
       String? _adbPath = await which('adb');
 
       if (_adbPath == null) {
@@ -39,8 +42,8 @@ class ADBNotifier extends ChangeNotifier {
             api!.data!['adb'][platform], 'adb.zip', _dir.path + '\\tmp');
 
         /// Extract java from compressed file.
-        bool _adbExtracted = await unzip(
-            _dir.path + '\\tmp\\' + 'adb.zip', 'C:\\fluttermatic\\');
+        bool _adbExtracted = await unzip(context,
+            _dir.path + '\\tmp\\' + 'adb.zip', '$_drive:\\fluttermatic\\');
 
         if (_adbExtracted) {
           await logger.file(LogTypeTag.info, 'ADB extraction was successful');
@@ -50,7 +53,7 @@ class ADBNotifier extends ChangeNotifier {
 
         /// Appending path to env
         bool _isADBPathSet =
-            await setPath('C:\\fluttermatic\\platform-tools', _dir.path);
+            await setPath('$_drive:\\fluttermatic\\platform-tools', _dir.path);
 
         if (_isADBPathSet) {
           await logger.file(LogTypeTag.info, 'Flutter-SDK set to path');

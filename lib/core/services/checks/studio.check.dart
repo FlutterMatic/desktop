@@ -31,6 +31,8 @@ class AndroidStudioNotifier extends ChangeNotifier {
   Progress get progress => _progress;
 
   Future<void> checkAStudio(BuildContext context, FluttermaticAPI? api) async {
+    String _drive = context.read<SpaceCheck>().drive;
+
     _progress = Progress.started;
     notifyListeners();
 
@@ -51,7 +53,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
             Directory(tempDir.path.replaceAll('Temp', 'JetBrains'));
 
         /// Check in Program Files Directory
-        bool _checkPF = await checkProgramFiles();
+        bool _checkPF = await checkProgramFiles(context);
 
         if (!_checkPF && await _jetBrainsPath.exists()) {
           bool _checkJB = await checkJetBrains(
@@ -60,17 +62,18 @@ class AndroidStudioNotifier extends ChangeNotifier {
 
           if (!_checkJB) {
             /// Check for AndroidStudio Directory to extract Android studio files
-            bool studioDir = await checkDir('C:\\fluttermatic\\',
+            bool studioDir = await checkDir('$_drive:\\fluttermatic\\',
                 subDirName: 'AndroidStudio');
 
             bool _flutterMaticDir =
-                await checkDir('C:\\', subDirName: 'fluttermatic');
+                await checkDir('$_drive:\\', subDirName: 'fluttermatic');
 
             if (!studioDir) {
               if (!_flutterMaticDir) {
-                await Directory('C:\\fluttermatic').create(recursive: true);
+                await Directory('$_drive:\\fluttermatic')
+                    .create(recursive: true);
               }
-              await Directory('C:\\fluttermatic\\AndroidStudio')
+              await Directory('$_drive:\\fluttermatic\\AndroidStudio')
                   .create(recursive: true);
               await logger.file(LogTypeTag.info,
                   'Created Android studio directory in fluttermatic folder.');
@@ -123,8 +126,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
     } on ShellException catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
-      await logger.file(LogTypeTag.error, _.message,
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
     } catch (_, s) {
       _progress = Progress.failed;
       notifyListeners();
@@ -134,16 +136,18 @@ class AndroidStudioNotifier extends ChangeNotifier {
 
   /// This function will check if the Android Studio
   /// is installed in the Program Files directory.
-  Future<bool> checkProgramFiles() async {
+  Future<bool> checkProgramFiles(BuildContext context) async {
+    String _drive = context.read<SpaceCheck>().drive;
+
     await logger.file(LogTypeTag.info, 'Checking Program Files');
-    Directory _programFilesDir = Directory('C:\\Program Files\\Android');
+    Directory _programFilesDir = Directory('$_drive:\\Program Files\\Android');
     try {
       if (await _programFilesDir.exists()) {
         await logger.file(LogTypeTag.info, 'Program Files Directory Exists');
         await logger.file(
             LogTypeTag.info, 'Checking in Program Files for Android studio');
-        String? studio64PFPath =
-            await getFilePath('C:\\Program Files\\Android\\', 'studio64.exe');
+        String? studio64PFPath = await getFilePath(
+            '$_drive:\\Program Files\\Android\\', 'studio64.exe');
         if (studio64PFPath != null) {
           await logger.file(
               LogTypeTag.info, 'Studio64.exe found in Program Files');
@@ -164,8 +168,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
       await logger.file(
           LogTypeTag.error, 'Extracting failed - File System Exception',
           stackTraces: s);
-      await logger.file(LogTypeTag.error, _.message.toString(),
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
       return false;
     } catch (_, s) {
       await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
@@ -206,6 +209,8 @@ class AndroidStudioNotifier extends ChangeNotifier {
     required String appDir,
     String? archiveType,
   }) async {
+    String _drive = context.read<SpaceCheck>().drive;
+
     /// Downloading Android studio.
     if (kDebugMode || kProfileMode) {
       await context.read<DownloadNotifier>().downloadFile(
@@ -225,29 +230,29 @@ class AndroidStudioNotifier extends ChangeNotifier {
     notifyListeners();
 
     /// Extract Android studio from compressed file.
-    bool _studioExtracted =
-        await unzip(appDir + '\\tmp\\studio.zip', 'C:\\fluttermatic\\');
+    bool _studioExtracted = await unzip(
+        context, appDir + '\\tmp\\studio.zip', '$_drive:\\fluttermatic\\');
 
     if (_studioExtracted) {
       await logger.file(
           LogTypeTag.info, 'Android studio extraction was successful');
-      if (await checkDir('C:\\fluttermatic\\', subDirName: 'android-studio')) {
-        Directory _renameDir = Directory('C:\\fluttermatic\\android-studio');
+      if (await checkDir('$_drive:\\fluttermatic\\', subDirName: 'android-studio')) {
+        Directory _renameDir = Directory('$_drive:\\fluttermatic\\android-studio');
 
         if (await _renameDir.exists()) {
-          await _renameDir.rename('C:\\fluttermatic\\AndroidStudio');
+          await _renameDir.rename('$_drive:\\fluttermatic\\AndroidStudio');
           await logger.file(
               LogTypeTag.info, 'Renamed android-studio to AndroidStudio');
         }
 
         /// Appending path to env
         bool _isASPathSet =
-            await setPath('C:\\fluttermatic\\AndroidStudio\\bin', appDir);
+            await setPath('$_drive:\\fluttermatic\\AndroidStudio\\bin', appDir);
 
         if (_isASPathSet) {
           await SharedPref()
               .pref
-              .setString('Studio_path', 'C:\\fluttermatic\\AndroidStudio\\bin');
+              .setString('Studio_path', '$_drive:\\fluttermatic\\AndroidStudio\\bin');
           await logger.file(LogTypeTag.info, 'Android studio set to path');
         } else {
           _progress = Progress.failed;

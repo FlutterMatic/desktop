@@ -27,7 +27,23 @@ class AboutSection extends StatelessWidget {
           'Version: ${SharedPref().pref.getString(SPConst.appVersion) ?? 'Unknown app version'} (${SharedPref().pref.getString(SPConst.appBuild)?.toUpperCase() ?? 'Unknown app build'}) \n$osName - $osVersion',
           showIcon: false,
           type: InformationType.info,
-        )
+        ),
+        VSeparators.small(),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            child: const Text('Licenses'),
+            onPressed: () {
+              showLicensePage(
+                context: context,
+                applicationIcon: Image.asset(Assets.appLogo),
+                applicationName: 'FlutterMatic',
+                applicationVersion:
+                    const String.fromEnvironment('CURRENT_VERSION'),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

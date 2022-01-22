@@ -14,15 +14,16 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class SetupDocsScreen extends StatefulWidget {
-  const SetupDocsScreen({Key? key}) : super(key: key);
+class SetupDocsDialog extends StatefulWidget {
+  const SetupDocsDialog({Key? key}) : super(key: key);
 
   @override
-  _SetupDocsScreenState createState() => _SetupDocsScreenState();
+  _SetupDocsDialogState createState() => _SetupDocsDialogState();
 }
 
-class _SetupDocsScreenState extends State<SetupDocsScreen> {
+class _SetupDocsDialogState extends State<SetupDocsDialog> {
   bool _isLoading = true;
   final List<TabViewObject> _tabs = <TabViewObject>[];
 
@@ -54,17 +55,36 @@ class _SetupDocsScreenState extends State<SetupDocsScreen> {
                   .map((String _word) =>
                       _word.substring(0, 1).toUpperCase() + _word.substring(1))
                   .join(' '),
-              MarkdownBody(
-                selectable: true,
-                data: _fileContent,
-                extensionSet: md.ExtensionSet(
-                  md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-                  <md.InlineSyntax>[
-                    md.EmojiSyntax(),
-                    ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
-                  ],
+              SingleChildScrollView(
+                child: MarkdownBody(
+                  onTapLink: (String txt, String? href, String title) {
+                    try {
+                      launch(txt);
+                    } catch (_, s) {
+                      logger.file(LogTypeTag.error,
+                          'Couldn\'t open documentation referenced link: $txt - $href - $title - Error: $_',
+                          stackTraces: s);
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarTile(
+                          context,
+                          'Sorry, couldn\'t open this link.',
+                          type: SnackBarType.error,
+                        ),
+                      );
+                    }
+                  },
+                  selectable: true,
+                  data: _fileContent,
+                  extensionSet: md.ExtensionSet(
+                    md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+                    <md.InlineSyntax>[
+                      md.EmojiSyntax(),
+                      ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+                    ],
+                  ),
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                 ),
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
               ),
             ),
           );

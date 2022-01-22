@@ -1,8 +1,10 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
 import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
@@ -56,7 +58,12 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                       padding: EdgeInsets.zero,
                       child: const Icon(Icons.more_vert, size: 14),
                       color: Colors.transparent,
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const _ConfirmDeleteProjectDialog(),
+                        );
+                      },
                       radius: BorderRadius.circular(2),
                       width: 22,
                       height: 22,
@@ -127,6 +134,73 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ConfirmDeleteProjectDialog extends StatefulWidget {
+  const _ConfirmDeleteProjectDialog({Key? key}) : super(key: key);
+
+  @override
+  _ConfirmDeleteProjectDialogState createState() =>
+      _ConfirmDeleteProjectDialogState();
+}
+
+class _ConfirmDeleteProjectDialogState
+    extends State<_ConfirmDeleteProjectDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        children: <Widget>[
+          const DialogHeader(title: 'Project Options'),
+          VSeparators.small(),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RectangleButton(
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(child: Icon(Icons.edit, size: 30)),
+                      VSeparators.normal(),
+                      const Text('Edit'),
+                    ],
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+              HSeparators.normal(),
+              Expanded(
+                child: RectangleButton(
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(
+                        child: Icon(Icons.delete_forever,
+                            color: AppTheme.errorColor, size: 30),
+                      ),
+                      VSeparators.normal(),
+                      const Text('Delete Project'),
+                    ],
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+          VSeparators.normal(),
+          ActionOptions(
+            actions: <ActionOptionsObject>[
+              // TODO: Support the following options:
+              ActionOptionsObject('Add Configuration', () {}),
+              ActionOptionsObject('View Existing Configurations', () {}),
+              ActionOptionsObject('Scan pubspec.yaml for new updates', () {}),
+              ActionOptionsObject('Create Release', () {}),
+            ],
+          ),
+        ],
       ),
     );
   }

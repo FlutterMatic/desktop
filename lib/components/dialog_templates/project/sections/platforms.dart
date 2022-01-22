@@ -12,7 +12,6 @@ class ProjectPlatformsSection extends StatefulWidget {
   final bool windows;
   final bool macos;
   final bool linux;
-  final bool isNullSafety;
 
   final Function({
     bool ios,
@@ -21,7 +20,6 @@ class ProjectPlatformsSection extends StatefulWidget {
     bool windows,
     bool macos,
     bool linux,
-    bool isNullSafety,
   }) onChanged;
 
   const ProjectPlatformsSection({
@@ -33,7 +31,6 @@ class ProjectPlatformsSection extends StatefulWidget {
     required this.windows,
     required this.macos,
     required this.linux,
-    required this.isNullSafety,
   }) : super(key: key);
 
   @override
@@ -166,33 +163,9 @@ class _ProjectPlatformsSectionState extends State<ProjectPlatformsSection> {
           ),
         ),
         VSeparators.normal(),
-        RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              informationWidget(
-                'Dart supports null-safety. Null safety helps you catch probable bugs before they happen. Learn more about null-safety from the official Dart documentations.',
-                type: InformationType.info,
-              ),
-              VSeparators.normal(),
-              CheckBoxElement(
-                onChanged: (bool? val) {
-                  widget.onChanged(
-                    ios: widget.ios,
-                    android: widget.android,
-                    web: widget.web,
-                    windows: widget.windows,
-                    macos: widget.macos,
-                    linux: widget.linux,
-                    isNullSafety: val ?? true,
-                  );
-                },
-                value: widget.isNullSafety,
-                text: 'Enable null-safety',
-              ),
-            ],
-          ),
+        informationWidget(
+          'Dart supports null-safety. Null safety helps you catch probable bugs before they happen. Learn more about null-safety from the official Dart documentations. Null-safety is enabled by default.',
+          type: InformationType.info,
         ),
         VSeparators.normal(),
         if (!validatePlatformSelection(

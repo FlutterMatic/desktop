@@ -35,11 +35,11 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
       children: <Widget>[
         infoWidget(
           context,
-          'You can easily setup common environments for Flutter such as Firebase.',
+          'You can easily setup common environments for Flutter such as Firebase. More coming soon.',
         ),
         VSeparators.normal(),
         Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.only(bottom: 15),
           child: RoundContainer(
             color: Colors.blueGrey.withOpacity(0.2),
             child: Row(
@@ -68,6 +68,7 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                     );
 
                     if (_file == null) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -80,6 +81,7 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
 
                     // Make sure it's a valid file
                     if (!_file.path.endsWith('.json')) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -92,6 +94,7 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
 
                     // Make sure that the file name is "google-services.json"
                     if (_file.name != 'google-services.json') {
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -109,6 +112,7 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
 
                       widget.onFirebaseUpload(_googleServices);
 
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -117,6 +121,9 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                         ),
                       );
                     } catch (_) {
+                      await logger.file(LogTypeTag.error,
+                          'Couldn\'t upload "google-services.json" file. $_');
+                      ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
                           context,
@@ -124,8 +131,6 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
                           type: SnackBarType.error,
                         ),
                       );
-                      await logger.file(LogTypeTag.error,
-                          'Couldn\'t upload "google-services.json" file. $_');
                     }
                   },
                 ),
@@ -137,53 +142,50 @@ class _ProjectPreConfigSectionState extends State<ProjectPreConfigSection> {
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.1),
+              color: Colors.blueGrey.withOpacity(0.2),
               child: Column(
                 children: <Widget>[
                   Row(
                     children: <Widget>[
                       SvgPicture.asset(Assets.firebase, height: 20),
-                      const Spacer(),
-                      SquareButton(
-                        icon: const Icon(Icons.close_rounded, size: 15),
-                        onPressed: () {
-                          Map<String, dynamic>? _firebaseJson =
-                              widget.firebaseJson;
-                          widget.onFirebaseUpload(null);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Your Firebase project has been removed.',
-                              type: SnackBarType.done,
-                              action: snackBarAction(
-                                text: 'Undo',
-                                onPressed: () =>
-                                    widget.onFirebaseUpload(_firebaseJson),
-                              ),
-                            ),
-                          );
-                        },
-                        color: Colors.transparent,
-                        size: 22,
-                      ),
-                    ],
-                  ),
-                  VSeparators.normal(),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Text(
-                        'Project Name: ',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      HSeparators.small(),
                       Expanded(
                         child: Text(
                           widget.firebaseJson!['project_info']!['project_id'],
                         ),
                       ),
+                      Tooltip(
+                        message: 'Remove',
+                        waitDuration: const Duration(seconds: 1),
+                        child: SquareButton(
+                          icon: const Icon(Icons.close_rounded, size: 15),
+                          onPressed: () {
+                            Map<String, dynamic>? _firebaseJson =
+                                widget.firebaseJson;
+
+                            widget.onFirebaseUpload(null);
+
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Your Firebase project has been removed.',
+                                type: SnackBarType.done,
+                                action: snackBarAction(
+                                  text: 'Undo',
+                                  onPressed: () =>
+                                      widget.onFirebaseUpload(_firebaseJson),
+                                ),
+                              ),
+                            );
+                          },
+                          color: Colors.transparent,
+                          size: 22,
+                        ),
+                      ),
                     ],
                   ),
-                  VSeparators.small(),
+                  VSeparators.normal(),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
+import 'package:fluttermatic/components/dialog_templates/other/reset_fluttermatic.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 
@@ -49,7 +50,6 @@ class _TroubleShootSettingsSectionState
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TabViewTabHeadline(
       title: 'Troubleshoot',
       allowContentScroll: false,
@@ -57,6 +57,7 @@ class _TroubleShootSettingsSectionState
         Expanded(
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 if (_requireTruShoot)
                   Padding(
@@ -66,83 +67,96 @@ class _TroubleShootSettingsSectionState
                       type: InformationType.error,
                     ),
                   ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    CheckBoxElement(
-                      onChanged: (bool? val) {
-                        setState(() => _all = !_all);
-                        _checkTroubleShoot();
-                      },
-                      value: _all,
-                      text: 'All Applications',
-                    ),
-                    CheckBoxElement(
-                      onChanged: (bool? val) {
-                        setState(() {
-                          _flutter = !_flutter;
-                          _all = false;
-                        });
-                        _checkTroubleShoot();
-                      },
-                      value: _flutter,
-                      text: 'Flutter',
-                    ),
-                    CheckBoxElement(
-                      onChanged: (bool? val) {
-                        setState(() {
-                          _studio = !_studio;
-                          _all = false;
-                        });
-                        _checkTroubleShoot();
-                      },
-                      value: _studio,
-                      text: 'Android Studio',
-                    ),
-                    CheckBoxElement(
-                      onChanged: (bool? val) {
-                        setState(() {
-                          _vsc = !_vsc;
-                          _all = false;
-                        });
-                        _checkTroubleShoot();
-                      },
-                      value: _vsc,
-                      text: 'Visual Studio Code',
-                    ),
-                  ],
+                CheckBoxElement(
+                  onChanged: (bool? val) {
+                    setState(() => _all = !_all);
+                    _checkTroubleShoot();
+                  },
+                  value: _all,
+                  text: 'All Applications',
+                ),
+                CheckBoxElement(
+                  onChanged: (bool? val) {
+                    setState(() {
+                      _flutter = !_flutter;
+                      _all = false;
+                    });
+                    _checkTroubleShoot();
+                  },
+                  value: _flutter,
+                  text: 'Flutter',
+                ),
+                CheckBoxElement(
+                  onChanged: (bool? val) {
+                    setState(() {
+                      _studio = !_studio;
+                      _all = false;
+                    });
+                    _checkTroubleShoot();
+                  },
+                  value: _studio,
+                  text: 'Android Studio',
+                ),
+                CheckBoxElement(
+                  onChanged: (bool? val) {
+                    setState(() {
+                      _vsc = !_vsc;
+                      _all = false;
+                    });
+                    _checkTroubleShoot();
+                  },
+                  value: _vsc,
+                  text: 'Visual Studio Code',
                 ),
                 VSeparators.normal(),
-                ActionOptions(
-                  actions: <ActionOptionsObject>[
-                    ActionOptionsObject(
-                      'Generate Report',
-                      () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const BuildLogsDialog(),
-                        );
-                      },
+                const Text('Options'),
+                VSeparators.small(),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 2,
+                      height: 60,
+                      color: Colors.blueGrey.withOpacity(0.2),
                     ),
-                    ActionOptionsObject(
-                      'Flutter Doctor',
-                      () {}, // TODO: Show flutter doctor result. Run doctor to get result.
+                    HSeparators.xSmall(),
+                    Expanded(
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 5,
+                        children: <Widget>[
+                          TextButton(
+                            child: const Text('Troubleshoot'),
+                            onPressed: _startTroubleshoot,
+                          ),
+                          TextButton(
+                            child: const Text('Flutter Doctor'),
+                            // TODO: Show flutter doctor result. Run doctor to get result.
+                            onPressed: () {},
+                          ),
+                          TextButton(
+                            child: const Text('Generate Report'),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const BuildLogsDialog(),
+                              );
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Reset all'),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const ResetFlutterMaticDialog(),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ],
-            ),
-          ),
-        ),
-        VSeparators.xSmall(),
-        Align(
-          alignment: Alignment.centerRight,
-          child: RectangleButton(
-            width: 150,
-            onPressed: _startTroubleshoot,
-            child: Text(
-              'Start Troubleshoot',
-              style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
             ),
           ),
         ),

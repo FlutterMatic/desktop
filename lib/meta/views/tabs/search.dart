@@ -33,6 +33,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 15, 15, 5),
       child: Stack(
+        fit: StackFit.loose,
         children: <Widget>[
           Row(
             children: <Widget>[
@@ -171,13 +172,8 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                         ? kYellowColor
                         : Colors.yellow[900],
                   ),
-                  onPressed: () {
-                    // showDialog(
-                    //   context: context,
-                    //   barrierDismissible: false,
-                    //   builder: (_) => const NewProjectDialog(),
-                    // );
-                  },
+                  // TODO: Show notifications.
+                  onPressed: () {},
                 ),
               ),
             ],

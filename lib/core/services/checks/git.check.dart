@@ -35,6 +35,8 @@ class GitNotifier extends ChangeNotifier {
   /// Check git exists in the system or not.
   Future<void> checkGit(BuildContext context, FluttermaticAPI? api) async {
     try {
+      String _drive = context.read<SpaceCheck>().drive;
+
       _progress = Progress.started;
       notifyListeners();
 
@@ -76,7 +78,9 @@ class GitNotifier extends ChangeNotifier {
 
           /// Extract java from compressed file.
           bool _gitExtracted = await unzip(
-              _dir.path + '\\tmp\\' + 'git.tar.bz2', 'C:\\fluttermatic\\git');
+              context,
+              _dir.path + '\\tmp\\' + 'git.tar.bz2',
+              '$_drive:\\fluttermatic\\git');
           if (_gitExtracted) {
             await logger.file(LogTypeTag.info, 'Git extraction was successful');
           } else {
@@ -85,12 +89,12 @@ class GitNotifier extends ChangeNotifier {
 
           /// Appending path to env
           bool _isGitPathSet =
-              await setPath('C:\\fluttermatic\\git\\bin', _dir.path);
+              await setPath('$_drive:\\fluttermatic\\git\\bin', _dir.path);
 
           if (_isGitPathSet) {
             await SharedPref()
                 .pref
-                .setString(SPConst.gitPath, 'C:\\fluttermatic\\git\\bin');
+                .setString(SPConst.gitPath, '$_drive:\\fluttermatic\\git\\bin');
             _progress = Progress.done;
             notifyListeners();
             await logger.file(LogTypeTag.info, 'Git set to path');

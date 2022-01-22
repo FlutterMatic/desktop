@@ -51,7 +51,7 @@ class ProjectServicesModel {
       projectsPath: cache.projectsPath ?? _getValue('projectsPath'),
       refreshIntervals: cache.refreshIntervals ?? _getValue('refreshIntervals'),
       lastReload:
-          cache.lastReload ?? DateTime.tryParse(_getValue('lastReload')),
+          cache.lastReload ?? DateTime.tryParse(_getValue('lastReload') ?? ''),
     );
 
     await _file.writeAsString(jsonEncode(_newCache.toJson()));
@@ -172,7 +172,7 @@ class ProjectCacheResult {
     return ProjectCacheResult(
       projectsPath: json['projectsPath'].toString(),
       refreshIntervals: int.parse(json['refreshIntervals']),
-      lastReload: DateTime.parse(json['lastReload']),
+      lastReload: DateTime.tryParse(json['lastReload']),
     );
   }
 

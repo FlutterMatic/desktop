@@ -33,6 +33,8 @@ class FlutterNotifier extends ChangeNotifier {
   /// Function checks whether Flutter-SDK exists in the system or not.
   Future<void> checkFlutter(BuildContext context, FlutterSDK? sdk) async {
     try {
+      String _drive = context.read<SpaceCheck>().drive;
+
       _progress = Progress.started;
       notifyListeners();
 
@@ -52,9 +54,7 @@ class FlutterNotifier extends ChangeNotifier {
       if (_flutterPath == null) {
         /// Application supporting Directory
         Directory _dir = await getApplicationSupportDirectory();
-        // value = 'Flutter not found';
         await logger.file(LogTypeTag.warning, 'Flutter-SDK not found');
-        // value = 'Downloading flutter';
         await logger.file(LogTypeTag.info, 'Downloading Flutter-SDK');
 
         bool _fZip =
@@ -89,8 +89,9 @@ class FlutterNotifier extends ChangeNotifier {
 
         /// Extraction
         bool _extracted = await unzip(
+            context,
             _dir.path + '\\tmp\\' + 'flutter.$_archiveType',
-            'C:\\fluttermatic\\');
+            '$_drive:\\fluttermatic\\');
 
         if (_extracted) {
           // value = 'Extracted Flutter-SDK';
@@ -105,13 +106,12 @@ class FlutterNotifier extends ChangeNotifier {
 
         /// Appending path to env
         bool _isPathSet =
-            await setPath('C:\\fluttermatic\\flutter\\bin', _dir.path);
+            await setPath('$_drive:\\fluttermatic\\flutter\\bin', _dir.path);
 
         if (_isPathSet) {
           await logger.file(LogTypeTag.info, 'Flutter-SDK set to path');
-          await SharedPref()
-              .pref
-              .setString(SPConst.flutterPath, 'C:\\fluttermatic\\flutter\\bin');
+          await SharedPref().pref.setString(
+              SPConst.flutterPath, '$_drive:\\fluttermatic\\flutter\\bin');
         } else {
           await logger.file(LogTypeTag.error, 'Flutter-SDK set to path failed');
         }

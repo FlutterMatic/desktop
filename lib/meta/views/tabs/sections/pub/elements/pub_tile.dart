@@ -98,35 +98,39 @@ class _PubPkgTileState extends State<PubPkgTile> {
                     // Show a copy icon to copy the dependency directly on when
                     // hovering to avoid UI distraction.
                     if (_isHovering)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5),
-                        child: RectangleButton(
-                          width: 22,
-                          height: 22,
-                          padding: EdgeInsets.zero,
-                          radius: BorderRadius.circular(2),
-                          color: Colors.transparent,
-                          child: Icon(
-                            Icons.content_copy,
-                            size: 14,
-                            color: (Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black)
-                                .withOpacity(0.5),
+                      Tooltip(
+                        message: 'Copy dependency',
+                        waitDuration: const Duration(seconds: 1),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: RectangleButton(
+                            width: 22,
+                            height: 22,
+                            padding: EdgeInsets.zero,
+                            radius: BorderRadius.circular(2),
+                            color: Colors.transparent,
+                            child: Icon(
+                              Icons.content_copy,
+                              size: 14,
+                              color: (Theme.of(context).isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(0.5),
+                            ),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: widget.data!.name +
+                                      ': ^${widget.data!.info.version}'));
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(
+                                  context,
+                                  'Dependency has been copied to your clipboard.',
+                                  type: SnackBarType.done,
+                                ),
+                              );
+                            },
                           ),
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(
-                                text: widget.data!.name +
-                                    ': ^${widget.data!.info.version}'));
-                            ScaffoldMessenger.of(context).clearSnackBars();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarTile(
-                                context,
-                                'Dependency has been copied to your clipboard.',
-                                type: SnackBarType.done,
-                              ),
-                            );
-                          },
                         ),
                       ),
                   ],
@@ -149,82 +153,94 @@ class _PubPkgTileState extends State<PubPkgTile> {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.thumb_up_alt_rounded,
-                            size: 13,
-                            color: (Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black)
-                                .withOpacity(0.5),
-                          ),
-                          HSeparators.xSmall(),
-                          Text(
-                            NumberFormat.compact().format(
-                                widget.data?.metrics?.score.likeCount ?? 0),
-                            style: TextStyle(
+                      child: Tooltip(
+                        message: 'Likes',
+                        waitDuration: const Duration(seconds: 1),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.thumb_up_alt_rounded,
+                              size: 13,
                               color: (Theme.of(context).isDarkTheme
                                       ? Colors.white
                                       : Colors.black)
                                   .withOpacity(0.5),
                             ),
-                          ),
-                        ],
+                            HSeparators.xSmall(),
+                            Text(
+                              NumberFormat.compact().format(
+                                  widget.data?.metrics?.score.likeCount ?? 0),
+                              style: TextStyle(
+                                color: (Theme.of(context).isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.5),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.insights_rounded,
-                            size: 13,
-                            color: (Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black)
-                                .withOpacity(0.5),
-                          ),
-                          HSeparators.xSmall(),
-                          Text(
-                            (widget.data?.metrics?.score.maxPoints ?? 0)
-                                .toString(),
-                            style: TextStyle(
+                      child: Tooltip(
+                        message: 'Score',
+                        waitDuration: const Duration(seconds: 1),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.insights_rounded,
+                              size: 13,
                               color: (Theme.of(context).isDarkTheme
                                       ? Colors.white
                                       : Colors.black)
                                   .withOpacity(0.5),
                             ),
-                          ),
-                        ],
+                            HSeparators.xSmall(),
+                            Text(
+                              (widget.data?.metrics?.score.maxPoints ?? 0)
+                                  .toString(),
+                              style: TextStyle(
+                                color: (Theme.of(context).isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.5),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.public_rounded,
-                            size: 13,
-                            color: (Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black)
-                                .withOpacity(0.5),
-                          ),
-                          HSeparators.xSmall(),
-                          Text(
-                            (widget.data?.metrics?.score.maxPoints ?? 0)
-                                    .toString() +
-                                '%',
-                            style: TextStyle(
+                      child: Tooltip(
+                        message: 'Popularity',
+                        waitDuration: const Duration(seconds: 1),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.public_rounded,
+                              size: 13,
                               color: (Theme.of(context).isDarkTheme
                                       ? Colors.white
                                       : Colors.black)
                                   .withOpacity(0.5),
                             ),
-                          ),
-                        ],
+                            HSeparators.xSmall(),
+                            Text(
+                              (widget.data?.metrics?.score.maxPoints ?? 0)
+                                      .toString() +
+                                  '%',
+                              style: TextStyle(
+                                color: (Theme.of(context).isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.5),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -255,6 +271,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                   children: <Widget>[
                     const Tooltip(
                       message: 'Verified Publisher',
+                      waitDuration: Duration(seconds: 1),
                       child: Icon(Icons.verified, size: 15, color: kGreenColor),
                     ),
                     HSeparators.xSmall(),

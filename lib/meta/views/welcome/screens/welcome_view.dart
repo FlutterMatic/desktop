@@ -113,7 +113,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (_) => const SetupDocsScreen(),
+                            builder: (_) => const SetupDocsDialog(),
                           );
                         },
                         child: Padding(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
@@ -47,7 +48,13 @@ class DiscoverSettingsSection extends StatelessWidget {
             ),
             ActionOptionsObject(
               'Our Docs',
-              () {}, // TODO: Navigate to our documentation.
+              () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (_) => const SetupDocsDialog(),
+                );
+              },
               icon: SvgPicture.asset(Assets.doc,
                   color: Theme.of(context).isDarkTheme ? null : Colors.black,
                   height: 14),

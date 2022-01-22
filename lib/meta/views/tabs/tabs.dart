@@ -1,4 +1,5 @@
 // 🐦 Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -30,7 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeTabObject('Home', Assets.home, HomeMainSection()),
     HomeTabObject('Projects', Assets.project, HomeProjectsSection()),
     HomeTabObject('Pub Packages', Assets.package, HomePubSection()),
-    HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections()),
+    if (!kReleaseMode) // TODO: Remove this once this tab is ready for production.
+      HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections()),
   ];
 
   @override

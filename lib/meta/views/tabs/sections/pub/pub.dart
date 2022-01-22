@@ -133,18 +133,13 @@ class _HomePubSectionState extends State<HomePubSection> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(15),
-                child: Column(
-                  children: <Widget>[
-                    VSeparators.large(),
-                    HorizontalAxisView(
-                      title: 'Favorites & Popular Packages',
-                      isVertical: true,
-                      // Creates a empty list of packages that will be filled later.
-                      content: <int>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                          .map((int e) => const PubPkgTile(data: null))
-                          .toList(),
-                    ),
-                  ],
+                child: HorizontalAxisView(
+                  title: 'Favorites & Popular Packages',
+                  isVertical: true,
+                  // Creates a empty list of packages that will be filled later.
+                  content: <int>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                      .map((int e) => const PubPkgTile(data: null))
+                      .toList(),
                 ),
               ),
             ),
@@ -157,7 +152,6 @@ class _HomePubSectionState extends State<HomePubSection> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    VSeparators.large(),
                     HorizontalAxisView(
                       title: 'Favorites & Popular Packages',
                       isVertical: true,
