@@ -110,7 +110,6 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Select Editor'),
-          VSeparators.normal(),
           if (_showEditorSelection) ...<Widget>[
             Row(
               children: <Widget>[

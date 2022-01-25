@@ -15,6 +15,7 @@ import 'package:fluttermatic/core/libraries/components.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/meta/views/dialogs/drive_error.dart';
 import 'package:fluttermatic/meta/views/dialogs/low_drive_storage.dart';
 
 class WelcomeGettingStarted extends StatefulWidget {
@@ -41,7 +42,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
       String _result = 'success';
       await _options.retry(
         () async {
-          if (apiData == null) {
+          if (apiData == null && mounted) {
             await context.read<FlutterMaticAPINotifier>().fetchAPIData();
             apiData = context.read<FlutterMaticAPINotifier>().apiMap;
             await logger.file(LogTypeTag.info,
@@ -50,7 +51,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         },
         onRetry: (_) async {
           _totalAttempts++;
-          if (_totalAttempts == _options.maxAttempts) {
+          if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup because of connection issues.');
             _result = 'error';
@@ -61,7 +62,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
       );
       await _options.retry(
         () async {
-          if (sdkData == null) {
+          if (sdkData == null && mounted) {
             await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
             sdkData = context.read<FlutterSDKNotifier>().sdkMap;
             await logger.file(LogTypeTag.info,
@@ -70,7 +71,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         },
         onRetry: (_) async {
           _totalAttempts++;
-          if (_totalAttempts == _options.maxAttempts) {
+          if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
             _result = 'error';
@@ -81,7 +82,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
       );
       await _options.retry(
         () async {
-          if (tagName == null || sha == null) {
+          if (tagName == null || sha == null && mounted) {
             await context.read<VSCodeAPINotifier>().fetchVscAPIData();
             tagName = context.read<VSCodeAPINotifier>().tagName;
             sha = context.read<VSCodeAPINotifier>().sha;
@@ -93,7 +94,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         },
         onRetry: (_) async {
           _totalAttempts++;
-          if (_totalAttempts == _options.maxAttempts) {
+          if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
             _result = 'error';
@@ -103,7 +104,17 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
         retryIf: (_) => _ is SocketException || _ is TimeoutException,
       );
 
-      if (context.read<SpaceCheck>().lowDriveSpace) {
+      // If we have a drive error, we show a dialog error until resolved.
+      if (context.read<SpaceCheck>().hasConflictingError) {
+        await showDialog(
+          context: context,
+          builder: (_) => const SystemDriveErrorDialog(),
+        );
+      }
+
+      // If we are low in space, show a dialog that won't allow interaction
+      // until we have enough space.
+      if (context.read<SpaceCheck>().lowDriveSpace && mounted) {
         await showDialog(
           context: context,
           builder: (_) => const LowDriveSpaceDialog(),

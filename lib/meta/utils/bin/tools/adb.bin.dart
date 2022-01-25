@@ -32,6 +32,7 @@ abstract class ADBBinInfo {
         .split(' ')
         .map((String word) => word.trim())
         .where((String word) => word.isNotEmpty);
+
     bool foundADB = false;
 
     for (String word in output) {
@@ -39,11 +40,7 @@ abstract class ADBBinInfo {
         if (foundADB) {
           try {
             adbVersion = Version.parse(word);
-          } catch (_, s) {
-            logger.file(
-                LogTypeTag.error, 'Failed to parse ADB version: $word: $_',
-                stackTraces: s);
-          }
+          } catch (_) {}
         } else if (word.toLowerCase().contains('bridge')) {
           foundADB = true;
         }

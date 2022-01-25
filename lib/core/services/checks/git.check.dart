@@ -43,7 +43,9 @@ class GitNotifier extends ChangeNotifier {
       Directory _dir = await getApplicationSupportDirectory();
       _progress = Progress.checking;
       notifyListeners();
+
       String? _gitPath = await which('git');
+      
       if (_gitPath == null) {
         await logger.file(
             LogTypeTag.warning, 'Git not installed in the system.');
@@ -128,7 +130,7 @@ class GitNotifier extends ChangeNotifier {
 
         gitVersion = await getGitBinVersion();
         versions.git = gitVersion.toString();
-        await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
+        await logger.file(LogTypeTag.info, 'Git version: ${versions.git}');
         await SharedPref().pref.setString(SPConst.gitVersion, versions.git!);
         _progress = Progress.done;
         notifyListeners();
@@ -138,7 +140,7 @@ class GitNotifier extends ChangeNotifier {
         _gitPath = SharedPref().pref.getString(SPConst.gitPath);
         await logger.file(LogTypeTag.info, 'Git found at - $_gitPath');
         versions.git = SharedPref().pref.getString(SPConst.gitVersion);
-        await logger.file(LogTypeTag.info, 'Git version : ${versions.git}');
+        await logger.file(LogTypeTag.info, 'Git version: ${versions.git}');
         _progress = Progress.done;
         notifyListeners();
       }

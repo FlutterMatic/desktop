@@ -38,8 +38,7 @@ class AboutSection extends StatelessWidget {
                 context: context,
                 applicationIcon: Image.asset(Assets.appLogo),
                 applicationName: 'FlutterMatic',
-                applicationVersion:
-                    const String.fromEnvironment('CURRENT_VERSION'),
+                applicationVersion: appVersion + ' ($appBuild)',
               );
             },
           ),

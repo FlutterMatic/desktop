@@ -19,7 +19,7 @@ export '../../components/widgets/ui/info_widget.dart';
 export '../../components/widgets/ui/bullet_point.dart';
 export '../../components/widgets/ui/activity_tile.dart';
 export '../../components/widgets/ui/snackbar_tile.dart';
-export '../../components/widgets/ui/title_section.dart';
+export '../../components/widgets/ui/installation_status.dart';
 export '../../components/widgets/ui/warning_widget.dart';
 export '../../components/widgets/ui/round_container.dart';
 export '../../components/widgets/ui/dialog_template.dart';

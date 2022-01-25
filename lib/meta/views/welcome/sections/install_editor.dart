@@ -79,7 +79,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
             welcomeHeaderTitle(
               Assets.editor,
               'Install Editor',
-              'You will need to install the Flutter Editor to start using Flutter.',
+              'You will need to install an editor that supports Flutter to start developing your apps.',
             ),
             VSeparators.normal(),
             if (_editorTypes.contains(EditorType.none))
@@ -90,7 +90,32 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                   type: InformationType.warning,
                 ),
               ),
-            if (!widget.isInstalling && !widget.doneInstalling)
+            if (widget.isInstalling || widget.doneInstalling)
+              Builder(
+                builder: (_) {
+                  if (vsCodeNotifier.progress == Progress.started ||
+                      vsCodeNotifier.progress == Progress.checking ||
+                      androidStudioNotifier.progress == Progress.checking ||
+                      androidStudioNotifier.progress == Progress.started) {
+                    return hLoadingIndicator(context: context);
+                  } else if (vsCodeNotifier.progress == Progress.extracting ||
+                      androidStudioNotifier.progress == Progress.extracting) {
+                    return hLoadingIndicator(context: context);
+                  } else if (vsCodeNotifier.progress == Progress.done &&
+                      androidStudioNotifier.progress == Progress.done) {
+                    return welcomeToolInstalled(
+                      context,
+                      title:
+                          '${_editorTypes.length > 1 ? 'Editors' : 'Editor'} Installed',
+                      message:
+                          '${_editorTypes.length > 1 ? 'Editors' : 'Editor'} installed successfully on your device. You can now continue to the next step.',
+                    );
+                  } else {
+                    return const CustomProgressIndicator();
+                  }
+                },
+              )
+            else
               Row(
                 children: <Widget>[
                   _selectEditor(
@@ -102,18 +127,8 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                       if (_editorTypes.contains(EditorType.none)) {
                         setState(() =>
                             _editorTypes = <EditorType>[EditorType.vscode]);
-                      } else {
-                        if (_editorTypes.contains(EditorType.vscode)) {
-                          if (_editorTypes.length == 1) {
-                            setState(() =>
-                                _editorTypes = <EditorType>[EditorType.none]);
-                          } else {
-                            setState(
-                                () => _editorTypes.remove(EditorType.vscode));
-                          }
-                        } else {
-                          setState(() => _editorTypes.add(EditorType.vscode));
-                        }
+                      } else if (!_editorTypes.contains(EditorType.vscode)) {
+                        setState(() => _editorTypes.add(EditorType.vscode));
                       }
                       widget.onEditorTypeChanged(_editorTypes);
                     },
@@ -132,20 +147,12 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                         setState(() => _editorTypes = <EditorType>[
                               EditorType.androidStudio
                             ]);
-                      } else {
-                        if (_editorTypes.contains(EditorType.androidStudio)) {
-                          if (_editorTypes.length == 1) {
-                            setState(() =>
-                                _editorTypes = <EditorType>[EditorType.none]);
-                          } else {
-                            setState(() =>
-                                _editorTypes.remove(EditorType.androidStudio));
-                          }
-                        } else {
-                          setState(
-                              () => _editorTypes.add(EditorType.androidStudio));
-                        }
+                      } else if (!_editorTypes
+                          .contains(EditorType.androidStudio)) {
+                        setState(
+                            () => _editorTypes.add(EditorType.androidStudio));
                       }
+
                       widget.onEditorTypeChanged(_editorTypes);
                     },
                     installation: vsCodeNotifier.progress != Progress.none ||
@@ -173,31 +180,6 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     isSelected: _editorTypes.contains(EditorType.none),
                   ),
                 ],
-              )
-            else
-              Builder(
-                builder: (_) {
-                  if (vsCodeNotifier.progress == Progress.started ||
-                      vsCodeNotifier.progress == Progress.checking ||
-                      androidStudioNotifier.progress == Progress.checking ||
-                      androidStudioNotifier.progress == Progress.started) {
-                    return hLoadingIndicator(context: context);
-                  } else if (vsCodeNotifier.progress == Progress.extracting ||
-                      androidStudioNotifier.progress == Progress.extracting) {
-                    return hLoadingIndicator(context: context);
-                  } else if (vsCodeNotifier.progress == Progress.done &&
-                      androidStudioNotifier.progress == Progress.done) {
-                    return welcomeToolInstalled(
-                      context,
-                      title:
-                          '${_editorTypes.length > 1 ? 'Editors' : 'Editor'} Installed',
-                      message:
-                          '${_editorTypes.length > 1 ? 'Editors' : 'Editor'} installed successfully on your device. You can now continue to the next step.',
-                    );
-                  } else {
-                    return const CustomProgressIndicator();
-                  }
-                },
               ),
             VSeparators.normal(),
             WelcomeButton(

@@ -101,7 +101,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           ),
                         ),
                       ),
-                      HSeparators.xSmall(),
                       TextButton(
                         style: ButtonStyle(
                           splashFactory: NoSplash.splashFactory,
@@ -113,7 +112,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (_) => const SetupDocsDialog(),
+                            builder: (_) => const FMaticDocumentationDialog(),
                           );
                         },
                         child: Padding(
@@ -339,7 +338,7 @@ class _WelcomePageState extends State<WelcomePage> {
               // Restart the device immediately. There is no need to schedule
               // the restart since we are already having a timer above.
               await shell.run('shutdown /r /f /t');
-            } else {
+            } else if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 snackBarTile(
                   context,

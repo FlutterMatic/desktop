@@ -14,55 +14,71 @@ import 'package:fluttermatic/core/libraries/services.dart';
 class ConnectionNotifier with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
 
-  bool _isOnline = false;
+  bool _isOnline = true;
   bool get isOnline => _isOnline;
 
   /// Will start monitoring the user network connection making
   /// sure to notify any connection changes.
   Future<void> startMonitoring() async {
-    await initConnectivity();
     _connectivity.onConnectivityChanged
         .listen((ConnectivityResult result) async {
       if (result == ConnectivityResult.none) {
         _isOnline = false;
-        notifyListeners();
+        await logger.file(
+            LogTypeTag.warning, 'Lost connection. FlutterMatic is offline.');
       } else {
-        await _updateConnectionStatus().then((bool isConnected) {
+        await _updateConnectionStatus().then((bool isConnected) async {
           _isOnline = isConnected;
-          notifyListeners();
+
+          if (isConnected) {
+            await logger.file(
+                LogTypeTag.info, 'Back online. FlutterMatic is online.');
+          } else {
+            await logger.file(LogTypeTag.warning,
+                'Lost connection. FlutterMatic is offline.');
+          }
         });
       }
+
+      notifyListeners();
     });
   }
 
   Future<void> initConnectivity() async {
     try {
-      ConnectivityResult status = await _connectivity.checkConnectivity();
-      if (status == ConnectivityResult.none) {
+      ConnectivityResult _status = await _connectivity.checkConnectivity();
+
+      if (_status == ConnectivityResult.none) {
         _isOnline = false;
-        notifyListeners();
       } else {
         _isOnline = true;
-        notifyListeners();
       }
-    } on PlatformException catch (_) {
-      await logger.file(LogTypeTag.error, 'PlatformException: $_');
-    } catch (e) {
-      await logger.file(LogTypeTag.error, e.toString());
+
+      notifyListeners();
+
+      // ignore: unawaited_futures
+      startMonitoring();
+      return;
+    } on PlatformException catch (_, s) {
+      await logger.file(
+          LogTypeTag.error, 'Failed to init connection. PlatformException: $_',
+          stackTraces: s);
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error,
+          'Failed to establish initial connection: ${_.toString()}',
+          stackTraces: s);
     }
   }
 
   Future<bool> _updateConnectionStatus() async {
     try {
-      List<InternetAddress> result =
+      List<InternetAddress> _result =
           await InternetAddress.lookup('www.google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      } else {
-        return false;
-      }
-    } on SocketException catch (_) {
-      await logger.file(LogTypeTag.error, 'SocketException: $_');
+
+      return _result.isNotEmpty && _result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_, s) {
+      await logger.file(LogTypeTag.error, 'SocketException: $_',
+          stackTraces: s);
       return false;
     } catch (_, s) {
       await logger.file(

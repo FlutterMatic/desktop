@@ -23,7 +23,7 @@ class DownloadNotifier extends ChangeNotifier {
   Progress get progress => _progress;
   double get downloadProgress => dProgress;
 
-  Future<void> downloadFile(String uri, String? fileName, String dir,
+  Future<void> downloadFile(String uri, String fileName, String dir,
       {Color? progressBarColor}) async {
     _progress = Progress.started;
     dProgress = 0;
@@ -37,7 +37,7 @@ class DownloadNotifier extends ChangeNotifier {
         _progress = Progress.downloading;
         notifyListeners();
         await logger.file(LogTypeTag.info, 'Started downloading $fileName.');
-        bool _exists = await checkFile(dir + '\\', fileName!);
+        bool _exists = await checkFile(dir + '\\', fileName);
         if (!_exists) {
           IOSink openFile = File(dir + '\\' + fileName).openWrite();
           if (dProgress > 100) {
@@ -83,6 +83,7 @@ class DownloadNotifier extends ChangeNotifier {
             'Error code while downloading $fileName - ${response.statusCode}');
       }
     } catch (_, s) {
+      print(s);
       _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.error, 'Failed to use download notifier: $_',

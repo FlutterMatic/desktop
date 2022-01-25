@@ -5,25 +5,25 @@ import 'package:flutter/services.dart';
 // 📦 Package imports:
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class SetupDocsDialog extends StatefulWidget {
-  const SetupDocsDialog({Key? key}) : super(key: key);
+class FMaticDocumentationDialog extends StatefulWidget {
+  const FMaticDocumentationDialog({Key? key}) : super(key: key);
 
   @override
-  _SetupDocsDialogState createState() => _SetupDocsDialogState();
+  _FMaticDocumentationDialogState createState() =>
+      _FMaticDocumentationDialogState();
 }
 
-class _SetupDocsDialogState extends State<SetupDocsDialog> {
+class _FMaticDocumentationDialogState extends State<FMaticDocumentationDialog> {
   bool _isLoading = true;
   final List<TabViewObject> _tabs = <TabViewObject>[];
 
@@ -38,7 +38,7 @@ class _SetupDocsDialogState extends State<SetupDocsDialog> {
     try {
       for (String name in _docsNames) {
         String _fileContent =
-            await rootBundle.loadString('assets/markdown/setup_docs/$name');
+            await rootBundle.loadString('assets/markdown/documentation/$name');
 
         setState(() {
           _tabs.add(
@@ -93,13 +93,13 @@ class _SetupDocsDialogState extends State<SetupDocsDialog> {
 
       setState(() => _isLoading = false);
     } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to load setup docs $_',
+      await logger.file(LogTypeTag.error, 'Failed to load documentation $_',
           stackTraces: s);
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
           context,
-          'Failed to load setup docs. Please try again later.',
+          'Failed to load documentation. Please try again later.',
           type: SnackBarType.error,
         ),
       );
@@ -120,8 +120,7 @@ class _SetupDocsDialogState extends State<SetupDocsDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const DialogHeader(title: 'Setup Documentation'),
-          VSeparators.normal(),
+          const DialogHeader(title: 'Documentation'),
           if (_isLoading)
             const Center(child: Spinner())
           else

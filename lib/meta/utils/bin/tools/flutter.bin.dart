@@ -6,9 +6,6 @@ import 'dart:io';
 import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-// 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/services.dart';
-
 String? _flutterExecutablePath;
 
 /// Resolved flutter path if found
@@ -65,11 +62,7 @@ abstract class FlutterBinInfo {
         if (foundFlutter) {
           try {
             version = Version.parse(word);
-          } catch (_, s) {
-            logger.file(
-                LogTypeTag.error, 'Failed to parse Flutter version: $word: $_',
-                stackTraces: s);
-          }
+          } catch (_) {}
         } else if (word.toLowerCase().contains('flutter')) {
           foundFlutter = true;
         }

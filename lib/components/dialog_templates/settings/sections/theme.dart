@@ -22,6 +22,7 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   Widget build(BuildContext context) {
     return TabViewTabHeadline(
       title: 'Themes',
+      allowContentScroll: false,
       content: <Widget>[
         _themeTiles(
           context,
@@ -48,6 +49,14 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
                   Theme.of(context).brightness == Brightness.light);
             }
           },
+        ),
+        const Spacer(),
+        Align(
+          alignment: Alignment.centerRight,
+          child: SelectableText(
+            appVersion + ' - ' + appBuild,
+            style: const TextStyle(color: Colors.grey),
+          ),
         ),
       ],
     );

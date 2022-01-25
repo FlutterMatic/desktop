@@ -1,14 +1,16 @@
 // 🎯 Dart imports:
 import 'dart:io';
 
-// 📦 Package imports:
+// 🐦 Flutter imports:
 import 'package:flutter/cupertino.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
+
+// 📦 Package imports:
 import 'package:process_run/shell.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
 
 // import 'package:process_run/shell.dart';

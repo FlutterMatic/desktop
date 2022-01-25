@@ -1,11 +1,17 @@
+// 🎯 Dart imports:
 import 'dart:io';
 import 'dart:math';
 
+// 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/main.dart';
+
+// 📦 Package imports:
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -15,7 +21,7 @@ import 'package:fluttermatic/core/libraries/components.dart';
 import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:fluttermatic/main.dart';
 
 class ResetFlutterMaticDialog extends StatefulWidget {
   const ResetFlutterMaticDialog({Key? key}) : super(key: key);
@@ -92,10 +98,10 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
             child: IgnorePointer(
               ignoring: _loading,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const DialogHeader(
                       title: 'Reset FlutterMatic', canClose: false),
-                  VSeparators.small(),
                   informationWidget(
                     'You are about to completely reset FlutterMatic. This will delete all your data and settings including Flutter, IDE\'s, Git and anything else that was installed by FlutterMatic. You will still be able to reinstall all of these again.',
                     type: InformationType.error,

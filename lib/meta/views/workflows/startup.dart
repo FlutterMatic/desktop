@@ -20,6 +20,7 @@ import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/sections/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/sections/configure_actions.dart';
 import 'package:fluttermatic/meta/views/workflows/sections/confirmation.dart';
@@ -53,9 +54,12 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // Actions Config
   PlatformBuildModes _iOSBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _androidBuildMode = PlatformBuildModes.release;
+  PlatformBuildModes _webBuildMode = PlatformBuildModes.release;
+  PlatformBuildModes _windowsBuildMode = PlatformBuildModes.release;
+  PlatformBuildModes _macOSBuildMode = PlatformBuildModes.release;
+  PlatformBuildModes _linuxBuildMode = PlatformBuildModes.release;
+  WebRenderers _webRenderer = WebRenderers.canvaskit;
   bool _isFirebaseDeployVerified = false;
-  WebRenderers _defaultWebRenderer = WebRenderers.canvaskit;
-  PlatformBuildModes _defaultWebBuildMode = PlatformBuildModes.release;
 
   // Utils
   bool _showInfoLast = false;
@@ -81,11 +85,14 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
         iOSBuildMode: _iOSBuildMode,
         androidBuildMode: _androidBuildMode,
         isFirebaseDeployVerified: _isFirebaseDeployVerified,
-        defaultWebRenderer: _defaultWebRenderer,
-        defaultWebBuildMode: _defaultWebBuildMode,
+        webRenderer: _webRenderer,
+        webBuildMode: _webBuildMode,
         workflowActions:
             _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
         isSaved: false,
+        linuxBuildMode: _linuxBuildMode,
+        macosBuildMode: _macOSBuildMode,
+        windowsBuildMode: _windowsBuildMode,
       ).toJson();
 
       List<bool> _stopConditions = <bool>[
@@ -208,11 +215,14 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             iOSBuildMode: _iOSBuildMode,
             androidBuildMode: _androidBuildMode,
             isFirebaseDeployVerified: _isFirebaseDeployVerified,
-            defaultWebRenderer: _defaultWebRenderer,
-            defaultWebBuildMode: _defaultWebBuildMode,
+            webRenderer: _webRenderer,
+            webBuildMode: _webBuildMode,
             workflowActions:
                 _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
             isSaved: false,
+            linuxBuildMode: _linuxBuildMode,
+            macosBuildMode: _macOSBuildMode,
+            windowsBuildMode: _windowsBuildMode,
           ),
         );
 
@@ -239,12 +249,15 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               iOSBuildMode: _iOSBuildMode,
               androidBuildMode: _androidBuildMode,
               isFirebaseDeployVerified: _isFirebaseDeployVerified,
-              defaultWebRenderer: _defaultWebRenderer,
-              defaultWebBuildMode: _defaultWebBuildMode,
+              webRenderer: _webRenderer,
+              webBuildMode: _webBuildMode,
               workflowActions: _workflowActions
                   .map((WorkflowActionModel e) => e.id)
                   .toList(),
               isSaved: false,
+              linuxBuildMode: _linuxBuildMode,
+              macosBuildMode: _macOSBuildMode,
+              windowsBuildMode: _windowsBuildMode,
             ),
           );
 
@@ -290,19 +303,21 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     iOSBuildMode: _iOSBuildMode,
                     androidBuildMode: _androidBuildMode,
                     isFirebaseDeployVerified: _isFirebaseDeployVerified,
-                    defaultWebRenderer: _defaultWebRenderer,
-                    defaultWebBuildMode: _defaultWebBuildMode,
+                    webRenderer: _webRenderer,
+                    webBuildMode: _webBuildMode,
                     workflowActions: _workflowActions
                         .map((WorkflowActionModel e) => e.id)
                         .toList(),
                     isSaved: false,
+                    linuxBuildMode: _linuxBuildMode,
+                    macosBuildMode: _macOSBuildMode,
+                    windowsBuildMode: _windowsBuildMode,
                   ),
                 );
 
                 Navigator.pop(context);
               },
             ),
-            VSeparators.normal(),
             if (_interfaceView == _InterfaceView.workflowInfo)
               SetProjectWorkflowInfo(
                 disableChangePubspec: _forcePubspec,
@@ -365,25 +380,41 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             if (_interfaceView == _InterfaceView.configureActions)
               SetProjectWorkflowActionsConfiguration(
                 workflowActions: _workflowActions,
-                firebaseProjectIDController: _firebaseProjectIDController,
-                firebaseProjectName: _firebaseProjectName,
                 webUrlController: _webUrlController,
-                defaultIOSBuildMode: _iOSBuildMode,
-                oniOSBuildModeChanged: (PlatformBuildModes mode) =>
-                    setState(() => _iOSBuildMode = mode),
-                defaultAndroidBuildMode: _androidBuildMode,
-                onAndroidBuildModeChanged: (PlatformBuildModes mode) =>
-                    setState(() => _androidBuildMode = mode),
+                firebaseProjectName: _firebaseProjectName,
+                firebaseProjectIDController: _firebaseProjectIDController,
+                onFirebaseValidatedChanged: (bool isFirebaseValidated) {
+                  setState(
+                      () => _isFirebaseDeployVerified = isFirebaseValidated);
+                },
                 isFirebaseValidated: _isFirebaseDeployVerified,
-                onFirebaseValidatedChanged: (bool isFirebaseValidated) =>
-                    setState(
-                        () => _isFirebaseDeployVerified = isFirebaseValidated),
-                defaultWebBuildMode: _defaultWebBuildMode,
-                defaultWebRenderer: _defaultWebRenderer,
-                onBuildWebModeChanged: (PlatformBuildModes mode) =>
-                    setState(() => _defaultWebBuildMode = mode),
+                defaultWebBuildMode: _webBuildMode,
+                defaultIOSBuildMode: _iOSBuildMode,
+                defaultAndroidBuildMode: _androidBuildMode,
+                defaultLinuxBuildMode: _linuxBuildMode,
+                defaultMacOSBuildMode: _macOSBuildMode,
+                defaultWindowsBuildMode: _windowsBuildMode,
+                defaultWebRenderer: _webRenderer,
+                oniOSBuildModeChanged: (PlatformBuildModes mode) {
+                  setState(() => _iOSBuildMode = mode);
+                },
+                onAndroidBuildModeChanged: (PlatformBuildModes mode) {
+                  setState(() => _androidBuildMode = mode);
+                },
+                onBuildWebModeChanged: (PlatformBuildModes mode) {
+                  setState(() => _webBuildMode = mode);
+                },
+                onLinuxBuildModeChanged: (PlatformBuildModes mode) {
+                  setState(() => _linuxBuildMode = mode);
+                },
+                onMacOSBuildModeChanged: (PlatformBuildModes mode) {
+                  setState(() => _macOSBuildMode = mode);
+                },
+                onWindowsBuildModeChanged: (PlatformBuildModes mode) {
+                  setState(() => _windowsBuildMode = mode);
+                },
                 onWebRendererChanged: (WebRenderers renderer) =>
-                    setState(() => _defaultWebRenderer = renderer),
+                    setState(() => _webRenderer = renderer),
                 onNext: () {
                   if (_workflowActions.any((WorkflowActionModel e) =>
                       e.id == WorkflowActionsIds.deployProjectWeb)) {
@@ -424,12 +455,15 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       iOSBuildMode: _iOSBuildMode,
                       androidBuildMode: _androidBuildMode,
                       isFirebaseDeployVerified: _isFirebaseDeployVerified,
-                      defaultWebRenderer: _defaultWebRenderer,
-                      defaultWebBuildMode: _defaultWebBuildMode,
+                      webRenderer: _webRenderer,
+                      webBuildMode: _webBuildMode,
                       workflowActions: _workflowActions
                           .map((WorkflowActionModel e) => e.id)
                           .toList(),
                       isSaved: true,
+                      linuxBuildMode: _linuxBuildMode,
+                      macosBuildMode: _macOSBuildMode,
+                      windowsBuildMode: _windowsBuildMode,
                     ),
                   );
 
@@ -452,24 +486,44 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       iOSBuildMode: _iOSBuildMode,
                       androidBuildMode: _androidBuildMode,
                       isFirebaseDeployVerified: _isFirebaseDeployVerified,
-                      defaultWebRenderer: _defaultWebRenderer,
-                      defaultWebBuildMode: _defaultWebBuildMode,
+                      webRenderer: _webRenderer,
+                      webBuildMode: _webBuildMode,
                       workflowActions: _workflowActions
                           .map((WorkflowActionModel e) => e.id)
                           .toList(),
                       isSaved: true,
+                      linuxBuildMode: _linuxBuildMode,
+                      macosBuildMode: _macOSBuildMode,
+                      windowsBuildMode: _windowsBuildMode,
                     ),
                   );
 
                   if (_hasSaved) {
-                    // TODO: Show the workflow runner.
+                    Navigator.pop(context);
 
-                    // We now want to run the workflow.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Running workflows not yet supported/implemented. But workflow saved.',
-                        type: SnackBarType.error,
+                    String? _path =
+                        ((_pubspecFile?.pathToPubspec ?? widget.pubspecPath)
+                                ?.split('\\')
+                              ?..removeLast())
+                            ?.join('\\');
+
+                    if (_path == null) {
+                      await logger.file(LogTypeTag.error,
+                          'Could not get path to show workflow runner at save and run.');
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+                          context,
+                          'Failed to open Workflow Runner. Try opening the runner from the projects tab.',
+                          type: SnackBarType.error));
+
+                      return;
+                    }
+
+                    await showDialog(
+                      context: context,
+                      builder: (_) => WorkflowRunnerDialog(
+                        workflowPath:
+                            _path + 'fmatic' + (_nameController.text) + '.json',
                       ),
                     );
                   }
@@ -629,6 +683,8 @@ Future<bool> _saveWorkflow(
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow.',
         stackTraces: s);
+
+    Navigator.pop(context);
 
     if (showAlerts) {
       ScaffoldMessenger.of(context).clearSnackBars();

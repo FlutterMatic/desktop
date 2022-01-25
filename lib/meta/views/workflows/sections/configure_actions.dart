@@ -10,7 +10,10 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_android.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_ios.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/build_linux.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/build_macos.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_web.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/build_windows.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/deploy_web.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 
@@ -18,17 +21,23 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final TextEditingController webUrlController;
   final TextEditingController firebaseProjectName;
   final TextEditingController firebaseProjectIDController;
+  final PlatformBuildModes defaultAndroidBuildMode;
+  final PlatformBuildModes defaultIOSBuildMode;
+  final PlatformBuildModes defaultWebBuildMode;
+  final PlatformBuildModes defaultWindowsBuildMode;
+  final PlatformBuildModes defaultMacOSBuildMode;
+  final PlatformBuildModes defaultLinuxBuildMode;
+  final WebRenderers defaultWebRenderer;
   final List<WorkflowActionModel> workflowActions;
   final Function(PlatformBuildModes mode) onAndroidBuildModeChanged;
   final Function(PlatformBuildModes mode) oniOSBuildModeChanged;
-  final PlatformBuildModes defaultAndroidBuildMode;
-  final PlatformBuildModes defaultIOSBuildMode;
+  final Function(PlatformBuildModes mode) onBuildWebModeChanged;
+  final Function(PlatformBuildModes mode) onWindowsBuildModeChanged;
+  final Function(PlatformBuildModes mode) onMacOSBuildModeChanged;
+  final Function(PlatformBuildModes mode) onLinuxBuildModeChanged;
+  final Function(WebRenderers renderer) onWebRendererChanged;
   final Function(bool isFirebaseValidated) onFirebaseValidatedChanged;
   final bool isFirebaseValidated;
-  final Function(WebRenderers renderer) onWebRendererChanged;
-  final WebRenderers defaultWebRenderer;
-  final Function(PlatformBuildModes mode) onBuildWebModeChanged;
-  final PlatformBuildModes defaultWebBuildMode;
   final Function() onNext;
 
   const SetProjectWorkflowActionsConfiguration({
@@ -47,6 +56,12 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
     required this.defaultWebRenderer,
     required this.onBuildWebModeChanged,
     required this.defaultWebBuildMode,
+    required this.defaultWindowsBuildMode,
+    required this.defaultMacOSBuildMode,
+    required this.defaultLinuxBuildMode,
+    required this.onWindowsBuildModeChanged,
+    required this.onMacOSBuildModeChanged,
+    required this.onLinuxBuildModeChanged,
     required this.onNext,
   }) : super(key: key);
 
@@ -60,36 +75,57 @@ class _SetProjectWorkflowActionsConfigurationState
   late PlatformBuildModes _iOSBuildMode = widget.defaultIOSBuildMode;
   late PlatformBuildModes _androidBuildMode = widget.defaultAndroidBuildMode;
 
-  bool get isDeployWeb => widget.workflowActions
+  bool get _isDeployWeb => widget.workflowActions
       .where((WorkflowActionModel element) =>
           element.id == WorkflowActionsIds.deployProjectWeb)
       .toList()
       .isNotEmpty;
 
-  bool get isBuildIOS => widget.workflowActions
+  bool get _isBuildIOS => widget.workflowActions
       .where((WorkflowActionModel element) =>
           element.id == WorkflowActionsIds.buildProjectForIOS)
       .toList()
       .isNotEmpty;
 
-  bool get isBuildAndroid => widget.workflowActions
+  bool get _isBuildAndroid => widget.workflowActions
       .where((WorkflowActionModel element) =>
           element.id == WorkflowActionsIds.buildProjectForAndroid)
       .toList()
       .isNotEmpty;
 
-  bool get isBuildWeb => widget.workflowActions
+  bool get _isBuildWeb => widget.workflowActions
       .where((WorkflowActionModel element) =>
           element.id == WorkflowActionsIds.buildProjectForWeb)
       .toList()
       .isNotEmpty;
 
-  List<bool> get isBuildActionSelected {
+  bool get _isBuildWindows => widget.workflowActions
+      .where((WorkflowActionModel element) =>
+          element.id == WorkflowActionsIds.buildProjectForWindows)
+      .toList()
+      .isNotEmpty;
+
+  bool get _isBuildMacOS => widget.workflowActions
+      .where((WorkflowActionModel element) =>
+          element.id == WorkflowActionsIds.buildProjectForMacOS)
+      .toList()
+      .isNotEmpty;
+
+  bool get _isBuildLinux => widget.workflowActions
+      .where((WorkflowActionModel element) =>
+          element.id == WorkflowActionsIds.buildProjectForLinux)
+      .toList()
+      .isNotEmpty;
+
+  List<bool> get _isBuildActionSelected {
     return <bool>[
-      isDeployWeb,
-      isBuildAndroid,
-      isBuildIOS,
-      isBuildWeb,
+      _isDeployWeb,
+      _isBuildAndroid,
+      _isBuildIOS,
+      _isBuildWeb,
+      _isBuildWindows,
+      _isBuildMacOS,
+      _isBuildLinux,
     ];
   }
 
@@ -98,7 +134,7 @@ class _SetProjectWorkflowActionsConfigurationState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (!isBuildActionSelected.contains(true))
+        if (!_isBuildActionSelected.contains(true))
           Center(
             child: RoundContainer(
               color: Colors.blueGrey.withOpacity(0.1),
@@ -123,7 +159,7 @@ class _SetProjectWorkflowActionsConfigurationState
               ),
             ),
           ),
-        if (isDeployWeb)
+        if (_isDeployWeb)
           DeployWebWorkflowActionConfig(
             firebaseProjectIDController: widget.firebaseProjectIDController,
             firebaseProjectName: widget.firebaseProjectName,
@@ -131,14 +167,14 @@ class _SetProjectWorkflowActionsConfigurationState
             isValidated: widget.isFirebaseValidated,
             onFirebaseValidated: widget.onFirebaseValidatedChanged,
           ),
-        if (isBuildWeb)
+        if (_isBuildWeb)
           BuildWebWorkflowActionConfig(
             defaultBuildMode: widget.defaultWebBuildMode,
             onBuildModeChanged: widget.onBuildWebModeChanged,
             defaultRenderer: widget.defaultWebRenderer,
             onRendererChanged: widget.onWebRendererChanged,
           ),
-        if (isBuildAndroid)
+        if (_isBuildAndroid)
           BuildAndroidWorkflowActionConfig(
             defaultBuildMode: _androidBuildMode,
             onBuildModeChanged: (PlatformBuildModes mode) {
@@ -146,13 +182,28 @@ class _SetProjectWorkflowActionsConfigurationState
               setState(() => _androidBuildMode = mode);
             },
           ),
-        if (isBuildIOS)
+        if (_isBuildIOS)
           BuildIOSWorkflowActionConfig(
             defaultBuildMode: _iOSBuildMode,
             onBuildModeChanged: (PlatformBuildModes mode) {
               widget.oniOSBuildModeChanged(mode);
               setState(() => _iOSBuildMode = mode);
             },
+          ),
+        if (_isBuildWindows)
+          BuildWindowsWorkflowActionConfig(
+            onBuildModeChanged: widget.onWindowsBuildModeChanged,
+            defaultBuildMode: widget.defaultWindowsBuildMode,
+          ),
+        if (_isBuildMacOS)
+          BuildMacOSWorkflowActionConfig(
+            onBuildModeChanged: widget.onMacOSBuildModeChanged,
+            defaultBuildMode: widget.defaultMacOSBuildMode,
+          ),
+        if (_isBuildLinux)
+          BuildLinuxWorkflowActionConfig(
+            onBuildModeChanged: widget.onLinuxBuildModeChanged,
+            defaultBuildMode: widget.defaultLinuxBuildMode,
           ),
         Align(
           alignment: Alignment.centerRight,

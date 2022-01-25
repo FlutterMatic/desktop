@@ -76,9 +76,7 @@ flutter:
     - assets/images/app_icons/
     - assets/images/logos/
     - assets/images/icons/
-    - assets/images/placeholders/
-    - assets/markdown/setup_docs/
-    - assets/lottie/
+    - assets/markdown/documentation/
     - CHANGELOG.md
 
   fonts:

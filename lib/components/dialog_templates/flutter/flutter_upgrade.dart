@@ -4,91 +4,74 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:provider/src/provider.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import '../dialog_header.dart';
 
-class UpgradeFlutterDialog extends StatefulWidget {
-  const UpgradeFlutterDialog({Key? key}) : super(key: key);
+class UpdateFlutterDialog extends StatefulWidget {
+  const UpdateFlutterDialog({Key? key}) : super(key: key);
 
   @override
-  _UpgradeFlutterDialogState createState() => _UpgradeFlutterDialogState();
+  _UpdateFlutterDialogState createState() => _UpdateFlutterDialogState();
 }
 
-class _UpgradeFlutterDialogState extends State<UpgradeFlutterDialog> {
-  /// TODO: Upgrade Flutter when is requested. Ignore the request and say that Flutter is already up to date if current version is equal to the latest version.
+class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
+  bool _updating = false;
+
+  /// TODO: Update Flutter when is requested. Ignore the request and say that Flutter is already up to date if current version is equal to the latest version.
   Future<void> _upgradeFlutter() async {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      snackBarTile(
-        context,
-        'Checking and upgrading your Flutter version.',
-        type: SnackBarType.done,
-      ),
-    );
+    setState(() => _updating = true);
 
-    List<ProcessResult> _versionInfo = await shell.run('flutter --version');
+    // Make sure that there is an internet connection.
+    if (context.read<ConnectionNotifier>().isOnline) {
+      
+    }
 
-    // String _version = _versionInfo.first.stdout.toString().split(' ')[1];
-    String _channel = _versionInfo.first.stdout.toString().split(' ')[4];
-    String _flutterUrl = 'https://github.com/flutter/flutter';
+    // Already Updated Sample Response:
+    // Flutter is already up to date on channel stable
+    // Flutter 2.8.1 • channel stable • https://github.com/flutter/flutter.git
+    // Framework • revision 77d935af4d (6 weeks ago) • 2021-12-16 08:37:33 -0800
+    // Engine • revision 890a5fca2e
+    // Tools • Dart 2.15.1
 
-    // Get the latest commit hash from the branch of [channel].
-    String _latestCommitHash =
-        await getRepoCommitHash(branchName: _channel, url: _flutterUrl);
-
-    print(_latestCommitHash);
-
-    // Compare the current Flutter on the system commit hash with the latest
-    // commit hash from the branch of [channel].
-    List<ProcessResult> _currentBranchInfo =
-        await shell.run('git rev-parse --abbrev-ref HEAD');
-
-    String _currentCommitHash = _currentBranchInfo.first.stdout.toString();
-
-    print(_currentCommitHash);
+    await Future<void>.delayed(const Duration(seconds: 10));
 
     // Latest version already.
-    if (_currentCommitHash == _latestCommitHash) {
-    } else {}
-
-    // Navigator.pop(context);
-
-    // BgActivityTile _tile = BgActivityTile(
-    //   title: 'Upgrading your Flutter version',
-    //   activityId: Timeline.now.toString(),
-    // );
-
-    // setState(() => bgActivities.add(_tile));
-
-    // setState(() => bgActivities.remove(_tile));
-
-    // Navigator.pop(context);
+    setState(() => _updating = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return DialogTemplate(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const DialogHeader(title: 'Upgrade Flutter'),
-          const Text(
-            'Keeping Flutter up-to-date is a good idea since it helps with many things including performance improvements, bug fixes and new features.',
-            textAlign: TextAlign.center,
-          ),
-          VSeparators.small(),
-          infoWidget(context,
-              'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete.'),
-          VSeparators.small(),
-          RectangleButton(
-            width: double.infinity,
-            onPressed: _upgradeFlutter,
-            child: const Text('Upgrade Flutter'),
-          ),
-        ],
+    return WillPopScope(
+      onWillPop: () async => !_updating,
+      child: DialogTemplate(
+        outerTapExit: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            DialogHeader(title: 'Update Flutter', canClose: !_updating),
+            const Text(
+              'Keeping Flutter up-to-date is a good idea since it helps with many things including performance improvements, bug fixes and new features.',
+              textAlign: TextAlign.center,
+            ),
+            VSeparators.small(),
+            infoWidget(context,
+                'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete. You can\'t use FlutterMatic while we update.'),
+            VSeparators.small(),
+            RectangleButton(
+              loading: _updating,
+              width: double.infinity,
+              onPressed: _upgradeFlutter,
+              child: const Text('Check and Update Flutter'),
+            ),
+          ],
+        ),
       ),
     );
   }

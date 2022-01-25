@@ -1,22 +1,38 @@
-// 🐦 Flutter imports:
+import 'dart:io';
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/utils/time_ago.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
+
+Future<void> _check(List<dynamic> data) async {
+  SendPort _port = data[0];
+  String _logPath = data[1];
+
+  ServiceCheckResponse _result =
+      await CheckServices.checkDart(Directory(_logPath));
+
+  _port.send(<dynamic>[
+    _result.version?.toString(),
+    _result.channel,
+  ]);
+}
 
 class HomeDartVersionTile extends StatefulWidget {
   const HomeDartVersionTile({Key? key}) : super(key: key);
@@ -26,19 +42,33 @@ class HomeDartVersionTile extends StatefulWidget {
 }
 
 class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
+  final ReceivePort _port = ReceivePort('DART_HOME_ISOLATE_PORT');
+
   Version? _version;
   String _channel = '...';
 
-  bool get _doneLoading => _version != null && _channel != '...';
+  bool _doneLoading = false;
+  bool _listening = false;
 
   Future<void> _load() async {
     while (mounted) {
-      ServiceCheckResponse _result = await CheckServices.checkDart();
+      Directory _logPath = await getApplicationSupportDirectory();
+      await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path]);
 
-      if (mounted) {
-        setState(() {
-          _version = _result.version;
-          _channel = _result.channel ?? '...';
+      if (mounted && !_listening) {
+        _port.listen((dynamic data) {
+          setState(() => _listening = true);
+          if (mounted) {
+            setState(() {
+              _doneLoading = true;
+              if (data[0] == null) {
+                _version = null;
+              } else {
+                _version = Version?.parse(data[0] as String);
+              }
+              _channel = data[1] as String? ?? '...';
+            });
+          }
         });
       }
 
@@ -50,6 +80,12 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
   void initState() {
     _load();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _port.close();
+    super.dispose();
   }
 
   @override
@@ -73,63 +109,127 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
                     ),
                   ),
                   HSeparators.xSmall(),
-                  SvgPicture.asset(Assets.done, height: 20),
+                  if (!_doneLoading)
+                    const Text('- ')
+                  else if (_version == null)
+                    SvgPicture.asset(Assets.error, height: 20)
+                  else
+                    SvgPicture.asset(Assets.done, height: 20),
                 ],
               ),
               VSeparators.normal(),
               HoverMessageWithIconAction(
-                message: 'Dart is up to date on channel $_channel',
-                icon: const Icon(Icons.check_rounded,
-                    color: kGreenColor, size: 15),
+                message: _doneLoading
+                    ? (_version == null
+                        ? 'Dart is not installed on your device'
+                        : 'Dart is up to date on channel $_channel')
+                    : '...',
+                icon: Icon(
+                    _doneLoading
+                        ? (_version == null ? Icons.error : Icons.check_rounded)
+                        : Icons.lock_clock,
+                    color: _doneLoading
+                        ? (_version == null ? AppTheme.errorColor : kGreenColor)
+                        : kYellowColor,
+                    size: 15),
               ),
               VSeparators.normal(),
-              HoverMessageWithIconAction(
-                message: SharedPref()
-                        .pref
-                        .containsKey(SPConst.lastDartUpdateCheck)
-                    ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdateCheck) ?? DateTime.now().toString()))}'
-                    : 'Never checked for new updates before',
-                icon: const Icon(Icons.refresh_rounded,
-                    color: kGreenColor, size: 15),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      'Checking for new Dart updates...',
+              if (_doneLoading && _version != null ||
+                  !_doneLoading) ...<Widget>[
+                HoverMessageWithIconAction(
+                  message: SharedPref()
+                          .pref
+                          .containsKey(SPConst.lastDartUpdateCheck)
+                      ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdateCheck) ?? DateTime.now().toString()))}'
+                      : 'Never checked for new updates before',
+                  icon: const Icon(Icons.refresh_rounded,
+                      color: kGreenColor, size: 15),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const _UpdatingDartDialog(),
+                    );
+                  },
+                ),
+                VSeparators.normal(),
+                HoverMessageWithIconAction(
+                  message: SharedPref().pref.containsKey(SPConst.lastDartUpdate)
+                      ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdate) ?? DateTime.now().toString()))}'
+                      : 'Never updated before',
+                  icon: const Icon(Icons.check_rounded,
+                      color: kGreenColor, size: 15),
+                ),
+                VSeparators.normal(),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: RectangleButton(
+                        child: const Text('Check Updates'),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const _UpdatingDartDialog(),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                },
-              ),
-              VSeparators.normal(),
-              HoverMessageWithIconAction(
-                message: SharedPref().pref.containsKey(SPConst.lastDartUpdate)
-                    ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdate) ?? DateTime.now().toString()))}'
-                    : 'Never updated before',
-                icon: const Icon(Icons.check_rounded,
-                    color: kGreenColor, size: 15),
-              ),
-              VSeparators.normal(),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RectangleButton(
-                      child: const Text('Check Updates'),
-                      onPressed: () {},
+                    HSeparators.normal(),
+                    Expanded(
+                      child: RectangleButton(
+                        child: const Text('Create New'),
+                        onPressed: () {
+                          // TODO: Implement creating a new dart project
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            snackBarTile(
+                              context,
+                              'Feature not implemented yet',
+                              type: SnackBarType.error,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  HSeparators.normal(),
-                  Expanded(
-                    child: RectangleButton(
-                      child: const Text('Create New'),
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              )
+                  ],
+                ),
+              ] else
+                RectangleButton(
+                  width: double.infinity,
+                  child: const Text('Install Dart'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const InstallToolDialog(
+                          tool: WelcomeTab.installFlutter),
+                    );
+                  },
+                ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _UpdatingDartDialog extends StatelessWidget {
+  const _UpdatingDartDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        children: <Widget>[
+          const DialogHeader(title: 'Updating Dart'),
+          infoWidget(context,
+              'Dart is preinstalled with Flutter. This means that whenever there is a new Flutter version, Dart will be updated automatically by Flutter. This ensures that the Flutter SDK supports the latest Dart version.'),
+          VSeparators.normal(),
+          RectangleButton(
+            width: double.infinity,
+            child: const Text('Close'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }

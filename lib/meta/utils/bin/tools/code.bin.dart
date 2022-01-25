@@ -27,7 +27,7 @@ abstract class VSCBinInfo {
   /// First line is sufficient
   static Future<VSCBinInfo?> parseVersionOutput(String? resultOutput) async {
     if (resultOutput == null) {
-      await logger.file(LogTypeTag.error, 'VSCode result : $resultOutput');
+      await logger.file(LogTypeTag.error, 'VSCode result: $resultOutput');
       return null;
     }
     Version? vscVersion;

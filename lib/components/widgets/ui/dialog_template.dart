@@ -16,6 +16,7 @@ class DialogTemplate extends StatelessWidget {
   final Alignment align;
   final Color? closeBgColor;
   final Color? closeIconColor;
+  final bool canScroll;
 
   const DialogTemplate({
     Key? key,
@@ -25,6 +26,7 @@ class DialogTemplate extends StatelessWidget {
     this.height,
     this.align = Alignment.center,
     this.outerTapExit = true,
+    this.canScroll = true,
     this.closeBgColor,
     this.closeIconColor,
     this.onExit,
@@ -42,9 +44,14 @@ class DialogTemplate extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: width ?? 500),
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Scrollbar(
+                isAlwaysShown: false,
+                showTrackOnHover: false,
                 notificationPredicate: (ScrollNotification notification) =>
                     false,
                 child: SingleChildScrollView(
+                  physics: canScroll
+                      ? const AlwaysScrollableScrollPhysics()
+                      : const NeverScrollableScrollPhysics(),
                   child: GestureDetector(
                     onTap: () {},
                     child: Padding(

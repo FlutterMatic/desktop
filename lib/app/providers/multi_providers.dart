@@ -9,6 +9,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:fluttermatic/core/libraries/api.dart';
 import 'package:fluttermatic/core/libraries/checks.dart';
 import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 
 class MultiProviders extends StatelessWidget {
   const MultiProviders(this.child, {Key? key}) : super(key: key);
@@ -21,6 +22,9 @@ class MultiProviders extends StatelessWidget {
       providers: <SingleChildWidget>[
         ChangeNotifierProvider<ConnectionNotifier>(
           create: (BuildContext context) => ConnectionNotifier(),
+        ),
+        ChangeNotifierProvider<NotificationsNotifier>(
+          create: (BuildContext context) => NotificationsNotifier(),
         ),
         ChangeNotifierProvider<DownloadNotifier>(
           create: (BuildContext context) => DownloadNotifier(),

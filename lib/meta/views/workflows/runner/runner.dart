@@ -20,8 +20,10 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/task_runner_view.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
@@ -87,11 +89,17 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
         _loading = false;
       });
     } catch (_, s) {
-      await logger.file(
-          LogTypeTag.error, 'Failed to load workflow: ${widget.workflowPath}',
+      await logger.file(LogTypeTag.error,
+          'Failed to load workflow: ${widget.workflowPath}: $_',
           stackTraces: s);
-      await writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.error,
-          'Workflow session failed to initialize.');
+      try {
+        await writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.error,
+            'Workflow session failed to initialize.');
+      } catch (_, s) {
+        await logger.file(
+            LogTypeTag.error, 'Failed to write workflow session log: $_',
+            stackTraces: s);
+      }
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
@@ -149,7 +157,6 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
         child: Column(
           children: <Widget>[
             DialogHeader(title: 'Workflow Runner', canClose: !_isRunning),
-            VSeparators.small(),
             if (_loading)
               const Padding(padding: EdgeInsets.all(50), child: Spinner())
             else if (!_isRunning && !_isCompleted) ...<Widget>[
@@ -194,72 +201,95 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                 },
               ),
             ] else ...<Widget>[
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _workflowActions.length,
-                itemBuilder: (_, int i) {
-                  bool _isLast = i == _workflowActions.length - 1;
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
-                    child: TaskRunnerView(
-                      logFile: _workflowSessionLogs,
-                      completedActions: _completedActions,
-                      template: _template,
-                      action: workflowActionModels.firstWhere(
-                          (WorkflowActionModel e) =>
-                              e.id == _workflowActions[i]),
-                      currentAction: _currentActionRunning,
-                      onDone: () async {
-                        if (_isCompleted) {
-                          return;
-                        }
-
-                        if (!_completedActions.contains(_workflowActions[i])) {
-                          setState(
-                              () => _completedActions.add(_workflowActions[i]));
-                        }
-
-                        if (_currentActionRunning == _workflowActions.last &&
-                            _workflowActions.length ==
-                                _completedActions.length) {
-                          await writeWorkflowSessionLog(
-                              _workflowSessionLogs,
-                              LogTypeTag.info,
-                              'Workflow running session completed.');
-                          if (mounted) {
-                            setState(() {
-                              _isCompleted = true;
-                              _isRunning = false;
-                            });
+              if (_isRunning && !_isCompleted)
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _workflowActions.length,
+                  itemBuilder: (_, int i) {
+                    bool _isLast = i == _workflowActions.length - 1;
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
+                      child: TaskRunnerView(
+                        logFile: _workflowSessionLogs,
+                        completedActions: _completedActions,
+                        template: _template,
+                        action: workflowActionModels.firstWhere(
+                            (WorkflowActionModel e) =>
+                                e.id == _workflowActions[i]),
+                        currentAction: _currentActionRunning,
+                        onDone: () async {
+                          if (_isCompleted) {
+                            return;
                           }
+
+                          if (!_completedActions
+                              .contains(_workflowActions[i])) {
+                            setState(() =>
+                                _completedActions.add(_workflowActions[i]));
+                          }
+
+                          if (_currentActionRunning == _workflowActions.last &&
+                              _workflowActions.length ==
+                                  _completedActions.length) {
+                            await writeWorkflowSessionLog(
+                                _workflowSessionLogs,
+                                LogTypeTag.info,
+                                'Workflow running session completed.');
+                            if (mounted) {
+                              setState(() {
+                                _isCompleted = true;
+                                _isRunning = false;
+                              });
+                            }
+                            _stopwatch.stop();
+                          } else {
+                            await writeWorkflowSessionLog(
+                                _workflowSessionLogs,
+                                LogTypeTag.info,
+                                'Moving to next workflow action: ${_workflowActions[i + 1]}');
+                            setState(() => _currentActionRunning =
+                                _workflowActions[i + 1]);
+                          }
+                        },
+                        onError: (String error) {
+                          setState(() {
+                            _currentActionRunning = 'none';
+                            _isCompleted = true;
+                            _isRunning = false;
+                            _resultType = WorkflowActionStatus.failed;
+                          });
                           _stopwatch.stop();
-                        } else {
-                          await writeWorkflowSessionLog(
-                              _workflowSessionLogs,
-                              LogTypeTag.info,
-                              'Moving to next workflow action: ${_workflowActions[i + 1]}');
-                          setState(() =>
-                              _currentActionRunning = _workflowActions[i + 1]);
-                        }
-                      },
-                      onError: (String error) {
-                        setState(() {
-                          _currentActionRunning = 'none';
-                          _isCompleted = true;
-                          _isRunning = false;
-                          _resultType = WorkflowActionStatus.failed;
-                        });
-                        _stopwatch.stop();
-                      },
-                      dirPath: widget.workflowPath
-                          .substring(0, widget.workflowPath.lastIndexOf('\\')),
-                    ),
-                  );
-                },
-              ),
-              if (_isCompleted)
+                        },
+                        dirPath: widget.workflowPath.substring(
+                            0, widget.workflowPath.lastIndexOf('\\')),
+                      ),
+                    );
+                  },
+                ),
+              if (_isCompleted && !_isRunning)
                 if (_resultType == WorkflowActionStatus.failed) ...<Widget>[
+                  RoundContainer(
+                    width: 500,
+                    height: 230,
+                    color: Colors.blueGrey.withOpacity(0.2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text('.... Click on "Logs" to view entire log'),
+                        Expanded(
+                          child: LogViewBuilder(
+                            logs: _workflowSessionLogs
+                                .readAsLinesSync()
+                                .sublist(_workflowSessionLogs
+                                        .readAsLinesSync()
+                                        .length -
+                                    6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   VSeparators.normal(),
                   SizedBox(
                     width: 500,
@@ -275,6 +305,16 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                       children: <Widget>[
                         RectangleButton(
                           width: 100,
+                          child: const Text('Close'),
+                          onPressed: () {
+                            writeWorkflowSessionLog(_workflowSessionLogs,
+                                LogTypeTag.info, 'Workflow session closed.');
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        HSeparators.small(),
+                        RectangleButton(
+                          width: 100,
                           child: const Text('Logs'),
                           onPressed: () {
                             Navigator.pop(context);
@@ -285,14 +325,29 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                             );
                           },
                         ),
-                        HSeparators.normal(),
+                        HSeparators.small(),
                         RectangleButton(
                           width: 100,
-                          child: const Text('Close'),
+                          child: const Text('Re-run'),
                           onPressed: () {
-                            writeWorkflowSessionLog(_workflowSessionLogs,
-                                LogTypeTag.info, 'Workflow session closed.');
-                            Navigator.of(context).pop();
+                            Navigator.pop(context);
+                            showDialog(
+                              context: context,
+                              builder: (_) => WorkflowRunnerDialog(
+                                  workflowPath: widget.workflowPath),
+                            );
+                          },
+                        ),
+                        HSeparators.small(),
+                        RectangleButton(
+                          width: 100,
+                          child: const Text('View Docs'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showDialog(
+                              context: context,
+                              builder: (_) => const FMaticDocumentationDialog(),
+                            );
                           },
                         ),
                       ],

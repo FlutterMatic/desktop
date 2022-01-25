@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/libraries/components.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
@@ -52,7 +52,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
-                  builder: (_) => const SetupDocsDialog(),
+                  builder: (_) => const FMaticDocumentationDialog(),
                 );
               },
               icon: SvgPicture.asset(Assets.doc,

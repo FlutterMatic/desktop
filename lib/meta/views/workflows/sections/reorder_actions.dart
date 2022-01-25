@@ -232,6 +232,12 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.analyzeDartProject);
   bool _containsTestCode = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
+  bool _containsBuildWindows = workflowActions.any((WorkflowActionModel e) =>
+      e.id == WorkflowActionsIds.buildProjectForWindows);
+  bool _containsBuildMacOS = workflowActions.any((WorkflowActionModel e) =>
+      e.id == WorkflowActionsIds.buildProjectForMacOS);
+  bool _containsBuildLinux = workflowActions.any((WorkflowActionModel e) =>
+      e.id == WorkflowActionsIds.buildProjectForLinux);
   bool _containsDeployWeb = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.deployProjectWeb);
 
@@ -276,7 +282,7 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_buildWebIndex < _testCodeIndex) {
       _suggestions.add(
-        'Test the code before building web. This way we can make sure there are no syntax errors before attempting build.',
+        'Test the code before building for web. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
@@ -292,7 +298,7 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_buildAndroidIndex < _testCodeIndex) {
       _suggestions.add(
-        'Test the code before building Android. This way we can make sure there are no syntax errors before attempting build.',
+        'Test the code before building for Android. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
@@ -307,7 +313,55 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_buildIosIndex < _testCodeIndex) {
       _suggestions.add(
-        'Test the code before building iOS. This way we can make sure there are no syntax errors before attempting build.',
+        'Test the code before building for iOS. This way we can make sure there are no syntax errors before attempting build.',
+      );
+    }
+  }
+
+  // If we are testing code after performing Windows build.
+  if (_containsBuildWindows && _containsTestCode) {
+    int _buildWindowsIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForWindows);
+
+    int _testCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
+
+    if (_buildWindowsIndex < _testCodeIndex) {
+      _suggestions.add(
+        'Test the code before building for Windows. This way we can make sure there are no syntax errors before attempting build.',
+      );
+    }
+  }
+
+  // If we are testing code after performing macOS build.
+  if (_containsBuildMacOS && _containsTestCode) {
+    int _buildMacOSIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForMacOS);
+
+    int _testCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
+
+    if (_buildMacOSIndex < _testCodeIndex) {
+      _suggestions.add(
+        'Test the code before building for macOS. This way we can make sure there are no syntax errors before attempting build.',
+      );
+    }
+  }
+
+  // If we are testing code after performing Linux build.
+  if (_containsBuildLinux && _containsTestCode) {
+    int _buildLinuxIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForLinux);
+
+    int _testCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
+
+    if (_buildLinuxIndex < _testCodeIndex) {
+      _suggestions.add(
+        'Test the code before building for Linux. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
@@ -323,7 +377,7 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_analyzeCodeIndex > _buildWebIndex) {
       _suggestions.add(
-        'Analyze the code before building the web. This way you can be sure there are no syntax errors before building the web.',
+        'Analyze the code before building for web. This way you can be sure there are no syntax errors before building the web.',
       );
     }
   }
@@ -340,7 +394,7 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_analyzeCodeIndex > _buildAndroidIndex) {
       _suggestions.add(
-        'Analyze the code before building the Android. This way you can be sure there are no syntax errors before building the Android.',
+        'Analyze the code before building for Android. This way you can be sure there are no syntax errors before building the Android.',
       );
     }
   }
@@ -356,7 +410,58 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
     if (_analyzeCodeIndex > _buildIosIndex) {
       _suggestions.add(
-        'Analyze the code before building the iOS. This way you can be sure there are no syntax errors before building the iOS.',
+        'Analyze the code before building for iOS. This way you can be sure there are no syntax errors before building the iOS.',
+      );
+    }
+  }
+
+  // If contains analyze and also a Windows build.
+  if (_containsAnalyzeCode && _containsBuildWindows) {
+    int _analyzeCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.analyzeDartProject);
+
+    int _buildWindowsIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForWindows);
+
+    if (_analyzeCodeIndex > _buildWindowsIndex) {
+      _suggestions.add(
+        'Analyze the code before building for Windows. This way you can be sure there are no syntax errors before building the Windows.',
+      );
+    }
+  }
+
+  // If contains analyze and also a macOS build.
+  if (_containsAnalyzeCode && _containsBuildMacOS) {
+    int _analyzeCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.analyzeDartProject);
+
+    int _buildMacOSIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForMacOS);
+
+    if (_analyzeCodeIndex > _buildMacOSIndex) {
+      _suggestions.add(
+        'Analyze the code before building for macOS. This way you can be sure there are no syntax errors before building the MacOS.',
+      );
+    }
+  }
+
+  // If contains analyze and also a Linux build.
+  if (_containsAnalyzeCode && _containsBuildLinux) {
+    int _analyzeCodeIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.analyzeDartProject);
+
+    int _buildLinuxIndex = workflowActions.indexWhere(
+        (WorkflowActionModel e) =>
+            e.id == WorkflowActionsIds.buildProjectForLinux);
+
+    if (_analyzeCodeIndex > _buildLinuxIndex) {
+      _suggestions.add(
+        'Analyze the code before building for Linux. This way you can be sure there are no syntax errors before building the Linux.',
       );
     }
   }

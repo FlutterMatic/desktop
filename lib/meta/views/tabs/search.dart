@@ -1,14 +1,16 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/meta/views/tabs/components/notifications/notification_view.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/components/dialog_templates/other/status.dart';
 import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/search_result_tile.dart';
@@ -54,7 +56,22 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                 ),
               ),
               HSeparators.small(),
-              const SizedBox(width: 40),
+              Tooltip(
+                message: 'Status',
+                waitDuration: const Duration(seconds: 1),
+                child: RectangleButton(
+                  width: 40,
+                  height: 40,
+                  child: const Icon(Icons.analytics_rounded, size: 20),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => const StatusDialog(),
+                    );
+                  },
+                ),
+              ),
               const Spacer(),
               SizedBox(
                 width: (MediaQuery.of(context).size.width > 1000) ? 500 : 400,
@@ -159,23 +176,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                 ),
               ),
               HSeparators.small(),
-              Tooltip(
-                message: 'Notifications',
-                waitDuration: const Duration(seconds: 1),
-                child: RectangleButton(
-                  width: 40,
-                  height: 40,
-                  child: Icon(
-                    Icons.notifications_outlined,
-                    size: 20,
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? kYellowColor
-                        : Colors.yellow[900],
-                  ),
-                  // TODO: Show notifications.
-                  onPressed: () {},
-                ),
-              ),
+              const _NotificationsButton(),
             ],
           ),
           // Show the search results in realtime if the user has typed
@@ -234,6 +235,87 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NotificationsButton extends StatefulWidget {
+  const _NotificationsButton({Key? key}) : super(key: key);
+
+  @override
+  State<_NotificationsButton> createState() => _NotificationsButtonState();
+}
+
+class _NotificationsButtonState extends State<_NotificationsButton> {
+  int _notificationsCount = 0;
+  bool _hasNotifications = false;
+
+  Future<void> _reloadOnNotification() async {
+    while (mounted) {
+      await Future<void>.delayed(const Duration(seconds: 3));
+
+      if (context.read<NotificationsNotifier>().notifications.isNotEmpty) {
+        if (!_hasNotifications) {
+          setState(() => _hasNotifications = true);
+        }
+      } else {
+        if (_hasNotifications) {
+          setState(() => _hasNotifications = false);
+        }
+      }
+
+      if (context.read<NotificationsNotifier>().notifications.length !=
+          _notificationsCount) {
+        setState(() => _notificationsCount =
+            context.read<NotificationsNotifier>().notifications.length);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    _reloadOnNotification();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: context.read<NotificationsNotifier>().notifications.isEmpty
+          ? 'No Notifications'
+          : 'Notifications (${context.read<NotificationsNotifier>().notifications.length})',
+      waitDuration: const Duration(seconds: 1),
+      child: Stack(
+        children: <Widget>[
+          RectangleButton(
+            width: 40,
+            height: 40,
+            child: Icon(Icons.notifications_outlined,
+                color: Colors.yellow[900], size: 20),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => const NotificationViewDialog(),
+              );
+            },
+          ),
+          Positioned(
+            right: 10,
+            top: 10,
+            child: AnimatedOpacity(
+              opacity: _hasNotifications ? 1 : 0,
+              duration: const Duration(milliseconds: 150),
+              child: const RoundContainer(
+                child: SizedBox.shrink(),
+                color: kRedColor,
+                radius: 20,
+                height: 10,
+                width: 10,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -1,8 +1,8 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/core/libraries/utils.dart';
 import 'package:fluttermatic/core/libraries/views.dart';
@@ -155,7 +155,6 @@ class _ConfirmDeleteProjectDialogState
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Project Options'),
-          VSeparators.small(),
           Row(
             children: <Widget>[
               Expanded(
@@ -194,8 +193,8 @@ class _ConfirmDeleteProjectDialogState
           ActionOptions(
             actions: <ActionOptionsObject>[
               // TODO: Support the following options:
-              ActionOptionsObject('Add Configuration', () {}),
-              ActionOptionsObject('View Existing Configurations', () {}),
+              ActionOptionsObject('Add Workflow', () {}),
+              ActionOptionsObject('View Existing Workflow', () {}),
               ActionOptionsObject('Scan pubspec.yaml for new updates', () {}),
               ActionOptionsObject('Create Release', () {}),
             ],

@@ -65,7 +65,7 @@ class ADBNotifier extends ChangeNotifier {
 
         adbVersion = await getADBBinVersion();
         versions.adb = adbVersion.toString();
-        await logger.file(LogTypeTag.info, 'ADB version : ${versions.adb}');
+        await logger.file(LogTypeTag.info, 'ADB version: ${versions.adb}');
       }
     } on ShellException catch (shellException, s) {
       await logger.file(LogTypeTag.error, shellException.message,

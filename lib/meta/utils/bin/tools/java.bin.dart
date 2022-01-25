@@ -42,11 +42,7 @@ abstract class JavaBinInfo {
         if (foundJava) {
           try {
             javaVersion = Version.parse(word.replaceAll('"', ''));
-          } catch (_, s) {
-            logger.file(
-                LogTypeTag.error, 'Failed to parse Java version: $word: $_',
-                stackTraces: s);
-          }
+          } catch (_) {}
         } else if (word.toLowerCase().contains('java')) {
           foundJava = true;
         }

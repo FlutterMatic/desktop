@@ -170,48 +170,47 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                 right: 5,
                 child: Row(
                   children: <Widget>[
-                    if (allowDevControls)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 2),
-                        child: SquareButton(
-                          size: 25,
-                          color: Colors.transparent,
-                          tooltip: 'Clear all',
-                          icon: Icon(
-                            Icons.clear_all,
-                            size: 15,
-                            color: Colors.grey.withOpacity(0.6),
-                          ),
-                          onPressed: () async {
-                            if (_doneHashes.isEmpty) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(context,
-                                    'Begin setting up FlutterMatic by clicking on some of the items below.',
-                                    type: SnackBarType.warning),
-                              );
-
-                              return;
-                            }
-
-                            await SharedPref()
-                                .pref
-                                .remove(SPConst.guideFinishedHashes);
-                            setState(() {
-                              _doneHashes.clear();
-                              _percent = 0;
-                            });
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2),
+                      child: SquareButton(
+                        size: 25,
+                        color: Colors.transparent,
+                        tooltip: 'Clear all',
+                        icon: Icon(
+                          Icons.clear_all,
+                          size: 15,
+                          color: Colors.grey.withOpacity(0.6),
+                        ),
+                        onPressed: () async {
+                          if (_doneHashes.isEmpty) {
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarTile(
-                                context,
-                                'Guide has been reset. Let\'s start over!',
-                                type: SnackBarType.done,
-                              ),
+                              snackBarTile(context,
+                                  'Begin setting up FlutterMatic by clicking on some of the items below.',
+                                  type: SnackBarType.warning),
                             );
-                          },
-                        ),
+
+                            return;
+                          }
+
+                          await SharedPref()
+                              .pref
+                              .remove(SPConst.guideFinishedHashes);
+                          setState(() {
+                            _doneHashes.clear();
+                            _percent = 0;
+                          });
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            snackBarTile(
+                              context,
+                              'Guide has been reset. Let\'s start over!',
+                              type: SnackBarType.done,
+                            ),
+                          );
+                        },
                       ),
+                    ),
                     SquareButton(
                       size: 25,
                       color: Colors.transparent,

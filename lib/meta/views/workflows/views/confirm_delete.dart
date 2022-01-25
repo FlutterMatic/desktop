@@ -83,6 +83,22 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                         setState(() => _loading = true);
                         if (_confirmValue == 'DELETE') {
                           await File(widget.path).delete();
+
+                          // Check to see if this workflow has any logs and
+                          // delete them as well.
+                          Directory _logsDir = Directory((widget.path
+                                      .split('\\')
+                                    ..removeLast())
+                                  .join('\\') +
+                              '\\logs\\' +
+                              widget.path.split('\\').last.split('.').first);
+
+                          if (await _logsDir.exists()) {
+                            await _logsDir.delete(recursive: true);
+                            await logger.file(LogTypeTag.info,
+                                'Deleted logs for workflow ${widget.path.split('\\').last}');
+                          }
+
                           await logger.file(LogTypeTag.info,
                               'Deleted a workflow file from ${widget.path}');
                           await widget.onClose(true);

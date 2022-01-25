@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+        // For Windows (debug, release, profile)
         {
             "name": "FlutterMatic-Desktop",
             "type": "dart",
@@ -10,6 +11,128 @@
             "args": [
                 "-d",
                 "windows",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "args": [
+                "-d",
+                "windows",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "profile",
+            "args": [
+                "-d",
+                "windows",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        // For macOS (debug, release, profile)
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "macos",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "args": [
+                "-d",
+                "macos",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "profile",
+            "args": [
+                "-d",
+                "macos",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        // For Linux (debug, release, profile)
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "linux",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "args": [
+                "-d",
+                "linux",
+                "--dart-define",
+                "RELEASE_TYPE=alpha",
+                "--dart-define",
+                "CURRENT_VERSION=0.0.1-alpha"
+            ]
+        },
+        {
+            "name": "FlutterMatic-Desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "profile",
+            "args": [
+                "-d",
+                "linux",
                 "--dart-define",
                 "RELEASE_TYPE=alpha",
                 "--dart-define",

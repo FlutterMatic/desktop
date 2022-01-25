@@ -27,9 +27,6 @@ bool _showDevControls = true;
 
 bool allowDevControls = (kDebugMode && _showDevControls);
 
-/// Whether there is a new version of the app available.
-bool isNewVersionAvailable = false;
-
 /// Fluttermatic API data object.
 FluttermaticAPI? apiData;
 
@@ -48,8 +45,9 @@ List<BgActivityTile> bgActivityTiles = <BgActivityTile>[];
 String platform = Platform.operatingSystem;
 String osName = Platform.operatingSystem;
 String osVersion = Platform.operatingSystemVersion;
-String appVersion = 'Unknown App Version';
-String appBuild = 'Unknown App Build';
+String appVersion =
+    const String.fromEnvironment('CURRENT_VERSION').split('-').first;
+String appBuild = const String.fromEnvironment('RELEASE_TYPE').toUpperCase();
 
 const String _placeholderBase = 'assets/images/placeholders/';
 const String _imagesIconsBase = 'assets/images/icons/';
@@ -61,7 +59,6 @@ class Assets {
   static const String studio = '${_imagesLogosBase}android_studio.svg';
   static const String firebase = '${_imagesLogosBase}firebase.svg';
   static const String settings = '${_imagesIconsBase}settings.svg';
-  static const String extracting = '${_lottieBase}extraction.json';
   static const String workflow = '${_imagesIconsBase}workflow.svg';
   static const String confetti = '${_imagesIconsBase}confetti.svg';
   static const String package = '${_imagesIconsBase}package.svg';

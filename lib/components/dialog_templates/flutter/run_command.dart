@@ -52,7 +52,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
     } else if (_trimmedCommand == 'upgrade') {
       Navigator.pop(context);
       await showDialog(
-          context: context, builder: (_) => const UpgradeFlutterDialog());
+          context: context, builder: (_) => const UpdateFlutterDialog());
     } else if (_trimmedCommand == 'channelmaster' ||
         _trimmedCommand == 'channelstable' ||
         _trimmedCommand == 'channeldev' ||

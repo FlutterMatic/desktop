@@ -11,6 +11,11 @@ import 'utils.dart';
 late String fluttermaticDesktopPath;
 
 Future<void> main(List<String> args) async {
+  if (Platform.isMacOS) {
+    print(errorPen('This script is not yet supported on macOS.'));
+    exit(1);
+  }
+
   if (Directory.current.path.endsWith('scripts')) {
     fluttermaticDesktopPath =
         (Directory.current.path.split('\\')..removeLast()).join('\\');

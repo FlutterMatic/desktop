@@ -80,25 +80,43 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
     }
 
     if (widget.action.id == WorkflowActionsIds.buildProjectForWeb) {
-      _commands.add('flutter clean');
       _commands.add('flutter pub get');
       _commands.add(
-          'flutter build web --${widget.template.iOSBuildMode.name} --web-renderer ${widget.template.defaultWebRenderer.name}');
+          'flutter build web --${widget.template.iOSBuildMode.name} --web-renderer ${widget.template.webRenderer.name}');
       return;
     }
 
     if (widget.action.id == WorkflowActionsIds.buildProjectForIOS) {
-      _commands.add('flutter clean');
       _commands.add('flutter pub get');
       _commands.add('flutter build ios --${widget.template.iOSBuildMode.name}');
       return;
     }
 
     if (widget.action.id == WorkflowActionsIds.buildProjectForAndroid) {
-      _commands.add('flutter clean');
       _commands.add('flutter pub get');
       _commands.add(
           'flutter build android --${widget.template.androidBuildMode.name}');
+      return;
+    }
+
+    if (widget.action.id == WorkflowActionsIds.buildProjectForWindows) {
+      _commands.add('flutter pub get');
+      _commands.add(
+          'flutter build windows --${widget.template.windowsBuildMode.name}');
+      return;
+    }
+
+    if (widget.action.id == WorkflowActionsIds.buildProjectForMacOS) {
+      _commands.add('flutter pub get');
+      _commands
+          .add('flutter build macos --${widget.template.macosBuildMode.name}');
+      return;
+    }
+
+    if (widget.action.id == WorkflowActionsIds.buildProjectForLinux) {
+      _commands.add('flutter pub get');
+      _commands
+          .add('flutter build linux --${widget.template.linuxBuildMode.name}');
       return;
     }
   }
@@ -138,7 +156,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
                         .map((ProcessResult e) => e.stdout.toString())
                         .join(','));
                 if (mounted) {
-                  setState(() => _out.add(line.last.stdout.toString()));
+                  setState(() => _out.add(line.first.stdout.toString()));
                 }
               },
             )

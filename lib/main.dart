@@ -26,14 +26,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Directory _basePath = await getApplicationSupportDirectory();
   debugPrint('📂 AppData path: ${_basePath.path}');
-  runApp(const RestartWidget(child: MultiProviders(FlutterMaticMain())));
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
-    appWindow.maximize();
     appWindow.alignment = Alignment.center;
     appWindow.title = 'FlutterMatic';
     appWindow.show();
   });
+  // Wrapped with a restart widget to allow restarting FlutterMatic from
+  // anywhere in the app without restarting Flutter engine.
+  runApp(const RestartWidget(child: MultiProviders(FlutterMaticMain())));
 }
 
 class FlutterMaticMain extends StatefulWidget {
@@ -80,15 +81,15 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       // Calculate the space on the disk(s).
       await SpaceCheck().checkSpace();
 
-      if (kDebugMode) await SharedPref().pref.clear();
+      // Keeps on monitoring the network connection and updates any listener
+      // when the connection changes.
+      await ConnectionNotifier().initConnectivity();
 
-      appVersion = const String.fromEnvironment('CURRENT_VERSION');
+      // if (kDebugMode) await SharedPref().pref.clear();
 
       await SharedPref()
           .pref
           .setString(SPConst.appVersion, appVersion.toString());
-
-      appBuild = const String.fromEnvironment('RELEASE_TYPE');
 
       await SharedPref().pref.setString(SPConst.appBuild, appBuild.toString());
 
@@ -103,21 +104,30 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       }
 
       if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
-        List<ProcessResult?>? platformData;
+        List<ProcessResult> platformData = <ProcessResult>[];
 
-        if (Platform.isWindows) {
-          platformData = await shell
-              .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"');
-        } else {
-          platformData = null;
+        switch (Platform.operatingSystem) {
+          case 'windows':
+            platformData = await shell
+                .run('systeminfo | findstr /B /C:"OS Name" /C:"OS Version"');
+            break;
+          case 'linux':
+            // TODO: Get linux platform data.
+            break;
+          case 'macos':
+            // TODO: Get macos platform data.
+            break;
+          default:
+            platformData = <ProcessResult>[];
         }
 
         await SharedPref()
             .pref
             .setString(SPConst.sysPlatform, Platform.operatingSystem)
-            .then((_) => platform =
-                SharedPref().pref.getString(SPConst.sysPlatform) ??
-                    Platform.operatingSystem);
+            .then((_) {
+          return platform = SharedPref().pref.getString(SPConst.sysPlatform) ??
+              Platform.operatingSystem;
+        });
 
         platform = SharedPref().pref.getString(SPConst.sysPlatform) ??
             Platform.operatingSystem;
@@ -126,7 +136,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
             .pref
             .setString(
                 SPConst.osName,
-                platformData![0]!
+                platformData[0]
                     .stdout
                     .toString()
                     .split('\n')[0]
@@ -134,15 +144,17 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                     .replaceAll('OS Name: ', '')
                     .replaceAll('\\r', '')
                     .trim())
-            .then((_) => osName = SharedPref().pref.getString(SPConst.osName) ??
-                Platform.operatingSystem);
+            .then((_) {
+          return osName = SharedPref().pref.getString(SPConst.osName) ??
+              Platform.operatingSystem;
+        });
 
         osName = SharedPref().pref.getString(SPConst.osName) ??
             Platform.operatingSystem;
 
         await SharedPref().pref.setString(
             SPConst.osVersion,
-            platformData[0]!
+            platformData[0]
                 .stdout
                 .toString()
                 .split('\n')[1]
@@ -169,9 +181,12 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
       setState(() => _isChecking = false);
 
-      await PkgViewData.getInitialPackages();
-      await logger.file(LogTypeTag.info,
-          'Background fetched the pub list for performance improvements.');
+      while (mounted) {
+        await PkgViewData.getInitialPackages();
+        await logger.file(LogTypeTag.info,
+            'Background fetched the pub list for performance improvements.');
+        await Future<void>.delayed(const Duration(hours: 1));
+      }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to initialize data fetch. $_',
           stackTraces: s);
@@ -220,6 +235,56 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         : ThemeMode.light,
                     debugShowCheckedModeBanner: false,
                     builder: (_, Widget? child) {
+                      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                        // Log the render error to the log file so we can see it.
+                        logger.file(
+                          LogTypeTag.error,
+                          'Error while building UI: ${errorDetails.exception}',
+                          stackTraces: errorDetails.stack,
+                        );
+                        if (!kReleaseMode) {
+                          return ErrorWidget(errorDetails.exception);
+                        } else {
+                          return Scaffold(
+                            body: Material(
+                              color: Colors.transparent,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      const Text(
+                                        'Rendering Error - Restart App',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      VSeparators.normal(),
+                                      SelectableText(
+                                          'Error: ${errorDetails.exception}'),
+                                      VSeparators.normal(),
+                                      informationWidget(
+                                          'Please report this error by generating report in settings and filing a bug report on GitHub. To do that, close and reopen the app, go to Settings > GitHub > Create Issue.'),
+                                      VSeparators.normal(),
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          child: SelectableText(
+                                              'StackTrace: ${errorDetails.stack}'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      };
+
                       return Stack(
                         children: <Widget>[
                           Center(child: child),

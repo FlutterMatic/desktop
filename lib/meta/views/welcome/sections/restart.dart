@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/core/libraries/components.dart';
 import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/libraries/views.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
   return Column(
@@ -50,7 +53,12 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
                         : AppTheme.darkBackgroundColor,
                     child: const Text('Our Documentation',
                         style: TextStyle(color: Colors.white)),
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => const FMaticDocumentationDialog(),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -68,6 +76,22 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
         progress: Progress.none,
         buttonText: 'Restart',
       ),
+      VSeparators.small(),
+      TextButton(
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder<Widget>(
+              pageBuilder: (_, __, ___) => const HomeScreen(),
+              transitionDuration: Duration.zero,
+            ),
+          );
+          SharedPref().pref.setBool(SPConst.completedSetup, true);
+          SharedPref().pref.remove(SPConst.setupTab);
+          logger.file(LogTypeTag.info, 'Skipping restart after setup.');
+        },
+        child: const Text('Skip'),
+      )
     ],
   );
 }

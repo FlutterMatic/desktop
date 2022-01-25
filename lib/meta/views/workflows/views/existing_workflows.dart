@@ -18,6 +18,7 @@ import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 import 'package:fluttermatic/meta/views/workflows/views/confirm_delete.dart';
+import 'package:fluttermatic/meta/views/workflows/views/log_history.dart';
 
 class ShowExistingWorkflows extends StatefulWidget {
   final String pubspecPath;
@@ -345,7 +346,7 @@ class _ShowWorkflowTileOptions extends StatelessWidget {
                   onPressed: () {},
                 ),
               ),
-              HSeparators.small(),
+              HSeparators.normal(),
               Expanded(
                 child: RectangleButton(
                   height: 80,
@@ -359,7 +360,55 @@ class _ShowWorkflowTileOptions extends StatelessWidget {
                   onPressed: () {}, // TODO: Open edit view
                 ),
               ),
-              HSeparators.small(),
+              HSeparators.normal(),
+              Expanded(
+                child: RectangleButton(
+                  height: 80,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(child: Icon(Icons.history, size: 20)),
+                      VSeparators.small(),
+                      const Text('View Logs'),
+                    ],
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) =>
+                          ShowWorkflowLogHistory(workflowPath: workflowPath),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          VSeparators.normal(),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RectangleButton(
+                  height: 80,
+                  child: Column(
+                    children: <Widget>[
+                      const Expanded(
+                        child:
+                            Icon(Icons.play_arrow_rounded, color: kGreenColor),
+                      ),
+                      VSeparators.small(),
+                      const Text('Run'),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (_) =>
+                          WorkflowRunnerDialog(workflowPath: workflowPath),
+                    );
+                  },
+                ),
+              ),
+              HSeparators.normal(),
               Expanded(
                 child: RectangleButton(
                   height: 80,
@@ -367,7 +416,7 @@ class _ShowWorkflowTileOptions extends StatelessWidget {
                     children: <Widget>[
                       const Expanded(
                         child: Icon(Icons.delete_forever,
-                            color: AppTheme.errorColor, size: 20),
+                            color: AppTheme.errorColor),
                       ),
                       VSeparators.small(),
                       const Text('Delete'),

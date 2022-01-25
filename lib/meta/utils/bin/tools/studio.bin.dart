@@ -31,7 +31,7 @@ abstract class AndroidStudioBinInfo {
       return AndroidStudioBinInfoImpl(version: studioVersion);
     } on FormatException catch (formatException) {
       logger.file(
-          LogTypeTag.error, 'Format Exception : ${formatException.toString()}');
+          LogTypeTag.error, 'Format Exception: ${formatException.toString()}');
       return null;
     } catch (_, s) {
       logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
