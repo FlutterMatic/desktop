@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+title: '[🐛] Your issue title here'
+labels: 'bug'
+assignees: 'yahu1031, ZiyadF296'
 ---
 
 **Describe the bug**
@@ -24,7 +23,14 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. Windows]
+ - OS: [e.g. Windows, macOS, Linux]
+
+**Logs (please upload the logs file by following the instructions):**
+ - Go to settings
+ - Click on the Troubleshoot tab
+ - Click on "Generate Logs" button
+ - Follow the instructions to generate the logs
+ - Upload the generated ".log" file to the issue here on GitHub
 
 **Additional context**
 Add any other context about the problem here.
