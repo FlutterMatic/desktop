@@ -85,7 +85,8 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
   String? _savePath;
 
-  final ReceivePort _generatePort = ReceivePort();
+  static final ReceivePort _generatePort =
+      ReceivePort('GENERATE_REPORT_ISOLATE_PORT');
 
   bool _isListening = false;
 

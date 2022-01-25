@@ -3,6 +3,7 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 
 // 📦 Package imports:
 import 'package:provider/src/provider.dart';
@@ -34,7 +35,60 @@ class UpdateFlutterMaticDialog extends StatefulWidget {
 class _UpdateFlutterMaticDialogState extends State<UpdateFlutterMaticDialog> {
   bool _updating = false;
 
-  late final String? _version = widget.downloadUrl?.split('/')[7];
+  String? _version;
+
+  @override
+  void initState() {
+    widget.downloadUrl?.split('/').forEach((String element) {
+      if (element.startsWith('v')) {
+        List<String> _currentVersion = element.substring(1).split('.');
+        List<String> _releaseTypes = <String>['alpha', 'beta', 'stable'];
+
+        bool _isValid = false;
+
+        for (int i = 0; i < _currentVersion.length; i++) {
+          if (i < 2) {
+            if (int.tryParse(_currentVersion[i]) != null) {
+              continue;
+            }
+          } else {
+            List<String> _finalSplit = _currentVersion[i].split('-');
+            if (int.tryParse(_finalSplit[0]) == null) {
+              break;
+            }
+
+            if (_releaseTypes.contains(_finalSplit[1].toLowerCase())) {
+              _isValid = true;
+              break;
+            }
+          }
+        }
+
+        if (_isValid) {
+          setState(() => _version = element.toUpperCase());
+          return;
+        }
+      }
+    });
+
+    if (_version == null) {
+      _error();
+    }
+    super.initState();
+  }
+
+  Future<void> _error() async {
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+      context,
+      'Failed to get details about this update. Please try again later.',
+      type: SnackBarType.error,
+    ));
+    Navigator.pop(context);
+    await logger.file(
+        LogTypeTag.error, 'Failed to get details about FlutterMatic update.');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,135 +96,127 @@ class _UpdateFlutterMaticDialogState extends State<UpdateFlutterMaticDialog> {
       onWillPop: () async => false,
       child: DialogTemplate(
         outerTapExit: false,
-        child: Column(
-          children: <Widget>[
-            const DialogHeader(title: 'Update FlutterMatic', canClose: false),
-            informationWidget(
-                'There is a new version of FlutterMatic, version ${_version?.substring(1) ?? 'UNKNOWN (UH-OH 🤔)'} is the latest and you are using version $appVersion-$appBuild',
-                type: InformationType.green),
-            VSeparators.normal(),
-            RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
-              child: Row(
-                children: <Widget>[
-                  Container(width: 2, height: 20, color: kGreenColor),
-                  HSeparators.small(),
-                  Expanded(
-                    child: Text(
-                        'Download the latest version of FlutterMatic - $_version'),
-                  ),
-                ],
-              ),
-            ),
-            VSeparators.normal(),
-            if (_updating)
+        child: IgnorePointer(
+          ignoring: _version == null,
+          child: Column(
+            children: <Widget>[
+              const DialogHeader(title: 'Update FlutterMatic', canClose: false),
+              informationWidget(
+                  'There is a new version of FlutterMatic, version ${_version?.substring(1) ?? 'UNKNOWN'} is the latest and you are using version $appVersion-$appBuild',
+                  type: InformationType.green),
+              VSeparators.normal(),
               RoundContainer(
                 color: Colors.blueGrey.withOpacity(0.2),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    color: kGreenColor,
-                    backgroundColor: kGreenColor.withOpacity(0.1),
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(kGreenColor),
-                  ),
+                child: Row(
+                  children: <Widget>[
+                    Container(width: 2, height: 20, color: kGreenColor),
+                    HSeparators.small(),
+                    Expanded(
+                      child: Text(
+                          'Download the latest version of FlutterMatic - ${_version ?? 'UNKNOWN'}'),
+                    ),
+                  ],
                 ),
-              )
-            else
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RectangleButton(
-                      child: const Text('Cancel'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  HSeparators.normal(),
-                  Expanded(
-                    child: RectangleButton(
-                      color: kGreenColor.withOpacity(
-                          context.read<ThemeChangeNotifier>().isDarkTheme
-                              ? 1
-                              : 0.7),
-                      child: const Text('Download',
-                          style: TextStyle(color: Colors.black)),
-                      onPressed: () async {
-                        try {
-                          setState(() => _updating = true);
-
-                          // Will download and extract the [widget.downloadUrl].
-                          // After that is done, it will get the path where the
-                          // app code is and replace the entire folder with the
-                          // downloaded one.
-                          // After that, it will then close the app and restart
-                          // it using the new code.
-                          // Downloads to the C:\\fluttermatic\\fm_update\\ folder.
-                          String _downloadPath =
-                              '${context.read<SpaceCheck>().drive}:\\fluttermatic';
-
-                          await Directory(_downloadPath)
-                              .create(recursive: true);
-
-                          await context.read<DownloadNotifier>().downloadFile(
-                              widget.downloadUrl!,
-                              'fm_update-$_version'.replaceAll('.', '-') +
-                                  '.zip',
-                              _downloadPath);
-
-                          await logger.file(LogTypeTag.info,
-                              'FlutterMatic update version $_version has been downloaded. Extracting...');
-
-                          setState(() => _updating = false);
-
-                          // Will open the folder viewer to show the downloaded
-                          // updated.
-                          switch (Platform.operatingSystem) {
-                            case 'windows':
-                              await Process.run(
-                                  'explorer', <String>[_downloadPath]);
-                              break;
-                            case 'linux':
-                              await Process.run(
-                                  'xdg-open', <String>[_downloadPath]);
-                              break;
-                            case 'macos':
-                              await Process.run(
-                                  'open', <String>[_downloadPath]);
-                              break;
-                          }
-
-                          Navigator.pop(context);
-
-                          await showDialog(
-                            context: context,
-                            builder: (_) => _UpdateInstructionsDialog(
-                                downloadPath: _downloadPath),
-                          );
-
-                          return;
-                        } catch (_, s) {
-                          await logger.file(LogTypeTag.error,
-                              'Failed to update FlutterMatic to version $_version: $_',
-                              stackTraces: s);
-                          setState(() => _updating = false);
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Failed to download update. Please try again or download update manually from GitHub.',
-                              action: snackBarAction(
-                                text: 'GitHub',
-                                onPressed: () => launch(widget.downloadUrl!),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
               ),
-          ],
+              VSeparators.normal(),
+              if (_updating)
+                const CustomLinearProgressIndicator(includeBox: false)
+              else
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: RectangleButton(
+                        child: const Text('Cancel'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    HSeparators.normal(),
+                    Expanded(
+                      child: RectangleButton(
+                        color: kGreenColor.withOpacity(
+                            context.read<ThemeChangeNotifier>().isDarkTheme
+                                ? 1
+                                : 0.7),
+                        child: const Text('Download',
+                            style: TextStyle(color: Colors.black)),
+                        onPressed: () async {
+                          try {
+                            setState(() => _updating = true);
+
+                            // Will download and extract the [widget.downloadUrl].
+                            // After that is done, it will get the path where the
+                            // app code is and replace the entire folder with the
+                            // downloaded one.
+                            // After that, it will then close the app and restart
+                            // it using the new code.
+                            // Downloads to the C:\\fluttermatic\\fm_update\\ folder.
+                            String _downloadPath =
+                                '${context.read<SpaceCheck>().drive}:\\fluttermatic';
+
+                            await Directory(_downloadPath)
+                                .create(recursive: true);
+
+                            await context.read<DownloadNotifier>().downloadFile(
+                                widget.downloadUrl!,
+                                'fm_update-$_version'.replaceAll('.', '-') +
+                                    '.zip',
+                                _downloadPath);
+
+                            await logger.file(LogTypeTag.info,
+                                'FlutterMatic update version $_version has been downloaded. Extracting...');
+
+                            setState(() => _updating = false);
+
+                            // Will open the folder viewer to show the downloaded
+                            // updated.
+                            switch (Platform.operatingSystem) {
+                              case 'windows':
+                                await Process.run(
+                                    'explorer', <String>[_downloadPath]);
+                                break;
+                              case 'linux':
+                                await Process.run(
+                                    'xdg-open', <String>[_downloadPath]);
+                                break;
+                              case 'macos':
+                                await Process.run(
+                                    'open', <String>[_downloadPath]);
+                                break;
+                            }
+
+                            Navigator.pop(context);
+
+                            await showDialog(
+                              context: context,
+                              builder: (_) => _UpdateInstructionsDialog(
+                                  downloadPath: _downloadPath),
+                            );
+
+                            return;
+                          } catch (_, s) {
+                            await logger.file(LogTypeTag.error,
+                                'Failed to update FlutterMatic to version $_version: $_',
+                                stackTraces: s);
+                            setState(() => _updating = false);
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Failed to download update. Please try again or download update manually from GitHub.',
+                                action: snackBarAction(
+                                  text: 'GitHub',
+                                  onPressed: () => launch(widget.downloadUrl!),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );

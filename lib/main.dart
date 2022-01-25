@@ -47,6 +47,18 @@ class FlutterMaticMain extends StatefulWidget {
 class _FlutterMaticMainState extends State<FlutterMaticMain> {
   bool _isChecking = true;
 
+  Future<void> _hasCompletedSetup() async {
+    if (SharedPref().pref.containsKey(SPConst.completedSetup) &&
+        !SharedPref().pref.containsKey(SPConst.setupTab)) {
+      completedSetup =
+          SharedPref().pref.getBool(SPConst.completedSetup) ?? false;
+    } else {
+      await SharedPref().pref.setBool(SPConst.completedSetup, false);
+      completedSetup =
+          SharedPref().pref.getBool(SPConst.completedSetup) ?? false;
+    }
+  }
+
   Future<void> _initDataFetch() async {
     try {
       /// Application supporting Directory
@@ -93,15 +105,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
       await SharedPref().pref.setString(SPConst.appBuild, appBuild.toString());
 
-      if (SharedPref().pref.containsKey(SPConst.completedSetup) &&
-          !SharedPref().pref.containsKey(SPConst.setupTab)) {
-        completedSetup =
-            SharedPref().pref.getBool(SPConst.completedSetup) ?? false;
-      } else {
-        await SharedPref().pref.setBool(SPConst.completedSetup, false);
-        completedSetup =
-            SharedPref().pref.getBool(SPConst.completedSetup) ?? false;
-      }
+      await _hasCompletedSetup();
 
       if (!SharedPref().pref.containsKey(SPConst.sysPlatform)) {
         List<ProcessResult> platformData = <ProcessResult>[];
@@ -190,6 +194,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to initialize data fetch. $_',
           stackTraces: s);
+      await _hasCompletedSetup();
       setState(() => _isChecking = false);
     }
   }

@@ -207,13 +207,8 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                       children: _searchResults.isEmpty
                           ? <Widget>[
                               if (_loadingSearch)
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: LinearProgressIndicator(
-                                    backgroundColor:
-                                        Colors.blue.withOpacity(0.1),
-                                  ),
-                                )
+                                const CustomLinearProgressIndicator(
+                                    includeBox: false)
                               else
                                 informationWidget(
                                   'There are no results for your search query. Try using another term instead.',
@@ -257,17 +252,18 @@ class _NotificationsButtonState extends State<_NotificationsButton> {
       await Future<void>.delayed(const Duration(seconds: 3));
 
       if (context.read<NotificationsNotifier>().notifications.isNotEmpty) {
-        if (!_hasNotifications) {
+        if (!_hasNotifications && mounted) {
           setState(() => _hasNotifications = true);
         }
       } else {
-        if (_hasNotifications) {
+        if (_hasNotifications && mounted) {
           setState(() => _hasNotifications = false);
         }
       }
 
       if (context.read<NotificationsNotifier>().notifications.length !=
-          _notificationsCount) {
+              _notificationsCount &&
+          mounted) {
         setState(() => _notificationsCount =
             context.read<NotificationsNotifier>().notifications.length);
       }

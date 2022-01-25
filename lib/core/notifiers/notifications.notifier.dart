@@ -1,4 +1,3 @@
-// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
@@ -10,7 +9,7 @@ class NotificationsNotifier with ChangeNotifier {
 
   /// Will start monitoring the user network connection making
   /// sure to notify any connection changes.
-  void newNotification(NotificationObject notificationObject) {
+  Future<void> newNotification(NotificationObject notificationObject) async {
     // Make sure that this id doesn't already exist.
     bool _idExists = false;
 
@@ -22,7 +21,7 @@ class NotificationsNotifier with ChangeNotifier {
     }
 
     if (_idExists) {
-      logger.file(LogTypeTag.error,
+      await logger.file(LogTypeTag.error,
           'Notification id already exists. Can\'t add a duplicated notification id: ${notificationObject.id}');
       assert(false,
           'Notification id already exists. Can\'t add a duplicated notification id: ${notificationObject.id}');
@@ -42,20 +41,22 @@ class NotificationsNotifier with ChangeNotifier {
       );
       notifyListeners();
 
-      logger.file(LogTypeTag.info,
+      await logger.file(LogTypeTag.info,
           'New notification: ${notificationObject.id} - ${notificationObject.title} - ${notificationObject.message}');
+      // We will add the notification to the cache.
+
     }
   }
 
-  void removeNotification(String notificationId) {
+  Future<void> removeNotification(String notificationId) async {
     _notifications.removeWhere(
         (NotificationObject notification) => notification.id == notificationId);
     notifyListeners();
-    logger.file(LogTypeTag.info, 'Removed notification: $notificationId');
+    await logger.file(LogTypeTag.info, 'Removed notification: $notificationId');
   }
 
-  void clearNotifications() {
-    logger.file(LogTypeTag.info,
+  Future<void> clearNotifications() async {
+    await logger.file(LogTypeTag.info,
         'Notifications cleared: ${_notifications.length} notifications');
     _notifications.clear();
     notifyListeners();

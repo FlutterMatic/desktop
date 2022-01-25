@@ -34,7 +34,8 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
 
   // Data
   final List<ProjectObject> _projects = <ProjectObject>[];
-  final ReceivePort _loadProjectsPort = ReceivePort('find_projects_isolate');
+  final ReceivePort _loadProjectsPort =
+      ReceivePort('FIND_PROJECTS_ISOLATE_PORT');
 
   Future<void> _loadProjects([bool notFirstCall = false]) async {
     try {

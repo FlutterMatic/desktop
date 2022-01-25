@@ -1,6 +1,7 @@
 // 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
@@ -8,7 +9,10 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/meta/utils/check_new_version.dart';
+import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
@@ -32,11 +36,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _animateFinish = false;
+  // Isolate Receive Ports
+  static final ReceivePort _clearLogsPort = ReceivePort('CLEAR_OLD_LOGS_PORT');
+  static final ReceivePort _checkUpdatesPort =
+      ReceivePort('CHECK_UPDATES_PORT');
 
+  // Utils
+  bool _animateFinish = false;
+  bool _isUpdatesPortListening = false;
+  bool _isClearLogsPortListening = false;
+
+  // Update Status
   String? _updateDownloadUrl;
   bool _updateAvailable = false;
 
+  // Tabs
   late HomeTabObject _selectedTab;
 
   late final List<HomeTabObject> _tabs = const <HomeTabObject>[
@@ -49,8 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _checkUpdates() async {
     try {
-      String _version = 'v' + appVersion + '-' + appBuild.toLowerCase();
-
       while (mounted) {
         if (!context.read<ConnectionNotifier>().isOnline) {
           await Future<void>.delayed(const Duration(seconds: 5));
@@ -68,52 +80,20 @@ class _HomeScreenState extends State<HomeScreen> {
           continue;
         }
 
-        http.Response _result = await http.get(Uri.parse(
-            'https://api.github.com/repos/fluttermatic/desktop/releases'));
+        await Isolate.spawn(checkNewFlutterMaticVersion, <dynamic>[
+          _checkUpdatesPort.sendPort,
+          (await getApplicationSupportDirectory()).path,
+          Platform.operatingSystem.toLowerCase()
+        ]);
 
-        if (_result.statusCode == 200) {
-          String _latestVersion =
-              (jsonDecode(_result.body) as List<dynamic>)[0]['tag_name'];
-
-          if (_latestVersion.toLowerCase() != _version.toLowerCase()) {
-            await logger.file(LogTypeTag.warning,
-                'Found a new FlutterMatic version. Current version: $_version Latest version: $_latestVersion');
-
-            if (mounted) {
-              bool _isTargeted = false;
-
-              // Finds the asset in the API that is for this platform. If there
-              // is no asset for this release on this platform, then it means
-              // that the release is not targeted for this platform and perhaps
-              // it's only a fix for a specific platform.
-              String _downloadUrl =
-                  (jsonDecode(_result.body) as List<Map<String, dynamic>>)
-                      .firstWhere((Map<String, dynamic> asset) {
-                if (asset['name'].toLowerCase() ==
-                    Platform.operatingSystem.toLowerCase()) {
-                  _isTargeted = true;
-                  return true;
-                }
-                return false;
-              })['browser_download_url'];
-
-              if (_isTargeted) {
-                setState(() {
-                  _updateAvailable = true;
-                  _updateDownloadUrl = _downloadUrl;
-                });
-              } else {
-                await logger.file(LogTypeTag.info,
-                    'Release is not targeted. Skipping. Latest version: $_latestVersion Current version: $_version Platform OS: ${Platform.operatingSystem}');
-              }
-            }
-          } else {
-            await logger.file(LogTypeTag.info,
-                'No new FlutterMatic version found. Current version: $_version ');
-          }
-        } else {
-          await logger.file(LogTypeTag.error,
-              'Failed to check for updates. Response code: ${_result.statusCode}');
+        if (!_isUpdatesPortListening && mounted) {
+          setState(() => _isUpdatesPortListening = true);
+          _checkUpdatesPort.listen((dynamic message) {
+            setState(() {
+              _updateAvailable = message[0];
+              _updateDownloadUrl = message[1];
+            });
+          });
         }
 
         // Keep checking for new updates every hour.
@@ -148,6 +128,19 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => _animateFinish = true);
     });
     _checkUpdates();
+    // After a minute when everything has settled, we will clear logs that are
+    // old to avoid clogging up the FlutterMatic app data space.
+    Future<void>.delayed(const Duration(seconds: 5)).then((_) async {
+      await Isolate.spawn(clearOldLogs, <dynamic>[
+        _clearLogsPort.sendPort,
+        (await getApplicationSupportDirectory()).path
+      ]);
+
+      if (!_isClearLogsPortListening) {
+        setState(() => _isClearLogsPortListening = true);
+        _clearLogsPort.listen((_) => _clearLogsPort.close());
+      }
+    });
     super.initState();
   }
 
@@ -385,7 +378,6 @@ class UpdateAppButton extends StatelessWidget {
   }
 }
 
-
 // // We do not need to make a request to the pub API because this won't be
 // // called every time the user types.
 // // We will filter out the [_pub] list and set the results to the
@@ -461,38 +453,38 @@ class UpdateAppButton extends StatelessWidget {
 //   setState(() => _loadingSearch = false);
 // }
 
-  // Future<void> _startSearch() async {
-  //   setState(() => _loadingSearch = true);
+// Future<void> _startSearch() async {
+//   setState(() => _loadingSearch = true);
 
-  //   List<ProjectObject> _results = <ProjectObject>[];
+//   List<ProjectObject> _results = <ProjectObject>[];
 
-  //   if (_searchText.isEmpty) {
-  //     setState(_searchResults.clear);
-  //     return;
-  //   }
+//   if (_searchText.isEmpty) {
+//     setState(_searchResults.clear);
+//     return;
+//   }
 
-  //   String _q = removeSpaces(_searchText.toLowerCase());
+//   String _q = removeSpaces(_searchText.toLowerCase());
 
-  //   for (ProjectObject _project in _projects) {
-  //     if (_results.length >= 5) {
-  //       break;
-  //     }
+//   for (ProjectObject _project in _projects) {
+//     if (_results.length >= 5) {
+//       break;
+//     }
 
-  //     List<bool> _matches = <bool>[
-  //       removeSpaces(_project.name.toLowerCase()).contains(_q),
-  //       _project.path.toLowerCase().contains(_q),
-  //       if (_project.description != null)
-  //         removeSpaces(_project.description!.toLowerCase()).contains(_q),
-  //     ];
+//     List<bool> _matches = <bool>[
+//       removeSpaces(_project.name.toLowerCase()).contains(_q),
+//       _project.path.toLowerCase().contains(_q),
+//       if (_project.description != null)
+//         removeSpaces(_project.description!.toLowerCase()).contains(_q),
+//     ];
 
-  //     if (_matches.contains(true)) {
-  //       _results.add(_project);
-  //     }
-  //   }
+//     if (_matches.contains(true)) {
+//       _results.add(_project);
+//     }
+//   }
 
-  //   setState(() {
-  //     _searchResults.clear();
-  //     _searchResults.addAll(_results);
-  //     _loadingSearch = false;
-  //   });
-  // }
+//   setState(() {
+//     _searchResults.clear();
+//     _searchResults.addAll(_results);
+//     _loadingSearch = false;
+//   });
+// }

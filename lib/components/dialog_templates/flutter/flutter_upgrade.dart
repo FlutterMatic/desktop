@@ -1,8 +1,12 @@
 // 🎯 Dart imports:
+import 'dart:developer';
 import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/core/models/check_response.model.dart';
+import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/core/services/checks/check.services.dart';
 
 // 📦 Package imports:
 import 'package:provider/src/provider.dart';
@@ -24,13 +28,21 @@ class UpdateFlutterDialog extends StatefulWidget {
 class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
   bool _updating = false;
 
-  /// TODO: Update Flutter when is requested. Ignore the request and say that Flutter is already up to date if current version is equal to the latest version.
+  String _activityMessage = '';
+
   Future<void> _upgradeFlutter() async {
     setState(() => _updating = true);
 
     // Make sure that there is an internet connection.
-    if (context.read<ConnectionNotifier>().isOnline) {
-      
+    if (!context.read<ConnectionNotifier>().isOnline) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Please check your network connection first to update Flutter.',
+        type: SnackBarType.error,
+      ));
+      setState(() => _updating = false);
+      return;
     }
 
     // Already Updated Sample Response:
@@ -40,10 +52,68 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
     // Engine • revision 890a5fca2e
     // Tools • Dart 2.15.1
 
-    await Future<void>.delayed(const Duration(seconds: 10));
+    await shell
+        .run('flutter upgrade')
+        .asStream()
+        .listen((List<ProcessResult> event) {
+          if (event.isNotEmpty && mounted) {
+            setState(() => _activityMessage =
+                event.last.stdout.toString().split('\n').first);
+          }
+        })
+        .asFuture()
+        .onError((Object? _, StackTrace s) {
+          logger.file(LogTypeTag.error, 'Error while updating Flutter: $_',
+              stackTraces: s);
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+            context,
+            'Failed to update Flutter. Please make sure you have a stable network connection and try again.',
+            type: SnackBarType.error,
+          ));
+          if (mounted) {
+            setState(() =>
+                _activityMessage = 'An error occurred while updating Flutter.');
+          }
+          return;
+        });
 
-    // Latest version already.
-    setState(() => _updating = false);
+    ServiceCheckResponse _result = await CheckServices.checkFlutter();
+
+    await context.read<NotificationsNotifier>().newNotification(
+          NotificationObject(
+            Timeline.now.toString(),
+            title:
+                'Flutter has been updated to ${_result.version ?? 'UNKNOWN'}',
+            message:
+                'You have successfully updated your local Flutter version to ${_result.version ?? 'UNKNOWN'}.',
+            onPressed: null,
+          ),
+        );
+
+    if (mounted) {
+      if (_activityMessage.toLowerCase().startsWith('flutter is already')) {
+        await logger.file(LogTypeTag.info,
+            'Flutter is already up to date on channel stable with version ${_result.version}. Attempted upgrade when no new version available.');
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'Flutter is already up to date on channel ${_result.channel}.',
+          type: SnackBarType.done,
+        ));
+      } else {
+        await logger.file(LogTypeTag.info,
+            'Flutter has been updated to ${_result.version} on channel ${_result.channel}.');
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'Flutter has been updated to ${_result.version ?? 'UNKNOWN'} on channel ${_result.channel}.',
+          type: SnackBarType.done,
+        ));
+      }
+
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -60,16 +130,43 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
               'Keeping Flutter up-to-date is a good idea since it helps with many things including performance improvements, bug fixes and new features.',
               textAlign: TextAlign.center,
             ),
-            VSeparators.small(),
+            VSeparators.normal(),
             infoWidget(context,
                 'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete. You can\'t use FlutterMatic while we update.'),
             VSeparators.small(),
-            RectangleButton(
-              loading: _updating,
-              width: double.infinity,
-              onPressed: _upgradeFlutter,
-              child: const Text('Check and Update Flutter'),
-            ),
+            if (_updating)
+              RoundContainer(
+                child: Builder(
+                  builder: (_) {
+                    if (_activityMessage.isEmpty) {
+                      return const CustomLinearProgressIndicator(
+                          includeBox: false);
+                    } else {
+                      return Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(_activityMessage,
+                                maxLines: 1, overflow: TextOverflow.ellipsis),
+                          ),
+                          HSeparators.small(),
+                          const SizedBox(
+                            width: 50,
+                            child: CustomLinearProgressIndicator(
+                                includeBox: false),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              )
+            else
+              RectangleButton(
+                loading: _updating,
+                width: double.infinity,
+                onPressed: _upgradeFlutter,
+                child: const Text('Check and Update Flutter'),
+              ),
           ],
         ),
       ),

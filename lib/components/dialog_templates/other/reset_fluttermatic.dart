@@ -57,6 +57,8 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
         await _downloadedTools.delete(recursive: true);
       }
 
+      await SharedPref().pref.clear();
+
       // Restart the app.
       RestartWidget.restartApp(context);
 

@@ -66,7 +66,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   bool _saveLocalError = false;
   bool _isSavingLocally = false;
 
-  final ReceivePort _saveLocallyPort = ReceivePort();
+  final ReceivePort _saveLocallyPort =
+      ReceivePort('WORKFLOW_AUTO_SYNC_ISOLATE_PORT');
 
   Map<String, dynamic> _lastSavedContent = <String, dynamic>{};
 

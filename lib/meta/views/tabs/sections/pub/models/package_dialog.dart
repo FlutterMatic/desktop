@@ -41,7 +41,8 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
 
   bool _shouldDisplay = false;
 
-  final ReceivePort _readMePort = ReceivePort();
+  final ReceivePort _readMePort =
+      ReceivePort('GET_PACKAGE_README_ISOLATE_PORT');
 
   Future<void> _loadData() async {
     try {
