@@ -46,7 +46,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             await context.read<FlutterMaticAPINotifier>().fetchAPIData();
             apiData = context.read<FlutterMaticAPINotifier>().apiMap;
             await logger.file(LogTypeTag.info,
-                'Fetched FlutterMatic API data: ${apiData?.data.toString().substring(0, 50)}...');
+                'Fetched FlutterMatic API data: ${apiData?.data}');
           }
         },
         onRetry: (_) async {
@@ -66,7 +66,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
             sdkData = context.read<FlutterSDKNotifier>().sdkMap;
             await logger.file(LogTypeTag.info,
-                'Fetched Flutter SDK data: ${sdkData?.data.toString().substring(0, 50)}...');
+                'Fetched Flutter SDK data: ${sdkData?.data}');
           }
         },
         onRetry: (_) async {
