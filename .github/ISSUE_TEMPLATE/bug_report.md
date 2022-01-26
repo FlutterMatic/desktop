@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: '[🐛] Your issue title here'
 labels: 'bug'
-assignees: 'yahu1031, ZiyadF296'
+assignees: 'yahu1031'
 ---
 
 **Describe the bug**
