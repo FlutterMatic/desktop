@@ -14,7 +14,6 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Expects the following data:
 /// [<String> filePath, <String> fileName, <SendPort> port]
