@@ -8,14 +8,17 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class GitHubSettingsSection extends StatelessWidget {
   const GitHubSettingsSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TabViewTabHeadline(
       title: 'GitHub',
       content: <Widget>[
@@ -24,6 +27,15 @@ class GitHubSettingsSection extends StatelessWidget {
             Expanded(
               child: RectangleButton(
                 height: 100,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Icon(Icons.error_outline_rounded,
+                          color: Theme.of(context).iconTheme.color, size: 30),
+                    ),
+                    const Text('Create Issue'),
+                  ],
+                ),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -70,19 +82,6 @@ class GitHubSettingsSection extends StatelessWidget {
                     ),
                   );
                 },
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Icon(Icons.error_outline_rounded,
-                          color: customTheme.iconTheme.color, size: 30),
-                    ),
-                    Text(
-                      'Create Issue',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color),
-                    ),
-                  ],
-                ),
               ),
             ),
             HSeparators.small(),
@@ -97,13 +96,9 @@ class GitHubSettingsSection extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: Icon(Icons.precision_manufacturing,
-                          size: 30, color: customTheme.iconTheme.color),
+                          size: 30, color: Theme.of(context).iconTheme.color),
                     ),
-                    Text(
-                      'Pull Request',
-                      style: TextStyle(
-                          color: customTheme.textTheme.bodyText1!.color),
-                    ),
+                    const Text('Pull Request'),
                   ],
                 ),
               ),

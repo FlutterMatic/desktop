@@ -15,10 +15,15 @@ import 'package:pub_semver/src/version.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/core/libraries/api.dart';
-import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/api/flutter_sdk.api.dart';
+import 'package:fluttermatic/core/models/flutter_sdk.model.dart';
+import 'package:fluttermatic/core/models/version.model.dart';
+import 'package:fluttermatic/core/notifiers/download.notifier.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/services/check_file.dart';
+import 'package:fluttermatic/core/services/extraction.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/core/services/set_path.dart';
 import 'package:fluttermatic/meta/utils/bin/tools/flutter.bin.dart' as fb;
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 

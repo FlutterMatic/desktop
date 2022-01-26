@@ -1,5 +1,4 @@
 // 🎯 Dart imports:
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -9,22 +8,24 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/meta/utils/check_new_version.dart';
-import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/check_new_version.dart';
+import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/update_fluttermatic.dart';
 import 'package:fluttermatic/meta/views/tabs/search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/pub.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/workflow.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -291,7 +292,6 @@ Widget _tabTile(
   required Function() onPressed,
   required bool selected,
 }) {
-  ThemeData _customTheme = Theme.of(context);
   Size _size = MediaQuery.of(context).size;
 
   bool _showShortView = _size.width < 900;
@@ -308,7 +308,7 @@ Widget _tabTile(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         color: selected
-            ? _customTheme.colorScheme.secondary.withOpacity(0.2)
+            ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
             : Colors.transparent,
         padding: EdgeInsets.all(_showShortView ? 5 : 10),
         onPressed: onPressed,
@@ -323,7 +323,10 @@ Widget _tabTile(
                       child: Text(
                         name,
                         style: TextStyle(
-                          color: _customTheme.textTheme.bodyText1!.color!
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .color!
                               .withOpacity(selected ? 1 : .4),
                         ),
                       ),

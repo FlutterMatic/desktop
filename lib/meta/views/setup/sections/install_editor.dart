@@ -6,19 +6,26 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/services/checks/studio.check.dart';
+import 'package:fluttermatic/core/services/checks/vsc.check.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/setup/components/button.dart';
+import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/progress_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/tool_installed.dart';
 
-class WelcomeInstallEditor extends StatefulWidget {
+class SetUpInstallEditor extends StatefulWidget {
   final VoidCallback onInstall;
   final VoidCallback onContinue;
   final Function(List<EditorType>) onEditorTypeChanged;
   final bool isInstalling;
   final bool doneInstalling;
 
-  const WelcomeInstallEditor({
+  const SetUpInstallEditor({
     Key? key,
     required this.onInstall,
     required this.onContinue,
@@ -28,10 +35,10 @@ class WelcomeInstallEditor extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _WelcomeInstallEditorState createState() => _WelcomeInstallEditorState();
+  _SetUpInstallEditorState createState() => _SetUpInstallEditorState();
 }
 
-class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
+class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
   List<EditorType> _editorTypes = <EditorType>[
     EditorType.androidStudio,
     EditorType.vscode,
@@ -76,7 +83,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
 
         return Column(
           children: <Widget>[
-            welcomeHeaderTitle(
+            setUpHeaderTitle(
               Assets.editor,
               'Install Editor',
               'You will need to install an editor that supports Flutter to start developing your apps.',
@@ -103,7 +110,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                     return hLoadingIndicator(context: context);
                   } else if (vsCodeNotifier.progress == Progress.done &&
                       androidStudioNotifier.progress == Progress.done) {
-                    return welcomeToolInstalled(
+                    return setUpToolInstalled(
                       context,
                       title:
                           '${_editorTypes.length > 1 ? 'Editors' : 'Editor'} Installed',
@@ -182,7 +189,7 @@ class _WelcomeInstallEditorState extends State<WelcomeInstallEditor> {
                 ],
               ),
             VSeparators.normal(),
-            WelcomeButton(
+            SetUpButton(
               buttonText: _getProgress() == Progress.done ? 'Continue' : null,
               onInstall: widget.onInstall,
               onContinue: widget.onContinue,

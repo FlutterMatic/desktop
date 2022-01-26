@@ -11,16 +11,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/app/providers/multi_providers.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/views/setup/components/windows_controls.dart';
+import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
+import 'meta/views/setup/screens/setup_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +37,7 @@ Future<void> main() async {
     appWindow.alignment = Alignment.center;
     appWindow.title = 'FlutterMatic';
     appWindow.show();
+    appWindow.maximize();
   });
   // Wrapped with a restart widget to allow restarting FlutterMatic from
   // anywhere in the app without restarting Flutter engine.
@@ -45,6 +52,7 @@ class FlutterMaticMain extends StatefulWidget {
 }
 
 class _FlutterMaticMainState extends State<FlutterMaticMain> {
+  // Utils
   bool _isChecking = true;
 
   Future<void> _hasCompletedSetup() async {
@@ -185,10 +193,14 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
       setState(() => _isChecking = false);
 
+      // Get the package every hour to avoid loading it and waiting when the
+      // user goes to the packages tab in home.
       while (mounted) {
         await PkgViewData.getInitialPackages();
+
         await logger.file(LogTypeTag.info,
             'Background fetched the pub list for performance improvements.');
+
         await Future<void>.delayed(const Duration(hours: 1));
       }
     } catch (_, s) {
@@ -332,7 +344,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         ? const Scaffold(
                             body: Center(child: Spinner(thickness: 2)))
                         : !completedSetup
-                            ? const WelcomePage()
+                            ? const SetupScreen()
                             : const HomeScreen(),
                   ),
                 ),

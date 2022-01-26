@@ -4,8 +4,8 @@ import 'dart:io';
 import 'dart:isolate';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
 
 class ProjectServicesModel {

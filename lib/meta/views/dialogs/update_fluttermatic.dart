@@ -3,21 +3,24 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 
 // 📦 Package imports:
 import 'package:provider/src/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/notifiers/download.notifier.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class UpdateFlutterMaticDialog extends StatefulWidget {
   final String? downloadUrl;

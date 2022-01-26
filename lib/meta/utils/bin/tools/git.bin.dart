@@ -7,8 +7,8 @@ import 'package:process_run/shell_run.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 Future<Version?> getGitVersion() => getGitBinVersion();
 

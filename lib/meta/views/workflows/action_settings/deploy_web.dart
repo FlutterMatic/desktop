@@ -12,7 +12,7 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 

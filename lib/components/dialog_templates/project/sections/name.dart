@@ -8,8 +8,13 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class ProjectNameSection extends StatefulWidget {
   final String? path;

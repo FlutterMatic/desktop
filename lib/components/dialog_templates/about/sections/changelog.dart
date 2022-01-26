@@ -7,7 +7,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ChangelogAboutSection extends StatefulWidget {

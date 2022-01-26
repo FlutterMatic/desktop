@@ -59,7 +59,6 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TextFormField(
       scrollPhysics: const BouncingScrollPhysics(),
       cursorRadius: const Radius.circular(10),
@@ -72,7 +71,7 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType ?? TextInputType.text,
       obscureText: obscureText,
       maxLines: numLines ?? 1,
-      style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+      style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
       inputFormatters: filterFormatters ??
           <TextInputFormatter>[
             filteringTextInputFormatter ?? FilteringTextInputFormatter.deny('')
@@ -88,10 +87,12 @@ class CustomTextField extends StatelessWidget {
         filled: true,
         hintText: hintText,
         counterStyle: TextStyle(
-          color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
+          color:
+              Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.75),
         ),
         hintStyle: TextStyle(
-            color: customTheme.textTheme.bodyText1!.color!.withOpacity(0.75),
+            color:
+                Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.75),
             fontSize: 15),
       ),
       textAlignVertical: TextAlignVertical.center,

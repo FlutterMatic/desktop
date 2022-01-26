@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/close_button.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 const List<Progress> _disabledProgresses = <Progress>[
@@ -13,14 +14,14 @@ const List<Progress> _disabledProgresses = <Progress>[
   Progress.started,
 ];
 
-class WelcomeButton extends StatelessWidget {
+class SetUpButton extends StatelessWidget {
   final Progress progress;
   final VoidCallback? onContinue;
   final VoidCallback? onInstall;
   final String? buttonText;
   final bool loading;
 
-  const WelcomeButton({
+  const SetUpButton({
     required this.progress,
     required this.onInstall,
     required this.onContinue,

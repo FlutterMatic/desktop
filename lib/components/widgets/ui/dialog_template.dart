@@ -2,9 +2,8 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class DialogTemplate extends StatelessWidget {
   final Widget child;
@@ -74,24 +73,4 @@ class DialogTemplate extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget popUpTextTemplate(String title, String description) {
-  return SingleChildScrollView(
-    child: Column(
-      children: <Widget>[
-        //Title
-        SelectableText(
-          title,
-          textAlign: TextAlign.center,
-        ),
-        VSeparators.normal(),
-        //Description
-        SelectableText(
-          description,
-          textAlign: TextAlign.center,
-        ),
-      ],
-    ),
-  );
 }

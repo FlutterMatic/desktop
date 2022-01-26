@@ -2,12 +2,15 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
 import 'package:fluttermatic/meta/views/workflows/views/existing_workflows.dart';
 
 class ProjectInfoTile extends StatefulWidget {

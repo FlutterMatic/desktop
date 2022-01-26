@@ -12,8 +12,12 @@ import 'package:path_provider/path_provider.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 /// Expects the following data:
 /// [<String> filePath, <String> fileName, <SendPort> port]
@@ -21,10 +25,10 @@ import 'package:fluttermatic/core/libraries/widgets.dart';
 /// Returns:
 /// True if the file was successfully sent, false otherwise.
 Future<void> _generateReportOnIsolate(List<dynamic> data) async {
-  String _basePath = data[0];
-  String _filePath = data[1];
-  String _fileName = data[2];
-  SendPort _port = data[3];
+  SendPort _port = data[0];
+  String _basePath = data[1];
+  String _filePath = data[2];
+  String _fileName = data[3];
 
   try {
     // Will go to the support directory then to the "logs" directory. Will then
@@ -62,10 +66,14 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
       );
     }
 
+    await logger.file(
+        LogTypeTag.info, 'Report generated on ${DateTime.now().toString()}',
+        logDir: Directory(_basePath));
+
     _port.send(true);
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
-        stackTraces: s);
+        stackTraces: s, logDir: Directory(_basePath));
     _port.send(false);
   }
 }
@@ -93,10 +101,10 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
   Future<void> _generateReport() async {
     try {
       await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
+        _generatePort.sendPort,
         (await getApplicationSupportDirectory()).path,
         _savePath,
         _fileName,
-        _generatePort.sendPort
       ]);
 
       if (mounted && !_isListening) {

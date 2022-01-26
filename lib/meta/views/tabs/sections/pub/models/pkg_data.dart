@@ -154,17 +154,17 @@ class PkgViewData {
   static const int _cacheTimeout = 60;
   static final PubClient _pub = PubClient();
 
-  // Will get the JSON from this URL: https://pub.dev/api/package-name-completion-data
-  // This JSON will contain the list of all pub packages that are available.
-  //
-  // The results will only contain the package name.
-  //
-  // To get the full data about a specific package we need to make a request to
-  // the following URL: https://pub.dev/api/packages/package-name
-  //
-  // Once we get the JSON, we will store it the first time and then use it to
-  // filter the results as the user types.
-  // This is done to avoid making too many requests to the pub API.
+  /// Will get the JSON from this URL: https://pub.dev/api/package-name-completion-data
+  /// This JSON will contain the list of all pub packages that are available.
+  ///
+  /// The results will only contain the package name.
+  ///
+  /// To get the full data about a specific package we need to make a request to
+  /// the following URL: https://pub.dev/api/packages/package-name
+  ///
+  /// Once we get the JSON, we will store it the first time and then use it to
+  /// filter the results as the user types.
+  /// This is done to avoid making too many requests to the pub API.
   static Future<GetPkgResponseModel> getInitialPackages() async {
     List<PkgViewData> _pubPackages = <PkgViewData>[];
     Directory _dir = await getApplicationSupportDirectory();

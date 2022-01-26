@@ -1,7 +1,9 @@
+// 🎯 Dart imports:
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:fluttermatic/core/libraries/services.dart';
+// 🌎 Project imports:
+import 'package:fluttermatic/core/services/logs.dart';
 
 const int _oldLogDays = 30;
 

@@ -6,10 +6,10 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/services/code_highlighter.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
-class MarkdownBlock extends StatefulWidget {
+class MarkdownBlock extends StatelessWidget {
   final String? data;
   final bool wrapWithBox;
   final bool shrinkView;
@@ -22,29 +22,9 @@ class MarkdownBlock extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MarkdownBlockState createState() => _MarkdownBlockState();
-}
-
-class _MarkdownBlockState extends State<MarkdownBlock> {
-  String _finalData() {
-    if (widget.data == null) {
-      return '';
-    } else if (widget.data!.contains('img.shields.io')) {
-      // We need to convert the tags to png images because we don't support
-      // displaying svg in markdown yet.
-      return widget.data!.replaceAll('.svg', '.png');
-      // TODO(@yahu1031): Make this .svg extension only replace the ones in the
-      // url "img.shields.io" and not anywhere else to .png so that it can be displayed.
-    } else {
-      return widget.data!;
-    }
-    // return  widget._data!.replaceAll('https://img.shields.io/pub/v/shared_preferences.svg', 'https://img.shields.io/pub/v/shared_preferences.png'),
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MarkdownBody(
-      data: _finalData(),
+      data: data ?? 'Nothing to show',
       selectable: true,
       styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
       syntaxHighlighter: DartSyntaxHighlighter(
@@ -67,37 +47,37 @@ class _MarkdownBlockState extends State<MarkdownBlock> {
               .withOpacity(0.1),
         ),
         p: TextStyle(
-          fontSize: widget.shrinkView ? 16 : 20,
+          fontSize: shrinkView ? 16 : 20,
           fontWeight: FontWeight.w400,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h1: TextStyle(
-          fontSize: widget.shrinkView ? 14 : 24,
+          fontSize: shrinkView ? 14 : 24,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h2: TextStyle(
-          fontSize: widget.shrinkView ? 13 : 20,
+          fontSize: shrinkView ? 13 : 20,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h3: TextStyle(
-          fontSize: widget.shrinkView ? 12 : 18,
+          fontSize: shrinkView ? 12 : 18,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h4: TextStyle(
-          fontSize: widget.shrinkView ? 11 : 16,
+          fontSize: shrinkView ? 11 : 16,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h5: TextStyle(
-          fontSize: widget.shrinkView ? 10 : 14,
+          fontSize: shrinkView ? 10 : 14,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),
         h6: TextStyle(
-          fontSize: widget.shrinkView ? 9 : 12,
+          fontSize: shrinkView ? 9 : 12,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
         ),

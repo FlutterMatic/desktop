@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/core/services/checks/flutter.check.dart';
+import 'package:fluttermatic/meta/views/setup/components/button.dart';
+import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/progress_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/tool_installed.dart';
 
 Widget installFlutter(
   BuildContext context, {
@@ -18,7 +24,7 @@ Widget installFlutter(
       builder: (BuildContext context, FlutterNotifier flutterNotifier, _) {
     return Column(
       children: <Widget>[
-        welcomeHeaderTitle(
+        setUpHeaderTitle(
           Assets.flutter,
           'Install Flutter',
           'You will need to install Flutter in your device to start using Flutter.',
@@ -37,7 +43,7 @@ Widget installFlutter(
               return infoWidget(context,
                   'We will check if you have Flutter installed or not and install it for you if you don\'t.');
             } else if (flutterNotifier.progress == Progress.done) {
-              return welcomeToolInstalled(
+              return setUpToolInstalled(
                 context,
                 title:
                     'Flutter Installed - v${flutterNotifier.flutterVersion ?? 'Unknown'}',
@@ -50,7 +56,7 @@ Widget installFlutter(
           },
         ),
         VSeparators.normal(),
-        WelcomeButton(
+        SetUpButton(
           onInstall: onInstall,
           onContinue: onContinue,
           progress: flutterNotifier.progress,

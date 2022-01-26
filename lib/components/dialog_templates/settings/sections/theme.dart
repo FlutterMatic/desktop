@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ThemeSettingsSection extends StatefulWidget {
   const ThemeSettingsSection({Key? key}) : super(key: key);
@@ -26,11 +27,11 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
       content: <Widget>[
         _themeTiles(
           context,
-          !Theme.of(context).isDarkTheme &&
+          selected: !Theme.of(context).isDarkTheme &&
               !ThemeChangeNotifier().isSystemTheme,
-          'Light Mode',
-          'Get a bright and shining desktop',
-          () {
+          title: 'Light Mode',
+          description: 'Get a bright and shining desktop',
+          onPressed: () {
             if (Theme.of(context).isDarkTheme) {
               context.read<ThemeChangeNotifier>().updateTheme(
                   Theme.of(context).brightness == Brightness.light);
@@ -40,10 +41,11 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
         VSeparators.small(),
         _themeTiles(
           context,
-          Theme.of(context).isDarkTheme && !ThemeChangeNotifier().isSystemTheme,
-          'Dark Mode',
-          'For dark and nighty appearance',
-          () {
+          selected: Theme.of(context).isDarkTheme &&
+              !ThemeChangeNotifier().isSystemTheme,
+          title: 'Dark Mode',
+          description: 'For dark and nighty appearance',
+          onPressed: () {
             if (!Theme.of(context).isDarkTheme) {
               context.read<ThemeChangeNotifier>().updateTheme(
                   Theme.of(context).brightness == Brightness.light);
@@ -63,9 +65,13 @@ class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
   }
 }
 
-Widget _themeTiles(BuildContext context, bool selected, String title,
-    String description, Function() onPressed) {
-  ThemeData customTheme = Theme.of(context);
+Widget _themeTiles(
+  BuildContext context, {
+  required bool selected,
+  required String title,
+  required String description,
+  required Function() onPressed,
+}) {
   return RectangleButton(
     height: 65,
     onPressed: onPressed,
@@ -83,19 +89,13 @@ Widget _themeTiles(BuildContext context, bool selected, String title,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  title,
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
-                ),
+                Text(title),
                 VSeparators.xSmall(),
                 Text(
                   description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: customTheme.textTheme.bodyText1!.color!
-                          .withOpacity(0.6)),
+                  style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),

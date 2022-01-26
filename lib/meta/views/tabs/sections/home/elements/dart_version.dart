@@ -1,6 +1,8 @@
+// 🎯 Dart imports:
 import 'dart:io';
 import 'dart:isolate';
 
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -9,15 +11,21 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/utils/time_ago.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 
@@ -200,7 +208,7 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
                     showDialog(
                       context: context,
                       builder: (_) => const InstallToolDialog(
-                          tool: WelcomeTab.installFlutter),
+                          tool: SetUpTab.installFlutter),
                     );
                   },
                 ),

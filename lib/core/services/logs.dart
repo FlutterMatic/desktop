@@ -54,24 +54,28 @@ class Logger {
     DateTime _now = DateTime.now();
     String _baseData =
         '[${_now.hour}:${_now.minute}:${_now.second}] - $message\n';
+
+    String _logData = _baseData.length > 100
+        ? _baseData.substring(0, 100) + '...'
+        : _baseData;
     try {
       switch (tag) {
         case LogTypeTag.info:
-          if (kDebugMode || kProfileMode) console.log('INFORMATION $_baseData');
+          if (kDebugMode || kProfileMode) console.log('INFORMATION $_logData');
           await _file.writeAsString(
             '''INFORMATION $_baseData''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.warning:
-          if (kDebugMode || kProfileMode) console.log('WARNING $_baseData');
+          if (kDebugMode || kProfileMode) console.log('WARNING $_logData');
           await _file.writeAsString(
             '''WARNING $_baseData[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.error:
-          if (kDebugMode || kProfileMode) console.log('ERROR $_baseData');
+          if (kDebugMode || kProfileMode) console.log('ERROR $_logData');
           await _file.writeAsString(
             '''ERROR $_baseData[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
             mode: FileMode.writeOnlyAppend,

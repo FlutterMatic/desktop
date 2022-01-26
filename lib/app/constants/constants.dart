@@ -9,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/activity_tile.dart';
+import 'package:fluttermatic/core/models/flutter_sdk.model.dart';
+import 'package:fluttermatic/core/models/fluttermatic.model.dart';
 
 // Shell global reference
 final Shell shell = Shell(

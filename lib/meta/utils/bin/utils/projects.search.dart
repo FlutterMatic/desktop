@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 

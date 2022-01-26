@@ -12,8 +12,8 @@ import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ConfirmWorkflowDelete extends StatefulWidget {
   final String path;

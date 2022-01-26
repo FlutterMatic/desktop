@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class ProjectOrgNameSection extends StatefulWidget {
   final String projName;

@@ -1,4 +1,4 @@
-enum WelcomeTab {
+enum SetUpTab {
   gettingStarted,
   installFlutter,
   installEditor,

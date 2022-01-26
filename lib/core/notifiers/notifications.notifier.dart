@@ -1,7 +1,8 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class NotificationsNotifier with ChangeNotifier {
   final List<NotificationObject> _notifications = <NotificationObject>[];

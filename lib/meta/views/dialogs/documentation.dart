@@ -13,7 +13,7 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class FMaticDocumentationDialog extends StatefulWidget {
   const FMaticDocumentationDialog({Key? key}) : super(key: key);

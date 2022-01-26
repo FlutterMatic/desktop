@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/services/check_file.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class DownloadNotifier extends ChangeNotifier {
   Duration perTime = const Duration(milliseconds: 500);

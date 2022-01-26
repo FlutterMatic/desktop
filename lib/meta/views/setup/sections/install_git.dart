@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/core/services/checks/git.check.dart';
+import 'package:fluttermatic/meta/views/setup/components/button.dart';
+import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/progress_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/tool_installed.dart';
 
 Widget installGit(
   BuildContext context, {
@@ -20,7 +26,7 @@ Widget installGit(
       builder: (BuildContext context, GitNotifier gitNotifier, _) {
     return Column(
       children: <Widget>[
-        welcomeHeaderTitle(
+        setUpHeaderTitle(
           Assets.git,
           'Install Git',
           'Flutter relies on Git to get and install dependencies and other tools.',
@@ -39,7 +45,7 @@ Widget installGit(
               return infoWidget(context,
                   'Git will be used to provide services such as Pub and other tools that Flutter & Dart uses.');
             } else if (gitNotifier.progress == Progress.done) {
-              return welcomeToolInstalled(
+              return setUpToolInstalled(
                 context,
                 title:
                     'Git Installed - v${gitNotifier.gitVersion ?? 'Unknown'}',
@@ -52,7 +58,7 @@ Widget installGit(
           },
         ),
         VSeparators.normal(),
-        WelcomeButton(
+        SetUpButton(
           onContinue: onContinue,
           onInstall: onInstall,
           progress: gitNotifier.progress,

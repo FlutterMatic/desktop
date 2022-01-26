@@ -6,7 +6,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 Widget windowControls(BuildContext context, {bool disabled = false}) {

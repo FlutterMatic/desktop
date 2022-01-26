@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class ConnectionNotifier with ChangeNotifier {
   final Connectivity _connectivity = Connectivity();

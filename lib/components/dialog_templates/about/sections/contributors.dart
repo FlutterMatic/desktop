@@ -10,7 +10,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 
 bool _failedRequest = false;
 
@@ -25,13 +28,12 @@ class ContributorsAboutSection extends StatefulWidget {
 class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TabViewTabHeadline(
       title: 'Contributors',
       content: <Widget>[
         RoundContainer(
           width: double.infinity,
-          color: customTheme.colorScheme.secondary.withOpacity(0.2),
+          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -49,16 +51,11 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
               ),
               HSeparators.small(),
               RectangleButton(
-                color: customTheme.colorScheme.secondary.withOpacity(0.2),
-                hoverColor: customTheme.hoverColor,
+                color: Colors.blueGrey.withOpacity(0.4),
                 width: 90,
                 onPressed: () =>
                     launch('https://github.com/FlutterMatic/desktop'),
-                child: Text(
-                  'Get Started',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
-                ),
+                child: const Text('Get Started'),
               ),
             ],
           ),
@@ -66,7 +63,7 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
         VSeparators.xSmall(),
         if (_failedRequest)
           RoundContainer(
-            color: customTheme.colorScheme.secondary.withOpacity(0.2),
+            color: Colors.blueGrey.withOpacity(0.2),
             width: double.infinity,
             child: Column(
               children: <Widget>[
@@ -154,7 +151,6 @@ class _ContributorTileState extends State<ContributorTile> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     if (_failed) {
       return const SizedBox.shrink();
     } else {
@@ -163,7 +159,7 @@ class _ContributorTileState extends State<ContributorTile> {
         child: RectangleButton(
           height: 65,
           width: double.infinity,
-          color: customTheme.colorScheme.secondary.withOpacity(0.2),
+          color: Colors.blueGrey.withOpacity(0.2),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           onPressed: () => launch('https://www.github.com/$_userId'),
           child: _loading
@@ -180,19 +176,10 @@ class _ContributorTileState extends State<ContributorTile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            _userName,
-                            style: TextStyle(
-                              color: customTheme.textTheme.bodyText1!.color,
-                            ),
-                          ),
+                          Text(_userName),
                           VSeparators.xSmall(),
-                          Text(
-                            'GitHub: ' + _userId,
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color!
-                                    .withOpacity(0.7)),
-                          ),
+                          Text('GitHub: ' + _userId,
+                              style: const TextStyle(color: Colors.grey)),
                         ],
                       ),
                     ),

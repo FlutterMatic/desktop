@@ -5,13 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/sections.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/services/checks/flutter.check.dart';
+import 'package:fluttermatic/core/services/checks/git.check.dart';
+import 'package:fluttermatic/core/services/checks/java.check.dart';
+import 'package:fluttermatic/core/services/checks/studio.check.dart';
+import 'package:fluttermatic/core/services/checks/vsc.check.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_editor.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_flutter.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_git.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_java.dart';
 
 class InstallToolDialog extends StatefulWidget {
-  final WelcomeTab tool;
+  final SetUpTab tool;
 
   const InstallToolDialog({
     Key? key,
@@ -38,9 +47,9 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
   @override
   void initState() {
     switch (widget.tool) {
-      case WelcomeTab.gettingStarted:
+      case SetUpTab.gettingStarted:
         break;
-      case WelcomeTab.installFlutter:
+      case SetUpTab.installFlutter:
         setState(() {
           _view = installFlutter(
             context,
@@ -60,9 +69,9 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
           );
         });
         break;
-      case WelcomeTab.installEditor:
+      case SetUpTab.installEditor:
         setState(() {
-          _view = WelcomeInstallEditor(
+          _view = SetUpInstallEditor(
             onInstall: () async {
               if (_editors.contains(EditorType.none)) {
                 Navigator.pop(context);
@@ -100,7 +109,7 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
           );
         });
         break;
-      case WelcomeTab.installGit:
+      case SetUpTab.installGit:
         setState(() {
           _view = installGit(
             context,
@@ -121,7 +130,7 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
         });
 
         break;
-      case WelcomeTab.installJava:
+      case SetUpTab.installJava:
         setState(() {
           _view = installJava(
             context,
@@ -143,7 +152,7 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
         });
 
         break;
-      case WelcomeTab.restart:
+      case SetUpTab.restart:
         break;
     }
     super.initState();
@@ -167,7 +176,7 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             _view,
-            if (!_loading && !_isDone && widget.tool != WelcomeTab.installJava)
+            if (!_loading && !_isDone && widget.tool != SetUpTab.installJava)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: TextButton(

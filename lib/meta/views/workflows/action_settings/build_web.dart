@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
 import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
 import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 

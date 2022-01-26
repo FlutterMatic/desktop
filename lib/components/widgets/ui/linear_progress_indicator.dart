@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class CustomLinearProgressIndicator extends StatelessWidget {
   final bool includeBox;

@@ -7,7 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class EditorsSettingsSection extends StatefulWidget {
@@ -45,7 +49,6 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TabViewTabHeadline(
       title: 'Editors',
       content: <Widget>[
@@ -83,12 +86,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                         child: Column(
                           children: <Widget>[
                             Expanded(child: SvgPicture.asset(Assets.vscode)),
-                            Text(
-                              'VS Code',
-                              style: TextStyle(
-                                  color:
-                                      customTheme.textTheme.bodyText1!.color),
-                            ),
+                            const Text('VS Code'),
                           ],
                         ),
                       ),
@@ -115,12 +113,7 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                         child: Column(
                           children: <Widget>[
                             Expanded(child: SvgPicture.asset(Assets.studio)),
-                            Text(
-                              'Android Studio',
-                              style: TextStyle(
-                                  color:
-                                      customTheme.textTheme.bodyText1!.color),
-                            ),
+                            const Text('Android Studio'),
                           ],
                         ),
                       ),

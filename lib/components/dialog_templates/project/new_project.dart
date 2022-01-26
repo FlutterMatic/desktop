@@ -13,10 +13,15 @@ import 'package:fluttermatic/components/dialog_templates/project/sections/name.d
 import 'package:fluttermatic/components/dialog_templates/project/sections/org_name.dart';
 import 'package:fluttermatic/components/dialog_templates/project/sections/platforms.dart';
 import 'package:fluttermatic/components/dialog_templates/project/sections/pre_config.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/actions/flutter.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
 
 class NewProjectDialog extends StatefulWidget {
@@ -199,7 +204,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return WillPopScope(
       onWillPop: () async => false,
       child: DialogTemplate(
@@ -211,10 +215,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
               leading: _index != _NewProjectSections.projectName &&
                       _index != _NewProjectSections.creatingProject
                   ? SquareButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_rounded,
-                        color: customTheme.textTheme.bodyText1!.color,
-                      ),
+                      icon: const Icon(Icons.arrow_back_ios_rounded),
                       color: Colors.transparent,
                       onPressed: () => setState(() => _index =
                           _NewProjectSections.values[_index.index - 1]),
@@ -326,9 +327,6 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
                                   .values[_NewProjectSections.values.length - 2]
                           ? 'Create'
                           : 'Next',
-                      style: TextStyle(
-                        color: customTheme.textTheme.bodyText1!.color,
-                      ),
                     ),
                   ),
                 ],

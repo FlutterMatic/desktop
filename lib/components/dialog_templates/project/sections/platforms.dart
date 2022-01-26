@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class ProjectPlatformsSection extends StatefulWidget {
   final bool ios;

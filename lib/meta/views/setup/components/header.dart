@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
-Widget createWelcomeHeader(WelcomeTab tab, BuildContext context) {
-  Widget _title(String title, WelcomeTab tileTab) {
+Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
+  Widget _title(String title, SetUpTab tileTab) {
     if (tab == tileTab) {
       return Expanded(
         child: Column(
@@ -49,12 +50,12 @@ Widget createWelcomeHeader(WelcomeTab tab, BuildContext context) {
             ),
             Row(
               children: <Widget>[
-                _title('Getting Started', WelcomeTab.gettingStarted),
-                _title('Install Flutter', WelcomeTab.installFlutter),
-                _title('Install Editor', WelcomeTab.installEditor),
-                _title('Install Git', WelcomeTab.installGit),
-                _title('Install Java', WelcomeTab.installJava),
-                _title('Restart', WelcomeTab.restart),
+                _title('Getting Started', SetUpTab.gettingStarted),
+                _title('Install Flutter', SetUpTab.installFlutter),
+                _title('Install Editor', SetUpTab.installEditor),
+                _title('Install Git', SetUpTab.installGit),
+                _title('Install Java', SetUpTab.installJava),
+                _title('Restart', SetUpTab.restart),
               ],
             )
           ],

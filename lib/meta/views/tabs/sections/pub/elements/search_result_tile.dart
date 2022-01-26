@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/models/package_dialog.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class PubPackageSearchResultTile extends StatefulWidget {

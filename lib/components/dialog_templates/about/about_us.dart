@@ -7,7 +7,8 @@ import 'package:fluttermatic/components/dialog_templates/about/sections/changelo
 import 'package:fluttermatic/components/dialog_templates/about/sections/contributors.dart';
 import 'package:fluttermatic/components/dialog_templates/about/sections/report.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 
 class AboutUsDialog extends StatelessWidget {
   const AboutUsDialog({Key? key}) : super(key: key);

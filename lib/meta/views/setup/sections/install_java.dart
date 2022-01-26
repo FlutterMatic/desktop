@@ -5,12 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/bullet_point.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/services/checks/java.check.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/setup/components/button.dart';
+import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/progress_indicator.dart';
+import 'package:fluttermatic/meta/views/setup/components/tool_installed.dart';
 
 Widget installJava(
   BuildContext context, {
@@ -24,7 +34,7 @@ Widget installJava(
     builder: (BuildContext context, JavaNotifier javaNotifier, _) {
       return Column(
         children: <Widget>[
-          welcomeHeaderTitle(
+          setUpHeaderTitle(
             Assets.java,
             'Install Java',
             'Java is sometimes needed in Flutter development. However you can skip if you do not want to install Java.',
@@ -41,7 +51,7 @@ Widget installJava(
               } else if (javaNotifier.progress == Progress.extracting) {
                 return hLoadingIndicator(context: context);
               } else if (javaNotifier.progress == Progress.done) {
-                return welcomeToolInstalled(
+                return setUpToolInstalled(
                   context,
                   title:
                       'Java Installed - v${javaNotifier.javaVersion ?? 'Unknown'}',
@@ -52,7 +62,7 @@ Widget installJava(
                 return infoWidget(context,
                     'Java can be essential for Android development. We recommend installing Java if you will be developing Android apps.');
               } else if (javaNotifier.progress == Progress.done) {
-                return welcomeToolInstalled(
+                return setUpToolInstalled(
                   context,
                   title:
                       'Java Installed - v${javaNotifier.javaVersion ?? 'Unknown'}',
@@ -65,7 +75,7 @@ Widget installJava(
             },
           ),
           VSeparators.normal(),
-          WelcomeButton(
+          SetUpButton(
             onContinue: onContinue,
             onInstall: onInstall,
             progress: javaNotifier.progress,

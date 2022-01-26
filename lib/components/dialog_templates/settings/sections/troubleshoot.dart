@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/dialog_templates/other/reset_fluttermatic.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
   const TroubleShootSettingsSection({Key? key}) : super(key: key);

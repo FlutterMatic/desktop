@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/circle_chart.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 

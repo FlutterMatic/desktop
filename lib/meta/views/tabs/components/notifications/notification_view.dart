@@ -1,11 +1,18 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
+// 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/meta/views/tabs/components/notifications/notification_tile.dart';
-import 'package:provider/provider.dart';
 
 class NotificationViewDialog extends StatefulWidget {
   const NotificationViewDialog({Key? key}) : super(key: key);

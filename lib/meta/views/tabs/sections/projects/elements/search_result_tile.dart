@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ProjectSearchResultTile extends StatelessWidget {
   final ProjectObject project;

@@ -1,18 +1,21 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
-import 'package:fluttermatic/meta/views/tabs/components/notifications/notification_view.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/other/status.dart';
 import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/models.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/tabs/components/notifications/notification_view.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/search_result_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 

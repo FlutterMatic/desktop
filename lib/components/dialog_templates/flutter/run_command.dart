@@ -8,10 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/flutter/change_channel.dart';
+import 'package:fluttermatic/components/dialog_templates/flutter/flutter_upgrade.dart';
 import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class RunCommandDialog extends StatefulWidget {
   const RunCommandDialog({Key? key}) : super(key: key);
@@ -43,7 +51,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
     setState(() {
       _commandResult = null;
       _showTypeRequest = false;
-      _trimmedCommand = _commandController.text.replaceAll(' ', '');
+      _trimmedCommand = _commandController.text.toLowerCase().trim();
     });
     if (_trimmedCommand == 'create.' || _trimmedCommand == 'create') {
       Navigator.pop(context);
@@ -53,10 +61,10 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
       Navigator.pop(context);
       await showDialog(
           context: context, builder: (_) => const UpdateFlutterDialog());
-    } else if (_trimmedCommand == 'channelmaster' ||
-        _trimmedCommand == 'channelstable' ||
-        _trimmedCommand == 'channeldev' ||
-        _trimmedCommand == 'channelbeta') {
+    } else if (_trimmedCommand == 'channel master' ||
+        _trimmedCommand == 'channel stable' ||
+        _trimmedCommand == 'channel dev' ||
+        _trimmedCommand == 'channel beta') {
       Navigator.pop(context);
       await showDialog(
           context: context, builder: (_) => const ChangeChannelDialog());

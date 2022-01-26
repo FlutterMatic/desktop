@@ -5,18 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
+import 'package:fluttermatic/meta/views/setup/components/button.dart';
+import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
+import 'package:fluttermatic/meta/views/tabs/home.dart';
 
-Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
+Widget setUpRestart(BuildContext context, {VoidCallback? onRestart}) {
   return Column(
     children: <Widget>[
-      welcomeHeaderTitle(
+      setUpHeaderTitle(
         Assets.confetti,
         'Congrats',
         'All set! You will need to restart your device to start using Flutter.',
@@ -70,7 +76,7 @@ Widget welcomeRestart(BuildContext context, {VoidCallback? onRestart}) {
       informationWidget(
           'You will need to restart your device to fully complete this setup. Make sure to save all your work before restarting.'),
       VSeparators.large(),
-      WelcomeButton(
+      SetUpButton(
         onContinue: () {},
         onInstall: onRestart,
         progress: Progress.none,

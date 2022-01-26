@@ -12,16 +12,19 @@ import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
 class ResetFlutterMaticDialog extends StatefulWidget {
   const ResetFlutterMaticDialog({Key? key}) : super(key: key);

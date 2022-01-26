@@ -6,8 +6,10 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/installation_status.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
 
@@ -107,7 +109,7 @@ class _StatusDialogState extends State<StatusDialog> {
                   onDownload: () => showDialog(
                     context: context,
                     builder: (_) => const InstallToolDialog(
-                        tool: WelcomeTab.installFlutter),
+                        tool: SetUpTab.installFlutter),
                   ),
                   tooltip: 'Dart',
                 ),
@@ -125,7 +127,7 @@ class _StatusDialogState extends State<StatusDialog> {
                   onDownload: () => showDialog(
                     context: context,
                     builder: (_) => const InstallToolDialog(
-                        tool: WelcomeTab.installFlutter),
+                        tool: SetUpTab.installFlutter),
                   ),
                   tooltip: 'Flutter',
                 ),
@@ -143,7 +145,7 @@ class _StatusDialogState extends State<StatusDialog> {
                   onDownload: () => showDialog(
                     context: context,
                     builder: (_) =>
-                        const InstallToolDialog(tool: WelcomeTab.installEditor),
+                        const InstallToolDialog(tool: SetUpTab.installEditor),
                   ),
                   tooltip: 'Studio',
                 ),
@@ -161,7 +163,7 @@ class _StatusDialogState extends State<StatusDialog> {
                   onDownload: () => showDialog(
                     context: context,
                     builder: (_) =>
-                        const InstallToolDialog(tool: WelcomeTab.installEditor),
+                        const InstallToolDialog(tool: SetUpTab.installEditor),
                   ),
                   tooltip: 'VS Code',
                 ),
@@ -177,7 +179,7 @@ class _StatusDialogState extends State<StatusDialog> {
                   onDownload: () => showDialog(
                     context: context,
                     builder: (_) =>
-                        const InstallToolDialog(tool: WelcomeTab.installGit),
+                        const InstallToolDialog(tool: SetUpTab.installGit),
                   ),
                   tooltip: 'Git',
                 ),
@@ -194,7 +196,7 @@ class _StatusDialogState extends State<StatusDialog> {
                   onDownload: () => showDialog(
                     context: context,
                     builder: (_) =>
-                        const InstallToolDialog(tool: WelcomeTab.installJava),
+                        const InstallToolDialog(tool: SetUpTab.installJava),
                   ),
                   tooltip: 'Java',
                 ),

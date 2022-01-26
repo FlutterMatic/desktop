@@ -8,16 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/bullet_point.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import '../dialog_header.dart';
 
 class FlutterRequirementsDialog extends StatelessWidget {
   const FlutterRequirementsDialog({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return DialogTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +34,7 @@ class FlutterRequirementsDialog extends StatelessWidget {
             _linuxTemplate()
           else
             RoundContainer(
-              color: customTheme.focusColor,
+              color: Colors.blueGrey.withOpacity(0.2),
               child: Column(
                 children: <Widget>[
                   VSeparators.xSmall(),

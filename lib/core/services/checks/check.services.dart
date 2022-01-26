@@ -8,8 +8,8 @@ import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/bin/tools/adb.bin.dart';
 import 'package:fluttermatic/meta/utils/bin/tools/code.bin.dart';
 import 'package:fluttermatic/meta/utils/bin/tools/flutter.bin.dart';

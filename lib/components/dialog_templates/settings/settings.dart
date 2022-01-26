@@ -9,7 +9,8 @@ import 'package:fluttermatic/components/dialog_templates/settings/sections/githu
 import 'package:fluttermatic/components/dialog_templates/settings/sections/projects.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/theme.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/troubleshoot.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 
 class SettingDialog extends StatelessWidget {
   final String? goToPage;

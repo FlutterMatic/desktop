@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/notifiers/download.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
   const CustomProgressIndicator({Key? key}) : super(key: key);

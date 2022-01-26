@@ -4,18 +4,25 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/core/models/check_response.model.dart';
-import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
-import 'package:fluttermatic/core/services/checks/check.services.dart';
+import 'package:fluttermatic/main.dart';
+import 'package:fluttermatic/meta/views/tabs/home.dart';
 
 // 📦 Package imports:
 import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/models/check_response.model.dart';
+import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
+import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/core/services/checks/check.services.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import '../dialog_header.dart';
 
 class UpdateFlutterDialog extends StatefulWidget {
@@ -80,38 +87,52 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
 
     ServiceCheckResponse _result = await CheckServices.checkFlutter();
 
-    await context.read<NotificationsNotifier>().newNotification(
-          NotificationObject(
-            Timeline.now.toString(),
-            title:
-                'Flutter has been updated to ${_result.version ?? 'UNKNOWN'}',
-            message:
-                'You have successfully updated your local Flutter version to ${_result.version ?? 'UNKNOWN'}.',
-            onPressed: null,
-          ),
-        );
+    bool _hasNew =
+        !_activityMessage.toLowerCase().startsWith('flutter is already');
 
-    if (mounted) {
-      if (_activityMessage.toLowerCase().startsWith('flutter is already')) {
-        await logger.file(LogTypeTag.info,
-            'Flutter is already up to date on channel stable with version ${_result.version}. Attempted upgrade when no new version available.');
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context,
-          'Flutter is already up to date on channel ${_result.channel}.',
-          type: SnackBarType.done,
-        ));
-      } else {
-        await logger.file(LogTypeTag.info,
-            'Flutter has been updated to ${_result.version} on channel ${_result.channel}.');
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context,
-          'Flutter has been updated to ${_result.version ?? 'UNKNOWN'} on channel ${_result.channel}.',
-          type: SnackBarType.done,
-        ));
-      }
+    if (_hasNew) {
+      await context.read<NotificationsNotifier>().newNotification(
+            NotificationObject(
+              Timeline.now.toString(),
+              title:
+                  'Flutter has been updated to ${_result.version ?? 'UNKNOWN'}',
+              message:
+                  'You have successfully updated your local Flutter version to ${_result.version ?? 'UNKNOWN'}.',
+              onPressed: null,
+            ),
+          );
 
+      await logger.file(LogTypeTag.info,
+          'Flutter has been updated to ${_result.version} on channel ${_result.channel}.');
+    } else {
+      await logger.file(LogTypeTag.info,
+          'Flutter is already up to date on channel stable with version ${_result.version}. Attempted upgrade when no new version available.');
+    }
+
+    // TODO: Switch operator
+    if (!_hasNew) {
+      await Navigator.pushAndRemoveUntil(
+        context,
+        PageRouteBuilder<Widget>(
+          transitionDuration: Duration.zero,
+          pageBuilder: (_, __, ___) => const HomeScreen(),
+        ),
+        (_) => false,
+      );
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Flutter has been updated to ${_result.version ?? 'UNKNOWN'} on channel ${_result.channel}.',
+        type: SnackBarType.done,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Flutter is already up to date on channel ${_result.channel}.',
+        type: SnackBarType.done,
+      ));
       Navigator.pop(context);
     }
   }

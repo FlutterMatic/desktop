@@ -2,12 +2,15 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 
-Widget welcomeToolInstalled(BuildContext context,
-    {required String title, required String message}) {
+Widget setUpToolInstalled(
+  BuildContext context, {
+  required String title,
+  required String message,
+}) {
   return RoundContainer(
     color: Theme.of(context).isDarkTheme
         ? Colors.blueGrey.withOpacity(0.2)

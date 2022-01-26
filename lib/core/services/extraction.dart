@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/services/check_dir.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 // import 'package:process_run/shell.dart';
 
@@ -26,11 +27,14 @@ import 'package:fluttermatic/core/libraries/services.dart';
 /// ```
 ///
 /// This will return the file `path` after downloading.
-Future<bool> unzip(BuildContext context, String source, String destination) async {
+Future<bool> unzip(
+    BuildContext context, String source, String destination) async {
   try {
     String _drive = context.read<SpaceCheck>().drive;
+
     /// Check for temporary Directory to download files
-    bool destinationDir = await checkDir('$_drive:\\', subDirName: 'fluttermatic');
+    bool destinationDir =
+        await checkDir('$_drive:\\', subDirName: 'fluttermatic');
 
     /// If tmpDir is false, then create a temporary directory.
     if (!destinationDir) {
@@ -67,7 +71,8 @@ Future<bool> unzip(BuildContext context, String source, String destination) asyn
     await logger.file(LogTypeTag.error, _.message.toString());
   } on ShellException catch (_, s) {
     await File(source).delete(recursive: true);
-    await logger.file(LogTypeTag.error, 'Extracting failed - Shell Exception: $_',
+    await logger.file(
+        LogTypeTag.error, 'Extracting failed - Shell Exception: $_',
         stackTraces: s);
     await logger.file(LogTypeTag.error, _.message.toString());
   } on FileSystemException catch (_, s) {

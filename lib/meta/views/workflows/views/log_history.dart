@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
+import 'package:fluttermatic/meta/views/tabs/home.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 

@@ -7,7 +7,11 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
@@ -59,7 +63,6 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TabViewTabHeadline(
       title: 'Projects',
       content: <Widget>[
@@ -93,10 +96,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   message: _dirPath == null ? 'Select Path' : 'Change Path',
                   child: IconButton(
                     color: Colors.transparent,
-                    icon: Icon(
-                      Icons.edit_outlined,
-                      color: customTheme.textTheme.bodyText1!.color,
-                    ),
+                    icon: const Icon(Icons.edit_outlined),
                     onPressed: () async {
                       String? _projectsDirectory;
                       String? _directoryPath =

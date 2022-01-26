@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 
 class SelectTile extends StatefulWidget {
   final List<String> options;
@@ -40,7 +40,6 @@ class _SelectTileState extends State<SelectTile> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -49,18 +48,16 @@ class _SelectTileState extends State<SelectTile> {
           children: widget.options
               .map(
                 (String val) => _selectTile(
-                  val,
-                  () {
+                  context,
+                  leading: val,
+                  onPressed: () {
                     if (widget.disable == false) {
                       widget.onPressed!(val);
                       setState(() => _selected = val);
                     }
                   },
-                  val == _selected,
-                  widget.disable,
-                  customTheme.backgroundColor,
-                  customTheme.colorScheme.secondary,
-                  context,
+                  selected: val == _selected,
+                  disable: widget.disable,
                 ),
               )
               .toList(),
@@ -76,9 +73,13 @@ class _SelectTileState extends State<SelectTile> {
   }
 }
 
-Widget _selectTile(dynamic leading, VoidCallback? onPressed, bool selected,
-    bool disable, Color color, Color hoverColor, BuildContext context) {
-  ThemeData customTheme = Theme.of(context);
+Widget _selectTile(
+  BuildContext context, {
+  required String leading,
+  required Function() onPressed,
+  required bool selected,
+  required bool disable,
+}) {
   return RectangleButton(
     color: Colors.transparent,
     width: double.infinity,
@@ -96,19 +97,15 @@ Widget _selectTile(dynamic leading, VoidCallback? onPressed, bool selected,
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
             color: selected
-                ? customTheme.textTheme.headline1!.color
-                : customTheme.hoverColor,
+                ? Theme.of(context).textTheme.headline1!.color
+                : Theme.of(context).hoverColor,
           ),
         ),
         HSeparators.small(),
         Expanded(
-          child: leading.runtimeType == String
-              ? Text(leading,
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color))
-              : leading.runtimeType == Widget
-                  ? leading
-                  : const Text('Something unexpected is going on...'),
+          child: Text(leading,
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color)),
         ),
       ],
     ),

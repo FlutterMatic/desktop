@@ -11,7 +11,7 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
 import 'package:fluttermatic/main.dart';
 
 class SystemDriveErrorDialog extends StatelessWidget {

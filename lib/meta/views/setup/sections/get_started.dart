@@ -10,26 +10,32 @@ import 'package:provider/provider.dart';
 import 'package:retry/retry.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/api.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/core/api/flutter_sdk.api.dart';
+import 'package:fluttermatic/core/api/fluttermatic.api.dart';
+import 'package:fluttermatic/core/api/vscode.api.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/drive_error.dart';
 import 'package:fluttermatic/meta/views/dialogs/low_drive_storage.dart';
+import 'package:fluttermatic/meta/views/setup/components/button.dart';
+import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
-class WelcomeGettingStarted extends StatefulWidget {
+class SetUpGettingStarted extends StatefulWidget {
   final Function() onContinue;
-  const WelcomeGettingStarted({
+  const SetUpGettingStarted({
     Key? key,
     required this.onContinue,
   }) : super(key: key);
 
   @override
-  _WelcomeGettingStartedState createState() => _WelcomeGettingStartedState();
+  _SetUpGettingStartedState createState() => _SetUpGettingStartedState();
 }
 
-class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
+class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
   final RetryOptions _options = const RetryOptions(maxAttempts: 5);
 
   int _totalAttempts = 0;
@@ -46,7 +52,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             await context.read<FlutterMaticAPINotifier>().fetchAPIData();
             apiData = context.read<FlutterMaticAPINotifier>().apiMap;
             await logger.file(LogTypeTag.info,
-                'Fetched FlutterMatic API data: ${apiData?.data.toString().substring(0, 50)}...');
+                'Fetched FlutterMatic API data: ${apiData?.data ?? 'ERROR. NO DATA'}');
           }
         },
         onRetry: (_) async {
@@ -66,7 +72,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
             await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
             sdkData = context.read<FlutterSDKNotifier>().sdkMap;
             await logger.file(LogTypeTag.info,
-                'Fetched Flutter SDK data: ${sdkData?.data.toString().substring(0, 50)}...');
+                'Fetched Flutter SDK data: ${sdkData?.data ?? 'ERROR. NO DATA'}');
           }
         },
         onRetry: (_) async {
@@ -138,7 +144,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return Column(
           children: <Widget>[
-            welcomeHeaderTitle(
+            setUpHeaderTitle(
               Assets.flutter,
               'Install Flutter',
               'Welcome to FlutterMatic. You will be guided through the steps necessary to setup and install Flutter on your device.',
@@ -159,7 +165,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
               hLoadingIndicator(context: context),
             VSeparators.large(),
             if (snapshot.hasData && snapshot.data == 'error')
-              WelcomeButton(
+              SetUpButton(
                 onInstall: () {},
                 buttonText: allowDevControls ? 'Continue' : 'Retry',
                 loading: _isLoading,
@@ -176,7 +182,7 @@ class _WelcomeGettingStartedState extends State<WelcomeGettingStarted> {
                 progress: Progress.done,
               )
             else
-              WelcomeButton(
+              SetUpButton(
                 onInstall: () {},
                 onContinue: widget.onContinue,
                 progress:

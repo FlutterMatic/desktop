@@ -6,10 +6,20 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/api.dart';
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
+import 'package:fluttermatic/core/api/flutter_sdk.api.dart';
+import 'package:fluttermatic/core/api/fluttermatic.api.dart';
+import 'package:fluttermatic/core/api/vscode.api.dart';
+import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
+import 'package:fluttermatic/core/notifiers/download.notifier.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/services/checks/adb.check.dart';
+import 'package:fluttermatic/core/services/checks/flutter.check.dart';
+import 'package:fluttermatic/core/services/checks/git.check.dart';
+import 'package:fluttermatic/core/services/checks/java.check.dart';
+import 'package:fluttermatic/core/services/checks/studio.check.dart';
+import 'package:fluttermatic/core/services/checks/vsc.check.dart';
 
 class MultiProviders extends StatelessWidget {
   const MultiProviders(this.child, {Key? key}) : super(key: key);

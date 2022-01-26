@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 
 class MultipleChoice extends StatefulWidget {
   final List<String> options;
@@ -40,18 +40,24 @@ class _MultipleChoiceState extends State<MultipleChoice> {
 
     for (int i = 0; i < widget.options.length; i++) {
       _elements.add(
-        _circleElement(_value == widget.options[i], widget.options[i],
-            (String val) {
-          setState(() => _value = val);
-          widget.onChanged(val);
-        }),
+        _circleElement(
+          selected: _value == widget.options[i],
+          message: widget.options[i],
+          onPressed: (String val) {
+            setState(() => _value = val);
+            widget.onChanged(val);
+          },
+        ),
       );
     }
     return Column(children: _elements);
   }
 
-  Widget _circleElement(
-      bool selected, String message, Function(String) onPressed) {
+  Widget _circleElement({
+    required bool selected,
+    required String message,
+    required Function(String) onPressed,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Row(

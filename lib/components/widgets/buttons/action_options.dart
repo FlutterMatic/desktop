@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ActionOptions extends StatelessWidget {
@@ -19,17 +19,16 @@ class ActionOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return Column(
       children: actions.map((ActionOptionsObject e) {
         return _buttonListTile(
+          context,
           icon: e.icon,
-          color: customTheme.buttonTheme.colorScheme?.primary ??
+          color: Theme.of(context).buttonTheme.colorScheme?.primary ??
               AppTheme.darkBackgroundColor,
           onPressed: e.onPressed,
           title: e.title,
           length: actions.length,
-          context: context,
           index: actions.indexOf(e),
         );
       }).toList(),
@@ -45,19 +44,18 @@ class ActionOptionsObject {
   const ActionOptionsObject(this.title, this.onPressed, {this.icon});
 }
 
-Widget _buttonListTile({
+Widget _buttonListTile(
+  BuildContext context, {
   required Widget? icon,
   required String title,
   required VoidCallback? onPressed,
   required Color color,
   required int index,
   required int length,
-  required BuildContext context,
 }) {
   Radius _curveValue = const Radius.circular(5);
   Radius _curveEmpty = Radius.zero;
   Radius _endExpression = (length == 1 ? _curveValue : _curveEmpty);
-  ThemeData customTheme = Theme.of(context);
   return RectangleButton(
     width: double.infinity,
     onPressed: onPressed,
@@ -78,7 +76,8 @@ Widget _buttonListTile({
         Expanded(
           child: Text(
             title,
-            style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
           ),
         ),
         Icon(Icons.arrow_forward_ios_rounded,

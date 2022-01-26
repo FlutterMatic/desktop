@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 
 class TabViewWidget extends StatefulWidget {
   final double? height;
@@ -51,10 +51,11 @@ class _TabViewWidgetState extends State<TabViewWidget> {
           children: widget.tabs.map(
             (TabViewObject e) {
               return tabItemWidget(
-                e.name,
-                () => setState(() => _index = widget.tabs.indexOf(e)),
-                _index == widget.tabs.indexOf(e),
                 context,
+                name: e.name,
+                selected: _index == widget.tabs.indexOf(e),
+                onPressed: () =>
+                    setState(() => _index = widget.tabs.indexOf(e)),
               );
             },
           ).toList(),
@@ -79,8 +80,11 @@ class TabViewObject {
 }
 
 Widget tabItemWidget(
-    String name, Function() onPressed, bool selected, BuildContext context) {
-  ThemeData customTheme = Theme.of(context);
+  BuildContext context, {
+  required String name,
+  required Function() onPressed,
+  required bool selected,
+}) {
   return RectangleButton(
     width: 130,
     hoverColor: Colors.transparent,
@@ -88,7 +92,7 @@ Widget tabItemWidget(
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     color: selected
-        ? customTheme.colorScheme.secondary.withOpacity(0.2)
+        ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
         : Colors.transparent,
     padding: const EdgeInsets.all(10),
     onPressed: onPressed,
@@ -97,7 +101,10 @@ Widget tabItemWidget(
       child: Text(
         name,
         style: TextStyle(
-            color: customTheme.textTheme.bodyText1!.color!
+            color: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .color!
                 .withOpacity(selected ? 1 : .4)),
       ),
     ),

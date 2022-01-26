@@ -7,7 +7,8 @@ import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+import 'package:fluttermatic/core/services/check_file.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 /// Sets the path of a directory to env path variable.
 ///

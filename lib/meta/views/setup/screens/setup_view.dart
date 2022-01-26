@@ -6,26 +6,40 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/core/libraries/checks.dart';
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/notifiers.dart';
-import 'package:fluttermatic/core/libraries/sections.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
-import 'package:fluttermatic/core/libraries/utils.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/components/dialog_templates/about/about_us.dart';
+import 'package:fluttermatic/components/dialog_templates/flutter/flutter_requirements.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/services/checks/flutter.check.dart';
+import 'package:fluttermatic/core/services/checks/git.check.dart';
+import 'package:fluttermatic/core/services/checks/java.check.dart';
+import 'package:fluttermatic/core/services/checks/studio.check.dart';
+import 'package:fluttermatic/core/services/checks/vsc.check.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
+import 'package:fluttermatic/meta/views/setup/components/header.dart';
+import 'package:fluttermatic/meta/views/setup/sections/get_started.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_editor.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_flutter.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_git.dart';
+import 'package:fluttermatic/meta/views/setup/sections/install_java.dart';
+import 'package:fluttermatic/meta/views/setup/sections/restart.dart';
+import 'package:fluttermatic/meta/views/tabs/home.dart';
 
-class WelcomePage extends StatefulWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+class SetupScreen extends StatefulWidget {
+  const SetupScreen({Key? key}) : super(key: key);
 
   @override
-  _WelcomePageState createState() => _WelcomePageState();
+  _SetupScreenState createState() => _SetupScreenState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
-  WelcomeTab _tab = WelcomeTab.gettingStarted;
+class _SetupScreenState extends State<SetupScreen> {
+  SetUpTab _tab = SetUpTab.gettingStarted;
   bool _installing = false;
   bool _completedInstall = false;
 
@@ -38,9 +52,9 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     if (SharedPref().pref.containsKey(SPConst.setupTab)) {
-      setState(() => _tab = WelcomeTab.restart);
+      setState(() => _tab = SetUpTab.restart);
     } else {
-      setState(() => _tab = WelcomeTab.gettingStarted);
+      setState(() => _tab = SetUpTab.gettingStarted);
     }
     super.initState();
   }
@@ -54,7 +68,7 @@ class _WelcomePageState extends State<WelcomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               children: <Widget>[
-                createWelcomeHeader(_tab, context),
+                createSetUpHeader(_tab, context),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -191,17 +205,17 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Widget _getCurrentPage(BuildContext context) {
     switch (_tab) {
-      case WelcomeTab.gettingStarted:
-        return WelcomeGettingStarted(
+      case SetUpTab.gettingStarted:
+        return SetUpGettingStarted(
           onContinue: () {
             setState(() {
               _installing = false;
               _completedInstall = false;
-              _tab = WelcomeTab.installFlutter;
+              _tab = SetUpTab.installFlutter;
             });
           },
         );
-      case WelcomeTab.installFlutter:
+      case SetUpTab.installFlutter:
         return installFlutter(
           context,
           onInstall: () async {
@@ -219,11 +233,11 @@ class _WelcomePageState extends State<WelcomePage> {
           },
           onContinue: () => setState(() {
             _completedInstall = false;
-            _tab = WelcomeTab.installEditor;
+            _tab = SetUpTab.installEditor;
           }),
         );
-      case WelcomeTab.installEditor:
-        return WelcomeInstallEditor(
+      case SetUpTab.installEditor:
+        return SetUpInstallEditor(
           onInstall: () async {
             setState(() => _installing = true);
 
@@ -231,7 +245,7 @@ class _WelcomePageState extends State<WelcomePage> {
             if (_editor.contains(EditorType.none)) {
               setState(() {
                 _editor.clear();
-                _tab = WelcomeTab.installGit;
+                _tab = SetUpTab.installGit;
               });
             }
 
@@ -265,10 +279,10 @@ class _WelcomePageState extends State<WelcomePage> {
           doneInstalling: _completedInstall,
           onContinue: () => setState(() {
             _completedInstall = false;
-            _tab = WelcomeTab.installGit;
+            _tab = SetUpTab.installGit;
           }),
         );
-      case WelcomeTab.installGit:
+      case SetUpTab.installGit:
         return installGit(
           context,
           onInstall: () async {
@@ -286,10 +300,10 @@ class _WelcomePageState extends State<WelcomePage> {
           doneInstalling: _completedInstall,
           onContinue: () => setState(() {
             _completedInstall = false;
-            _tab = WelcomeTab.installJava;
+            _tab = SetUpTab.installJava;
           }),
         );
-      case WelcomeTab.installJava:
+      case SetUpTab.installJava:
         return installJava(
           context,
           onInstall: () async {
@@ -306,17 +320,17 @@ class _WelcomePageState extends State<WelcomePage> {
           onSkip: () => setState(() {
             _installing = false;
             _completedInstall = false;
-            _tab = WelcomeTab.restart;
+            _tab = SetUpTab.restart;
           }),
           onContinue: () async {
             await SharedPref().pref.setString(SPConst.setupTab, 'RESTART');
-            setState(() => _tab = WelcomeTab.restart);
+            setState(() => _tab = SetUpTab.restart);
           },
           isInstalling: _installing,
           doneInstalling: _completedInstall,
         );
-      case WelcomeTab.restart:
-        return welcomeRestart(
+      case SetUpTab.restart:
+        return setUpRestart(
           context,
           onRestart: () async {
             int _restartSeconds = 5;

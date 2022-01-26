@@ -1,10 +1,14 @@
+// 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/services.dart';
+// 📦 Package imports:
 import 'package:http/http.dart' as http;
+
+// 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 Future<void> checkNewFlutterMaticVersion(List<dynamic> data) async {
   SendPort _port = data[0];

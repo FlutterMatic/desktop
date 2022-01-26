@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 
-Widget welcomeHeaderTitle(String iconPath, String title, String description,
+Widget setUpHeaderTitle(String iconPath, String title, String description,
     {Color? color, double iconHeight = 30}) {
   return Column(
     children: <Widget>[

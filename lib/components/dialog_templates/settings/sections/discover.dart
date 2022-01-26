@@ -6,18 +6,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/libraries/components.dart';
-import 'package:fluttermatic/core/libraries/constants.dart';
-import 'package:fluttermatic/core/libraries/views.dart';
-import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/components/dialog_templates/about/about_us.dart';
+import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 
 class DiscoverSettingsSection extends StatelessWidget {
   const DiscoverSettingsSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
     return TabViewTabHeadline(
       title: 'Discover',
       content: <Widget>[
@@ -64,7 +66,7 @@ class DiscoverSettingsSection extends StatelessWidget {
         VSeparators.small(),
         RoundContainer(
           width: double.infinity,
-          color: customTheme.colorScheme.secondary.withOpacity(0.2),
+          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               const Expanded(
@@ -75,8 +77,6 @@ class DiscoverSettingsSection extends StatelessWidget {
               ),
               HSeparators.small(),
               RectangleButton(
-                color: customTheme.colorScheme.secondary.withOpacity(0.2),
-                hoverColor: customTheme.hoverColor,
                 width: 70,
                 onPressed: () {
                   Navigator.pop(context);
@@ -85,11 +85,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                     builder: (_) => const AboutUsDialog(),
                   );
                 },
-                child: Text(
-                  'About',
-                  style:
-                      TextStyle(color: customTheme.textTheme.bodyText1!.color),
-                ),
+                child: const Text('About'),
               ),
             ],
           ),
