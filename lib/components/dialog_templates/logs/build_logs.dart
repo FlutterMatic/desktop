@@ -8,12 +8,13 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:path_provider/path_provider.dart';
-
+import 'package:path/path.dart' as p;
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/core/libraries/services.dart';
 import 'package:fluttermatic/core/libraries/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Expects the following data:
 /// [<String> filePath, <String> fileName, <SendPort> port]
@@ -35,19 +36,31 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
     // The first line will contain information such as the date and time of the
     // report generation.
 
-    String _dir = _basePath + '\\logs';
-
-    List<FileSystemEntity> _logsDir = Directory(_dir)
-        .listSync(recursive: true)
-        .where((FileSystemEntity e) => e is File && e.path.endsWith('.log'))
-        .toList();
-
-    File _reportFile = File(_filePath + '\\' + _fileName);
+    String _dir = p.join(_basePath, 'logs');
+    late File _reportFile;
+    Directory _logsDir = Directory(_dir);
+    List<FileSystemEntity> logsDirList = <FileSystemEntity>[];
+    if (await _logsDir.exists()) {
+      _reportFile = File(p.join(_filePath, _fileName));
+      if (await _reportFile.exists()) {
+        logsDirList = await _logsDir
+            .list(recursive: true)
+            .where((FileSystemEntity e) => e is File && e.path.endsWith('.log'))
+            .toList();
+      } else {
+        await _reportFile.create(recursive: true);
+        logsDirList.add(_reportFile);
+      }
+    } else {
+      await _logsDir.create(recursive: true);
+      _reportFile = File(p.join(_filePath, _fileName));
+      logsDirList.add(_reportFile);
+    }
 
     await _reportFile
         .writeAsString('Report generated on ${DateTime.now().toString()}\n\n');
 
-    for (FileSystemEntity logFile in _logsDir) {
+    for (FileSystemEntity logFile in logsDirList) {
       List<String> _logs = <String>[];
 
       _logs.add('---- LOG ---- \n' +
@@ -91,14 +104,14 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
   bool _isListening = false;
 
   Future<void> _generateReport() async {
+    Directory _appDir = await getApplicationSupportDirectory();
     try {
       await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
-        (await getApplicationSupportDirectory()).path,
+        _appDir.path,
         _savePath,
         _fileName,
         _generatePort.sendPort
       ]);
-
       if (mounted && !_isListening) {
         _generatePort.asBroadcastStream(onListen: (_) {
           if (mounted) {
@@ -119,16 +132,15 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
           if (message && mounted) {
             Navigator.pop(context);
+            await Future<void>.delayed(const Duration(seconds: 5));
             // Opens file viewer app to show the output.
             if (Platform.isWindows) {
-              await shell.run('explorer ' + _savePath!);
+              await shell.run('start ${_savePath!}');
             } else if (Platform.isMacOS) {
-              await shell.run('open ' + _savePath!);
+              await shell.run('open ${_savePath!}');
             } else if (Platform.isLinux) {
-              await shell.run('xdg-open ' + _savePath!);
+              await shell.run('xdg-open ${_savePath!}');
             }
-            await Future<void>.delayed(const Duration(seconds: 5));
-            Navigator.pop(context);
             _generatePort.close();
             return;
           } else if (mounted) {
@@ -140,11 +152,12 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
                 type: SnackBarType.error,
               ),
             );
-
             setState(() => _savePath = null);
             return;
           }
         });
+      } else {
+        await logger.file(LogTypeTag.error, 'Failed to generate issue report.');
       }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
