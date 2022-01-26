@@ -69,7 +69,7 @@ class _RunCommandDialogState extends State<RunCommandDialog> {
               }))
           .catchError((dynamic e) {
         setState(() => _commandResult =
-            '"${_commandController.text}" is not recognized as a flutter command. Run help to see all commands. \n\nPlease note you can only run Flutter commands. To run commands other than Flutter commands, use your ${Platform.isMacOS ? 'macOS' : Platform.isWindows ? 'Windows' : 'Linux'} terminal.');
+            '"${_commandController.text.length > 50 ? _commandController.text.substring(0, 50) + '...' : _commandController.text}" is not recognized as a flutter command. Run help to see all commands. \n\nPlease note you can only run Flutter commands. To run commands other than Flutter commands, use your ${Platform.isMacOS ? 'macOS' : Platform.isWindows ? 'Windows' : 'Linux'} terminal.');
       });
       setState(() => _loading = false);
     } else {
