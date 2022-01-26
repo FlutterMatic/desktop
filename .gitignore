@@ -1,20 +1,9 @@
-### certificates ###
-*.pem
-*.key
-*.crt
-*.cer
-*.priv
-*.pfx
-*.csr
-
 ### Dart ###
-# See https://www.dartlang.org/guides/libraries/private-files
 
 # Files and directories created by pub
 .dart_tool/
 .packages
 build/
-final_builds/
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
 
@@ -24,8 +13,6 @@ doc/api/
 
 # dotenv environment variables file
 .env*
-
-.idea/
 
 # Avoid committing generated Javascript files:
 *.dart.js
@@ -38,6 +25,14 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+### Dart Patch ###
+# dotenv environment variables file
+.env
+
+### DartEditor ###
+.project
+.buildlog
 
 ### Flutter ###
 # Flutter/Dart/Pub related
@@ -168,9 +163,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,flutter,dart,certificates
-
-# Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
-
 secret.dart
 secrets.dart
+pubspec.lock

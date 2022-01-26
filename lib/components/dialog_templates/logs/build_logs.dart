@@ -135,6 +135,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             } else if (Platform.isLinux) {
               await shell.run('xdg-open ' + _savePath!);
             }
+            
             await Future<void>.delayed(const Duration(seconds: 5));
             Navigator.pop(context);
             _generatePort.close();
@@ -154,17 +155,17 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
           }
         });
       }
+
+      setState(() => _savePath = null);
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
           stackTraces: s);
+
       ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Failed to generate issue report. Please try again.',
-          type: SnackBarType.error,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context, 'Failed to generate issue report. Please try again.',
+          type: SnackBarType.error));
+
       setState(() => _savePath = null);
     }
   }

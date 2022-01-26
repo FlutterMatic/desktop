@@ -3,7 +3,7 @@
     "configurations": [
         // For Windows (debug, release, profile)
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Windows-Debug",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -18,7 +18,7 @@
             ]
         },
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Windows-Release",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -33,7 +33,7 @@
             ]
         },
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Windows-Profile",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -49,7 +49,7 @@
         },
         // For macOS (debug, release, profile)
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Macos-Debug",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -64,7 +64,7 @@
             ]
         },
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Macos-Release",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -79,7 +79,7 @@
             ]
         },
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Macos-Profile",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -95,7 +95,7 @@
         },
         // For Linux (debug, release, profile)
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Linux-Debug",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -110,7 +110,7 @@
             ]
         },
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Linux-Release",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -125,7 +125,7 @@
             ]
         },
         {
-            "name": "FlutterMatic-Desktop",
+            "name": "Linux-Profile",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
