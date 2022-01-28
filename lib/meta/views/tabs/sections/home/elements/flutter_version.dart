@@ -14,9 +14,9 @@ import 'package:pub_semver/src/version.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/dialog_templates/flutter/change_channel.dart';
 import 'package:fluttermatic/components/dialog_templates/flutter/flutter_upgrade.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
-import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
@@ -128,7 +128,7 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
                 message: _doneLoading
                     ? (_version == null
                         ? 'Flutter is not installed on your device'
-                        : 'Flutter is up to date on channel $_channel ')
+                        : 'Flutter is up to date on channel ${_channel.toLowerCase()}')
                     : '...',
                 icon: Icon(
                     _doneLoading
@@ -184,11 +184,11 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
                     HSeparators.normal(),
                     Expanded(
                       child: RectangleButton(
-                        child: const Text('Create New'),
+                        child: const Text('Change Channel'),
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (_) => const NewProjectDialog(),
+                            builder: (_) => const ChangeFlutterChannelDialog(),
                           );
                         },
                       ),

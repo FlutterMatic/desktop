@@ -4,8 +4,9 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/main.dart';
-import 'package:fluttermatic/meta/views/tabs/home.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 // 📦 Package imports:
 import 'package:provider/src/provider.dart';
@@ -15,14 +16,14 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
-import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
-import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/views/tabs/home.dart';
 import '../dialog_header.dart';
 
 class UpdateFlutterDialog extends StatefulWidget {
@@ -59,6 +60,12 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
     // Engine • revision 890a5fca2e
     // Tools • Dart 2.15.1
 
+    await SharedPref().pref.setString(
+        SPConst.lastFlutterUpdateCheck, DateTime.now().toIso8601String());
+
+    await SharedPref().pref.setString(
+        SPConst.lastDartUpdateCheck, DateTime.now().toIso8601String());
+
     await shell
         .run('flutter upgrade')
         .asStream()
@@ -69,18 +76,23 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
           }
         })
         .asFuture()
-        .onError((Object? _, StackTrace s) {
-          logger.file(LogTypeTag.error, 'Error while updating Flutter: $_',
+        .onError((Object? _, StackTrace s) async {
+          await logger.file(
+              LogTypeTag.error, 'Error while updating Flutter: $_',
               stackTraces: s);
+
           ScaffoldMessenger.of(context).clearSnackBars();
           ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
             context,
             'Failed to update Flutter. Please make sure you have a stable network connection and try again.',
             type: SnackBarType.error,
           ));
+
           if (mounted) {
-            setState(() =>
-                _activityMessage = 'An error occurred while updating Flutter.');
+            setState(() {
+              _activityMessage = 'An error occurred while updating Flutter.';
+              _updating = false;
+            });
           }
           return;
         });
@@ -102,15 +114,16 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
             ),
           );
 
+      await SharedPref().pref.setString(
+          SPConst.lastFlutterUpdate, DateTime.now().toIso8601String());
+
+      await SharedPref()
+          .pref
+          .setString(SPConst.lastDartUpdate, DateTime.now().toIso8601String());
+
       await logger.file(LogTypeTag.info,
           'Flutter has been updated to ${_result.version} on channel ${_result.channel}.');
-    } else {
-      await logger.file(LogTypeTag.info,
-          'Flutter is already up to date on channel stable with version ${_result.version}. Attempted upgrade when no new version available.');
-    }
 
-    // TODO: Switch operator
-    if (!_hasNew) {
       await Navigator.pushAndRemoveUntil(
         context,
         PageRouteBuilder<Widget>(
@@ -127,6 +140,9 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
         type: SnackBarType.done,
       ));
     } else {
+      await logger.file(LogTypeTag.info,
+          'Flutter is already up to date on channel stable with version ${_result.version}. Attempted upgrade when no new version available.');
+
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
         context,
@@ -146,7 +162,11 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            DialogHeader(title: 'Update Flutter', canClose: !_updating),
+            DialogHeader(
+              title: 'Update Flutter',
+              leading: const BetaTile(),
+              canClose: !_updating,
+            ),
             const Text(
               'Keeping Flutter up-to-date is a good idea since it helps with many things including performance improvements, bug fixes and new features.',
               textAlign: TextAlign.center,
@@ -156,31 +176,7 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
                 'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete. You can\'t use FlutterMatic while we update.'),
             VSeparators.small(),
             if (_updating)
-              RoundContainer(
-                child: Builder(
-                  builder: (_) {
-                    if (_activityMessage.isEmpty) {
-                      return const CustomLinearProgressIndicator(
-                          includeBox: false);
-                    } else {
-                      return Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(_activityMessage,
-                                maxLines: 1, overflow: TextOverflow.ellipsis),
-                          ),
-                          HSeparators.small(),
-                          const SizedBox(
-                            width: 50,
-                            child: CustomLinearProgressIndicator(
-                                includeBox: false),
-                          ),
-                        ],
-                      );
-                    }
-                  },
-                ),
-              )
+              LoadActivityMessageElement(message: _activityMessage)
             else
               RectangleButton(
                 loading: _updating,

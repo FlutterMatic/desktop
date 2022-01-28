@@ -524,8 +524,12 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     await showDialog(
                       context: context,
                       builder: (_) => WorkflowRunnerDialog(
-                        workflowPath:
-                            _path + 'fmatic' + (_nameController.text) + '.json',
+                        workflowPath: _path +
+                            '\\' +
+                            'fmatic' +
+                            '\\' +
+                            (_nameController.text) +
+                            '.json',
                       ),
                     );
                   }
@@ -661,6 +665,8 @@ Future<bool> _saveWorkflow(
 
     _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
 
+    await Directory(_dirPath + '\\fmatic').create(recursive: true);
+
     await File.fromUri(Uri.file(_dirPath + '\\fmatic\\${template.name}.json'))
         .writeAsString(jsonEncode(template.toJson()))
         .timeout(const Duration(seconds: 3));
@@ -683,7 +689,7 @@ Future<bool> _saveWorkflow(
 
     return true;
   } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow.',
+    await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow: $_',
         stackTraces: s);
 
     Navigator.pop(context);

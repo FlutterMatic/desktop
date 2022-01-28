@@ -107,7 +107,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
         _fileName,
       ]);
 
-      if (mounted && !_isListening) {
+      if (!_isListening) {
         _generatePort.asBroadcastStream(onListen: (_) {
           if (mounted) {
             setState(() => _isListening = true);
@@ -118,7 +118,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             ScaffoldMessenger.of(context).showSnackBar(
               snackBarTile(
                 context,
-                'Something really weird is happening, and you need to report it!',
+                'Something really weird is happening, and you need to report it! Make an exception and don\'t about uploading a report. Just make sure to describe it well!',
                 type: SnackBarType.error,
               ),
             );
@@ -135,9 +135,13 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             } else if (Platform.isLinux) {
               await shell.run('xdg-open ' + _savePath!);
             }
-            
+
             await Future<void>.delayed(const Duration(seconds: 5));
-            Navigator.pop(context);
+
+            if (mounted) {
+              Navigator.pop(context);
+            }
+
             _generatePort.close();
             return;
           } else if (mounted) {
@@ -151,6 +155,8 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             );
 
             setState(() => _savePath = null);
+
+            _generatePort.close();
             return;
           }
         });
@@ -203,12 +209,11 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
                       disable: _savePath != null,
                       child: const Text('Select Path'),
                       onPressed: () async {
-                        String? _info = await file_selector.getDirectoryPath(
-                          confirmButtonText: 'Select Path',
-                        );
+                        String? _path = await file_selector.getDirectoryPath(
+                            confirmButtonText: 'Report');
 
-                        if (_info != null) {
-                          setState(() => _savePath = _info);
+                        if (_path != null) {
+                          setState(() => _savePath = _path);
                           await _generateReport();
                         } else {
                           ScaffoldMessenger.of(context).clearSnackBars();

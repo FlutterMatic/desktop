@@ -339,7 +339,7 @@ final List<_GuideModel> _guides = <_GuideModel>[
       showDialog(
         context: context,
         builder: (_) => const SettingDialog(
-          goToPage: 'Projects',
+          goToPage: SettingsPage.projects,
         ),
       );
     },

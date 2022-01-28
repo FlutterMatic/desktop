@@ -7,15 +7,34 @@ import 'package:fluttermatic/components/dialog_templates/settings/sections/disco
 import 'package:fluttermatic/components/dialog_templates/settings/sections/editors.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/github.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/projects.dart';
-import 'package:fluttermatic/components/dialog_templates/settings/sections/theme.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/overview.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/troubleshoot.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 
 class SettingDialog extends StatelessWidget {
-  final String? goToPage;
+  final SettingsPage? goToPage;
 
   const SettingDialog({Key? key, this.goToPage}) : super(key: key);
+
+  String? _getTitle() {
+    switch (goToPage) {
+      case SettingsPage.overview:
+        return 'Overview';
+      case SettingsPage.projects:
+        return 'Projects';
+      case SettingsPage.editors:
+        return 'Editors';
+      case SettingsPage.github:
+        return 'GitHub';
+      case SettingsPage.troubleshoot:
+        return 'Troubleshoot';
+      case SettingsPage.discover:
+        return 'Discover';
+      default:
+        return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +45,9 @@ class SettingDialog extends StatelessWidget {
         children: <Widget>[
           const DialogHeader(title: 'Settings'),
           TabViewWidget(
-            defaultPage: goToPage,
+            defaultPage: _getTitle(),
             tabs: const <TabViewObject>[
-              TabViewObject('Theme', ThemeSettingsSection()),
+              TabViewObject('Overview', OverviewSettingsSection()),
               TabViewObject('Projects', ProjectsSettingsSection()),
               TabViewObject('Editors', EditorsSettingsSection()),
               TabViewObject('GitHub', GitHubSettingsSection()),
@@ -40,4 +59,13 @@ class SettingDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+enum SettingsPage {
+  overview,
+  projects,
+  editors,
+  github,
+  troubleshoot,
+  discover,
 }

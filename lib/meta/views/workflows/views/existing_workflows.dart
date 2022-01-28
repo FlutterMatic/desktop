@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
@@ -138,7 +139,10 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(title: 'Workflows'),
+          const DialogHeader(
+            title: 'Workflows',
+            leading: BetaTile(),
+          ),
           if (_loadingWorkflows)
             const Padding(
               padding: EdgeInsets.all(15),
@@ -333,7 +337,10 @@ class _ShowWorkflowTileOptions extends StatelessWidget {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(title: 'Options'),
+          const DialogHeader(
+            title: 'Options',
+            leading: BetaTile(),
+          ),
           Row(
             children: <Widget>[
               Expanded(

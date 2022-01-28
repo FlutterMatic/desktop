@@ -7,6 +7,7 @@ import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/installation_status.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
@@ -96,7 +97,10 @@ class _StatusDialogState extends State<StatusDialog> {
             )
           : Column(
               children: <Widget>[
-                const DialogHeader(title: 'Status'),
+                const DialogHeader(
+                  title: 'Status',
+                  leading: BetaTile(),
+                ),
                 // Dart
                 InstallationStatusTile(
                   status: _dartInstalled
@@ -108,8 +112,8 @@ class _StatusDialogState extends State<StatusDialog> {
                       'You will need to have Dart installed on your device. This is the language that Flutter uses to build the app.',
                   onDownload: () => showDialog(
                     context: context,
-                    builder: (_) => const InstallToolDialog(
-                        tool: SetUpTab.installFlutter),
+                    builder: (_) =>
+                        const InstallToolDialog(tool: SetUpTab.installFlutter),
                   ),
                   tooltip: 'Dart',
                 ),
@@ -126,8 +130,8 @@ class _StatusDialogState extends State<StatusDialog> {
                       'You will need to have Flutter installed on your device. This is how your device will be able to understand the Dart language.',
                   onDownload: () => showDialog(
                     context: context,
-                    builder: (_) => const InstallToolDialog(
-                        tool: SetUpTab.installFlutter),
+                    builder: (_) =>
+                        const InstallToolDialog(tool: SetUpTab.installFlutter),
                   ),
                   tooltip: 'Flutter',
                 ),

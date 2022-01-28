@@ -1,5 +1,13 @@
+// 🎯 Dart imports:
+import 'dart:developer';
+import 'dart:io';
+
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
+
+// 📦 Package imports:
+import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -7,30 +15,119 @@ import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/select_tiles.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
+import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
-import 'package:fluttermatic/meta/views/tabs/home.dart';
+import 'package:fluttermatic/core/models/check_response.model.dart';
+import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/core/services/checks/check.services.dart';
+import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/main.dart';
 
-class ChangeChannelDialog extends StatefulWidget {
-  const ChangeChannelDialog({Key? key}) : super(key: key);
+class ChangeFlutterChannelDialog extends StatefulWidget {
+  const ChangeFlutterChannelDialog({Key? key}) : super(key: key);
 
   @override
-  _ChangeChannelDialogState createState() => _ChangeChannelDialogState();
+  _ChangeFlutterChannelDialogState createState() =>
+      _ChangeFlutterChannelDialogState();
 }
 
-class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
-  //Inputs
+class _ChangeFlutterChannelDialogState
+    extends State<ChangeFlutterChannelDialog> {
+  // Inputs
   String? _selectedChannel;
 
-  //Utils
-  bool _loadingMaterials = true;
-  bool _loading = true;
+  // Utils
+  bool _switching = false;
+  bool _initializing = true;
+  String? _currentChannel;
 
-  void _loadChannel() {
-    setState(() {
-      _loading = false;
-    });
+  // UI
+  String _activityMessage = '';
+
+  Future<void> _switchChannels() async {
+    try {
+      setState(() => _switching = true);
+
+      await shell
+          .run('flutter channel $_selectedChannel')
+          .asStream()
+          .listen((List<ProcessResult> event) {
+        if (mounted) {
+          setState(() => _activityMessage =
+              event.last.stdout.toString().split('\n').first);
+        }
+      }).asFuture();
+
+      await CheckServices.checkFlutter();
+
+      Navigator.pop(context);
+      RestartWidget.restartApp(context);
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(
+          context,
+          'Channel successfully switched to $_selectedChannel',
+          type: SnackBarType.done,
+        ),
+      );
+
+      await context.read<NotificationsNotifier>().newNotification(
+            NotificationObject(
+              Timeline.now.toString(),
+              title: 'Flutter channel switched',
+              message:
+                  'Your Flutter channel was successfully switched to $_selectedChannel from $_currentChannel',
+              onPressed: null,
+            ),
+          );
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Error switching channels: $_',
+          stackTraces: s);
+
+      setState(() => _switching = false);
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Failed to switch from $_currentChannel to $_selectedChannel. Please try again.',
+        type: SnackBarType.error,
+      ));
+    }
+  }
+
+  // Loads the current channel to avoid switching to the same channel.
+  Future<void> _loadChannel() async {
+    try {
+      ServiceCheckResponse _result = await CheckServices.checkFlutter();
+
+      String _channelCased = _result.channel!.substring(0, 1).toUpperCase() +
+          _result.channel!.substring(1);
+
+      await Future<void>.delayed(const Duration(seconds: 10));
+
+      if (mounted) {
+        setState(() {
+          _initializing = false;
+          _currentChannel = _channelCased;
+          _selectedChannel = _channelCased;
+        });
+      }
+    } catch (_, s) {
+      await logger.file(
+          LogTypeTag.error, 'Error loading channel for channel switching: $_',
+          stackTraces: s);
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Failed to load channel options. Please try again.',
+        type: SnackBarType.error,
+      ));
+
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -40,190 +137,77 @@ class _ChangeChannelDialogState extends State<ChangeChannelDialog> {
   }
 
   @override
-  void dispose() {
-    _loadingMaterials = true;
-    _loading = true;
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
-    return DialogTemplate(
-      child: _loading
-          ? const SizedBox(height: 300, width: 300, child: Spinner())
-          : _loadingMaterials
-              ? _updatingChannels(context)
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    const DialogHeader(title: 'Change Channel'),
-                    const Text(
-                      'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your device. We recommend staying on the stable channel.',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    VSeparators.normal(),
-                    SelectTile(
-                      onPressed: (String val) =>
-                          setState(() => _selectedChannel = val),
-                      defaultValue: _selectedChannel,
-                      options: const <String>[
-                        'Master',
-                        'Stable',
-                        'Beta',
-                        'Dev'
-                      ],
-                    ),
-                    informationWidget(
-                      'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
-                      type: InformationType.warning,
-                    ),
-                    VSeparators.small(),
-                    Row(
-                      children: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Text('Cancel'),
-                          ),
-                        ),
-                        const Spacer(),
-                        RectangleButton(
-                          width: 120,
+    return WillPopScope(
+      onWillPop: () async => !_switching,
+      child: DialogTemplate(
+        outerTapExit: false,
+        child: Shimmer.fromColors(
+          enabled: _initializing,
+          child: IgnorePointer(
+            ignoring: _initializing || _switching,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                DialogHeader(
+                  title: 'Change Channel',
+                  leading: const BetaTile(),
+                  canClose: !_switching,
+                ),
+                const Text(
+                  'Choose a new channel to switch to. Switching to a new channel may take a while. New resources will be installed on your device. We recommend staying on the stable channel.',
+                  style: TextStyle(fontSize: 13),
+                ),
+                VSeparators.normal(),
+                SelectTile(
+                  onPressed: (String val) =>
+                      setState(() => _selectedChannel = val),
+                  defaultValue: _selectedChannel,
+                  options: const <String>['Master', 'Stable', 'Beta', 'Dev'],
+                ),
+                VSeparators.small(),
+                informationWidget(
+                  'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
+                  type: InformationType.warning,
+                ),
+                VSeparators.small(),
+                if (_switching)
+                  LoadActivityMessageElement(message: _activityMessage)
+                else
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: RectangleButton(
+                          child: const Text('Cancel'),
                           onPressed: () {
-                            if (_selectedChannel == null) {
-                              Navigator.pop(context);
-                            }
-                            // TODO: Show the AlreadyChannelDialog if the user selected a channel that they are already currently in.
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (_) => AlreadyChannelDialog(),
-                            // );
-                            else {
-                              Navigator.pop(context);
-                              showDialog(
-                                context: context,
-                                builder: (_) => ConfirmChannelChangeDialog(
-                                    _selectedChannel!),
-                              );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      HSeparators.normal(),
+                      Expanded(
+                        child: RectangleButton(
+                          child: const Text('Continue'),
+                          onPressed: () {
+                            if (_currentChannel == _selectedChannel) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(context,
+                                      'You are already on $_currentChannel channel. Select a different channel to continue.'));
+                              return;
+                            } else {
+                              _switchChannels();
                             }
                           },
-                          child: Text(
-                            'Continue',
-                            style: TextStyle(
-                                color: customTheme.textTheme.bodyText1!.color),
-                          ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-    );
-  }
-}
-
-class AlreadyChannelDialog extends StatelessWidget {
-  const AlreadyChannelDialog({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData customTheme = Theme.of(context);
-    return DialogTemplate(
-      outerTapExit: false,
-      child: Column(
-        children: <Widget>[
-          const DialogHeader(title: 'Same Channel', canClose: false),
-          const Text(
-            // TODO: Show the channel name.
-            'It looks like you are already in the // Channel //. You didn\'t mean to choose // Channel //? You can go back and pick another channel.',
-            textAlign: TextAlign.center,
-          ),
-          VSeparators.large(),
-          RectangleButton(
-            width: double.infinity,
-            color: customTheme.focusColor,
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'OK',
-              style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
+                      ),
+                    ],
+                  ),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ConfirmChannelChangeDialog extends StatelessWidget {
-  final String channelName;
-
-  const ConfirmChannelChangeDialog(this.channelName, {Key? key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: Create the function to switch the flutter channels.
-    Future<void> _switchChannel() async {
-      // First make sure that the requested channel is not the same as
-      // the same channel the user is currently in.
-
-      Navigator.pop(context);
-    }
-
-    return DialogTemplate(
-      child: Column(
-        children: <Widget>[
-          DialogHeader(title: 'Change to $channelName'),
-          const Text(
-            'You will still be able to continue using the IDE with Flutter while we change channels. Please be aware that changing channels will take time.',
-            textAlign: TextAlign.center,
-          ),
-          infoWidget(context,
-              'This process may take some time. You will still be able to use Flutter in your IDE. Once switching channels, we recommend restarting any open editors.'),
-          VSeparators.normal(),
-          RectangleButton(
-            width: double.infinity,
-            color: Colors.blueGrey,
-            splashColor: Colors.blueGrey.withOpacity(0.5),
-            focusColor: Colors.blueGrey.withOpacity(0.5),
-            hoverColor: Colors.grey.withOpacity(0.5),
-            highlightColor: Colors.blueGrey.withOpacity(0.5),
-            onPressed: () async {
-              await _switchChannel();
-              await Navigator.push(
-                context,
-                MaterialPageRoute<Widget>(builder: (_) => const HomeScreen()),
-              );
-            },
-            child: const Text('Change Channel'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-Widget _updatingChannels(BuildContext context) {
-  ThemeData customTheme = Theme.of(context);
-  return Column(
-    children: <Widget>[
-      const DialogHeader(title: 'In Progress'),
-      const Text(
-        'We are currently updating your Flutter channel. Please check back later once we are finished updating your Flutter channel.',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13),
-      ),
-      VSeparators.large(),
-      RectangleButton(
-        width: double.infinity,
-        onPressed: () => Navigator.pop(context),
-        child: Text(
-          'OK',
-          style: TextStyle(color: customTheme.textTheme.bodyText1!.color),
         ),
       ),
-    ],
-  );
+    );
+  }
 }

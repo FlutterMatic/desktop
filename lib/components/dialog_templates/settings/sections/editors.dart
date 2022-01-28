@@ -23,13 +23,13 @@ class EditorsSettingsSection extends StatefulWidget {
 
 class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
   String? _defaultEditor;
-  bool _askEditorAlways = false;
+  bool _askEditorAlways = true;
 
   Future<void> _getDefaultEditor() async {
     if (SharedPref().pref.containsKey(SPConst.askEditorAlways)) {
       setState(() {
         _askEditorAlways =
-            SharedPref().pref.getBool(SPConst.askEditorAlways) ?? false;
+            SharedPref().pref.getBool(SPConst.askEditorAlways) ?? true;
       });
     }
     if (SharedPref().pref.containsKey(SPConst.defaultEditor)) {
@@ -125,20 +125,20 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
           ),
         ),
         VSeparators.small(),
-        CheckBoxElement(
-          onChanged: (bool? val) async {
-            val = val ?? false; // Ensures not `null`.
+        RoundContainer(
+          color: Colors.blueGrey.withOpacity(0.2),
+          child: CheckBoxElement(
+            onChanged: (bool? val) async {
+              setState(() => _askEditorAlways = (val ?? true));
+              await SharedPref()
+                  .pref
+                  .setBool(SPConst.askEditorAlways, val ?? true);
 
-            if (val) {
-              setState(() => _askEditorAlways = true);
-              await SharedPref().pref.setBool(SPConst.askEditorAlways, true);
-            } else {
-              setState(() => _askEditorAlways = false);
-              await SharedPref().pref.setBool(SPConst.askEditorAlways, false);
-            }
-          },
-          value: _askEditorAlways,
-          text: 'Always ask me which editor to use',
+              print(SharedPref().pref.getBool(SPConst.askEditorAlways));
+            },
+            value: _askEditorAlways,
+            text: 'Always ask me which editor to use',
+          ),
         ),
         HSeparators.small(),
       ],

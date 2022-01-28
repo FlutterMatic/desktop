@@ -44,8 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Utils
   bool _animateFinish = false;
-  bool _isUpdatesPortListening = false;
-  bool _isClearLogsPortListening = false;
 
   // Update Status
   String? _updateDownloadUrl;
@@ -87,15 +85,14 @@ class _HomeScreenState extends State<HomeScreen> {
           Platform.operatingSystem.toLowerCase()
         ]);
 
-        if (!_isUpdatesPortListening && mounted) {
-          setState(() => _isUpdatesPortListening = true);
-          _checkUpdatesPort.listen((dynamic message) {
+        _checkUpdatesPort.asBroadcastStream().listen((dynamic message) {
+          if (mounted) {
             setState(() {
               _updateAvailable = message[0];
               _updateDownloadUrl = message[1];
             });
-          });
-        }
+          }
+        });
 
         // Keep checking for new updates every hour.
         await Future<void>.delayed(const Duration(hours: 1));
@@ -137,12 +134,16 @@ class _HomeScreenState extends State<HomeScreen> {
         (await getApplicationSupportDirectory()).path
       ]);
 
-      if (!_isClearLogsPortListening) {
-        setState(() => _isClearLogsPortListening = true);
-        _clearLogsPort.listen((_) => _clearLogsPort.close());
-      }
+      _clearLogsPort.asBroadcastStream().listen((_) => _clearLogsPort.close());
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _clearLogsPort.close();
+    _checkUpdatesPort.close();
+    super.dispose();
   }
 
   @override

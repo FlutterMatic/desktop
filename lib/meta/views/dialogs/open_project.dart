@@ -13,6 +13,7 @@ import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
@@ -45,9 +46,13 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
 
   Future<void> _loadProject() async {
     try {
-      if (SharedPref().pref.containsKey(SPConst.askEditorAlways) &&
-          SharedPref().pref.getBool(SPConst.askEditorAlways) == true) {
+      if (!SharedPref().pref.containsKey(SPConst.askEditorAlways) ||
+          SharedPref().pref.containsKey(SPConst.askEditorAlways) &&
+              SharedPref().pref.getBool(SPConst.askEditorAlways) == true) {
         setState(() => _showEditorSelection = true);
+
+        await SharedPref().pref.setBool(SPConst.askEditorAlways, true);
+
         return;
       }
 
@@ -114,7 +119,10 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(title: 'Select Editor'),
+          const DialogHeader(
+            title: 'Select Editor',
+            leading: BetaTile(),
+          ),
           if (_showEditorSelection) ...<Widget>[
             Row(
               children: <Widget>[
@@ -179,12 +187,20 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
               ],
             ),
             VSeparators.normal(),
-            CheckBoxElement(
-              onChanged: (bool? val) =>
-                  setState(() => _rememberChoice = val ?? false),
-              value: _rememberChoice,
-              text: 'Remember my choice next time',
+            RoundContainer(
+              color: Colors.blueGrey.withOpacity(0.2),
+              child: CheckBoxElement(
+                onChanged: (bool? val) async {
+                  val = !(val ?? false);
+
+                  setState(() => _rememberChoice = !(val ?? false));
+                  await SharedPref().pref.setBool(SPConst.askEditorAlways, val);
+                },
+                value: _rememberChoice,
+                text: 'Remember my choice next time',
+              ),
             ),
+            VSeparators.normal(),
             Align(
               alignment: Alignment.centerRight,
               child: RectangleButton(
@@ -215,6 +231,7 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
                       Navigator.pop(context);
                       break;
                     case 'studio64':
+                      // TODO: Support opening Android Studio
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
@@ -231,7 +248,7 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
             ),
           ] else
             const Padding(
-              padding: EdgeInsets.only(bottom: 30),
+              padding: EdgeInsets.only(top: 10, bottom: 30),
               child: SizedBox(
                 width: 20,
                 height: 20,
@@ -242,26 +259,4 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
       ),
     );
   }
-}
-
-int directorySize(String dirPath) {
-  int _totalSize = 0;
-  Directory _dir = Directory(dirPath);
-
-  try {
-    if (_dir.existsSync()) {
-      _dir
-          .listSync(recursive: true, followLinks: false)
-          .forEach((FileSystemEntity entity) {
-        if (entity is File) {
-          _totalSize += entity.lengthSync();
-        }
-      });
-    }
-  } catch (_, s) {
-    logger.file(LogTypeTag.error, 'Failed to compute directory size: $_',
-        stackTraces: s);
-  }
-
-  return _totalSize;
 }

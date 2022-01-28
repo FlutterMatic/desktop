@@ -6,6 +6,7 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
@@ -157,7 +158,10 @@ class _ConfirmDeleteProjectDialogState
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(title: 'Project Options'),
+          const DialogHeader(
+            title: 'Project Options',
+            leading: BetaTile(),
+          ),
           Row(
             children: <Widget>[
               Expanded(

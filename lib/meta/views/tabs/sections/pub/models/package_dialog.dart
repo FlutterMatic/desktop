@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 // 📦 Package imports:
 import 'package:flutter_html/flutter_html.dart' as html;
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:intl/intl.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -128,7 +129,10 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          DialogHeader(title: widget.pkgInfo.name),
+          DialogHeader(
+            title: widget.pkgInfo.name,
+            leading: const BetaTile(),
+          ),
           if (_shouldDisplay && _pkgOptions?.isDiscontinued == true)
             informationWidget(
               'Attention: This package is currently discontinued and will not receive any future updates.${_pkgOptions?.replacedBy != null ? '\nSuggested replacement: ${_pkgOptions!.replacedBy}' : ''}',

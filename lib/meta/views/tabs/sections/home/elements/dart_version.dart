@@ -130,7 +130,7 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
                 message: _doneLoading
                     ? (_version == null
                         ? 'Dart is not installed on your device'
-                        : 'Dart is up to date on channel $_channel')
+                        : 'Dart is up to date on channel ${_channel.toLowerCase()}')
                     : '...',
                 icon: Icon(
                     _doneLoading

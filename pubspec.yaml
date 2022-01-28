@@ -42,7 +42,7 @@ msix_config:
   display_name: FlutterMatic
   publisher_display_name: Fluttermatic
   msix_version: 0.0.0.2
-  certificate_path: ./CERTIFICATE.pfx
+  # certificate_path: ./CERTIFICATE.pfx
   certificate_password: fluttermatic
   identity_name: fluttermatic
   publisher: CN=FLUTTERMATIC, O=Fluttermatic
@@ -50,6 +50,8 @@ msix_config:
   architecture: x64
   vs_generated_images_folder_path: ./assets/images/app_icons/
   capabilities: "internetClient"
+  # We want to be able to release this app on the Windows Store
+  store: true
 
 dev_dependencies:
   flutter_test:

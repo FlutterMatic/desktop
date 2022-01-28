@@ -1,5 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
@@ -11,20 +15,37 @@ import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
-class ThemeSettingsSection extends StatefulWidget {
-  const ThemeSettingsSection({Key? key}) : super(key: key);
+class OverviewSettingsSection extends StatefulWidget {
+  const OverviewSettingsSection({Key? key}) : super(key: key);
 
   @override
-  _ThemeSettingsSectionState createState() => _ThemeSettingsSectionState();
+  _OverviewSettingsSectionState createState() =>
+      _OverviewSettingsSectionState();
 }
 
-class _ThemeSettingsSectionState extends State<ThemeSettingsSection> {
+class _OverviewSettingsSectionState extends State<OverviewSettingsSection> {
   @override
   Widget build(BuildContext context) {
     return TabViewTabHeadline(
-      title: 'Themes',
+      title: 'Overview',
       allowContentScroll: false,
       content: <Widget>[
+        RoundContainer(
+          color: Colors.blueGrey.withOpacity(0.2),
+          child: CheckBoxElement(
+            onChanged: (bool? value) async {
+              await SharedPref()
+                  .pref
+                  .setBool(SPConst.homeShowGuide, value ?? false);
+              setState(() {});
+            },
+            value: SharedPref().pref.getBool(SPConst.homeShowGuide) ?? true,
+            text: 'Show home page setup guide',
+          ),
+        ),
+        VSeparators.normal(),
+        const Text('Theme'),
+        VSeparators.small(),
         _themeTiles(
           context,
           selected: !Theme.of(context).isDarkTheme &&

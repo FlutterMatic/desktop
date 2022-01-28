@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
@@ -62,7 +63,10 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(title: 'Workflow Session Logs'),
+          const DialogHeader(
+            title: 'Workflow Session Logs',
+            leading: BetaTile(),
+          ),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 300),
             child: LogViewBuilder(logs: _logs),

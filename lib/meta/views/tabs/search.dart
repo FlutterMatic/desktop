@@ -254,7 +254,8 @@ class _NotificationsButtonState extends State<_NotificationsButton> {
     while (mounted) {
       await Future<void>.delayed(const Duration(seconds: 3));
 
-      if (context.read<NotificationsNotifier>().notifications.isNotEmpty) {
+      if (mounted &&
+          context.read<NotificationsNotifier>().notifications.isNotEmpty) {
         if (!_hasNotifications && mounted) {
           setState(() => _hasNotifications = true);
         }
@@ -264,9 +265,9 @@ class _NotificationsButtonState extends State<_NotificationsButton> {
         }
       }
 
-      if (context.read<NotificationsNotifier>().notifications.length !=
-              _notificationsCount &&
-          mounted) {
+      if (mounted &&
+          context.read<NotificationsNotifier>().notifications.length !=
+              _notificationsCount) {
         setState(() => _notificationsCount =
             context.read<NotificationsNotifier>().notifications.length);
       }

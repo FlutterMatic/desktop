@@ -72,7 +72,7 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
             await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
             sdkData = context.read<FlutterSDKNotifier>().sdkMap;
             await logger.file(LogTypeTag.info,
-                'Fetched Flutter SDK data: ${sdkData?.data ?? 'ERROR. NO DATA'}');
+                'Fetched Flutter SDK data: ${sdkData?.data.toString().substring(0, 50) ?? 'ERROR. NO DATA'}...');
           }
         },
         onRetry: (_) async {

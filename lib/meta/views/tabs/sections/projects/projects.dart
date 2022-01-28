@@ -184,7 +184,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                           await showDialog(
                             context: context,
                             builder: (_) => const SettingDialog(
-                              goToPage: 'Projects',
+                              goToPage: SettingsPage.projects,
                             ),
                           );
                           await Navigator.pushReplacement(
@@ -230,7 +230,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                         await showDialog(
                           context: context,
                           builder: (_) => const SettingDialog(
-                            goToPage: 'Projects',
+                            goToPage: SettingsPage.projects,
                           ),
                         );
                         await Navigator.pushReplacement(
