@@ -15,7 +15,8 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 class StageTile extends StatelessWidget {
   final StageType stageType;
 
-  const StageTile({Key? key, this.stageType = StageType.beta}) : super(key: key);
+  const StageTile({Key? key, this.stageType = StageType.beta})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +75,7 @@ String _message(StageType type) {
     case StageType.beta:
       return 'This feature is in beta and may not work properly. Click to learn more.';
     case StageType.alpha:
-      return 'This feature is in alpha and can have many errors or bugs. Click to learn more.';
+      return 'This feature is in alpha and can have errors or bugs. Click to learn more.';
     case StageType.prerelease:
       return 'This feature is available but not ready for general use.';
   }

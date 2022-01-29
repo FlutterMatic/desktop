@@ -53,8 +53,6 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
         }
       }).asFuture();
 
-      print(_status);
-
       await logger.file(LogTypeTag.info,
           'Flutter doctor run ${_verbose ? 'with verbose' : 'without verbose'}: ${_status.join('\n')}');
 

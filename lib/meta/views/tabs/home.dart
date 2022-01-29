@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 // 🐦 Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -28,9 +27,11 @@ import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/pub.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/workflow.dart';
 
+enum HomeTab { home, projects, pub, workflow }
+
 class HomeScreen extends StatefulWidget {
-  final int? index;
-  const HomeScreen({Key? key, this.index}) : super(key: key);
+  final HomeTab? tab;
+  const HomeScreen({Key? key, this.tab}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -56,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeTabObject('Home', Assets.home, HomeMainSection()),
     HomeTabObject('Projects', Assets.project, HomeProjectsSection()),
     HomeTabObject('Pub Packages', Assets.package, HomePubSection()),
-    if (!kReleaseMode) // TODO: Remove this once this tab is ready for production.
-      HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections()),
+    HomeTabObject(
+        'Workflows', Assets.workflow, HomeWorkflowSections(), 'Alpha'),
   ];
 
   Future<void> _checkUpdates() async {
@@ -103,11 +104,45 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _cleanLogs() async {
+    try {
+      // After a minute when everything has settled, we will clear logs that are
+      // old to avoid clogging up the FlutterMatic app data space.
+      await Future<void>.delayed(const Duration(seconds: 5));
+
+      await Isolate.spawn(clearOldLogs, <dynamic>[
+        _clearLogsPort.sendPort,
+        (await getApplicationSupportDirectory()).path
+      ]);
+
+      _clearLogsPort.asBroadcastStream().listen((_) => _clearLogsPort.close());
+    } catch (_, s) {
+      await logger.file(LogTypeTag.error, 'Couldn\'t clear logs: $_',
+          stackTraces: s);
+    }
+  }
+
   @override
   void initState() {
     setState(() {
-      if (widget.index != null) {
-        _selectedTab = _tabs[widget.index!];
+      if (widget.tab != null) {
+        switch (widget.tab) {
+          case HomeTab.home:
+            _selectedTab = _tabs[0];
+            break;
+          case HomeTab.projects:
+            _selectedTab = _tabs[1];
+            break;
+          case HomeTab.pub:
+            _selectedTab = _tabs[2];
+            break;
+          case HomeTab.workflow:
+            _selectedTab = _tabs[3];
+            break;
+          default:
+            _selectedTab = _tabs[0];
+            break;
+        }
       } else {
         _selectedTab = _tabs.first;
       }
@@ -116,16 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => _animateFinish = true);
     });
     _checkUpdates();
-    // After a minute when everything has settled, we will clear logs that are
-    // old to avoid clogging up the FlutterMatic app data space.
-    Future<void>.delayed(const Duration(seconds: 5)).then((_) async {
-      await Isolate.spawn(clearOldLogs, <dynamic>[
-        _clearLogsPort.sendPort,
-        (await getApplicationSupportDirectory()).path
-      ]);
-
-      _clearLogsPort.asBroadcastStream().listen((_) => _clearLogsPort.close());
-    });
+    _cleanLogs();
     super.initState();
   }
 
@@ -167,6 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             (HomeTabObject e) {
                               return _tabTile(
                                 context,
+                                stageType: e.stageType,
                                 icon: SvgPicture.asset(
                                   e.icon,
                                   color: context
@@ -195,6 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 _tabTile(
                                   context,
+                                  stageType: null,
                                   icon: SvgPicture.asset(
                                     Assets.settings,
                                     color: context
@@ -220,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Expanded(
                                   child: _tabTile(
                                     context,
+                                    stageType: null,
                                     icon: SvgPicture.asset(
                                       Assets.settings,
                                       color: context
@@ -281,6 +310,7 @@ Widget _tabTile(
   required Widget icon,
   required String name,
   required Function() onPressed,
+  required String? stageType,
   required bool selected,
 }) {
   Size _size = MediaQuery.of(context).size;
@@ -290,7 +320,9 @@ Widget _tabTile(
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: Tooltip(
-      message: _showShortView ? name : '',
+      message: _showShortView
+          ? (name + (stageType == null ? '' : ' - $stageType'))
+          : '',
       waitDuration: const Duration(seconds: 1),
       child: RectangleButton(
         width: 200,
@@ -322,6 +354,14 @@ Widget _tabTile(
                         ),
                       ),
                     ),
+                    if (stageType != null) ...<Widget>[
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Text(stageType,
+                            style: const TextStyle(color: kGreenColor)),
+                      ),
+                    ],
                   ],
                 )
               : Center(child: icon),
@@ -335,8 +375,9 @@ class HomeTabObject {
   final String name;
   final String icon;
   final Widget child;
+  final String? stageType;
 
-  const HomeTabObject(this.name, this.icon, this.child);
+  const HomeTabObject(this.name, this.icon, this.child, [this.stageType]);
 }
 
 class UpdateAppButton extends StatelessWidget {

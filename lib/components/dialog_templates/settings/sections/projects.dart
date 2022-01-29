@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file_selector;
+import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -14,6 +15,7 @@ import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
   const ProjectsSettingsSection({Key? key}) : super(key: key);
@@ -96,7 +98,10 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   message: _dirPath == null ? 'Select Path' : 'Change Path',
                   child: IconButton(
                     color: Colors.transparent,
-                    icon: const Icon(Icons.edit_outlined),
+                    icon: const Icon(
+                      Icons.edit_outlined,
+                      color: Colors.blueGrey,
+                    ),
                     onPressed: () async {
                       String? _projectsDirectory;
                       String? _directoryPath =
@@ -158,6 +163,15 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
               onSelected: (int val) async {
                 try {
                   await SharedPref().pref.setInt(SPConst.projectRefresh, val);
+                  await ProjectServicesModel.updateProjectCache(
+                    supportDir: (await getApplicationSupportDirectory()).path,
+                    cache: ProjectCacheResult(
+                      projectsPath: null,
+                      refreshIntervals: val,
+                      lastProjectReload: null,
+                      lastWorkflowsReload: null,
+                    ),
+                  );
                   await logger.file(LogTypeTag.info,
                       'Projects refresh intervals was set to: $val');
                   setState(() => _refreshIntervals = val);

@@ -48,9 +48,11 @@ Future<void> clearOldLogs(List<dynamic> data) async {
       await _file.delete();
     }
 
-    await logger.file(LogTypeTag.info,
-        'Deleted old logs with a total of ${_fileNames.length} log(s)',
-        logDir: Directory(_path));
+    if (_fileNames.isNotEmpty) {
+      await logger.file(LogTypeTag.info,
+          'Deleted old logs with a total of ${_fileNames.length} log(s)',
+          logDir: Directory(_path));
+    }
 
     _port.send(true);
   } catch (_, s) {

@@ -76,6 +76,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   bool _syncStreamListening = false;
 
+  String get _projectPath =>
+      _pubspecFile?.pathToPubspec ?? widget.pubspecPath ?? '';
+
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
       Map<String, dynamic> _pendingChanges = WorkflowTemplate(
@@ -117,7 +120,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       Isolate _isolate =
           await Isolate.spawn(_saveWorkflowWithIsolate, <dynamic>[
         _saveLocallyPort.sendPort,
-        _pubspecFile?.pathToPubspec ?? widget.pubspecPath,
+        _projectPath,
         _pendingChanges,
         _nameController.text,
       ]).timeout(const Duration(seconds: 5), onTimeout: () {
@@ -155,9 +158,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _initPubspec() async {
     try {
-      String _path = widget.pubspecPath!.endsWith('\\pubspec.yaml')
-          ? widget.pubspecPath!
-          : (widget.pubspecPath! + '\\pubspec.yaml');
+      String _path = _projectPath.endsWith('\\pubspec.yaml')
+          ? _projectPath
+          : (_projectPath + '\\pubspec.yaml');
       List<String> _pubspec =
           await File.fromUri(Uri.file(_path, windows: true)).readAsLines();
 
@@ -201,7 +204,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_pubspecFile == null || widget.pubspecPath == null) {
+        if (_pubspecFile == null || _projectPath.isEmpty) {
           return true;
         }
 
@@ -209,7 +212,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           context,
           showAlerts: true,
           pubspecInfo: _pubspecFile,
-          pubspecPath: widget.pubspecPath!,
+          pubspecPath: _projectPath,
           template: WorkflowTemplate(
             name: _nameController.text,
             description: _descriptionController.text,
@@ -234,7 +237,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       },
       child: DialogTemplate(
         onExit: () async {
-          if (_pubspecFile == null || widget.pubspecPath == null) {
+          if (_pubspecFile == null || _projectPath.isEmpty) {
             Navigator.pop(context);
             return;
           }
@@ -243,7 +246,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             context,
             showAlerts: false,
             pubspecInfo: _pubspecFile,
-            pubspecPath: widget.pubspecPath!,
+            pubspecPath: _projectPath,
             template: WorkflowTemplate(
               name: _nameController.text,
               description: _descriptionController.text,
@@ -288,7 +291,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     )
                   : null,
               onClose: () async {
-                if (_pubspecFile == null || widget.pubspecPath == null) {
+                if (_pubspecFile == null || _projectPath.isEmpty) {
                   Navigator.pop(context);
                   return;
                 }
@@ -297,7 +300,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                   context,
                   showAlerts: false,
                   pubspecInfo: _pubspecFile,
-                  pubspecPath: widget.pubspecPath!,
+                  pubspecPath: _projectPath,
                   template: WorkflowTemplate(
                     name: _nameController.text,
                     description: _descriptionController.text,
@@ -449,7 +452,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     context,
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
-                    pubspecPath: widget.pubspecPath!,
+                    pubspecPath: _projectPath,
                     template: WorkflowTemplate(
                       name: _nameController.text,
                       description: _descriptionController.text,
@@ -480,7 +483,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     context,
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
-                    pubspecPath: widget.pubspecPath!,
+                    pubspecPath: _projectPath,
                     template: WorkflowTemplate(
                       name: _nameController.text,
                       description: _descriptionController.text,
@@ -506,12 +509,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     Navigator.pop(context);
 
                     String? _path =
-                        ((_pubspecFile?.pathToPubspec ?? widget.pubspecPath)
-                                ?.split('\\')
-                              ?..removeLast())
-                            ?.join('\\');
+                        (_projectPath.split('\\')..removeLast()).join('\\');
 
-                    if (_path == null) {
+                    if (_path.isEmpty) {
                       await logger.file(LogTypeTag.error,
                           'Could not get path to show workflow runner at save and run.');
                       ScaffoldMessenger.of(context).clearSnackBars();

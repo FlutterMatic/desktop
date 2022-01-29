@@ -28,8 +28,10 @@ class ProjectSearchUtils {
   /// Avoid calling this function too many times as they could be a reason the
   /// user will delete this app because of performance issues. Use clever
   /// caching algorithms that self merge when new changes are found.
-  static Future<List<ProjectObject>> getProjectsFromPath(
-      {required ProjectCacheResult cache, required String supportDir}) async {
+  static Future<List<ProjectObject>> getProjectsFromPath({
+    required ProjectCacheResult cache,
+    required String supportDir,
+  }) async {
     try {
       if (cache.projectsPath != null) {
         List<ProjectObject> _projects = <ProjectObject>[];
@@ -70,7 +72,8 @@ class ProjectSearchUtils {
           cache: ProjectCacheResult(
             projectsPath: null,
             refreshIntervals: null,
-            lastReload: DateTime.now(),
+            lastProjectReload: DateTime.now(),
+            lastWorkflowsReload: null,
           ),
           supportDir: supportDir,
         );
@@ -104,7 +107,7 @@ class ProjectSearchUtils {
         return _projectsFromCache;
       } else {
         await logger.file(LogTypeTag.warning,
-            'Tried to get projects when the projects cache is not set. Should request to fetch in background as an initial fetch.',
+            'Tried to get projects when the projects cache is not set. Should request to fetch in background as an initial fetch from path.',
             logDir: Directory(supportDir));
         return <ProjectObject>[];
       }

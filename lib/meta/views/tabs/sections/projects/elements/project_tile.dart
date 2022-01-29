@@ -55,6 +55,7 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
       onEnter: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
       child: RoundContainer(
+        height: 100,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -99,25 +100,28 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                 maxLines: 3,
               ),
             ),
-            VSeparators.normal(),
+            if (_isHovering)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Tooltip(
+                  waitDuration: const Duration(milliseconds: 500),
+                  message: widget.path,
+                  child: Text(
+                    widget.path,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ),
+              ),
+            VSeparators.small(),
             Text(
               'Modified date: ${toMonth(widget.modDate.month)} ${widget.modDate.day}, ${widget.modDate.year}',
               maxLines: 2,
               overflow: TextOverflow.fade,
               softWrap: false,
               style: TextStyle(color: Colors.grey[700]),
-            ),
-            VSeparators.normal(),
-            Tooltip(
-              waitDuration: const Duration(milliseconds: 500),
-              message: widget.path,
-              child: Text(
-                widget.path,
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-                style: TextStyle(color: Colors.grey[700]),
-              ),
             ),
             VSeparators.normal(),
             Row(
@@ -409,7 +413,7 @@ class __DeleteProjectDialogState extends State<_DeleteProjectDialog> {
                               PageRouteBuilder<Widget>(
                                 transitionDuration: Duration.zero,
                                 pageBuilder: (_, __, ___) =>
-                                    const HomeScreen(index: 1),
+                                    const HomeScreen(tab: HomeTab.projects),
                               ),
                             );
 

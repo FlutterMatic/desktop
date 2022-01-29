@@ -84,7 +84,6 @@ class DownloadNotifier extends ChangeNotifier {
             'Error code while downloading $fileName - ${response.statusCode}');
       }
     } catch (_, s) {
-      print(s);
       _progress = Progress.failed;
       notifyListeners();
       await logger.file(LogTypeTag.error, 'Failed to use download notifier: $_',

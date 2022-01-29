@@ -20,11 +20,7 @@ class ProjectServicesModel {
 
     Map<String, dynamic> _cache = jsonDecode((await _file.readAsString()));
 
-    return ProjectCacheResult(
-      projectsPath: _cache['projectsPath'],
-      refreshIntervals: _cache['refreshIntervals'],
-      lastReload: DateTime.tryParse(_cache['lastReload']),
-    );
+    return ProjectCacheResult.fromJson(_cache);
   }
 
   /// Updates the cache with the new information.
@@ -49,9 +45,12 @@ class ProjectServicesModel {
 
     ProjectCacheResult _newCache = ProjectCacheResult(
       projectsPath: cache.projectsPath ?? _getValue('projectsPath'),
-      refreshIntervals: cache.refreshIntervals ?? _getValue('refreshIntervals'),
-      lastReload:
-          cache.lastReload ?? DateTime.tryParse(_getValue('lastReload') ?? ''),
+      refreshIntervals: cache.refreshIntervals ??
+          int.tryParse(_getValue('refreshIntervals') ?? '1'),
+      lastProjectReload: cache.lastProjectReload ??
+          DateTime.tryParse(_getValue('lastReload') ?? ''),
+      lastWorkflowsReload: cache.lastWorkflowsReload ??
+          DateTime.tryParse(_getValue('lastWorkflowsReload') ?? ''),
     );
 
     await _file.writeAsString(jsonEncode(_newCache.toJson()));
@@ -71,6 +70,8 @@ class ProjectServicesModel {
   static Future<void> getProjectsIsolate(List<dynamic> data) async {
     SendPort _port = data[0];
     String _supportDir = data[1];
+    bool _force = data[2]; // Whether to force to refetch from scratch even if
+    // we have cache that is not expired.
 
     if (await ProjectSearchUtils.hasCache(_supportDir)) {
       await logger.file(
@@ -93,16 +94,22 @@ class ProjectServicesModel {
 
         // Seconds Difference
         int _difference = DateTime.now()
-            .difference(_cache.lastReload ?? DateTime.now())
+            .difference(_cache.lastProjectReload ?? DateTime.now())
             .inSeconds;
 
-        // Check to see if the cache is expired.
-        // Interval in minutes. Must be in seconds.
-        if (_difference < ((_cache.refreshIntervals ?? 0) * 60)) {
+        // Check to see if the cache is expired. Interval in minutes. Must be
+        // in seconds.
+        if (((_cache.refreshIntervals ?? 0) * 60) > _difference) {
           _isExpiredCache = false;
         }
 
-        if (_isExpiredCache) {
+        if (_isExpiredCache || _force) {
+          if (_force) {
+            await logger.file(LogTypeTag.info,
+                'Fetching projects from cache. Cache expired. Force refetch.',
+                logDir: Directory(_supportDir));
+          }
+
           await logger.file(
               LogTypeTag.info, 'Fetching projects from scratch. Cache expired.',
               logDir: Directory(_supportDir));
@@ -112,13 +119,19 @@ class ProjectServicesModel {
 
           List<ProjectObject> _projectsRefetch =
               await ProjectSearchUtils.getProjectsFromPath(
-            cache: await getProjectCache(_supportDir) ??
-                const ProjectCacheResult(
-                  lastReload: null,
-                  projectsPath: null,
-                  refreshIntervals: null,
-                ),
+            cache: _cache,
             supportDir: _supportDir,
+          );
+
+          // Update cache.
+          await updateProjectCache(
+            supportDir: _supportDir,
+            cache: ProjectCacheResult(
+              projectsPath: null,
+              refreshIntervals: null,
+              lastProjectReload: DateTime.now(),
+              lastWorkflowsReload: null,
+            ),
           );
 
           // Kill isolate. Cache is now updated.
@@ -144,9 +157,10 @@ class ProjectServicesModel {
           await ProjectSearchUtils.getProjectsFromPath(
         cache: await getProjectCache(_supportDir) ??
             const ProjectCacheResult(
-              lastReload: null,
+              lastProjectReload: null,
               projectsPath: null,
               refreshIntervals: null,
+              lastWorkflowsReload: null,
             ),
         supportDir: _supportDir,
       );
@@ -160,27 +174,31 @@ class ProjectServicesModel {
 class ProjectCacheResult {
   final String? projectsPath;
   final int? refreshIntervals;
-  final DateTime? lastReload;
+  final DateTime? lastProjectReload;
+  final DateTime? lastWorkflowsReload;
 
   const ProjectCacheResult({
     required this.projectsPath,
     required this.refreshIntervals,
-    required this.lastReload,
+    required this.lastProjectReload,
+    required this.lastWorkflowsReload,
   });
 
   factory ProjectCacheResult.fromJson(Map<String, dynamic> json) {
     return ProjectCacheResult(
-      projectsPath: json['projectsPath'].toString(),
-      refreshIntervals: int.parse(json['refreshIntervals']),
-      lastReload: DateTime.tryParse(json['lastReload']),
+      projectsPath: json['projectsPath']?.toString(),
+      refreshIntervals: int.tryParse(json['refreshIntervals'] ?? ''),
+      lastProjectReload: DateTime.tryParse(json['lastReload'] ?? ''),
+      lastWorkflowsReload: DateTime.tryParse(json['lastWorkflowsReload'] ?? ''),
     );
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'projectsPath': projectsPath,
-      'refreshIntervals': refreshIntervals,
-      'lastReload': lastReload.toString(),
+      'refreshIntervals': refreshIntervals?.toString(),
+      'lastReload': lastProjectReload?.toString(),
+      'lastWorkflowsReload': lastWorkflowsReload?.toString(),
     };
   }
 }

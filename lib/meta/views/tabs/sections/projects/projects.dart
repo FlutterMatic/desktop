@@ -53,7 +53,8 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           cache: ProjectCacheResult(
             projectsPath: SharedPref().pref.getString(SPConst.projectsPath),
             refreshIntervals: null,
-            lastReload: null,
+            lastProjectReload: null,
+            lastWorkflowsReload: null,
           ),
           supportDir: (await getApplicationSupportDirectory()).path,
         );
@@ -62,7 +63,8 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           ProjectServicesModel.getProjectsIsolate,
           <dynamic>[
             _loadProjectsPort.sendPort,
-            (await getApplicationSupportDirectory()).path
+            (await getApplicationSupportDirectory()).path,
+            notFirstCall,
           ],
         ).timeout(const Duration(minutes: 2)).onError((_, StackTrace s) async {
           await logger.file(LogTypeTag.error, 'Failed to get projects: $_',
@@ -133,7 +135,8 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder<Widget>(
-            pageBuilder: (_, __, ___) => const HomeScreen(index: 1),
+            pageBuilder: (_, __, ___) =>
+                const HomeScreen(tab: HomeTab.projects),
             transitionDuration: Duration.zero,
           ),
         );
@@ -192,7 +195,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                             context,
                             PageRouteBuilder<Route<dynamic>>(
                               pageBuilder: (_, __, ___) =>
-                                  const HomeScreen(index: 1),
+                                  const HomeScreen(tab: HomeTab.projects),
                               transitionDuration: Duration.zero,
                             ),
                           );
@@ -238,7 +241,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                           context,
                           PageRouteBuilder<Route<dynamic>>(
                             pageBuilder: (_, __, ___) =>
-                                const HomeScreen(index: 1),
+                                const HomeScreen(tab: HomeTab.projects),
                             transitionDuration: Duration.zero,
                           ),
                         );
@@ -264,9 +267,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                   color: Colors.transparent,
                   hoverColor: Colors.transparent,
                   icon: const Icon(Icons.refresh_rounded, size: 15),
-                  onPressed: () {
-                    _loadProjects(true);
-                  },
+                  onPressed: () => _loadProjects(true),
                 ),
                 content: _projects.map((ProjectObject e) {
                   return ProjectInfoTile(

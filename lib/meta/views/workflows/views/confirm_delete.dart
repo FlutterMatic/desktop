@@ -81,6 +81,7 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                           return;
                         }
                         setState(() => _loading = true);
+                        
                         if (_confirmValue == 'DELETE') {
                           await File(widget.path).delete();
 

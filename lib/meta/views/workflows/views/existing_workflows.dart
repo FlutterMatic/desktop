@@ -282,7 +282,7 @@ class __WorkflowTileState extends State<_WorkflowTile> {
                           onPressed: () {
                             showDialog(
                               context: context,
-                              builder: (_) => _ShowWorkflowTileOptions(
+                              builder: (_) => ShowWorkflowTileOptions(
                                 workflowPath: widget.path,
                                 onDelete: widget.onDelete,
                               ),
@@ -327,11 +327,11 @@ class __WorkflowTileState extends State<_WorkflowTile> {
   }
 }
 
-class _ShowWorkflowTileOptions extends StatelessWidget {
+class ShowWorkflowTileOptions extends StatelessWidget {
   final String workflowPath;
   final Function() onDelete;
 
-  const _ShowWorkflowTileOptions({
+  const ShowWorkflowTileOptions({
     Key? key,
     required this.workflowPath,
     required this.onDelete,
