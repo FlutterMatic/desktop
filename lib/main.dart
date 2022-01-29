@@ -15,8 +15,8 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/app/providers/multi_providers.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
 import 'package:fluttermatic/core/notifiers/space.notifier.dart';
 import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
@@ -41,7 +41,7 @@ Future<void> main() async {
   });
   // Wrapped with a restart widget to allow restarting FlutterMatic from
   // anywhere in the app without restarting Flutter engine.
-  runApp(const RestartWidget(child: MultiProviders(FlutterMaticMain())));
+  runApp(const MultiProviders(RestartWidget(child: FlutterMaticMain())));
 }
 
 class FlutterMaticMain extends StatefulWidget {

@@ -65,7 +65,7 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
         children: <Widget>[
           const DialogHeader(
             title: 'Workflow Session Logs',
-            leading: BetaTile(),
+            leading: StageTile(),
           ),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 300),

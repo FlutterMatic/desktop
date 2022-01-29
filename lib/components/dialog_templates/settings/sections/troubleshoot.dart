@@ -7,10 +7,10 @@ import 'package:fluttermatic/components/dialog_templates/flutter/flutter_doctor.
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/dialog_templates/other/reset_fluttermatic.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class TroubleShootSettingsSection extends StatefulWidget {
   const TroubleShootSettingsSection({Key? key}) : super(key: key);

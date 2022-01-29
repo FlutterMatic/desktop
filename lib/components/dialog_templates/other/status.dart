@@ -99,7 +99,7 @@ class _StatusDialogState extends State<StatusDialog> {
               children: <Widget>[
                 const DialogHeader(
                   title: 'Status',
-                  leading: BetaTile(),
+                  leading: StageTile(stageType: StageType.alpha),
                 ),
                 // Dart
                 InstallationStatusTile(

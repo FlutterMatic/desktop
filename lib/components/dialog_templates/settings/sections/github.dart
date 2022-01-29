@@ -11,8 +11,8 @@ import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class GitHubSettingsSection extends StatelessWidget {
   const GitHubSettingsSection({Key? key}) : super(key: key);

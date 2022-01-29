@@ -12,6 +12,7 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
@@ -257,6 +258,16 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
               child: HorizontalAxisView(
                 title: 'Projects',
                 isVertical: true,
+                action: SquareButton(
+                  size: 20,
+                  tooltip: 'Reload',
+                  color: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  icon: const Icon(Icons.refresh_rounded, size: 15),
+                  onPressed: () {
+                    _loadProjects(true);
+                  },
+                ),
                 content: _projects.map((ProjectObject e) {
                   return ProjectInfoTile(
                     name: e.name,
@@ -269,13 +280,15 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
             ),
           ),
         if (_reloadingFromCache)
-          const Positioned(
+          Positioned(
             bottom: 20,
             right: 20,
             child: Tooltip(
               message: 'Searching for new projects...',
               child: RoundContainer(
-                child: Spinner(thickness: 2),
+                borderWith: 2,
+                borderColor: Colors.blueGrey.withOpacity(0.5),
+                child: const Spinner(thickness: 2),
                 height: 40,
                 width: 40,
                 radius: 60,

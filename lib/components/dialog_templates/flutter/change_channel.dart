@@ -4,7 +4,6 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
@@ -14,11 +13,12 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/select_tiles.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
@@ -151,7 +151,7 @@ class _ChangeFlutterChannelDialogState
               children: <Widget>[
                 DialogHeader(
                   title: 'Change Channel',
-                  leading: const BetaTile(),
+                  leading: const StageTile(),
                   canClose: !_switching,
                 ),
                 const Text(

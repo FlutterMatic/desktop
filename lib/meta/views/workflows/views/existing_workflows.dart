@@ -14,10 +14,10 @@ import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
@@ -48,7 +48,12 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
 
   Future<void> _loadWorkflows() async {
     try {
-      Directory _dir = Directory(widget.pubspecPath + '\\fmatic');
+      String _path = !widget.pubspecPath.endsWith('\\pubspec.yaml')
+          ? widget.pubspecPath
+          : ((widget.pubspecPath.split('\\')..removeLast()).join('\\'));
+
+      Directory _dir = Directory(_path + '\\fmatic');
+
       if (!await _dir.exists()) {
         setState(() => _loadingWorkflows = false);
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -141,7 +146,7 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
         children: <Widget>[
           const DialogHeader(
             title: 'Workflows',
-            leading: BetaTile(),
+            leading: StageTile(),
           ),
           if (_loadingWorkflows)
             const Padding(
@@ -339,7 +344,7 @@ class _ShowWorkflowTileOptions extends StatelessWidget {
         children: <Widget>[
           const DialogHeader(
             title: 'Options',
-            leading: BetaTile(),
+            leading: StageTile(stageType: StageType.alpha),
           ),
           Row(
             children: <Widget>[
@@ -384,6 +389,7 @@ class _ShowWorkflowTileOptions extends StatelessWidget {
                     ],
                   ),
                   onPressed: () {
+                    Navigator.pop(context);
                     showDialog(
                       context: context,
                       builder: (_) =>

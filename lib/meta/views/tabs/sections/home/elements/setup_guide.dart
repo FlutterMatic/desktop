@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/dialog_templates/project/select.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
@@ -86,54 +88,55 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
   @override
   Widget build(BuildContext context) {
     if (_showGuide) {
-      return MouseRegion(
-        onHover: (_) => setState(() => _isHovering = true),
-        onExit: (_) => setState(() => _isHovering = false),
-        child: Stack(
-          children: <Widget>[
-            RoundContainer(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      CircularPercentIndicator(
-                        backgroundColor: (AppTheme.darkTheme.buttonTheme
-                                    .colorScheme?.primary ??
-                                kGreenColor)
-                            .withOpacity(0.2),
-                        size: 50,
-                        percent: _percent,
-                        center: Text(
-                          '${_getPercentage()}%',
-                          style: const TextStyle(fontSize: 12),
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 15),
+        child: MouseRegion(
+          onHover: (_) => setState(() => _isHovering = true),
+          onExit: (_) => setState(() => _isHovering = false),
+          child: Stack(
+            children: <Widget>[
+              RoundContainer(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        CircularPercentIndicator(
+                          backgroundColor: (AppTheme.darkTheme.buttonTheme
+                                      .colorScheme?.primary ??
+                                  kGreenColor)
+                              .withOpacity(0.2),
+                          size: 50,
+                          percent: _percent,
+                          center: Text(
+                            '${_getPercentage()}%',
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ),
-                      ),
-                      HSeparators.large(),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            const Text(
-                              'Complete setting up FlutterMatic',
-                              style: TextStyle(
-                                  fontSize: 19, fontWeight: FontWeight.bold),
-                            ),
-                            VSeparators.xSmall(),
-                            const Text(
-                              'Customize your preferences. This helps make using FlutterMatic easier and make the most out of it.',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
-                          ],
+                        HSeparators.large(),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const Text(
+                                'Complete setting up FlutterMatic',
+                                style: TextStyle(
+                                    fontSize: 19, fontWeight: FontWeight.bold),
+                              ),
+                              VSeparators.xSmall(),
+                              const Text(
+                                'Customize your preferences. This helps make using FlutterMatic easier and make the most out of it.',
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  VSeparators.xLarge(),
-                  VSeparators.small(),
-                  Column(
-                    children: _guides.map((_GuideModel e) {
+                      ],
+                    ),
+                    VSeparators.xLarge(),
+                    VSeparators.small(),
+                    ..._guides.map((_GuideModel e) {
                       return _GuideItem(
                         text: e.text,
                         context: context,
@@ -163,91 +166,93 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                         },
                       );
                     }).toList(),
-                  ),
-                ],
+                    infoWidget(context,
+                        'As we are preparing for more upcoming features, we will be adding more guides here.'),
+                  ],
+                ),
               ),
-            ),
-            if (_isHovering)
-              Positioned(
-                top: 5,
-                right: 5,
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 2),
-                      child: SquareButton(
-                        size: 25,
-                        color: Colors.transparent,
-                        tooltip: 'Clear all',
-                        icon: Icon(
-                          Icons.clear_all,
-                          size: 15,
-                          color: Colors.grey.withOpacity(0.6),
-                        ),
-                        onPressed: () async {
-                          if (_doneHashes.isEmpty) {
+              if (_isHovering)
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 2),
+                        child: SquareButton(
+                          size: 25,
+                          color: Colors.transparent,
+                          tooltip: 'Clear all',
+                          icon: Icon(
+                            Icons.clear_all,
+                            size: 15,
+                            color: Colors.grey.withOpacity(0.6),
+                          ),
+                          onPressed: () async {
+                            if (_doneHashes.isEmpty) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(context,
+                                    'Begin setting up FlutterMatic by clicking on some of the items below.',
+                                    type: SnackBarType.warning),
+                              );
+
+                              return;
+                            }
+
+                            await SharedPref()
+                                .pref
+                                .remove(SPConst.guideFinishedHashes);
+                            setState(() {
+                              _doneHashes.clear();
+                              _percent = 0;
+                            });
                             ScaffoldMessenger.of(context).clearSnackBars();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarTile(context,
-                                  'Begin setting up FlutterMatic by clicking on some of the items below.',
-                                  type: SnackBarType.warning),
+                              snackBarTile(
+                                context,
+                                'Guide has been reset. Let\'s start over!',
+                                type: SnackBarType.done,
+                              ),
                             );
-
-                            return;
-                          }
-
+                          },
+                        ),
+                      ),
+                      SquareButton(
+                        size: 25,
+                        color: Colors.transparent,
+                        tooltip: 'Dismiss Guide',
+                        icon: Icon(Icons.close_rounded,
+                            color: Colors.grey.withOpacity(0.6), size: 15),
+                        onPressed: () async {
+                          setState(() => _showGuide = false);
                           await SharedPref()
                               .pref
-                              .remove(SPConst.guideFinishedHashes);
-                          setState(() {
-                            _doneHashes.clear();
-                            _percent = 0;
-                          });
+                              .setBool(SPConst.homeShowGuide, false);
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(
                               context,
-                              'Guide has been reset. Let\'s start over!',
+                              'Dismissed guide successfully. You can bring it back in settings.',
                               type: SnackBarType.done,
+                              action: snackBarAction(
+                                text: 'Undo',
+                                onPressed: () async {
+                                  setState(() => _showGuide = true);
+                                  await SharedPref()
+                                      .pref
+                                      .setBool(SPConst.homeShowGuide, true);
+                                },
+                              ),
                             ),
                           );
                         },
                       ),
-                    ),
-                    SquareButton(
-                      size: 25,
-                      color: Colors.transparent,
-                      tooltip: 'Dismiss Guide',
-                      icon: Icon(Icons.close_rounded,
-                          color: Colors.grey.withOpacity(0.6), size: 15),
-                      onPressed: () async {
-                        setState(() => _showGuide = false);
-                        await SharedPref()
-                            .pref
-                            .setBool(SPConst.homeShowGuide, false);
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          snackBarTile(
-                            context,
-                            'Dismissed guide successfully. You can bring it back in settings.',
-                            type: SnackBarType.done,
-                            action: snackBarAction(
-                              text: 'Undo',
-                              onPressed: () async {
-                                setState(() => _showGuide = true);
-                                await SharedPref()
-                                    .pref
-                                    .setBool(SPConst.homeShowGuide, true);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       );
     } else {
@@ -345,18 +350,9 @@ final List<_GuideModel> _guides = <_GuideModel>[
     },
   ),
   _GuideModel(
-    text:
-        'Scan your project\'s dependencies to make sure that they are all up-to-date.',
-    onPressed: (_) {},
-  ),
-  _GuideModel(
     text: 'Create your first Flutter or Dart package using FlutterMatic.',
-    onPressed: (_) {},
-  ),
-  _GuideModel(
-    text:
-        'Add your own pubspec.yaml structure for new projects or packages created to include a default set of dependencies.',
-    onPressed: (_) {},
+    onPressed: (_) =>
+        showDialog(context: _, builder: (_) => const SelectProjectTypeDialog()),
   ),
   _GuideModel(
     text:
@@ -364,4 +360,14 @@ final List<_GuideModel> _guides = <_GuideModel>[
     onPressed: (_) =>
         showDialog(context: _, builder: (_) => const StartUpWorkflow()),
   ),
+  // _GuideModel(
+  //   text:
+  //       'Scan your project\'s dependencies to make sure that they are all up-to-date.',
+  //   onPressed: (_) {},
+  // ),
+  // _GuideModel(
+  //   text:
+  //       'Add your own pubspec.yaml structure for new projects or packages created to include a default set of dependencies.',
+  //   onPressed: (_) {},
+  // ),
 ];

@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/text_field.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
@@ -74,7 +74,7 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                   child: RectangleButton(
                     loading: _loading,
                     child: const Text('Delete'),
-                    color: AppTheme.errorColor,
+                    hoverColor: AppTheme.errorColor,
                     onPressed: () async {
                       try {
                         if (_loading) {

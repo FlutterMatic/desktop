@@ -16,10 +16,10 @@ import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
@@ -159,7 +159,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
           children: <Widget>[
             DialogHeader(
               title: 'Workflow Runner',
-              leading: const BetaTile(),
+              leading: const StageTile(stageType: StageType.alpha),
               canClose: !_isRunning,
             ),
             if (_loading)

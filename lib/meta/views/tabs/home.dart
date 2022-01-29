@@ -100,16 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t check for updates: $_',
           stackTraces: s);
-      if (mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTile(
-            context,
-            'We couldn\'t check for updates. Perhaps check your network connection. If not, then please try again later or check for any new release manually on GitHub.',
-            type: SnackBarType.error,
-          ),
-        );
-      }
     }
   }
 

@@ -4,16 +4,15 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 // 📦 Package imports:
 import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
@@ -23,6 +22,7 @@ import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
 import '../dialog_header.dart';
 
@@ -164,7 +164,7 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
           children: <Widget>[
             DialogHeader(
               title: 'Update Flutter',
-              leading: const BetaTile(),
+              leading: const StageTile(),
               canClose: !_updating,
             ),
             const Text(

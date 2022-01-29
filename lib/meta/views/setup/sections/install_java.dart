@@ -12,7 +12,7 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/bullet_point.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/core/services/checks/java.check.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';

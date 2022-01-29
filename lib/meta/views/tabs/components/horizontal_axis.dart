@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class HorizontalAxisView extends StatefulWidget {
   final String title;
   final List<Widget> content;
   final bool isVertical;
+  final Widget? action;
 
   const HorizontalAxisView({
     Key? key,
     required this.title,
     required this.content,
     this.isVertical = false,
+    this.action,
   }) : super(key: key);
 
   @override
@@ -39,52 +39,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
               child: Text(widget.title, style: const TextStyle(fontSize: 20)),
             ),
             HSeparators.normal(),
-            // Check if we are at the start of the list. If we are then we
-            // don't want to show the left arrow.
-            if (_controller.hasClients && _controller.offset > 0)
-              RectangleButton(
-                width: 30,
-                height: 30,
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  _controller.animateTo(
-                    _controller.offset - (265 * 2),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                  );
-                },
-                child: Icon(
-                  Icons.arrow_back_ios_rounded,
-                  size: 12,
-                  color: Theme.of(context).isDarkTheme
-                      ? Colors.grey
-                      : Colors.black,
-                ),
-              ),
-            HSeparators.small(),
-            // Check if we are at the end of the list. If we are then we
-            // don't want to show the right arrow.
-            if (_controller.hasClients &&
-                _controller.offset < _controller.position.maxScrollExtent)
-              RectangleButton(
-                width: 30,
-                height: 30,
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  _controller.animateTo(
-                    _controller.offset + (265 * 2),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                  );
-                },
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 12,
-                  color: Theme.of(context).isDarkTheme
-                      ? Colors.grey
-                      : Colors.black,
-                ),
-              ),
+            if (widget.action != null) widget.action!,
           ],
         ),
         VSeparators.large(),

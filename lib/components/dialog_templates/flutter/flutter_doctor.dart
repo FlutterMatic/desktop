@@ -1,6 +1,10 @@
+// 🎯 Dart imports:
 import 'dart:io';
 
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -87,7 +91,7 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
           children: <Widget>[
             DialogHeader(
               title: 'Flutter Doctor',
-              leading: const BetaTile(),
+              leading: const StageTile(),
               canClose: !_running,
             ),
             if (_done) ...<Widget>[

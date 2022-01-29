@@ -13,12 +13,12 @@ import 'package:provider/provider.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/text_field.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/notifiers/space.notifier.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
@@ -132,7 +132,7 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
                       HSeparators.normal(),
                       Expanded(
                         child: RectangleButton(
-                          color: AppTheme.errorColor,
+                          hoverColor: AppTheme.errorColor,
                           child: const Text('DELETE'),
                           onPressed: () async {
                             if (_confirmController.text != _verificationTxt) {

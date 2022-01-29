@@ -1,6 +1,3 @@
-// 🎯 Dart imports:
-import 'dart:io';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -21,19 +18,19 @@ import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
-class OpenProjectOnEditor extends StatefulWidget {
+class OpenProjectInEditor extends StatefulWidget {
   final String path;
 
-  const OpenProjectOnEditor({
+  const OpenProjectInEditor({
     Key? key,
     required this.path,
   }) : super(key: key);
 
   @override
-  State<OpenProjectOnEditor> createState() => _OpenProjectOnEditorState();
+  State<OpenProjectInEditor> createState() => _OpenProjectInEditorState();
 }
 
-class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
+class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
   String? _selectedEditor;
   bool _rememberChoice = false;
 
@@ -121,7 +118,7 @@ class _OpenProjectOnEditorState extends State<OpenProjectOnEditor> {
         children: <Widget>[
           const DialogHeader(
             title: 'Select Editor',
-            leading: BetaTile(),
+            leading: StageTile(),
           ),
           if (_showEditorSelection) ...<Widget>[
             Row(

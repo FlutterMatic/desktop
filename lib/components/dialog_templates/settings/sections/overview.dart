@@ -1,19 +1,19 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
-import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 // 📦 Package imports:
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class OverviewSettingsSection extends StatefulWidget {
   const OverviewSettingsSection({Key? key}) : super(key: key);

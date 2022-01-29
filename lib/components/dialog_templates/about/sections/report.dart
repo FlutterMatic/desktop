@@ -8,8 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 
 class ReportAboutSection extends StatelessWidget {
   const ReportAboutSection({Key? key}) : super(key: key);

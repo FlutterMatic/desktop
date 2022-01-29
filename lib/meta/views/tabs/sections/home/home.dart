@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/home/elements/dart_version.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/home/elements/flutter_version.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/home/elements/java_version.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/setup_guide.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/dart_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/flutter_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/git_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/java_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/studio_version.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/vsc_version.dart';
 
 class HomeMainSection extends StatefulWidget {
   const HomeMainSection({Key? key}) : super(key: key);
@@ -24,8 +27,6 @@ class _HomeMainSectionState extends State<HomeMainSection> {
         child: Column(
           children: <Widget>[
             const HomeSetupGuideTile(),
-            VSeparators.normal(),
-            // TODO: Use isolates for each individual tile. It's impacting performance.
             Row(
               children: <Widget>[
                 const Expanded(child: HomeFlutterVersionTile()),
@@ -36,9 +37,17 @@ class _HomeMainSectionState extends State<HomeMainSection> {
             VSeparators.normal(),
             Row(
               children: <Widget>[
+                const Expanded(child: HomeVSCVersionTile()),
+                HSeparators.normal(),
+                const Expanded(child: HomeStudioVersionTile()),
+              ],
+            ),
+            VSeparators.normal(),
+            Row(
+              children: <Widget>[
                 const Expanded(child: HomeJavaVersionTile()),
                 HSeparators.normal(),
-                const Spacer(),
+                const Expanded(child: HomeGitVersionTile()),
               ],
             ),
           ],

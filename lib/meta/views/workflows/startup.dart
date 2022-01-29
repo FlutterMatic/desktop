@@ -155,7 +155,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _initPubspec() async {
     try {
-      String _path = widget.pubspecPath! + '\\pubspec.yaml';
+      String _path = widget.pubspecPath!.endsWith('\\pubspec.yaml')
+          ? widget.pubspecPath!
+          : (widget.pubspecPath! + '\\pubspec.yaml');
       List<String> _pubspec =
           await File.fromUri(Uri.file(_path, windows: true)).readAsLines();
 

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/core/services/checks/studio.check.dart';
 import 'package:fluttermatic/core/services/checks/vsc.check.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';

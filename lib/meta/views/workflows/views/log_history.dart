@@ -10,12 +10,11 @@ import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
-import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -203,13 +202,7 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
                     width: double.infinity,
                     child: const Text('Run'),
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        PageRouteBuilder<Route<Widget>>(
-                          transitionDuration: Duration.zero,
-                          pageBuilder: (_, __, ___) => const HomeScreen(index: 1),
-                        ),
-                      );
+                      Navigator.pop(context);
 
                       showDialog(
                         context: context,

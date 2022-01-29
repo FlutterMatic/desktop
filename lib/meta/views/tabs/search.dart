@@ -7,15 +7,16 @@ import 'package:provider/provider.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/other/status.dart';
-import 'package:fluttermatic/components/dialog_templates/project/new_project.dart';
+import 'package:fluttermatic/components/dialog_templates/project/select.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/components/widgets/ui/warning_widget.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/views/tabs/components/notifications/notification_view.dart';
+import 'package:fluttermatic/meta/views/dialogs/notifications/notification_view.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/search_result_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
@@ -52,8 +53,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      barrierDismissible: false,
-                      builder: (_) => const NewProjectDialog(),
+                      builder: (_) => const SelectProjectTypeDialog(),
                     );
                   },
                 ),
@@ -69,7 +69,6 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      barrierDismissible: false,
                       builder: (_) => const StatusDialog(),
                     );
                   },
@@ -172,7 +171,6 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      barrierDismissible: false,
                       builder: (_) => const StartUpWorkflow(),
                     );
                   },
@@ -206,9 +204,22 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                   padding: const EdgeInsets.all(10),
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: _searchResults.isEmpty
                           ? <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  const StageTile(
+                                      stageType: StageType.prerelease),
+                                  HSeparators.normal(),
+                                  const Expanded(
+                                    child: Text(
+                                        'The search feature is not available yet. You will see this message appear until we provide the feature in a public release.'),
+                                  ),
+                                ],
+                              ),
+                              VSeparators.normal(),
                               if (_loadingSearch)
                                 const CustomLinearProgressIndicator(
                                     includeBox: false)
@@ -218,16 +229,27 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                   type: InformationType.error,
                                 ),
                             ]
-                          : _searchResults.map((ProjectObject e) {
-                              double _pad = _searchResults.indexOf(e) ==
-                                      _searchResults.length - 1
-                                  ? 0
-                                  : 5;
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: _pad),
-                                child: ProjectSearchResultTile(project: e),
-                              );
-                            }).toList(),
+                          : <Widget>[
+                              // TODO: Implement the search.
+                              // Search will be able to search multiple FM services.
+                              // This means that we need to perform multiple searches
+                              // and display the results in a list (merged and sorted
+                              // by either importance, relevance, or date).
+                              // This needs to be done in an efficient manner in addition
+                              // to an isolate implementation.
+
+                              // Show the search results.
+                              ..._searchResults.map((ProjectObject e) {
+                                double _pad = _searchResults.indexOf(e) ==
+                                        _searchResults.length - 1
+                                    ? 0
+                                    : 5;
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: _pad),
+                                  child: ProjectSearchResultTile(project: e),
+                                );
+                              })
+                            ],
                     ),
                   ),
                 ),
