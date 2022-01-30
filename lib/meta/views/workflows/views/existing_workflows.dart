@@ -12,19 +12,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
-import 'package:fluttermatic/meta/views/workflows/views/confirm_delete.dart';
-import 'package:fluttermatic/meta/views/workflows/views/log_history.dart';
+import 'package:fluttermatic/meta/views/workflows/views/workflow_options.dart';
 
 class ShowExistingWorkflows extends StatefulWidget {
   final String pubspecPath;
@@ -322,143 +320,6 @@ class __WorkflowTileState extends State<_WorkflowTile> {
               ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ShowWorkflowTileOptions extends StatelessWidget {
-  final String workflowPath;
-  final Function() onDelete;
-
-  const ShowWorkflowTileOptions({
-    Key? key,
-    required this.workflowPath,
-    required this.onDelete,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return DialogTemplate(
-      child: Column(
-        children: <Widget>[
-          const DialogHeader(
-            title: 'Options',
-            leading: StageTile(stageType: StageType.alpha),
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RectangleButton(
-                  height: 80,
-                  child: Column(
-                    children: <Widget>[
-                      const Expanded(
-                          child: Icon(Icons.preview_rounded, size: 20)),
-                      VSeparators.small(),
-                      const Text('Preview'),
-                    ],
-                  ),
-                  // TODO: Open preview
-                  onPressed: () {},
-                ),
-              ),
-              HSeparators.normal(),
-              Expanded(
-                child: RectangleButton(
-                  height: 80,
-                  child: Column(
-                    children: <Widget>[
-                      const Expanded(child: Icon(Icons.edit_rounded, size: 20)),
-                      VSeparators.small(),
-                      const Text('Edit'),
-                    ],
-                  ),
-                  onPressed: () {}, // TODO: Open edit view
-                ),
-              ),
-              HSeparators.normal(),
-              Expanded(
-                child: RectangleButton(
-                  height: 80,
-                  child: Column(
-                    children: <Widget>[
-                      const Expanded(child: Icon(Icons.history, size: 20)),
-                      VSeparators.small(),
-                      const Text('View Logs'),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (_) =>
-                          ShowWorkflowLogHistory(workflowPath: workflowPath),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          VSeparators.normal(),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RectangleButton(
-                  height: 80,
-                  child: Column(
-                    children: <Widget>[
-                      const Expanded(
-                        child:
-                            Icon(Icons.play_arrow_rounded, color: kGreenColor),
-                      ),
-                      VSeparators.small(),
-                      const Text('Run'),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (_) =>
-                          WorkflowRunnerDialog(workflowPath: workflowPath),
-                    );
-                  },
-                ),
-              ),
-              HSeparators.normal(),
-              Expanded(
-                child: RectangleButton(
-                  height: 80,
-                  child: Column(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Icon(Icons.delete_forever,
-                            color: AppTheme.errorColor),
-                      ),
-                      VSeparators.small(),
-                      const Text('Delete'),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    showDialog(
-                      context: context,
-                      builder: (_) => ConfirmWorkflowDelete(
-                        path: workflowPath,
-                        onClose: (bool d) {
-                          if (d) {
-                            return onDelete();
-                          }
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

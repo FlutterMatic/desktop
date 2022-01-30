@@ -11,14 +11,9 @@ import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/java_ve
 import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/studio_version.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/vsc_version.dart';
 
-class HomeMainSection extends StatefulWidget {
+class HomeMainSection extends StatelessWidget {
   const HomeMainSection({Key? key}) : super(key: key);
 
-  @override
-  State<HomeMainSection> createState() => _HomeMainSectionState();
-}
-
-class _HomeMainSectionState extends State<HomeMainSection> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -17,8 +18,11 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -30,8 +34,13 @@ import 'package:fluttermatic/meta/views/workflows/sections/reorder_actions.dart'
 
 class StartUpWorkflow extends StatefulWidget {
   final String? pubspecPath;
+  final WorkflowTemplate? editWorkflowTemplate;
 
-  const StartUpWorkflow({Key? key, this.pubspecPath}) : super(key: key);
+  const StartUpWorkflow({
+    Key? key,
+    this.pubspecPath,
+    this.editWorkflowTemplate,
+  }) : super(key: key);
 
   @override
   State<StartUpWorkflow> createState() => _StartUpWorkflowState();
@@ -185,10 +194,70 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
     }
   }
 
+  void _prepareEditSession() {
+    assert(widget.editWorkflowTemplate != null && widget.pubspecPath != null,
+        'To provide an edit workflow template, you must provide the path to the project pubspec.yaml file which contains the workflow.');
+
+    setState(() {
+      _nameController.text = widget.editWorkflowTemplate?.name ?? '';
+      _descriptionController.text =
+          widget.editWorkflowTemplate?.description ?? '';
+      _webUrlController.text = widget.editWorkflowTemplate?.webUrl ?? '';
+      _firebaseProjectName.text =
+          widget.editWorkflowTemplate?.firebaseProjectName ?? '';
+      _firebaseProjectIDController.text =
+          widget.editWorkflowTemplate?.firebaseProjectId ?? '';
+      _iOSBuildMode = widget.editWorkflowTemplate?.iOSBuildMode ??
+          PlatformBuildModes.release;
+      _androidBuildMode = widget.editWorkflowTemplate?.androidBuildMode ??
+          PlatformBuildModes.release;
+      _webRenderer =
+          widget.editWorkflowTemplate?.webRenderer ?? WebRenderers.canvaskit;
+      _webBuildMode = widget.editWorkflowTemplate?.webBuildMode ??
+          PlatformBuildModes.release;
+      _isFirebaseDeployVerified =
+          widget.editWorkflowTemplate?.isFirebaseDeployVerified ?? false;
+      _linuxBuildMode = widget.editWorkflowTemplate?.linuxBuildMode ??
+          PlatformBuildModes.release;
+      _macOSBuildMode = widget.editWorkflowTemplate?.macosBuildMode ??
+          PlatformBuildModes.release;
+      _windowsBuildMode = widget.editWorkflowTemplate?.windowsBuildMode ??
+          PlatformBuildModes.release;
+      if (widget.editWorkflowTemplate?.workflowActions == null) {
+        _workflowActions = <WorkflowActionModel>[];
+      } else {
+        _workflowActions =
+            widget.editWorkflowTemplate!.workflowActions.map((String e) {
+          return WorkflowActionModel(
+            id: e,
+            name: workflowActionModels
+                .where((WorkflowActionModel action) => action.id == e)
+                .first
+                .name,
+            description: workflowActionModels
+                .where((WorkflowActionModel action) => action.id == e)
+                .first
+                .description,
+            type: workflowActionModels
+                .where((WorkflowActionModel action) => action.id == e)
+                .first
+                .type,
+          );
+        }).toList();
+      }
+    });
+
+    logger.file(
+        LogTypeTag.info, 'Workflow template loaded. Beginning edit session.');
+  }
+
   @override
   void initState() {
     if (widget.pubspecPath != null) {
       _initPubspec();
+    }
+    if (widget.editWorkflowTemplate != null) {
+      _prepareEditSession();
     }
     _beginSaveMonitor();
     super.initState();
@@ -226,10 +295,10 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             webBuildMode: _webBuildMode,
             workflowActions:
                 _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
-            isSaved: false,
             linuxBuildMode: _linuxBuildMode,
             macosBuildMode: _macOSBuildMode,
             windowsBuildMode: _windowsBuildMode,
+            isSaved: false,
           ),
         );
 
@@ -275,10 +344,12 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             DialogHeader(
-              title: 'New Workflow',
+              title: widget.editWorkflowTemplate != null
+                  ? 'Edit Workflow'
+                  : 'New Workflow',
               leading: _interfaceView != _InterfaceView.workflowInfo
                   ? SquareButton(
-                      icon: const Icon(Icons.arrow_back_ios_rounded),
+                      icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
                       color: Colors.transparent,
                       onPressed: () => setState(() {
                         _showInfoLast = false;
@@ -289,7 +360,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                         }
                       }),
                     )
-                  : null,
+                  : const StageTile(stageType: StageType.beta),
               onClose: () async {
                 if (_pubspecFile == null || _projectPath.isEmpty) {
                   Navigator.pop(context);
@@ -328,7 +399,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             if (_interfaceView == _InterfaceView.workflowInfo)
               SetProjectWorkflowInfo(
                 disableChangePubspec: _forcePubspec,
-                showLastPage: _showInfoLast,
+                showLastPage:
+                    _showInfoLast || widget.editWorkflowTemplate != null,
                 onPubspecUpdate: (PubspecInfo pubspec) =>
                     setState(() => _pubspecFile = pubspec),
                 onNext: () {
@@ -467,14 +539,28 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       workflowActions: _workflowActions
                           .map((WorkflowActionModel e) => e.id)
                           .toList(),
-                      isSaved: true,
                       linuxBuildMode: _linuxBuildMode,
                       macosBuildMode: _macOSBuildMode,
                       windowsBuildMode: _windowsBuildMode,
+                      isSaved: true,
                     ),
                   );
 
                   if (_hasSaved) {
+                    // Update the cache with the new changes
+                    await WorkflowSearchUtils.getWorkflowsFromPath(
+                        cache: await ProjectServicesModel.getProjectCache(
+                                (await getApplicationSupportDirectory())
+                                    .path) ??
+                            const ProjectCacheResult(
+                              projectsPath: null,
+                              refreshIntervals: null,
+                              lastProjectReload: null,
+                              lastWorkflowsReload: null,
+                            ),
+                        supportDir:
+                            (await getApplicationSupportDirectory()).path);
+
                     Navigator.pop(context);
                   }
                 },
@@ -498,14 +584,28 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       workflowActions: _workflowActions
                           .map((WorkflowActionModel e) => e.id)
                           .toList(),
-                      isSaved: true,
                       linuxBuildMode: _linuxBuildMode,
                       macosBuildMode: _macOSBuildMode,
                       windowsBuildMode: _windowsBuildMode,
+                      isSaved: true,
                     ),
                   );
 
                   if (_hasSaved) {
+                    // Update the cache with the new changes
+                    await WorkflowSearchUtils.getWorkflowsFromPath(
+                        cache: await ProjectServicesModel.getProjectCache(
+                                (await getApplicationSupportDirectory())
+                                    .path) ??
+                            const ProjectCacheResult(
+                              projectsPath: null,
+                              refreshIntervals: null,
+                              lastProjectReload: null,
+                              lastWorkflowsReload: null,
+                            ),
+                        supportDir:
+                            (await getApplicationSupportDirectory()).path);
+
                     Navigator.pop(context);
 
                     String? _path =
@@ -683,7 +783,7 @@ Future<bool> _saveWorkflow(
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
           context,
-          'Workflow saved successfully.',
+          'Workflow saved successfully. You can find it in the "Workflows" tab.',
           type: SnackBarType.done,
         ),
       );

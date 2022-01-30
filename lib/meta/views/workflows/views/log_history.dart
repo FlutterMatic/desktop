@@ -120,7 +120,7 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
         });
       }
 
-      _loadLogs();
+      await _loadLogs();
 
       if (mounted) {
         Navigator.pop(context);
@@ -144,10 +144,18 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
     }
   }
 
-  void _loadLogs() {
+  Future<void> _loadLogs() async {
     String _dir = (widget.workflowPath.split('\\')..removeLast()).join('\\') +
         '\\logs' +
         '\\${widget.workflowPath.split('\\').last.replaceAll('.json', '')}';
+
+    if (!await Directory(_dir).exists()) {
+      setState(() {
+        _logs.clear();
+        _workflowPaths.clear();
+      });
+      return;
+    }
 
     List<FileSystemEntity> _workflowLogs = Directory(_dir).listSync();
 

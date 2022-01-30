@@ -15,7 +15,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/markdown_view.dart';
@@ -23,6 +22,7 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
@@ -131,7 +131,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
         children: <Widget>[
           DialogHeader(
             title: widget.pkgInfo.name,
-            leading: const StageTile(stageType: StageType.alpha),
+            leading: const StageTile(stageType: StageType.prerelease),
           ),
           if (_shouldDisplay && _pkgOptions?.isDiscontinued == true)
             informationWidget(

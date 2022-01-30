@@ -9,10 +9,8 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/other/status.dart';
 import 'package:fluttermatic/components/dialog_templates/project/select.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
@@ -29,7 +27,7 @@ class HomeSearchComponent extends StatefulWidget {
 
 class _HomeSearchComponentState extends State<HomeSearchComponent> {
   final TextEditingController _searchController = TextEditingController();
-  final bool _loadingSearch = false;
+  // final bool _loadingSearch = false;
 
   final FocusNode _searchNode = FocusNode();
   final List<ProjectObject> _searchResults = <ProjectObject>[];
@@ -219,15 +217,15 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                   ),
                                 ],
                               ),
-                              VSeparators.normal(),
-                              if (_loadingSearch)
-                                const CustomLinearProgressIndicator(
-                                    includeBox: false)
-                              else
-                                informationWidget(
-                                  'There are no results for your search query. Try using another term instead.',
-                                  type: InformationType.error,
-                                ),
+                              // VSeparators.normal(),
+                              // if (_loadingSearch)
+                              //   const CustomLinearProgressIndicator(
+                              //       includeBox: false)
+                              // else
+                              //   informationWidget(
+                              //     'There are no results for your search query. Try using another term instead.',
+                              //     type: InformationType.error,
+                              //   ),
                             ]
                           : <Widget>[
                               // TODO: Implement the search.

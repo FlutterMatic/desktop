@@ -1,3 +1,7 @@
+// 🎯 Dart imports:
+import 'dart:convert';
+import 'dart:io';
+
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -10,7 +14,8 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
-import 'package:fluttermatic/meta/views/workflows/views/existing_workflows.dart';
+import 'package:fluttermatic/meta/views/workflows/startup.dart';
+import 'package:fluttermatic/meta/views/workflows/views/workflow_options.dart';
 
 class WorkflowInfoTile extends StatefulWidget {
   final String path;
@@ -118,7 +123,23 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                   width: 40,
                   height: 40,
                   child: const Icon(Icons.edit_rounded, size: 20),
-                  onPressed: () {},
+                  onPressed: () async {
+                    Map<String, dynamic> _workflow =
+                        jsonDecode(await File(widget.path).readAsString());
+
+                    await showDialog(
+                      context: context,
+                      builder: (_) => StartUpWorkflow(
+                        pubspecPath: (widget.path.split('\\')
+                                  ..removeLast()
+                                  ..removeLast())
+                                .join('\\') +
+                            '\\pubspec.yaml',
+                        editWorkflowTemplate:
+                            WorkflowTemplate.fromJson(_workflow),
+                      ),
+                    );
+                  },
                 ),
                 if (widget.workflow.isSaved)
                   Padding(

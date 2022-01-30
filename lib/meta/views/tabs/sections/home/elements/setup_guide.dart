@@ -289,9 +289,8 @@ class __GuideItemState extends State<_GuideItem> {
       child: MouseRegion(
         onHover: (_) => setState(() => _isHovering = true),
         onExit: (_) => setState(() => _isHovering = false),
-        child: MaterialButton(
-          onPressed: () => widget.onPressed(widget.context),
-          hoverColor: Colors.transparent,
+        child: InkWell(
+          onTap: () => widget.onPressed(widget.context),
           child: Row(
             children: <Widget>[
               Container(
@@ -340,25 +339,25 @@ final List<_GuideModel> _guides = <_GuideModel>[
   _GuideModel(
     text:
         'Set your projects path where we can find all of your Flutter projects. You can then manage these projects easily from the projects tab.',
-    onPressed: (BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (_) => const SettingDialog(
-          goToPage: SettingsPage.projects,
-        ),
-      );
-    },
+    onPressed: (_) => showDialog(
+      context: _,
+      builder: (_) => const SettingDialog(goToPage: SettingsPage.projects),
+    ),
   ),
   _GuideModel(
     text: 'Create your first Flutter or Dart package using FlutterMatic.',
-    onPressed: (_) =>
-        showDialog(context: _, builder: (_) => const SelectProjectTypeDialog()),
+    onPressed: (_) => showDialog(
+      context: _,
+      builder: (_) => const SelectProjectTypeDialog(),
+    ),
   ),
   _GuideModel(
     text:
         'Automate your Flutter workspace by setting up workflows. This helps you setup commands to run for projects when you press run.',
-    onPressed: (_) =>
-        showDialog(context: _, builder: (_) => const StartUpWorkflow()),
+    onPressed: (_) => showDialog(
+      context: _,
+      builder: (_) => const StartUpWorkflow(),
+    ),
   ),
   // _GuideModel(
   //   text:

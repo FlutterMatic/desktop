@@ -11,10 +11,15 @@ import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;
+  // Provides the option to have your own builder for the action buttons
+  // or use the default one and must return a Widget
+  final Widget Function(BuildContext context, ActionOptionsObject action)?
+      actionButtonBuilder;
 
   const ActionOptions({
     Key? key,
     required this.actions,
+    this.actionButtonBuilder,
   }) : super(key: key);
 
   @override
@@ -30,6 +35,9 @@ class ActionOptions extends StatelessWidget {
           title: e.title,
           length: actions.length,
           index: actions.indexOf(e),
+          trailing: actionButtonBuilder != null
+              ? actionButtonBuilder!(context, e)
+              : null,
         );
       }).toList(),
     );
@@ -52,6 +60,7 @@ Widget _buttonListTile(
   required Color color,
   required int index,
   required int length,
+  required Widget? trailing,
 }) {
   Radius _curveValue = const Radius.circular(5);
   Radius _curveEmpty = Radius.zero;
@@ -80,6 +89,7 @@ Widget _buttonListTile(
                 TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
           ),
         ),
+        if (trailing != null) trailing,
         Icon(Icons.arrow_forward_ios_rounded,
             color: context.read<ThemeChangeNotifier>().isDarkTheme
                 ? Colors.white

@@ -17,6 +17,7 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 
 class SetProjectWorkflowInfo extends StatefulWidget {
@@ -108,8 +109,14 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                           type: SnackBarType.error,
                           action: snackBarAction(
                             text: 'Learn more',
-                            onPressed: () {},
-                            // TODO: Create documentation for this.
+                            onPressed: () {
+                              // TODO: Create documentation for required pubspec.yaml parameters.
+                              showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    const FMaticDocumentationDialog(),
+                              );
+                            },
                           ),
                         ),
                       );
@@ -210,7 +217,8 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       disable: widget.disableChangePubspec,
                       width: 120,
                       child: Text(
-                          widget.pubspecFile == null ? 'Select' : 'Change'),
+                        widget.pubspecFile == null ? 'Select' : 'Change',
+                      ),
                       onPressed: () async {
                         file.XFile? _file = await file.openFile();
                         if (_file == null && widget.pubspecFile != null) {

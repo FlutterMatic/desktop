@@ -13,8 +13,8 @@ import 'package:provider/provider.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/components/dialog_templates/text_field.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
@@ -174,7 +174,9 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
   }
 }
 
-String generateRandomString(int i) {
+/// Generates a random string that contains [total] characters. This will 
+/// contain numbers, uppercase and lowercase letters.
+String generateRandomString(int total) {
   const String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 
@@ -184,5 +186,5 @@ String generateRandomString(int i) {
       String.fromCharCodes(Iterable<int>.generate(
           length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  return getRandomString(i);
+  return getRandomString(total);
 }

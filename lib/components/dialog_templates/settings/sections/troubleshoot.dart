@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/flutter/flutter_doctor.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
+import 'package:fluttermatic/components/dialog_templates/other/clear_cache.dart';
 import 'package:fluttermatic/components/dialog_templates/other/reset_fluttermatic.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
@@ -157,6 +158,15 @@ class _TroubleShootSettingsSectionState
                               showDialog(
                                 context: context,
                                 builder: (_) => const BuildLogsDialog(),
+                              );
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Clear cache'),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const ClearCacheDialog(),
                               );
                             },
                           ),

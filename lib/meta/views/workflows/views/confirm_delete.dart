@@ -7,22 +7,26 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/components/dialog_templates/text_field.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 
 class ConfirmWorkflowDelete extends StatefulWidget {
   final String path;
+  final WorkflowTemplate template;
   final Function(bool) onClose;
 
   const ConfirmWorkflowDelete({
     Key? key,
     required this.path,
     required this.onClose,
+    required this.template,
   }) : super(key: key);
 
   @override
@@ -46,6 +50,31 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
             informationWidget(
               'Are you sure you want to delete this workflow? This action cannot be undone.',
               type: InformationType.warning,
+            ),
+            VSeparators.normal(),
+            RoundContainer(
+              color: Colors.blueGrey.withOpacity(0.2),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(widget.template.name),
+                        VSeparators.xSmall(),
+                        Text(
+                          widget.template.description,
+                          style: const TextStyle(color: Colors.grey),
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  HSeparators.normal(),
+                  const Icon(Icons.play_circle_outline_rounded,
+                      color: kGreenColor, size: 20),
+                ],
+              ),
             ),
             VSeparators.normal(),
             const Text(
@@ -81,7 +110,7 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                           return;
                         }
                         setState(() => _loading = true);
-                        
+
                         if (_confirmValue == 'DELETE') {
                           await File(widget.path).delete();
 
@@ -98,6 +127,23 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                             await _logsDir.delete(recursive: true);
                             await logger.file(LogTypeTag.info,
                                 'Deleted logs for workflow ${widget.path.split('\\').last}');
+                          }
+
+                          Iterable<FileSystemEntity> _existingWorkflows =
+                              Directory((widget.path.split('\\')..removeLast())
+                                      .join('\\'))
+                                  .listSync()
+                                  .whereType<File>();
+
+                          // If there are no more workflows, then delete the
+                          // entire "/fmatic" directory.
+                          if (_existingWorkflows.isEmpty) {
+                            await Directory((widget.path.split('\\')
+                                      ..removeLast())
+                                    .join('\\'))
+                                .delete(recursive: true);
+                            await logger.file(LogTypeTag.info,
+                                'Deleted project "fmatic" directory because no more workflows exist in it.');
                           }
 
                           await logger.file(LogTypeTag.info,

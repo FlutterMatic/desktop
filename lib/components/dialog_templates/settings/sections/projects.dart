@@ -81,12 +81,16 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: Text(
-                  _dirPath ??
-                      (_dirPathError
-                          ? 'Please set your projects path...'
-                          : 'Fetching your preferred project directory...'),
-                  maxLines: 2,
+                child: Tooltip(
+                  message: _dirPath ?? '',
+                  waitDuration: const Duration(seconds: 1),
+                  child: Text(
+                    _dirPath ??
+                        (_dirPathError
+                            ? 'Please set your projects path...'
+                            : 'Fetching your preferred project directory...'),
+                    maxLines: 2,
+                  ),
                 ),
               ),
               HSeparators.normal(),

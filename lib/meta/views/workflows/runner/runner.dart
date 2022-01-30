@@ -6,28 +6,21 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
-// 📦 Package imports:
-import 'package:flutter_svg/flutter_svg.dart';
-
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/beta_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
-import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/task_runner_view.dart';
-import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/status/error.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/status/startup.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/status/success.dart';
 
 class WorkflowRunnerDialog extends StatefulWidget {
   final String workflowPath;
@@ -165,7 +158,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
             if (_loading)
               const Padding(padding: EdgeInsets.all(50), child: Spinner())
             else if (!_isRunning && !_isCompleted)
-              _WorkflowStartUp(
+              WorkflowStartUp(
                 template: _template,
                 onRun: () {
                   setState(() => _isRunning = true);
@@ -177,12 +170,12 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
             else if (!_isRunning && _isCompleted) ...<Widget>[
               // If error occurred, show error message, else will show success.
               if (_resultType == WorkflowActionStatus.failed)
-                _WorkflowError(
+                WorkflowError(
                   logFile: _workflowSessionLogs,
                   path: widget.workflowPath,
                 )
               else if (_resultType == WorkflowActionStatus.done)
-                _WorkflowSuccess(
+                WorkflowSuccess(
                   elapsedTime: _composeTimeElapsed(),
                   template: _template,
                   logFile: _workflowSessionLogs,
@@ -258,230 +251,6 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _WorkflowStartUp extends StatelessWidget {
-  final Function() onRun;
-  final WorkflowTemplate template;
-
-  const _WorkflowStartUp({
-    Key? key,
-    required this.onRun,
-    required this.template,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        RoundContainer(
-          width: 500,
-          color: Colors.blueGrey.withOpacity(0.2),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(template.name),
-                    VSeparators.xSmall(),
-                    Text(template.description,
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              HSeparators.normal(),
-              SvgPicture.asset(Assets.done, color: kGreenColor, height: 20),
-            ],
-          ),
-        ),
-        VSeparators.normal(),
-        SizedBox(
-          width: 500,
-          child: informationWidget(
-            'You won\'t be able to use FlutterMatic until the workflow is completed.',
-            type: InformationType.info,
-          ),
-        ),
-        VSeparators.normal(),
-        RectangleButton(
-          child: const Text('Start'),
-          onPressed: onRun,
-        ),
-      ],
-    );
-  }
-}
-
-class _WorkflowError extends StatelessWidget {
-  final String path;
-  final File logFile;
-
-  const _WorkflowError({
-    Key? key,
-    required this.path,
-    required this.logFile,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        RoundContainer(
-          width: 500,
-          height: 230,
-          color: Colors.blueGrey.withOpacity(0.2),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text('.... Click on "Logs" to view entire log'),
-              Expanded(
-                child: LogViewBuilder(
-                  logs: logFile
-                      .readAsLinesSync()
-                      .sublist(logFile.readAsLinesSync().length - 6),
-                ),
-              ),
-            ],
-          ),
-        ),
-        VSeparators.normal(),
-        SizedBox(
-          width: 500,
-          child: informationWidget(
-            'The workflow failed to complete because of some error. Check the logs to see what went wrong.',
-            type: InformationType.warning,
-          ),
-        ),
-        VSeparators.normal(),
-        Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              RectangleButton(
-                width: 100,
-                child: const Text('Close'),
-                onPressed: () {
-                  writeWorkflowSessionLog(
-                      logFile, LogTypeTag.info, 'Workflow session closed.');
-                  Navigator.of(context).pop();
-                },
-              ),
-              HSeparators.small(),
-              RectangleButton(
-                width: 100,
-                child: const Text('Logs'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (_) => ViewWorkflowSessionLogs(path: logFile.path),
-                  );
-                },
-              ),
-              HSeparators.small(),
-              RectangleButton(
-                width: 100,
-                child: const Text('Re-run'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (_) => WorkflowRunnerDialog(workflowPath: path),
-                  );
-                },
-              ),
-              HSeparators.small(),
-              RectangleButton(
-                width: 100,
-                child: const Text('View Docs'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (_) => const FMaticDocumentationDialog(),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _WorkflowSuccess extends StatelessWidget {
-  final WorkflowTemplate template;
-  final String elapsedTime;
-  final File logFile;
-
-  const _WorkflowSuccess({
-    Key? key,
-    required this.elapsedTime,
-    required this.template,
-    required this.logFile,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        VSeparators.normal(),
-        SvgPicture.asset(Assets.done, color: kGreenColor),
-        VSeparators.normal(),
-        SizedBox(
-          width: 500,
-          child: Text(
-            'Your workflow has completed running. It took $elapsedTime to complete. If you need to check the logs of this workflow run session, you can click to open it.',
-            textAlign: TextAlign.center,
-          ),
-        ),
-        VSeparators.normal(),
-        RoundContainer(
-          width: 500,
-          color: Colors.blueGrey.withOpacity(0.2),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(template.name),
-                    VSeparators.xSmall(),
-                    Text(template.description,
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              HSeparators.normal(),
-              RectangleButton(
-                width: 100,
-                child: const Text('Logs'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (_) => ViewWorkflowSessionLogs(path: logFile.path),
-                  );
-                },
-              ),
-              HSeparators.normal(),
-              RectangleButton(
-                width: 100,
-                child: const Text('Close'),
-                onPressed: () {
-                  writeWorkflowSessionLog(
-                      logFile, LogTypeTag.info, 'Workflow session closed.');
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

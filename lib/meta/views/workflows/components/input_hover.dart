@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/components/dialog_templates/text_field.dart';
+import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 
 class InputHoverAffect extends StatefulWidget {
   final String hintText;

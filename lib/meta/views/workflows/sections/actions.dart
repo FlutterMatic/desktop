@@ -108,7 +108,7 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
           ),
         VSeparators.normal(),
         infoWidget(context,
-            'You can select more than one workflow to run. We will try to show you analysis and details about the result of these workflows when you run them. You will be able to change the order of this workflow in the next steps.'),
+            'You can select more than one workflow to run. We will try to show you analysis and details about the result of these workflows when you run them. You will be able to change the order of this workflow in the upcoming steps.'),
         VSeparators.normal(),
         DragTarget<WorkflowActionModel>(
           builder: (_, List<WorkflowActionModel?> candidateItems,
@@ -152,9 +152,10 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text(e?.name ?? 'err'),
+                            Text(e?.name ?? 'Uh-oh something went wrong'),
                             HSeparators.xSmall(),
                             SquareButton(
+                              tooltip: 'Remove',
                               icon: const Icon(Icons.close, size: 10),
                               size: 20,
                               color: Colors.blueGrey.withOpacity(0.2),
@@ -165,7 +166,7 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   snackBarTile(
                                     context,
-                                    '${e?.name ?? '"err"'} workflow action has been removed.',
+                                    '${e?.name ?? '"UNKNOWN"'} workflow action has been removed.',
                                     type: SnackBarType.warning,
                                     action: snackBarAction(
                                       text: 'Undo',
@@ -211,7 +212,18 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
             child: Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: workflowActionModels.map((WorkflowActionModel e) {
+              children:
+                  workflowActionModels.where((WorkflowActionModel element) {
+                bool _exists = false;
+
+                for (WorkflowActionModel added in _addedWorkflows) {
+                  if (added.name == element.name) {
+                    _exists = true;
+                  }
+                }
+
+                return !_exists;
+              }).map((WorkflowActionModel e) {
                 if (_addedWorkflows.contains(e)) {
                   return const SizedBox.shrink();
                 }
@@ -230,7 +242,7 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
 
                 return Draggable<WorkflowActionModel>(
                   data: e,
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
                       setState(() => _addedWorkflows.add(e));
                       widget.onActionsUpdate(_addedWorkflows);
