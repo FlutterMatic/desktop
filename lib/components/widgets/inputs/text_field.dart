@@ -2,8 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// 📦 Package imports:
+import 'package:provider/src/provider.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText;
@@ -83,7 +87,8 @@ class CustomTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         suffixIcon: suffixIcon,
-        fillColor: Colors.blueGrey.withOpacity(0.2),
+        fillColor: Colors.blueGrey.withOpacity(
+            context.read<ThemeChangeNotifier>().isDarkTheme ? 0.2 : 0.1),
         filled: true,
         hintText: hintText,
         counterStyle: TextStyle(

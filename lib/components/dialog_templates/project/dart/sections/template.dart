@@ -42,7 +42,6 @@ class _DartProjectTemplateSectionState
             'Choose your Dart template which will be used to generate your project.'),
         VSeparators.small(),
         RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
           child: SelectTile(
             defaultValue: widget.selectedTemplate,
             options:

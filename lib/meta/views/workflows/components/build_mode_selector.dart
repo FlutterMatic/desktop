@@ -77,7 +77,6 @@ Widget selectBuildTypeTile(
   required bool isSelected,
 }) {
   return RectangleButton(
-    color: Colors.blueGrey.withOpacity(0.2),
     disableColor: Colors.blueGrey.withOpacity(0.2),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     width: double.infinity,

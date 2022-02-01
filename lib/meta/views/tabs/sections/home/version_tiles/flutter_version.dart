@@ -40,6 +40,7 @@ Future<void> _check(List<dynamic> data) async {
     _result.version?.toString(),
     _result.channel,
   ]);
+  return;
 }
 
 class HomeFlutterVersionTile extends StatefulWidget {
@@ -63,8 +64,9 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
   Future<void> _load() async {
     while (mounted) {
       Directory _logPath = await getApplicationSupportDirectory();
-      await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
-          .timeout(const Duration(minutes: 1), onTimeout: () async {
+      Isolate _i =
+          await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
+              .timeout(const Duration(minutes: 1), onTimeout: () async {
         await logger.file(LogTypeTag.error, 'Flutter version check timeout');
         setState(() => _error = true);
 
@@ -73,6 +75,7 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
 
       if (mounted && !_listening) {
         _port.listen((dynamic data) {
+          _i.kill();
           setState(() => _listening = true);
           if (mounted) {
             setState(() {
@@ -138,50 +141,65 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
                 ],
               ),
               VSeparators.normal(),
-              HoverMessageWithIconAction(
-                message: _doneLoading
-                    ? (_version == null
-                        ? 'Flutter is not installed on your device'
-                        : 'Flutter is up to date on channel ${_channel.toLowerCase()}')
-                    : '...',
-                icon: Icon(
-                    _doneLoading
-                        ? (_version == null ? Icons.error : Icons.check_rounded)
-                        : Icons.lock_clock,
-                    color: _doneLoading
-                        ? (_version == null ? AppTheme.errorColor : kGreenColor)
-                        : kYellowColor,
-                    size: 15),
+              IgnorePointer(
+                ignoring: _version == null && _doneLoading,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: _version == null && _doneLoading ? 0.2 : 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      HoverMessageWithIconAction(
+                        message: _doneLoading
+                            ? (_version == null
+                                ? 'Flutter is not installed on your device'
+                                : 'Flutter is up to date on channel ${_channel.toLowerCase()}')
+                            : '...',
+                        icon: Icon(
+                            _doneLoading
+                                ? (_version == null
+                                    ? Icons.error
+                                    : Icons.check_rounded)
+                                : Icons.lock_clock,
+                            color: _doneLoading
+                                ? (_version == null
+                                    ? AppTheme.errorColor
+                                    : kGreenColor)
+                                : kYellowColor,
+                            size: 15),
+                      ),
+                      VSeparators.normal(),
+                      HoverMessageWithIconAction(
+                        message: SharedPref()
+                                .pref
+                                .containsKey(SPConst.lastFlutterUpdateCheck)
+                            ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastFlutterUpdateCheck) ?? '...'))}'
+                            : 'Never checked for new updates before',
+                        icon: const Icon(Icons.refresh_rounded,
+                            color: kGreenColor, size: 15),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const UpdateFlutterDialog(),
+                          );
+                        },
+                      ),
+                      VSeparators.normal(),
+                      HoverMessageWithIconAction(
+                        message: SharedPref()
+                                .pref
+                                .containsKey(SPConst.lastFlutterUpdate)
+                            ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastFlutterUpdate) ?? '...'))}'
+                            : 'Never updated before',
+                        icon: const Icon(Icons.check_rounded,
+                            color: kGreenColor, size: 15),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               VSeparators.normal(),
-              if (_doneLoading && _version != null ||
-                  !_doneLoading) ...<Widget>[
-                HoverMessageWithIconAction(
-                  message: SharedPref()
-                          .pref
-                          .containsKey(SPConst.lastFlutterUpdateCheck)
-                      ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastFlutterUpdateCheck) ?? DateTime.now().toString()))}'
-                      : 'Never checked for new updates before',
-                  icon: const Icon(Icons.refresh_rounded,
-                      color: kGreenColor, size: 15),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const UpdateFlutterDialog(),
-                    );
-                  },
-                ),
-                VSeparators.normal(),
-                HoverMessageWithIconAction(
-                  message: SharedPref()
-                          .pref
-                          .containsKey(SPConst.lastFlutterUpdate)
-                      ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastFlutterUpdate) ?? DateTime.now().toString()))}'
-                      : 'Never updated before',
-                  icon: const Icon(Icons.check_rounded,
-                      color: kGreenColor, size: 15),
-                ),
-                VSeparators.normal(),
+              if (_version != null || !_doneLoading)
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -208,8 +226,8 @@ class _HomeFlutterVersionStateTile extends State<HomeFlutterVersionTile> {
                       ),
                     ),
                   ],
-                ),
-              ] else
+                )
+              else
                 RectangleButton(
                   width: double.infinity,
                   child: const Text('Install Flutter'),

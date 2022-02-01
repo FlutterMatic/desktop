@@ -126,8 +126,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       setState(() => _isSavingLocally = true);
 
-      Isolate _isolate =
-          await Isolate.spawn(_saveWorkflowWithIsolate, <dynamic>[
+      Isolate _i = await Isolate.spawn(_saveWorkflowWithIsolate, <dynamic>[
         _saveLocallyPort.sendPort,
         _projectPath,
         _pendingChanges,
@@ -144,6 +143,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       if (!_syncStreamListening) {
         setState(() => _syncStreamListening = true);
         _saveLocallyPort.listen((dynamic message) {
+          _i.kill();
           if (message is Map<String, dynamic>) {
             setState(() {
               _lastSavedContent = message;
@@ -157,7 +157,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               _saveLocalError = true;
             });
           }
-          _isolate.kill();
         });
       }
 
@@ -725,10 +724,12 @@ Future<void> _saveWorkflowWithIsolate(List<dynamic> data) async {
         .timeout(const Duration(seconds: 3));
 
     _port.send(_data);
+    return;
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Couldn\'t sync workflow settings.',
         stackTraces: s);
     _port.send(<dynamic>[]);
+    return;
   }
 }
 

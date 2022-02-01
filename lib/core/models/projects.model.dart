@@ -3,12 +3,14 @@ class ProjectObject {
   final DateTime modDate;
   final String? description;
   final String path;
+  final bool pinned;
 
   const ProjectObject({
     required this.name,
     required this.modDate,
     required this.path,
     required this.description,
+    required this.pinned,
   });
 
   // Ability to convert to JSON.
@@ -18,6 +20,7 @@ class ProjectObject {
       'modDate': modDate.toIso8601String(),
       'description': description,
       'path': path,
+      'pinned': pinned,
     };
   }
 
@@ -28,6 +31,7 @@ class ProjectObject {
       modDate: DateTime.parse(json['modDate'] as String),
       description: json['description'] as String?,
       path: json['path'] as String,
+      pinned: json['pinned'] as bool,
     );
   }
 }

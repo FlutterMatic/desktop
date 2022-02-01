@@ -71,10 +71,12 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
         logDir: Directory(_basePath));
 
     _port.send(true);
+    return;
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
         stackTraces: s, logDir: Directory(_basePath));
     _port.send(false);
+    return;
   }
 }
 
@@ -100,7 +102,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
   Future<void> _generateReport() async {
     try {
-      await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
+      Isolate _i = await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
         _generatePort.sendPort,
         (await getApplicationSupportDirectory()).path,
         _savePath,
@@ -122,6 +124,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
                 type: SnackBarType.error,
               ),
             );
+            _i.kill();
             return;
           }
 
@@ -135,6 +138,8 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             } else if (Platform.isLinux) {
               await shell.run('xdg-open ' + _savePath!);
             }
+
+            _i.kill();
 
             await Future<void>.delayed(const Duration(seconds: 5));
 
@@ -155,7 +160,8 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             );
 
             setState(() => _savePath = null);
-
+            
+            _i.kill();
             _generatePort.close();
             return;
           }
@@ -193,7 +199,6 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
           ),
           VSeparators.normal(),
           RoundContainer(
-            color: Colors.blueGrey.withOpacity(0.2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

@@ -45,7 +45,6 @@ class WorkflowSuccess extends StatelessWidget {
         VSeparators.normal(),
         RoundContainer(
           width: 500,
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(

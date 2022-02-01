@@ -16,12 +16,10 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
-import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/elements/tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/models/workflows.services.dart';
@@ -63,7 +61,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
           supportDir: (await getApplicationSupportDirectory()).path,
         );
 
-        Isolate _isolate = await Isolate.spawn(
+        Isolate _i = await Isolate.spawn(
           WorkflowServicesModel.getWorkflowsIsolate,
           <dynamic>[
             _loadWorkflowsPort.sendPort,
@@ -91,14 +89,12 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                 _workflowsLoading = false;
                 _workflows.clear();
                 _workflows.addAll(message.first);
-                if (message[2] == true) {
-                  _reloadingFromCache = true;
-                } else {
-                  _reloadingFromCache = false;
-                }
+                _reloadingFromCache = message[2] == true;
               });
+
+              // No more expected responses, so will kill the isolate
               if (message[1] == true) {
-                _isolate.kill();
+                _i.kill();
               }
             }
           });
@@ -137,24 +133,20 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
           width: 40,
           height: 40,
           child: const Icon(Icons.refresh_rounded, size: 20),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              PageRouteBuilder<Widget>(
-                pageBuilder: (_, __, ___) =>
-                    const HomeScreen(tab: HomeTab.workflow),
-                transitionDuration: Duration.zero,
-              ),
-            );
-          },
+          onPressed: () => _loadWorkflows(true),
         ),
         HSeparators.small(),
         RectangleButton(
           width: 40,
           height: 40,
           child: const Icon(Icons.add_rounded, size: 20),
-          onPressed: () => showDialog(
-              context: context, builder: (_) => const StartUpWorkflow()),
+          onPressed: () async {
+            await showDialog(
+              context: context,
+              builder: (_) => const StartUpWorkflow(),
+            );
+            await _loadWorkflows(true);
+          },
         ),
       ],
     );
@@ -206,14 +198,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                             builder: (_) => const SettingDialog(
                                 goToPage: SettingsPage.projects),
                           );
-                          await Navigator.pushReplacement(
-                            context,
-                            PageRouteBuilder<Route<dynamic>>(
-                              pageBuilder: (_, __, ___) =>
-                                  const HomeScreen(tab: HomeTab.workflow),
-                              transitionDuration: Duration.zero,
-                            ),
-                          );
+                          await _loadWorkflows(true);
                         },
                       ),
                       HSeparators.small(),
@@ -252,14 +237,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                             goToPage: SettingsPage.projects,
                           ),
                         );
-                        await Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder<Route<dynamic>>(
-                            pageBuilder: (_, __, ___) =>
-                                const HomeScreen(tab: HomeTab.workflow),
-                            transitionDuration: Duration.zero,
-                          ),
-                        );
+                        await _loadWorkflows(true);
                       },
                     ),
                     HSeparators.small(),
@@ -295,8 +273,23 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                     canCollapse: true,
                     action: Row(
                       children: <Widget>[
-                        const StageTile(stageType: StageType.alpha),
-                        HSeparators.normal(),
+                        SquareButton(
+                          size: 20,
+                          tooltip: 'Add Workflow',
+                          color: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          icon: const Icon(Icons.add_rounded, size: 15),
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (_) => StartUpWorkflow(
+                                  pubspecPath: _workflows[i].path),
+                            );
+
+                            await _loadWorkflows(true);
+                          },
+                        ),
+                        HSeparators.small(),
                         SquareButton(
                           size: 20,
                           tooltip: 'Reload',

@@ -12,44 +12,65 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 
-class StageTile extends StatelessWidget {
+class StageTile extends StatefulWidget {
   final StageType stageType;
 
   const StageTile({Key? key, this.stageType = StageType.beta})
       : super(key: key);
 
   @override
+  State<StageTile> createState() => _StageTileState();
+}
+
+class _StageTileState extends State<StageTile> {
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    Future<void>.delayed(const Duration(milliseconds: 300)).then((_) {
+      if (mounted) {
+        setState(() => _isVisible = true);
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: stageType == StageType.prerelease
-          ? null
-          : () {
-              switch (stageType) {
-                case StageType.beta:
-                  showDialog(
-                    context: context,
-                    builder: (_) => const _BetaInfoDialog(),
-                  );
-                  break;
-                case StageType.alpha:
-                  showDialog(
-                    context: context,
-                    builder: (_) => const _AlphaInfoDialog(),
-                  );
-                  break;
-                case StageType.prerelease:
-                  break;
-              }
-            },
-      child: Tooltip(
-        message: _message(stageType),
-        child: RoundContainer(
-          borderColor: kGreenColor,
-          color: Colors.transparent,
-          padding: const EdgeInsets.all(6),
-          child: Text(
-            _name(stageType),
-            style: const TextStyle(color: kGreenColor, fontSize: 12),
+    return AnimatedOpacity(
+      opacity: _isVisible ? 0.6 : 0,
+      duration: const Duration(milliseconds: 500),
+      child: InkWell(
+        onTap: widget.stageType == StageType.prerelease
+            ? null
+            : () {
+                switch (widget.stageType) {
+                  case StageType.beta:
+                    showDialog(
+                      context: context,
+                      builder: (_) => const _BetaInfoDialog(),
+                    );
+                    break;
+                  case StageType.alpha:
+                    showDialog(
+                      context: context,
+                      builder: (_) => const _AlphaInfoDialog(),
+                    );
+                    break;
+                  case StageType.prerelease:
+                    break;
+                }
+              },
+        child: Tooltip(
+          message: _message(widget.stageType),
+          child: RoundContainer(
+            borderColor: kGreenColor,
+            color: Colors.transparent,
+            padding: const EdgeInsets.all(6),
+            child: Text(
+              _name(widget.stageType),
+              style: const TextStyle(color: kGreenColor, fontSize: 12),
+            ),
           ),
         ),
       ),

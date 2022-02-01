@@ -350,6 +350,9 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                         TextInputFormatter.withFunction(
                           (TextEditingValue oldValue,
                               TextEditingValue newValue) {
+                            if (newValue.text.isEmpty) {
+                              return newValue;
+                            }
                             // Only allow a-z, A-Z, 0-9, and spaces.
                             if (RegExp(r'^[a-zA-Z0-9 _]+$')
                                 .hasMatch(newValue.text)) {
@@ -407,7 +410,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                         TextInputFormatter.withFunction(
                             (TextEditingValue oldValue,
                                 TextEditingValue newValue) {
-                          if (newValue.text.length < 100) {
+                          if (newValue.text.length < 300) {
                             if (_descriptionTooLong) {
                               setState(() => _descriptionTooLong = false);
                             }
@@ -428,7 +431,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Tooltip(
                         message:
-                            'Description length must be less than 100 characters.',
+                            'Description length must be less than 300 characters.',
                         child: SvgPicture.asset(Assets.error, height: 20),
                       ),
                     ),

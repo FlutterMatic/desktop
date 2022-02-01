@@ -166,9 +166,13 @@ class _ChangeFlutterChannelDialogState
                   options: const <String>['Master', 'Stable', 'Beta', 'Dev'],
                 ),
                 VSeparators.small(),
-                informationWidget(
-                  'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
-                  type: InformationType.warning,
+                AnimatedOpacity(
+                  opacity: _initializing ? 0.1 : 1,
+                  duration: const Duration(milliseconds: 300),
+                  child: informationWidget(
+                    'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
+                    type: InformationType.warning,
+                  ),
                 ),
                 VSeparators.small(),
                 if (_switching)

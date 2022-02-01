@@ -56,52 +56,56 @@ class _SetProjectWorkflowActionsOrderState
             type: InformationType.green,
           ),
         VSeparators.normal(),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 350),
-          child: ReorderableListView.builder(
-            shrinkWrap: true,
-            itemCount: _workflowActions.length,
-            itemBuilder: (_, int i) {
-              return RoundContainer(
-                radius: 0,
-                width: double.infinity,
-                key: ValueKey<String>(_workflowActions[i].id),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      (i + 1).toString() + ' - ',
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    HSeparators.small(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(_workflowActions[i].name),
-                        VSeparators.xSmall(),
-                        Text(
-                          _workflowActions[i].description,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-            onReorder: (int oldIndex, int newIndex) {
-              // Reorder the list with the new index. Then after it will call on
-              // update to update.
-              setState(() {
-                if (newIndex > oldIndex) {
-                  newIndex -= 1;
-                }
-                WorkflowActionModel item = _workflowActions.removeAt(oldIndex);
-                _workflowActions.insert(newIndex, item);
-              });
+        ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 350),
+            child: ReorderableListView.builder(
+              shrinkWrap: true,
+              itemCount: _workflowActions.length,
+              itemBuilder: (_, int i) {
+                return RoundContainer(
+                  radius: 0,
+                  width: double.infinity,
+                  key: ValueKey<String>(_workflowActions[i].id),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        (i + 1).toString() + ' - ',
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      HSeparators.small(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(_workflowActions[i].name),
+                          VSeparators.xSmall(),
+                          Text(
+                            _workflowActions[i].description,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+              onReorder: (int oldIndex, int newIndex) {
+                // Reorder the list with the new index. Then after it will call on
+                // update to update.
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  WorkflowActionModel item =
+                      _workflowActions.removeAt(oldIndex);
+                  _workflowActions.insert(newIndex, item);
+                });
 
-              widget.onReorder(_workflowActions);
-            },
+                widget.onReorder(_workflowActions);
+              },
+            ),
           ),
         ),
         VSeparators.normal(),
@@ -117,7 +121,7 @@ class _SetProjectWorkflowActionsOrderState
                       width: 20,
                       height: 20,
                       radius: 50,
-                      color: Colors.blueGrey.withOpacity(0.5),
+                      color: Colors.blueGrey.withOpacity(0.2),
                       padding: EdgeInsets.zero,
                       child: Center(
                         child: Text(
@@ -125,7 +129,7 @@ class _SetProjectWorkflowActionsOrderState
                                 .length
                                 .toString(),
                             style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold)),
+                                fontSize: 11, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     HSeparators.small(),
@@ -135,32 +139,8 @@ class _SetProjectWorkflowActionsOrderState
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (_) => DialogTemplate(
-                      child: Column(
-                        children: <Widget>[
-                          const DialogHeader(title: 'Suggestions'),
-                          ..._suggestions(widget.workflowActions)
-                              .map(
-                                (String e) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: RoundContainer(
-                                    color: Colors.blueGrey.withOpacity(0.2),
-                                    width: double.infinity,
-                                    child: Text(e),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                          RectangleButton(
-                            width: double.infinity,
-                            child: const Text('OK'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    builder: (_) => _ShowSuggestionsDialog(
+                        workflowActions: _workflowActions),
                   );
                 },
               ),
@@ -189,7 +169,14 @@ class _SetProjectWorkflowActionsOrderState
                               Expanded(
                                 child: RectangleButton(
                                   child: const Text('View Suggestions'),
-                                  onPressed: () => Navigator.of(context).pop(),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => _ShowSuggestionsDialog(
+                                          workflowActions: _workflowActions),
+                                    );
+                                  },
                                 ),
                               ),
                               HSeparators.normal(),
@@ -216,6 +203,41 @@ class _SetProjectWorkflowActionsOrderState
           ],
         ),
       ],
+    );
+  }
+}
+
+class _ShowSuggestionsDialog extends StatelessWidget {
+  final List<WorkflowActionModel> workflowActions;
+  const _ShowSuggestionsDialog({
+    Key? key,
+    required this.workflowActions,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogTemplate(
+      child: Column(
+        children: <Widget>[
+          const DialogHeader(title: 'Suggestions'),
+          ..._suggestions(workflowActions)
+              .map(
+                (String e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: RoundContainer(
+                    width: double.infinity,
+                    child: Text(e),
+                  ),
+                ),
+              )
+              .toList(),
+          RectangleButton(
+            width: double.infinity,
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -339,9 +361,8 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
   // If we are testing code after performing macOS build.
   if (_containsBuildMacOS && _containsTestCode) {
-    int _buildMacOSIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.buildProjectForMacOS);
+    int _buildMacOSIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.buildProjectForMacOS);
 
     int _testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
@@ -355,9 +376,8 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
 
   // If we are testing code after performing Linux build.
   if (_containsBuildLinux && _containsTestCode) {
-    int _buildLinuxIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.buildProjectForLinux);
+    int _buildLinuxIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.buildProjectForLinux);
 
     int _testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
@@ -441,9 +461,8 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildMacOSIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.buildProjectForMacOS);
+    int _buildMacOSIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.buildProjectForMacOS);
 
     if (_analyzeCodeIndex > _buildMacOSIndex) {
       _suggestions.add(
@@ -458,9 +477,8 @@ List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildLinuxIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.buildProjectForLinux);
+    int _buildLinuxIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.buildProjectForLinux);
 
     if (_analyzeCodeIndex > _buildLinuxIndex) {
       _suggestions.add(

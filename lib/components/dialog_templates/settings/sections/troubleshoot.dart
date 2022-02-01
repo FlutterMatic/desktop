@@ -75,7 +75,6 @@ class _TroubleShootSettingsSectionState
                     ),
                   ),
                 RoundContainer(
-                  color: Colors.blueGrey.withOpacity(0.2),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -128,11 +127,8 @@ class _TroubleShootSettingsSectionState
                 VSeparators.small(),
                 Row(
                   children: <Widget>[
-                    Container(
-                      width: 2,
-                      height: 60,
-                      color: Colors.blueGrey.withOpacity(0.2),
-                    ),
+                    const RoundContainer(
+                        child: SizedBox.shrink(), width: 2, height: 60),
                     HSeparators.xSmall(),
                     Expanded(
                       child: Wrap(

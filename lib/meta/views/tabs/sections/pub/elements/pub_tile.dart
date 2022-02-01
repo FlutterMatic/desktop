@@ -231,7 +231,10 @@ class _PubPkgTileState extends State<PubPkgTile> {
                             ),
                             HSeparators.xSmall(),
                             Text(
-                              (widget.data?.metrics?.score.maxPoints ?? 0)
+                              NumberFormat.compact()
+                                      .format((widget.data?.metrics?.score
+                                              .popularityScore ??
+                                          0) * 100)
                                       .toString() +
                                   '%',
                               style: TextStyle(

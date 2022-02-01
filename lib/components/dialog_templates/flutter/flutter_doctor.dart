@@ -94,7 +94,6 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
             ),
             if (_done) ...<Widget>[
               RoundContainer(
-                color: Colors.blueGrey.withOpacity(0.2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: _status.map((String e) {

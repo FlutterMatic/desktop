@@ -242,16 +242,16 @@ class __WorkflowTileState extends State<_WorkflowTile> {
       onEnter: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
       child: RoundContainer(
-        color: Colors.blueGrey.withOpacity(0.2),
         padding: EdgeInsets.zero,
         child: Row(
           children: <Widget>[
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: Text(widget.template.name),
+                child: Text(widget.template.name, maxLines: 1),
               ),
             ),
+            HSeparators.normal(),
             if (!widget.template.isSaved)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -261,7 +261,6 @@ class __WorkflowTileState extends State<_WorkflowTile> {
                   child: SvgPicture.asset(Assets.warn, height: 20),
                 ),
               ),
-            HSeparators.normal(),
             if (_isHovering)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),

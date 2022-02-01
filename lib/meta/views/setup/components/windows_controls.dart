@@ -24,7 +24,6 @@ Widget windowControls(BuildContext context, {bool disabled = false}) {
             _control(
               context,
               icon: Icons.remove_rounded,
-              radius: const BorderRadius.only(bottomLeft: Radius.circular(10)),
               onPressed: () => appWindow.minimize(),
             ),
             _control(
@@ -49,7 +48,6 @@ Widget _control(
   BuildContext context, {
   required IconData icon,
   required VoidCallback onPressed,
-  BorderRadius radius = BorderRadius.zero,
   _HoverType hoverType = _HoverType.normal,
 }) {
   return SizedBox(
@@ -58,7 +56,6 @@ Widget _control(
       focusColor: Colors.transparent,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: radius),
       hoverColor: hoverType == _HoverType.normal
           ? Colors.blueGrey.withOpacity(0.2)
           : AppTheme.errorColor,

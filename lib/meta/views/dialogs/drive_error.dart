@@ -31,7 +31,6 @@ class SystemDriveErrorDialog extends StatelessWidget {
             ),
             VSeparators.normal(),
             RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

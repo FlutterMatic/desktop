@@ -106,7 +106,6 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
               child: MarkdownBody(
                 data: _data[index],
                 selectable: true,

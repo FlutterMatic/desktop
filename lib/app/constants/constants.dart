@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/components/widgets/ui/activity_tile.dart';
 import 'package:fluttermatic/core/models/flutter_sdk.model.dart';
 import 'package:fluttermatic/core/models/fluttermatic.model.dart';
 
@@ -39,8 +38,6 @@ String? tagName;
 
 /// SHA for vscode
 String? sha;
-
-List<BgActivityTile> bgActivityTiles = <BgActivityTile>[];
 
 // OS
 String platform = Platform.operatingSystem;

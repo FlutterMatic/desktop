@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -11,7 +12,7 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
@@ -59,7 +60,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
       children: <Widget>[
         RoundContainer(
           width: double.infinity,
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -106,10 +106,10 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
               type: InformationType.green,
             ),
           ),
-        VSeparators.normal(),
+        VSeparators.small(),
         infoWidget(context,
             'You can select more than one workflow to run. We will try to show you analysis and details about the result of these workflows when you run them. You will be able to change the order of this workflow in the upcoming steps.'),
-        VSeparators.normal(),
+        VSeparators.small(),
         DragTarget<WorkflowActionModel>(
           builder: (_, List<WorkflowActionModel?> candidateItems,
               List<dynamic> rejectedItems) {
@@ -121,7 +121,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
               );
             } else if (_addedWorkflows.isEmpty) {
               return RoundContainer(
-                color: Colors.blueGrey.withOpacity(0.2),
                 borderColor: kGreenColor.withOpacity(0.8),
                 child: Row(
                   children: <Widget>[
@@ -137,7 +136,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
             } else {
               return RoundContainer(
                 width: double.infinity,
-                color: Colors.blueGrey.withOpacity(0.2),
                 child: Wrap(
                   spacing: 10,
                   runSpacing: 10,
@@ -149,6 +147,10 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                   ].map(
                     (WorkflowActionModel? e) {
                       return RoundContainer(
+                        color: Colors.blueGrey.withOpacity(
+                            context.read<ThemeChangeNotifier>().isDarkTheme
+                                ? 0.2
+                                : 0.1),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -158,23 +160,9 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                               tooltip: 'Remove',
                               icon: const Icon(Icons.close, size: 10),
                               size: 20,
-                              color: Colors.blueGrey.withOpacity(0.2),
                               onPressed: () {
                                 setState(() => _addedWorkflows.remove(e));
                                 widget.onActionsUpdate(_addedWorkflows);
-                                ScaffoldMessenger.of(context).clearSnackBars();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  snackBarTile(
-                                    context,
-                                    '${e?.name ?? '"UNKNOWN"'} workflow action has been removed.',
-                                    type: SnackBarType.warning,
-                                    action: snackBarAction(
-                                      text: 'Undo',
-                                      onPressed: () => setState(
-                                          () => _addedWorkflows.add(e!)),
-                                    ),
-                                  ),
-                                );
                               },
                             ),
                           ],
@@ -195,15 +183,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
           onAccept: (WorkflowActionModel val) {
             setState(() => _addedWorkflows.add(val));
             widget.onActionsUpdate(_addedWorkflows);
-
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              snackBarTile(
-                context,
-                '${val.name} workflow action has been added.',
-                type: SnackBarType.done,
-              ),
-            );
           },
         ),
         if (_addedWorkflows.length != workflowActionModels.length)
@@ -246,19 +225,14 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                     onTap: () {
                       setState(() => _addedWorkflows.add(e));
                       widget.onActionsUpdate(_addedWorkflows);
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        snackBarTile(
-                          context,
-                          '${e.name} workflow action has been added.',
-                          type: SnackBarType.done,
-                        ),
-                      );
                     },
                     child: RoundContainer(
                       borderColor: _addedWorkflows.contains(e)
                           ? kGreenColor
-                          : AppTheme.darkBackgroundColor,
+                          : Colors.blueGrey.withOpacity(
+                              context.read<ThemeChangeNotifier>().isDarkTheme
+                                  ? 0.2
+                                  : 0.1),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -276,7 +250,6 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                       borderColor: _addedWorkflows.contains(e)
                           ? AppTheme.errorColor
                           : Colors.transparent,
-                      color: Colors.blueGrey,
                       child: Text(e.name),
                     ),
                   ),

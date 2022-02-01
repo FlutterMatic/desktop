@@ -52,7 +52,6 @@ class _DeployWebWorkflowActionStateConfig
         if (widget.isValidated)
           RoundContainer(
             width: double.infinity,
-            color: Colors.blueGrey.withOpacity(0.2),
             child: Column(
               children: <Widget>[
                 SvgPicture.asset(Assets.done, height: 20),
@@ -336,7 +335,6 @@ class __VerifyColumnBarState extends State<_VerifyColumnBar> {
   @override
   Widget build(BuildContext context) {
     return RoundContainer(
-      color: Colors.blueGrey.withOpacity(0.2),
       child: Row(
         children: <Widget>[
           SvgPicture.asset(Assets.done, height: 20),
@@ -357,21 +355,18 @@ class __VerifyColumnBarState extends State<_VerifyColumnBar> {
             duration: const Duration(milliseconds: 100),
             child: _isVerified
                 ? SquareButton(
-                    color: Colors.blueGrey.withOpacity(0.2),
                     icon: const Icon(Icons.edit_rounded, color: kYellowColor),
                     onPressed: widget.onEdit,
                   )
                 : Row(
                     children: <Widget>[
                       SquareButton(
-                        color: Colors.blueGrey.withOpacity(0.2),
                         icon: const Icon(Icons.close_rounded,
                             color: AppTheme.errorColor),
                         onPressed: widget.onEdit,
                       ),
                       HSeparators.small(),
                       SquareButton(
-                        color: Colors.blueGrey.withOpacity(0.2),
                         icon:
                             const Icon(Icons.check_rounded, color: kGreenColor),
                         onPressed: () async {

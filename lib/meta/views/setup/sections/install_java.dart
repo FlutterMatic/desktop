@@ -116,7 +116,6 @@ Widget installJava(
                                           : Colors.black),
                                 ),
                                 hoverColor: AppTheme.errorColor,
-                                color: Colors.blueGrey.withOpacity(0.2),
                                 onPressed: () {
                                   Navigator.pop(context);
                                   onSkip();
@@ -135,7 +134,6 @@ Widget installJava(
                                           ? Colors.white
                                           : Colors.black),
                                 ),
-                                color: Colors.blueGrey.withOpacity(0.2),
                                 onPressed: () => Navigator.pop(context),
                               ),
                             ),

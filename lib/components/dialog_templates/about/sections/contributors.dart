@@ -26,6 +26,11 @@ class ContributorsAboutSection extends StatefulWidget {
 }
 
 class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
+  static const List<_ContributorTile> _contributors = <_ContributorTile>[
+    _ContributorTile('56755783'), // Ziyad
+    _ContributorTile('35523357'), // Minnu
+  ];
+
   @override
   Widget build(BuildContext context) {
     return TabViewTabHeadline(
@@ -33,7 +38,6 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
       content: <Widget>[
         RoundContainer(
           width: double.infinity,
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -51,7 +55,6 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
               ),
               HSeparators.small(),
               RectangleButton(
-                color: Colors.blueGrey.withOpacity(0.4),
                 width: 90,
                 onPressed: () =>
                     launch('https://github.com/FlutterMatic/desktop'),
@@ -63,7 +66,6 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
         VSeparators.xSmall(),
         if (_failedRequest)
           RoundContainer(
-            color: Colors.blueGrey.withOpacity(0.2),
             width: double.infinity,
             child: Column(
               children: <Widget>[
@@ -84,28 +86,24 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
             ),
           )
         else
-          Column(
-            children: const <Widget>[
-              ContributorTile('56755783'), // Ziyad
-              ContributorTile('35523357'), // Minnu
-            ],
-          ),
+          Column(children: _contributors),
       ],
     );
   }
 }
 
-// Just trying to get the data from the github api.
-class ContributorTile extends StatefulWidget {
+// Will get the contributor user information from the GitHub api and return
+// a widget that displays the information.
+class _ContributorTile extends StatefulWidget {
   final String gitHubId;
 
-  const ContributorTile(this.gitHubId, {Key? key}) : super(key: key);
+  const _ContributorTile(this.gitHubId, {Key? key}) : super(key: key);
 
   @override
   _ContributorTileState createState() => _ContributorTileState();
 }
 
-class _ContributorTileState extends State<ContributorTile> {
+class _ContributorTileState extends State<_ContributorTile> {
   // Utils
   bool _loading = true;
   bool _failed = false;
@@ -125,6 +123,7 @@ class _ContributorTileState extends State<ContributorTile> {
       Uri.parse('https://api.github.com/user/${widget.gitHubId}'),
       headers: _header,
     );
+
     if (_result.statusCode == 200 && mounted) {
       dynamic _responseJSON = json.decode(_result.body);
       setState(() {
@@ -159,12 +158,15 @@ class _ContributorTileState extends State<ContributorTile> {
         child: RectangleButton(
           height: 65,
           width: double.infinity,
-          color: Colors.blueGrey.withOpacity(0.2),
+          color: Colors.blueGrey.withOpacity(0.1),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           onPressed: () => launch('https://www.github.com/$_userId'),
-          child: _loading
-              ? const Spinner(size: 15, thickness: 2)
-              : Row(
+          child: Builder(
+            builder: (_) {
+              if (_loading) {
+                return const Spinner(size: 15, thickness: 2);
+              } else {
+                return Row(
                   children: <Widget>[
                     CircleAvatar(
                       backgroundImage: NetworkImage(_profileURL, scale: 5),
@@ -183,13 +185,12 @@ class _ContributorTileState extends State<ContributorTile> {
                         ],
                       ),
                     ),
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Colors.blueGrey.withOpacity(0.4),
-                      size: 18,
-                    ),
+                    const Icon(Icons.arrow_forward_ios_rounded, size: 18),
                   ],
-                ),
+                );
+              }
+            },
+          ),
         ),
       );
     }

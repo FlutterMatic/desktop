@@ -131,6 +131,7 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
                         : Colors.transparent,
                     padding: EdgeInsets.zero,
                     child: RectangleButton(
+                      color: Colors.transparent,
                       height: 100,
                       onPressed: () => setState(() => _selectedEditor = 'code'),
                       child: Center(
@@ -160,6 +161,7 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
                         : Colors.transparent,
                     padding: EdgeInsets.zero,
                     child: RectangleButton(
+                      color: Colors.transparent,
                       height: 100,
                       onPressed: () =>
                           setState(() => _selectedEditor = 'studio64'),
@@ -185,7 +187,6 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
             ),
             VSeparators.normal(),
             RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
               child: CheckBoxElement(
                 onChanged: (bool? val) async {
                   val = !(val ?? false);

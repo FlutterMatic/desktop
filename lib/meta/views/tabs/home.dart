@@ -53,12 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
   // Tabs
   late HomeTabObject _selectedTab;
 
-  late final List<HomeTabObject> _tabs = const <HomeTabObject>[
+  static const List<HomeTabObject> _tabs = <HomeTabObject>[
     HomeTabObject('Home', Assets.home, HomeMainSection()),
     HomeTabObject('Projects', Assets.project, HomeProjectsSection()),
     HomeTabObject('Pub Packages', Assets.package, HomePubSection()),
-    HomeTabObject(
-        'Workflows', Assets.workflow, HomeWorkflowSections(), 'Alpha'),
+    HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections(), 'Beta'),
   ];
 
   Future<void> _checkUpdates() async {
@@ -80,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
           continue;
         }
 
-        await Isolate.spawn(checkNewFlutterMaticVersion, <dynamic>[
+        Isolate _i = await Isolate.spawn(checkNewFlutterMaticVersion, <dynamic>[
           _checkUpdatesPort.sendPort,
           (await getApplicationSupportDirectory()).path,
           Platform.operatingSystem.toLowerCase()
@@ -88,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         _checkUpdatesPort.asBroadcastStream().listen((dynamic message) {
           if (mounted) {
+            _i.kill();
             setState(() {
               _updateAvailable = message[0];
               _updateDownloadUrl = message[1];
@@ -110,12 +110,15 @@ class _HomeScreenState extends State<HomeScreen> {
       // old to avoid clogging up the FlutterMatic app data space.
       await Future<void>.delayed(const Duration(seconds: 5));
 
-      await Isolate.spawn(clearOldLogs, <dynamic>[
+      Isolate _i = await Isolate.spawn(clearOldLogs, <dynamic>[
         _clearLogsPort.sendPort,
         (await getApplicationSupportDirectory()).path
       ]);
 
-      _clearLogsPort.asBroadcastStream().listen((_) => _clearLogsPort.close());
+      _clearLogsPort.asBroadcastStream().listen((_) {
+        _i.kill();
+        _clearLogsPort.close();
+      });
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t clear logs: $_',
           stackTraces: s);

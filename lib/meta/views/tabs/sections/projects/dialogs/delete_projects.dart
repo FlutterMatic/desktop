@@ -69,7 +69,6 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
                     'This project is NOT a git repository. Please be aware that after you delete this project, you will not be able to recover it.'),
               VSeparators.normal(),
               RoundContainer(
-                color: Colors.blueGrey.withOpacity(0.2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

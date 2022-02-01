@@ -222,7 +222,7 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
                 ),
               ],
             )
-          ] else
+          ] else ...<Widget>[
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 400),
               child: ListView.builder(
@@ -252,6 +252,13 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
                 },
               ),
             ),
+            VSeparators.normal(),
+            RectangleButton(
+              width: double.infinity,
+              child: const Text('Close'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
         ],
       ),
     );
@@ -289,7 +296,6 @@ class __LogTileState extends State<_LogTile> {
       onEnter: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
       child: RoundContainer(
-        color: Colors.blueGrey.withOpacity(0.2),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -320,14 +326,14 @@ class __LogTileState extends State<_LogTile> {
                 size: 30,
                 tooltip: 'Delete',
                 icon: const Icon(Icons.delete_forever,
-                    color: kRedColor, size: 20),
+                    color: kRedColor, size: 18),
                 onPressed: widget.onDelete,
               ),
               HSeparators.small(),
               SquareButton(
                 size: 30,
                 tooltip: 'Open Log',
-                icon: const Icon(Icons.preview_rounded, size: 20),
+                icon: const Icon(Icons.preview_rounded, size: 18),
                 onPressed: () {
                   showDialog(
                     context: context,

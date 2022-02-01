@@ -66,7 +66,6 @@ class DiscoverSettingsSection extends StatelessWidget {
         VSeparators.small(),
         RoundContainer(
           width: double.infinity,
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               const Expanded(

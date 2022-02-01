@@ -1,6 +1,13 @@
+// 🎯 Dart imports:
 import 'dart:io';
 
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
+import 'package:path_provider/path_provider.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -14,7 +21,6 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ClearCacheDialog extends StatefulWidget {
   const ClearCacheDialog({Key? key}) : super(key: key);

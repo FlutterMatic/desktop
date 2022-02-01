@@ -7,7 +7,6 @@ import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/project/select.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
-import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
@@ -98,6 +97,7 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
               RoundContainer(
                 padding: const EdgeInsets.all(20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       children: <Widget>[
@@ -166,7 +166,7 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                         },
                       );
                     }).toList(),
-                    infoWidget(context,
+                    const Text(
                         'As we are preparing for more upcoming features, we will be adding more guides here.'),
                   ],
                 ),
@@ -287,10 +287,15 @@ class __GuideItemState extends State<_GuideItem> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: MouseRegion(
-        onHover: (_) => setState(() => _isHovering = true),
+        onHover: (_) {
+          if (!widget.isDone) {
+            setState(() => _isHovering = true);
+          }
+        },
         onExit: (_) => setState(() => _isHovering = false),
         child: InkWell(
-          onTap: () => widget.onPressed(widget.context),
+          hoverColor: Colors.transparent,
+          onTap: widget.isDone ? null : () => widget.onPressed(widget.context),
           child: Row(
             children: <Widget>[
               Container(

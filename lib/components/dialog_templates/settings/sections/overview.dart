@@ -31,7 +31,6 @@ class _OverviewSettingsSectionState extends State<OverviewSettingsSection> {
       allowContentScroll: false,
       content: <Widget>[
         RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
           child: CheckBoxElement(
             onChanged: (bool? value) async {
               await SharedPref()

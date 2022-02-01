@@ -25,7 +25,6 @@ import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/setup/components/windows_controls.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 import 'meta/views/setup/screens/setup_view.dart';
 
 Future<void> main() async {
@@ -104,8 +103,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       // Keeps on monitoring the network connection and updates any listener
       // when the connection changes.
       await ConnectionNotifier().initConnectivity();
-
-      // if (kDebugMode) await SharedPref().pref.clear();
 
       await SharedPref()
           .pref
@@ -192,17 +189,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       }
 
       setState(() => _isChecking = false);
-
-      // Get the package every hour to avoid loading it and waiting when the
-      // user goes to the packages tab in home.
-      while (mounted) {
-        await PkgViewData.getInitialPackages();
-
-        await logger.file(LogTypeTag.info,
-            'Background fetched the pub list for performance improvements.');
-
-        await Future<void>.delayed(const Duration(hours: 1));
-      }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to initialize data fetch. $_',
           stackTraces: s);

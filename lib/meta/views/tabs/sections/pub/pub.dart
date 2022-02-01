@@ -1,14 +1,20 @@
+// 🎯 Dart imports:
+import 'dart:isolate';
+
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/elements/pub_tile.dart';
@@ -22,10 +28,16 @@ class HomePubSection extends StatefulWidget {
 }
 
 class _HomePubSectionState extends State<HomePubSection> {
-  final List<PkgViewData> _pubPackages = <PkgViewData>[];
-
+  // Utils
   bool _errorPage = false;
   bool _loadingPackages = true;
+  bool _loadPubCalled = false;
+  bool _reloadingFromCache = false;
+
+  // Data
+  final List<PkgViewData> _pubPackages = <PkgViewData>[];
+  final ReceivePort _loadPubPackagesPort =
+      ReceivePort('GET_PUB_PACKAGES_ISOLATE_PORT');
 
   // Will get the JSON from this URL: https://pub.dev/api/package-name-completion-data
   // This JSON will contain the list of all pub packages that are available.
@@ -58,36 +70,75 @@ class _HomePubSectionState extends State<HomePubSection> {
       }
     });
 
-    GetPkgResponseModel _result = await PkgViewData.getInitialPackages();
+    // We want to get the pub cache first to show in the meantime as we are
+    // making a request to the pub API to fetch the latest data.
+    Isolate _i = await Isolate.spawn(
+      PkgViewData.getPackagesIsolate,
+      <dynamic>[
+        _loadPubPackagesPort.sendPort,
+        (await getApplicationSupportDirectory()).path,
+      ],
+    ).timeout(const Duration(minutes: 2)).onError((_, StackTrace s) async {
+      await logger.file(LogTypeTag.error, 'Failed to get packages: $_',
+          stackTraces: s);
 
-    if (mounted) {
-      switch (_result.response) {
-        case GetPkgResponse.done:
-          setState(() => _pubPackages.addAll(_result.packages));
-          break;
-        case GetPkgResponse.error:
-          setState(() {
-            _errorPage = true;
-            _pubPackages.clear();
-          });
-          break;
-        case GetPkgResponse.network:
-          setState(() {
-            _errorPage = false;
-            _pubPackages.clear();
-          });
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(
-              context,
-              'There appears to be a problem with the network. Please check your connection try again.',
-              type: SnackBarType.error,
-            ),
-          );
-          break;
-      }
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(context, 'Couldn\'t get the pub packages.',
+            type: SnackBarType.error),
+      );
 
-      setState(() => _loadingPackages = false);
+      return Isolate.current;
+    });
+
+    if (!_loadPubCalled) {
+      _loadPubPackagesPort.listen((dynamic message) {
+        if (mounted) {
+          setState(() => _loadPubCalled = true);
+          if (message is List && mounted) {
+            setState(() {
+              _loadingPackages = false;
+              switch ((message.first as GetPkgResponseModel).response) {
+                case GetPkgResponse.done:
+                  _pubPackages.clear();
+                  _pubPackages
+                      .addAll((message.first as GetPkgResponseModel).packages);
+                  break;
+                case GetPkgResponse.error:
+                  setState(() {
+                    _errorPage = true;
+                    _pubPackages.clear();
+                  });
+                  break;
+                case GetPkgResponse.pending:
+                  _pubPackages.clear();
+                  _pubPackages
+                      .addAll((message.first as GetPkgResponseModel).packages);
+                  _reloadingFromCache = true;
+                  break;
+                case GetPkgResponse.network:
+                  _errorPage = false;
+                  _pubPackages.clear();
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    snackBarTile(
+                      context,
+                      'There appears to be a problem with the network. Please check your connection try again.',
+                      type: SnackBarType.error,
+                    ),
+                  );
+                  break;
+              }
+              _reloadingFromCache = message[2] == true;
+            });
+
+            // No more expected responses, we will kill the isolate.
+            if (message[1] == true) {
+              _i.kill();
+            }
+          }
+        }
+      });
     }
   }
 
@@ -104,92 +155,112 @@ class _HomePubSectionState extends State<HomePubSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: <Widget>[
-        if (_errorPage)
-          Expanded(
-            child: Center(
-              child: SizedBox(
-                width: 300,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SvgPicture.asset(Assets.error),
-                    VSeparators.normal(),
-                    const Text(
-                      'Something went wrong. Maybe check your internet connection and try again.',
-                      textAlign: TextAlign.center,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (_errorPage)
+              Expanded(
+                child: Center(
+                  child: SizedBox(
+                    width: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SvgPicture.asset(Assets.error),
+                        VSeparators.normal(),
+                        const Text(
+                          'Something went wrong. Maybe check your internet connection and try again.',
+                          textAlign: TextAlign.center,
+                        ),
+                        VSeparators.large(),
+                        RectangleButton(
+                          child: const Text('Retry'),
+                          onPressed: _getInitialPackages,
+                        ),
+                      ],
                     ),
-                    VSeparators.large(),
-                    RectangleButton(
-                      child: const Text('Retry'),
-                      onPressed: _getInitialPackages,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          )
-        else if (_loadingPackages)
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: HorizontalAxisView(
-                  title: 'Favorites & Popular Packages',
-                  isVertical: true,
-                  // Creates a empty list of packages that will be filled later.
-                  content: <int>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                      .map((int e) => const PubPkgTile(data: null))
-                      .toList(),
-                ),
-              ),
-            ),
-          )
-        else
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    HorizontalAxisView(
+              )
+            else if (_loadingPackages)
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: HorizontalAxisView(
                       title: 'Favorites & Popular Packages',
                       isVertical: true,
-                      content: _pubPackages
-                          .map((PkgViewData e) => PubPkgTile(data: e))
+                      // Creates a empty list of packages that will be filled later.
+                      content: <int>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                          .map((int e) => const PubPkgTile(data: null))
                           .toList(),
                     ),
-                    VSeparators.large(),
-                    RoundContainer(
-                      borderWith: 2,
-                      padding: const EdgeInsets.all(20),
-                      borderColor: Colors.blueGrey.withOpacity(0.2),
-                      width: double.infinity,
-                      child: Row(
-                        children: <Widget>[
-                          SvgPicture.asset(
-                            Assets.package,
-                            height: 25,
-                            color: Theme.of(context).isDarkTheme
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                          HSeparators.small(),
-                          const Expanded(
-                            child: Text(
-                              'Try searching for the package that you are looking for.',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    VSeparators.large(),
-                  ],
+                  ),
                 ),
+              )
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        HorizontalAxisView(
+                          title: 'Favorites & Popular Packages',
+                          isVertical: true,
+                          content: _pubPackages
+                              .map((PkgViewData e) => PubPkgTile(data: e))
+                              .toList(),
+                        ),
+                        VSeparators.large(),
+                        RoundContainer(
+                          borderWith: 2,
+                          padding: const EdgeInsets.all(20),
+                          borderColor: Colors.blueGrey.withOpacity(0.2),
+                          width: double.infinity,
+                          child: Row(
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                Assets.package,
+                                height: 25,
+                                color: Theme.of(context).isDarkTheme
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              HSeparators.small(),
+                              const Expanded(
+                                child: Text(
+                                  'Try searching for the package that you are looking for.',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        VSeparators.large(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        if (_reloadingFromCache)
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Tooltip(
+              message: 'Searching for new pub packages...',
+              child: RoundContainer(
+                borderWith: 2,
+                borderColor: Colors.blueGrey.withOpacity(0.5),
+                child: const Spinner(thickness: 2),
+                height: 40,
+                width: 40,
+                radius: 60,
               ),
             ),
           ),

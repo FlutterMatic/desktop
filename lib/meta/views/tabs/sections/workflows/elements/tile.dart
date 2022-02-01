@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
@@ -85,11 +86,13 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                     ],
                   ),
                   VSeparators.normal(),
-                  Text(
-                    widget.workflow.description,
-                    style: const TextStyle(color: Colors.grey),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
+                  Expanded(
+                    child: Text(
+                      widget.workflow.description,
+                      style: const TextStyle(color: Colors.grey),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                    ),
                   ),
                   VSeparators.normal(),
                   Row(
@@ -107,59 +110,134 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                     ],
                   ),
                   VSeparators.normal(),
+                  if (widget.workflow.workflowActions.length == 1)
+                    Row(
+                      children: <Widget>[
+                        const RoundContainer(
+                          height: 10,
+                          width: 10,
+                          radius: 10,
+                          padding: EdgeInsets.zero,
+                          color: kGreenColor,
+                          child: SizedBox.shrink(),
+                        ),
+                        HSeparators.small(),
+                        Text(
+                          workflowActionModels
+                              .firstWhere((WorkflowActionModel element) {
+                            return element.id ==
+                                widget.workflow.workflowActions.first;
+                          }).name,
+                          style: const TextStyle(color: Colors.grey),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
+                    )
+                  // Will show the first and last action if there are more
+                  // than one
+                  else
+                    Row(
+                      children: <Widget>[
+                        const RoundContainer(
+                          height: 10,
+                          width: 10,
+                          radius: 10,
+                          padding: EdgeInsets.zero,
+                          color: kGreenColor,
+                          child: SizedBox.shrink(),
+                        ),
+                        HSeparators.small(),
+                        Text(
+                          workflowActionModels
+                              .firstWhere((WorkflowActionModel element) {
+                            return element.id ==
+                                widget.workflow.workflowActions.first;
+                          }).name,
+                          style: const TextStyle(color: Colors.grey),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        HSeparators.xSmall(),
+                        if (widget.workflow.workflowActions.length == 2)
+                          const Text('...',
+                              style: TextStyle(color: Colors.grey))
+                        else
+                          const RoundContainer(
+                            height: 2,
+                            width: 10,
+                            color: kGreenColor,
+                            child: SizedBox.shrink(),
+                          ),
+                        HSeparators.xSmall(),
+                        Text(
+                          workflowActionModels
+                              .firstWhere((WorkflowActionModel element) {
+                            return element.id ==
+                                widget.workflow.workflowActions.last;
+                          }).name,
+                          style: const TextStyle(color: Colors.grey),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
-            HSeparators.normal(),
-            Row(
-              children: <Widget>[
-                if (!widget.workflow.isSaved && _isHovering)
-                  Tooltip(
-                    message: 'This workflow has not completed setup yet',
-                    child: SvgPicture.asset(Assets.warn, height: 20),
-                  ),
-                const Spacer(),
-                RectangleButton(
-                  width: 40,
-                  height: 40,
-                  child: const Icon(Icons.edit_rounded, size: 20),
-                  onPressed: () async {
-                    Map<String, dynamic> _workflow =
-                        jsonDecode(await File(widget.path).readAsString());
-
-                    await showDialog(
-                      context: context,
-                      builder: (_) => StartUpWorkflow(
-                        pubspecPath: (widget.path.split('\\')
-                                  ..removeLast()
-                                  ..removeLast())
-                                .join('\\') +
-                            '\\pubspec.yaml',
-                        editWorkflowTemplate:
-                            WorkflowTemplate.fromJson(_workflow),
+            if (_isHovering || !widget.workflow.isSaved)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: <Widget>[
+                    if (!widget.workflow.isSaved)
+                      Tooltip(
+                        message: 'This workflow has not completed setup yet',
+                        child: SvgPicture.asset(Assets.warn, height: 20),
                       ),
-                    );
-                  },
-                ),
-                if (widget.workflow.isSaved)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: RectangleButton(
+                    const Spacer(),
+                    RectangleButton(
                       width: 40,
                       height: 40,
-                      child: const Icon(Icons.play_arrow_rounded,
-                          color: kGreenColor, size: 22),
-                      onPressed: () {
-                        showDialog(
+                      child: const Icon(Icons.edit_rounded, size: 20),
+                      onPressed: () async {
+                        Map<String, dynamic> _workflow =
+                            jsonDecode(await File(widget.path).readAsString());
+
+                        await showDialog(
                           context: context,
-                          builder: (_) =>
-                              WorkflowRunnerDialog(workflowPath: widget.path),
+                          builder: (_) => StartUpWorkflow(
+                            pubspecPath: (widget.path.split('\\')
+                                      ..removeLast()
+                                      ..removeLast())
+                                    .join('\\') +
+                                '\\pubspec.yaml',
+                            editWorkflowTemplate:
+                                WorkflowTemplate.fromJson(_workflow),
+                          ),
                         );
                       },
                     ),
-                  ),
-              ],
-            )
+                    if (widget.workflow.isSaved)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: RectangleButton(
+                          width: 40,
+                          height: 40,
+                          child: const Icon(Icons.play_arrow_rounded,
+                              color: kGreenColor, size: 22),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => WorkflowRunnerDialog(
+                                  workflowPath: widget.path),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              )
           ],
         ),
       ),

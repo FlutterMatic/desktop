@@ -1,4 +1,5 @@
 // 🎯 Dart imports:
+import 'dart:io';
 import 'dart:isolate';
 
 // 🐦 Flutter imports:
@@ -18,9 +19,9 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
-import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/project_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
@@ -38,7 +39,9 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   bool _loadProjectsCalled = false;
 
   // Data
-  final List<ProjectObject> _projects = <ProjectObject>[];
+  final List<ProjectObject> _dartProjects = <ProjectObject>[];
+  final List<ProjectObject> _pinnedProjects = <ProjectObject>[];
+  final List<ProjectObject> _flutterProjects = <ProjectObject>[];
   final ReceivePort _loadProjectsPort =
       ReceivePort('FIND_PROJECTS_ISOLATE_PORT');
 
@@ -59,7 +62,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           supportDir: (await getApplicationSupportDirectory()).path,
         );
 
-        Isolate _isolate = await Isolate.spawn(
+        Isolate _i = await Isolate.spawn(
           ProjectServicesModel.getProjectsIsolate,
           <dynamic>[
             _loadProjectsPort.sendPort,
@@ -85,16 +88,52 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
             if (message is List) {
               setState(() {
                 _projectsLoading = false;
-                _projects.clear();
-                _projects.addAll(message.first);
-                if (message[2] == true) {
-                  _reloadingFromCache = true;
-                } else {
-                  _reloadingFromCache = false;
+
+                // Clear the existing list of projects before adding the newly
+                // loaded ones.
+                _pinnedProjects.clear();
+                _flutterProjects.clear();
+                _dartProjects.clear();
+
+                // Adds the pinned projects
+                _pinnedProjects.addAll(
+                    (message.first as ProjectIsolateFetchResult)
+                        .pinnedProjects);
+
+                // Will sort the Dart and Flutter projects.
+                List<ProjectObject> _dart = <ProjectObject>[];
+                List<ProjectObject> _flutter = <ProjectObject>[];
+
+                // Sort
+                for (ProjectObject project
+                    in (message.first as ProjectIsolateFetchResult).projects) {
+                  try {
+                    PubspecInfo _pubspec = extractPubspec(
+                        lines: File(project.path + '\\pubspec.yaml')
+                            .readAsLinesSync(),
+                        path: project.path + '\\pubspec.yaml');
+
+                    if (_pubspec.isFlutterProject) {
+                      _flutter.add(project);
+                    } else {
+                      _dart.add(project);
+                    }
+                  } catch (_, s) {
+                    logger.file(LogTypeTag.warning,
+                        'Failed to sort in project tabs projects: $_',
+                        stackTraces: s);
+                  }
                 }
+
+                // Add
+                _dartProjects.addAll(_dart);
+                _flutterProjects.addAll(_flutter);
+
+                _reloadingFromCache = message[2] == true;
               });
+
               if (message[1] == true) {
-                _isolate.kill();
+                _i.kill();
               }
             }
           });
@@ -131,16 +170,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
       width: 40,
       height: 40,
       child: const Icon(Icons.refresh_rounded, size: 20),
-      onPressed: () {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder<Widget>(
-            pageBuilder: (_, __, ___) =>
-                const HomeScreen(tab: HomeTab.projects),
-            transitionDuration: Duration.zero,
-          ),
-        );
-      },
+      onPressed: () => _loadProjects(true),
     );
   }
 
@@ -160,6 +190,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: <Widget>[
         if (!SharedPref().pref.containsKey(SPConst.projectsPath))
           Center(
@@ -191,14 +222,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                               goToPage: SettingsPage.projects,
                             ),
                           );
-                          await Navigator.pushReplacement(
-                            context,
-                            PageRouteBuilder<Route<dynamic>>(
-                              pageBuilder: (_, __, ___) =>
-                                  const HomeScreen(tab: HomeTab.projects),
-                              transitionDuration: Duration.zero,
-                            ),
-                          );
+                          await _loadProjects(true);
                         },
                       ),
                       HSeparators.small(),
@@ -211,7 +235,9 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           )
         else if (_projectsLoading)
           const Center(child: Spinner(thickness: 2))
-        else if (_projects.isEmpty)
+        else if (_pinnedProjects.isEmpty &&
+            _flutterProjects.isEmpty &&
+            _dartProjects.isEmpty)
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -219,7 +245,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                 const Icon(Icons.info_outline_rounded, size: 40),
                 VSeparators.large(),
                 const Text(
-                  'No projects found. Please check the path you have added.',
+                  'No projects found. Please check the path you\nhave added.',
                   textAlign: TextAlign.center,
                 ),
                 VSeparators.large(),
@@ -237,14 +263,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                             goToPage: SettingsPage.projects,
                           ),
                         );
-                        await Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder<Route<dynamic>>(
-                            pageBuilder: (_, __, ___) =>
-                                const HomeScreen(tab: HomeTab.projects),
-                            transitionDuration: Duration.zero,
-                          ),
-                        );
+                        await _loadProjects(true);
                       },
                     ),
                     HSeparators.small(),
@@ -258,25 +277,157 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(15),
-              child: HorizontalAxisView(
-                title: 'Projects',
-                isVertical: true,
-                action: SquareButton(
-                  size: 20,
-                  tooltip: 'Reload',
-                  color: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  icon: const Icon(Icons.refresh_rounded, size: 15),
-                  onPressed: () => _loadProjects(true),
-                ),
-                content: _projects.map((ProjectObject e) {
-                  return ProjectInfoTile(
-                    name: e.name,
-                    description: e.description,
-                    modDate: e.modDate,
-                    path: e.path,
-                  );
-                }).toList(),
+              child: Column(
+                children: <Widget>[
+                  if (_pinnedProjects.isNotEmpty)
+                    HorizontalAxisView(
+                      title: 'Pinned Projects',
+                      isVertical: true,
+                      canCollapse: true,
+                      isCollapsedInitially: SharedPref()
+                              .pref
+                              .getBool(SPConst.pinnedProjectsCollapsed) ??
+                          false,
+                      onCollapse: (bool isCollapsed) {
+                        SharedPref().pref.setBool(
+                            SPConst.pinnedProjectsCollapsed, isCollapsed);
+                      },
+                      action: SquareButton(
+                        size: 20,
+                        tooltip: 'Reload',
+                        color: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        icon: const Icon(Icons.refresh_rounded, size: 15),
+                        onPressed: () => _loadProjects(true),
+                      ),
+                      content: _pinnedProjects.map((ProjectObject e) {
+                        return ProjectInfoTile(
+                          project: e,
+                          onPinChanged: () {
+                            // Get the information about this project whether
+                            // it is Flutter or Dart so we can add it to the
+                            // correct list.
+                            PubspecInfo _pubspec = extractPubspec(
+                                lines: File(e.path + '\\pubspec.yaml')
+                                    .readAsLinesSync(),
+                                path: e.path + '\\pubspec.yaml');
+
+                            // Remove it from the pinned list and add it to
+                            // the Flutter list.
+                            ProjectObject _project = ProjectObject(
+                              name: e.name,
+                              modDate: e.modDate,
+                              path: e.path,
+                              description: e.description,
+                              pinned: false,
+                            );
+
+                            setState(() {
+                              _pinnedProjects.remove(e);
+
+                              if (_pubspec.isFlutterProject) {
+                                _flutterProjects.add(_project);
+                              } else {
+                                _dartProjects.add(_project);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  if (_flutterProjects.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: HorizontalAxisView(
+                        title: 'Flutter Projects',
+                        isVertical: true,
+                        canCollapse: true,
+                        isCollapsedInitially: SharedPref()
+                                .pref
+                                .getBool(SPConst.flutterProjectsCollapsed) ??
+                            false,
+                        onCollapse: (bool isCollapsed) {
+                          SharedPref().pref.setBool(
+                              SPConst.flutterProjectsCollapsed, isCollapsed);
+                        },
+                        action: SquareButton(
+                          size: 20,
+                          tooltip: 'Reload',
+                          color: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          onPressed: () => _loadProjects(true),
+                        ),
+                        content: _flutterProjects.map((ProjectObject e) {
+                          return ProjectInfoTile(
+                            project: e,
+                            onPinChanged: () {
+                              // Remove it from the flutter projects list and
+                              // add it to the pinned list.
+                              ProjectObject _project = ProjectObject(
+                                name: e.name,
+                                modDate: e.modDate,
+                                path: e.path,
+                                description: e.description,
+                                pinned: true,
+                              );
+
+                              setState(() {
+                                _flutterProjects.remove(e);
+                                _pinnedProjects.add(_project);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  if (_dartProjects.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: HorizontalAxisView(
+                        title: 'Dart Projects',
+                        canCollapse: true,
+                        isVertical: true,
+                        isCollapsedInitially: SharedPref()
+                                .pref
+                                .getBool(SPConst.dartProjectsCollapsed) ??
+                            false,
+                        onCollapse: (bool isCollapsed) {
+                          SharedPref().pref.setBool(
+                              SPConst.dartProjectsCollapsed, isCollapsed);
+                        },
+                        action: SquareButton(
+                          size: 20,
+                          tooltip: 'Reload',
+                          color: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          icon: const Icon(Icons.refresh_rounded, size: 15),
+                          onPressed: () => _loadProjects(true),
+                        ),
+                        content: _dartProjects.map((ProjectObject e) {
+                          return ProjectInfoTile(
+                            project: e,
+                            onPinChanged: () {
+                              // Remove it from the flutter projects list and
+                              // add it to the pinned list.
+                              ProjectObject _project = ProjectObject(
+                                name: e.name,
+                                modDate: e.modDate,
+                                path: e.path,
+                                description: e.description,
+                                pinned: true,
+                              );
+
+                              setState(() {
+                                _dartProjects.remove(e);
+                                _pinnedProjects.add(_project);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),

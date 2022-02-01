@@ -35,10 +35,10 @@ Future<void> checkNewFlutterMaticVersion(List<dynamic> data) async {
       // is no asset for this release on this platform, then it means
       // that the release is not targeted for this platform and perhaps
       // it's only a fix for a specific platform.
-      String _downloadUrl =
-          (jsonDecode(_result.body) as List<Map<String, dynamic>>)
-              .firstWhere((Map<String, dynamic> asset) {
-        if (asset['name'].toLowerCase() == _platform) {
+      String _downloadUrl = (jsonDecode(_result.body) as List<dynamic>)
+          .firstWhere((dynamic asset) {
+        if ((asset as Map<String, dynamic>)['name'].toLowerCase() ==
+            _platform) {
           _isTargeted = true;
           return true;
         }

@@ -133,7 +133,6 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
             'Your project name can only include lower-case English letters (a-z) and underscores (_).'),
         VSeparators.normal(),
         RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(

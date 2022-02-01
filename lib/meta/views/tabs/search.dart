@@ -195,9 +195,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                         ? const Color(0xff262F34)
                         : Colors.white,
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: Colors.blueGrey.withOpacity(0.4),
-                    ),
+                    border: Border.all(color: Colors.blueGrey.withOpacity(0.4)),
                   ),
                   padding: const EdgeInsets.all(10),
                   child: SingleChildScrollView(

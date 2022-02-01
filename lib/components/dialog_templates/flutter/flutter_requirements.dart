@@ -34,7 +34,6 @@ class FlutterRequirementsDialog extends StatelessWidget {
             _linuxTemplate()
           else
             RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
               child: Column(
                 children: <Widget>[
                   VSeparators.xSmall(),

@@ -109,7 +109,6 @@ class _UpdateFlutterMaticDialogState extends State<UpdateFlutterMaticDialog> {
                   type: InformationType.green),
               VSeparators.normal(),
               RoundContainer(
-                color: Colors.blueGrey.withOpacity(0.2),
                 child: Row(
                   children: <Widget>[
                     Container(width: 2, height: 20, color: kGreenColor),
@@ -261,7 +260,6 @@ class _UpdateInstructionsDialog extends StatelessWidget {
                 type: InformationType.green),
             VSeparators.normal(),
             RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

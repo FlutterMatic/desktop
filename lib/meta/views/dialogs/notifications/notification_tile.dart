@@ -41,7 +41,6 @@ class _NotificationTileState extends State<NotificationTile> {
                     'Notification tapped: ${widget.notification.id}');
               },
         child: RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

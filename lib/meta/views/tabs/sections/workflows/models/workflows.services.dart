@@ -56,7 +56,7 @@ class WorkflowServicesModel {
           _isExpiredCache = false;
         }
 
-        if (_isExpiredCache) {
+        if (_isExpiredCache || _force) {
           if (_force) {
             await logger.file(LogTypeTag.info,
                 'Fetching workflows from cache. Cache expired. Force refetch.',
@@ -87,19 +87,20 @@ class WorkflowServicesModel {
 
           // Kill isolate. Cache is now updated.
           _port.send(<dynamic>[_workflowsRefetch, true, false]);
+          return;
         } else {
           await logger.file(LogTypeTag.info,
               'Fetching workflows from cache. Cache still valid.',
               logDir: Directory(_supportDir));
           // Kill isolate. Cache is still valid.
           _port.send(<dynamic>[_workflowsCache, true, false]);
+          return;
         }
       } else {
         // Kill isolate.
         _port.send(<dynamic>[_workflowsCache, true, false]);
+        return;
       }
-
-      return;
     } else {
       await logger.file(
           LogTypeTag.info, 'Fetching workflows initially. No cache found.',
@@ -116,6 +117,7 @@ class WorkflowServicesModel {
         supportDir: _supportDir,
       );
 
+      // Kill isolate
       _port.send(<dynamic>[_projectsPaths, true, false]);
       return;
     }

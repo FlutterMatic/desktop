@@ -45,7 +45,6 @@ class _FlutterProjectPreConfigSectionState extends State<FlutterProjectPreConfig
         Padding(
           padding: const EdgeInsets.only(bottom: 15),
           child: RoundContainer(
-            color: Colors.blueGrey.withOpacity(0.2),
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -146,7 +145,6 @@ class _FlutterProjectPreConfigSectionState extends State<FlutterProjectPreConfig
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: RoundContainer(
-              color: Colors.blueGrey.withOpacity(0.2),
               child: Column(
                 children: <Widget>[
                   Row(

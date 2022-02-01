@@ -126,7 +126,6 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
         ),
         VSeparators.small(),
         RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
           child: CheckBoxElement(
             onChanged: (bool? val) async {
               setState(() => _askEditorAlways = (val ?? true));
@@ -134,7 +133,6 @@ class _EditorsSettingsSectionState extends State<EditorsSettingsSection> {
                   .pref
                   .setBool(SPConst.askEditorAlways, val ?? true);
 
-              print(SharedPref().pref.getBool(SPConst.askEditorAlways));
             },
             value: _askEditorAlways,
             text: 'Always ask me which editor to use',

@@ -66,8 +66,9 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
   Future<void> _load() async {
     while (mounted) {
       Directory _logPath = await getApplicationSupportDirectory();
-      await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
-          .timeout(const Duration(minutes: 1), onTimeout: () async {
+      Isolate _i =
+          await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
+              .timeout(const Duration(minutes: 1), onTimeout: () async {
         await logger.file(LogTypeTag.error, 'Dart version check timeout');
         setState(() => _error = true);
 
@@ -76,6 +77,7 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
 
       if (mounted && !_listening) {
         _port.listen((dynamic data) {
+          _i.kill();
           setState(() => _listening = true);
           if (mounted) {
             setState(() {
@@ -142,48 +144,65 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
                 ],
               ),
               VSeparators.normal(),
-              HoverMessageWithIconAction(
-                message: _doneLoading
-                    ? (_version == null
-                        ? 'Dart is not installed on your device'
-                        : 'Dart is up to date on channel ${_channel.toLowerCase()}')
-                    : '...',
-                icon: Icon(
-                    _doneLoading
-                        ? (_version == null ? Icons.error : Icons.check_rounded)
-                        : Icons.lock_clock,
-                    color: _doneLoading
-                        ? (_version == null ? AppTheme.errorColor : kGreenColor)
-                        : kYellowColor,
-                    size: 15),
+              IgnorePointer(
+                ignoring: _version == null && _doneLoading,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: _version == null && _doneLoading ? 0.2 : 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      HoverMessageWithIconAction(
+                        message: _doneLoading
+                            ? (_version == null
+                                ? 'Dart is not installed on your device'
+                                : 'Dart is up to date on channel ${_channel.toLowerCase()}')
+                            : '...',
+                        icon: Icon(
+                            _doneLoading
+                                ? (_version == null
+                                    ? Icons.error
+                                    : Icons.check_rounded)
+                                : Icons.lock_clock,
+                            color: _doneLoading
+                                ? (_version == null
+                                    ? AppTheme.errorColor
+                                    : kGreenColor)
+                                : kYellowColor,
+                            size: 15),
+                      ),
+                      VSeparators.normal(),
+                      HoverMessageWithIconAction(
+                        message: SharedPref()
+                                .pref
+                                .containsKey(SPConst.lastDartUpdateCheck)
+                            ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdateCheck) ?? '...'))}'
+                            : 'Never checked for new updates before',
+                        icon: const Icon(Icons.refresh_rounded,
+                            color: kGreenColor, size: 15),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const _UpdatingDartDialog(),
+                          );
+                        },
+                      ),
+                      VSeparators.normal(),
+                      HoverMessageWithIconAction(
+                        message: SharedPref()
+                                .pref
+                                .containsKey(SPConst.lastDartUpdate)
+                            ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdate) ?? '...'))}'
+                            : 'Never updated before',
+                        icon: const Icon(Icons.check_rounded,
+                            color: kGreenColor, size: 15),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               VSeparators.normal(),
-              if (_doneLoading && _version != null ||
-                  !_doneLoading) ...<Widget>[
-                HoverMessageWithIconAction(
-                  message: SharedPref()
-                          .pref
-                          .containsKey(SPConst.lastDartUpdateCheck)
-                      ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdateCheck) ?? DateTime.now().toString()))}'
-                      : 'Never checked for new updates before',
-                  icon: const Icon(Icons.refresh_rounded,
-                      color: kGreenColor, size: 15),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const _UpdatingDartDialog(),
-                    );
-                  },
-                ),
-                VSeparators.normal(),
-                HoverMessageWithIconAction(
-                  message: SharedPref().pref.containsKey(SPConst.lastDartUpdate)
-                      ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastDartUpdate) ?? DateTime.now().toString()))}'
-                      : 'Never updated before',
-                  icon: const Icon(Icons.check_rounded,
-                      color: kGreenColor, size: 15),
-                ),
-                VSeparators.normal(),
+              if (_version != null || !_doneLoading)
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -210,8 +229,8 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
                       ),
                     ),
                   ],
-                ),
-              ] else
+                )
+              else
                 RectangleButton(
                   width: double.infinity,
                   child: const Text('Install Dart'),

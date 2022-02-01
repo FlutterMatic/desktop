@@ -77,7 +77,6 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
             ),
           ),
         RoundContainer(
-          color: Colors.blueGrey.withOpacity(0.2),
           child: Row(
             children: <Widget>[
               Expanded(

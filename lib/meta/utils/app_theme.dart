@@ -42,7 +42,7 @@ class AppTheme {
       canvasColor: darkBackgroundColor,
       primaryColor: darkBackgroundColor,
       backgroundColor: darkBackgroundColor,
-      unselectedWidgetColor: Colors.blueGrey.withOpacity(0.4),
+      unselectedWidgetColor: Colors.blueGrey.withOpacity(0.3),
       scaffoldBackgroundColor: darkBackgroundColor,
       primaryColorLight: const Color(0xFF2D333A),
       focusColor: const Color(0xFF444C56),

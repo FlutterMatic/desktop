@@ -32,8 +32,8 @@ class SPConst {
   static String gitVersion = 'GIT_VERSION';
 
   // Java Setup
-  static String javaVersion = 'JAVA_VERSION';
   static String javaPath = 'JAVA_PATH';
+  static String javaVersion = 'JAVA_VERSION';
 
   // Android Studio Setup
   static String aStudioPath = 'ANDROID_STUDIO_PATH';
@@ -47,6 +47,11 @@ class SPConst {
   static String askEditorAlways = 'ASK_EDITOR_ALWAYS';
   static String lastProjectsReload = 'LAST_PROJECTS_RELOAD';
   static String projectRefresh = 'PROJECT_REFRESH_INTERVALS';
+
+  // Tile Collapse Memory
+  static String dartProjectsCollapsed = 'DART_PROJECTS_COLLAPSED';
+  static String pinnedProjectsCollapsed = 'PINNED_PROJECTS_COLLAPSED';
+  static String flutterProjectsCollapsed = 'FLUTTER_PROJECTS_COLLAPSED';
 
   // Last Check Updates
   static String lastGitUpdateCheck = 'LAST_GIT_UPDATE_CHECK';

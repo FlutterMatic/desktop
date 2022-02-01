@@ -37,6 +37,7 @@ Future<void> _check(List<dynamic> data) async {
   _port.send(<dynamic>[
     _result.version?.toString(),
   ]);
+  return;
 }
 
 class HomeStudioVersionTile extends StatefulWidget {
@@ -59,8 +60,9 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
   Future<void> _load() async {
     while (mounted) {
       Directory _logPath = await getApplicationSupportDirectory();
-      await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
-          .timeout(const Duration(minutes: 1), onTimeout: () async {
+      Isolate _i =
+          await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
+              .timeout(const Duration(minutes: 1), onTimeout: () async {
         await logger.file(
             LogTypeTag.error, 'Android Studio version check timeout');
         setState(() => _error = true);
@@ -70,6 +72,7 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
 
       if (mounted && !_listening) {
         _port.listen((dynamic data) {
+          _i.kill();
           setState(() => _listening = true);
           if (mounted) {
             setState(() {
@@ -135,37 +138,47 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
                 ],
               ),
               VSeparators.normal(),
-              if (_doneLoading && _version != null ||
-                  !_doneLoading) ...<Widget>[
-                HoverMessageWithIconAction(
-                  message: SharedPref()
-                          .pref
-                          .containsKey(SPConst.lastAndroidStudioUpdateCheck)
-                      ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastAndroidStudioUpdateCheck) ?? DateTime.now().toString()))}'
-                      : 'Never checked for new updates before',
-                  icon: const Icon(Icons.refresh_rounded,
-                      color: kGreenColor, size: 15),
-                  onPressed: () {},
-                  // TODO: Show update studio dialog
+              IgnorePointer(
+                ignoring: _version == null && _doneLoading,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: _version == null && _doneLoading ? 0.2 : 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      HoverMessageWithIconAction(
+                        message: SharedPref().pref.containsKey(
+                                SPConst.lastAndroidStudioUpdateCheck)
+                            ? 'Checked for new updates ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastAndroidStudioUpdateCheck) ?? '...'))}'
+                            : 'Never checked for new updates before',
+                        icon: const Icon(Icons.refresh_rounded,
+                            color: kGreenColor, size: 15),
+                        onPressed: () {},
+                        // TODO: Show update studio dialog
+                      ),
+                      VSeparators.normal(),
+                      HoverMessageWithIconAction(
+                        message: SharedPref()
+                                .pref
+                                .containsKey(SPConst.lastAndroidStudioUpdate)
+                            ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastAndroidStudioUpdate) ?? '...'))}'
+                            : 'Never updated before',
+                        icon: const Icon(Icons.check_rounded,
+                            color: kGreenColor, size: 15),
+                      ),
+                    ],
+                  ),
                 ),
-                VSeparators.normal(),
-                HoverMessageWithIconAction(
-                  message: SharedPref()
-                          .pref
-                          .containsKey(SPConst.lastAndroidStudioUpdate)
-                      ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastAndroidStudioUpdate) ?? DateTime.now().toString()))}'
-                      : 'Never updated before',
-                  icon: const Icon(Icons.check_rounded,
-                      color: kGreenColor, size: 15),
-                ),
-                VSeparators.normal(),
+              ),
+              VSeparators.normal(),
+              if (_version != null || !_doneLoading)
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
                   onPressed: () {},
                   // TODO: Show update studio dialog
-                ),
-              ] else
+                )
+              else
                 RectangleButton(
                   width: double.infinity,
                   child: const Text('Install Studio'),

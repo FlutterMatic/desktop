@@ -55,9 +55,11 @@ Future<void> clearOldLogs(List<dynamic> data) async {
     }
 
     _port.send(true);
+    return;
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Failed to delete old logs: $_',
         stackTraces: s, logDir: Directory(_path));
     _port.send(false);
+    return;
   }
 }
