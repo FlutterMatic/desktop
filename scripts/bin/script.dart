@@ -29,7 +29,7 @@ Future<void> main(List<String> args) async {
     // Build the app in release mode.
     await buildAppWithMode(BuildMode.release);
 
-    return;
+    exit(0);
   }
 
   if (args.length > 1) {
@@ -40,12 +40,12 @@ Future<void> main(List<String> args) async {
 
   if (args.first == '--help' || args.first == '-h') {
     print(infoPen(helpMessage));
-    return;
+    exit(0);
   }
 
   if (args.first == '--version' || args.first == '-v') {
     print(infoPen(versionMessage));
-    return;
+    exit(0);
   }
 
   if (args.first.startsWith('--mode') || args.first.startsWith('-m')) {
@@ -62,21 +62,21 @@ Future<void> main(List<String> args) async {
         // Build the app in debug mode.
         await buildAppWithMode(BuildMode.debug);
 
-        return;
+        exit(0);
       case 'profile':
         print(greenPen('Building app in Profile mode...'));
 
         // Build the app in profile mode.
         await buildAppWithMode(BuildMode.profile);
 
-        return;
+        exit(0);
       case 'release':
         print(greenPen('Building app in Release mode...'));
 
         // Build the app in release mode.
         await buildAppWithMode(BuildMode.release);
 
-        return;
+        exit(0);
       default:
         print(errorPen('Invalid build mode provided.'));
         exit(1);
