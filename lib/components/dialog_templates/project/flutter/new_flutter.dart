@@ -17,10 +17,12 @@ import 'package:fluttermatic/components/dialog_templates/project/flutter/section
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
+import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/actions/flutter.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/bin/project_pre_configs/firebase.dart';
+import 'package:fluttermatic/meta/utils/bin/project_pre_configs/response.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class NewFlutterProjectDialog extends StatefulWidget {
@@ -39,6 +41,7 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
 
   // Utils
   _NewProjectSections _index = _NewProjectSections.projectName;
+  String _currentActivity = '';
 
   final GlobalKey<FormState> _createProjectFormKey = GlobalKey<FormState>();
 
@@ -67,10 +70,16 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
 
   String? _path = SharedPref().pref.getString(SPConst.projectsPath);
 
-  // Pre Config
-  Map<String, dynamic>? _firebaseJson;
+  // Firebase Pre-Config
+  List<String> _firebasePlist = <String>[];
+  List<String> _firebaseWebConfig = <String>[];
+  Map<String, dynamic> _firebaseJson = <String, dynamic>{};
 
   bool _confirmDirectory() {
+    if (_path == null) {
+      return false;
+    }
+
     List<FileSystemEntity> _dirs = Directory(_path!).listSync();
 
     // Make sure that there is no directory with the same name
@@ -163,23 +172,122 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
           if (_valid) {
             setState(() => _index = _NewProjectSections.creatingProject);
 
-            String _result = await FlutterActionServices.createNewProject(
-              NewFlutterProjectInfo(
-                projectPath: _path ?? '',
-                projectName: _nameController.text,
-                description: _descriptionController.text,
-                orgName: _orgController.text,
-                firebaseJson: _firebaseJson ?? <String, dynamic>{},
-                iOS: _ios,
-                android: _android,
-                web: _web,
-                windows: _windows,
-                macos: _macos,
-                linux: _linux,
-              ),
+            NewFlutterProjectInfo _projectInfo = NewFlutterProjectInfo(
+              projectPath: _path!,
+              projectName: _nameController.text,
+              description: _descriptionController.text,
+              orgName: _orgController.text,
+              firebaseJson: _firebaseJson,
+              iOS: _ios,
+              android: _android,
+              web: _web,
+              windows: _windows,
+              macos: _macos,
+              linux: _linux,
             );
 
+            Future<void> _deleteProject() async {
+              try {
+                Directory _dir = Directory(
+                    _projectInfo.projectPath + '\\' + _projectInfo.projectName);
+                await _dir.delete(recursive: true);
+                await logger.file(LogTypeTag.warning,
+                    'Project has been deleted because of pre-config error during setup.');
+              } catch (_, s) {
+                await logger.file(LogTypeTag.error,
+                    'Error deleting project for pre-config error: $_',
+                    stackTraces: s);
+              }
+
+              setState(() {
+                _index = _NewProjectSections
+                    .values[_NewProjectSections.values.length - 2];
+                _currentActivity = '';
+              });
+            }
+
+            String _result =
+                await FlutterActionServices.createNewProject(_projectInfo);
+
             if (_result == 'success') {
+              // Add the pre-config for Firebase Android.
+              if (_firebaseJson.isNotEmpty) {
+                setState(() =>
+                    _currentActivity = 'Adding Firebase Android pre-config...');
+                PreConfigResponse _result = await FirebasePreConfig.addAndroid(
+                  projectPath: _path!,
+                  googleServicesJSON: _firebaseJson,
+                  project: _projectInfo,
+                );
+
+                if (!_result.success) {
+                  await _deleteProject();
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    snackBarTile(
+                      context,
+                      _result.error ?? 'Failed to add Firebase Android config.',
+                      type: SnackBarType.error,
+                    ),
+                  );
+                  return;
+                }
+              }
+
+              // Add the pre-config for Firebase iOS.
+              if (_firebasePlist.isNotEmpty) {
+                setState(() =>
+                    _currentActivity = 'Adding Firebase iOS pre-config...');
+                PreConfigResponse _result = await FirebasePreConfig.addIOS(
+                  projectPath: _path!,
+                  googleServicesPlist: _firebasePlist,
+                  project: _projectInfo,
+                );
+
+                if (!_result.success) {
+                  await _deleteProject();
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    snackBarTile(
+                      context,
+                      _result.error ?? 'Failed to add Firebase iOS config.',
+                      type: SnackBarType.error,
+                    ),
+                  );
+                  return;
+                }
+              }
+
+              // Add the pre-config for Firebase Web.
+              if (_firebaseWebConfig.isNotEmpty) {
+                setState(() =>
+                    _currentActivity = 'Adding Firebase web pre-config...');
+                PreConfigResponse _result = await FirebasePreConfig.addWeb(
+                  projectPath: _path!,
+                  firebaseConfig: _firebaseWebConfig,
+                  project: _projectInfo,
+                );
+
+                if (!_result.success) {
+                  await _deleteProject();
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    snackBarTile(
+                      context,
+                      _result.error ?? 'Failed to add Firebase Web config.',
+                      type: SnackBarType.error,
+                    ),
+                  );
+                  return;
+                }
+              }
+
+              await FirebasePreConfig.addIOS(
+                projectPath: _path!,
+                googleServicesPlist: <String>[],
+                project: _projectInfo,
+              );
+
               Navigator.pop(context);
 
               await showDialog(
@@ -193,8 +301,11 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
               return;
             }
 
-            setState(() => _index = _NewProjectSections
-                .values[_NewProjectSections.values.length - 2]);
+            setState(() {
+              _index = _NewProjectSections
+                  .values[_NewProjectSections.values.length - 2];
+              _currentActivity = '';
+            });
 
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(
@@ -216,8 +327,11 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
               type: SnackBarType.error,
             ),
           );
-          setState(() => _index = _NewProjectSections
-              .values[_NewProjectSections.values.length - 2]);
+          setState(() {
+            _index = _NewProjectSections
+                .values[_NewProjectSections.values.length - 2];
+            _currentActivity = '';
+          });
         }
       }
     }
@@ -297,10 +411,19 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                     ),
                   if (_index == _NewProjectSections.preConfigProject)
                     FlutterProjectPreConfigSection(
+                      orgName: _orgController.text,
                       firebaseJson: _firebaseJson,
-                      onFirebaseUpload: (Map<String, dynamic>? json) {
-                        setState(() => _firebaseJson = json);
-                      },
+                      firebasePlist: _firebasePlist,
+                      firebaseWebConfig: _firebaseWebConfig,
+                      onJsonUpload: (Map<String, dynamic>? json) => setState(
+                          () => _firebaseJson = json ?? <String, dynamic>{}),
+                      onPlistUpload: (List<String> plist) =>
+                          setState(() => _firebasePlist = plist),
+                      onWebConfigUpload: (List<String> webConfig) =>
+                          setState(() => _firebaseWebConfig = webConfig),
+                      isAndroid: _android,
+                      isIos: _ios,
+                      isWeb: _web,
                     ),
                 ],
               ),
@@ -308,20 +431,8 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
             // Creating Project Indicator
             if (_index == _NewProjectSections.creatingProject)
               Padding(
-                padding: const EdgeInsets.only(left: 50, right: 50, top: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    const CustomLinearProgressIndicator(),
-                    VSeparators.xLarge(),
-                    const Text(
-                      'Creating new project. Hold on tight.',
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.all(50),
+                child: LoadActivityMessageElement(message: _currentActivity),
               ),
             VSeparators.small(),
             // Cancel & Next Buttons

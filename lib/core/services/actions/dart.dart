@@ -14,6 +14,9 @@ class DartActionServices {
           .cd(project.projectPath)
           .run('dart create -t ${project.template} ${project.projectName}');
 
+      await logger.file(LogTypeTag.info,
+          'Created new Dart project: ${project.toString()} at path: ${project.projectPath}');
+
       return 'success';
     } catch (_, s) {
       await logger.file(

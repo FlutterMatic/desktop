@@ -31,6 +31,9 @@ class FlutterActionServices {
             'flutter create --template=app ${project.projectName} --org ${project.orgName} --platforms $_platforms',
           );
 
+      await logger.file(LogTypeTag.info,
+          'Created new Flutter project: ${project.toString()} at path: ${project.projectPath}');
+
       return 'success';
     } catch (_, s) {
       await logger.file(
