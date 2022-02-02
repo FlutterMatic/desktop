@@ -17,6 +17,7 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 /// Expects the following data:
@@ -160,7 +161,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
             );
 
             setState(() => _savePath = null);
-            
+
             _i.kill();
             _generatePort.close();
             return;
@@ -193,7 +194,10 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(title: 'Generate Report'),
+          const DialogHeader(
+            title: 'Generate Report',
+            leading: StageTile(stageType: StageType.prerelease),
+          ),
           const Text(
             'If you need to create an issue on GitHub, please include the following information:',
           ),

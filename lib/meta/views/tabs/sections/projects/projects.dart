@@ -120,7 +120,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                     }
                   } catch (_, s) {
                     logger.file(LogTypeTag.warning,
-                        'Failed to sort in project tabs projects: $_',
+                        'Failed to sort in project tabs projects. Ignoring Project: $_',
                         stackTraces: s);
                   }
                 }

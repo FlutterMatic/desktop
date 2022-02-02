@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file_selector;
+import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -69,9 +70,17 @@ class _FlutterProjectPreConfigSectionState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Text(
-                'Have a Firebase backend you want to connect to?',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Row(
+                children: <Widget>[
+                  const Expanded(
+                    child: Text(
+                      'Have a Firebase backend you want to connect to?',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  HSeparators.normal(),
+                  SvgPicture.asset(Assets.firebase, height: 18),
+                ],
               ),
               VSeparators.small(),
               const Text(

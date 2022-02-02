@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/project/add_dependencies.dart';
+import 'package:fluttermatic/components/dialog_templates/project/common/dependencies.dart';
 import 'package:fluttermatic/components/dialog_templates/project/common/name.dart';
 import 'package:fluttermatic/components/dialog_templates/project/created.dart';
 import 'package:fluttermatic/components/dialog_templates/project/flutter/sections/description.dart';
@@ -53,6 +55,18 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
   bool _macos = true;
   bool _linux = true;
 
+  // Project Path
+  String? _path = SharedPref().pref.getString(SPConst.projectsPath);
+
+  // Firebase Pre-Config
+  List<String> _firebasePlist = <String>[];
+  List<String> _firebaseWebConfig = <String>[];
+  Map<String, dynamic> _firebaseJson = <String, dynamic>{};
+
+  // Dependencies and Dev Dependencies
+  List<String> _dependencies = <String>[];
+  List<String> _devDependencies = <String>[];
+
   bool _projectNameCondition() =>
       _nameController.text != '' &&
       _nameController.text.startsWith(RegExp('[a-zA-Z]')) &&
@@ -67,13 +81,6 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
       _orgController.text.contains(RegExp('[A-Za-z_]')) &&
       !_orgController.text.endsWith('.') &&
       !_orgController.text.endsWith('_');
-
-  String? _path = SharedPref().pref.getString(SPConst.projectsPath);
-
-  // Firebase Pre-Config
-  List<String> _firebasePlist = <String>[];
-  List<String> _firebaseWebConfig = <String>[];
-  Map<String, dynamic> _firebaseJson = <String, dynamic>{};
 
   bool _confirmDirectory() {
     if (_path == null) {
@@ -164,6 +171,8 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
           );
         }
       } else if (_index == _NewProjectSections.preConfigProject) {
+        setState(() => _index = _NewProjectSections.projectDependencies);
+      } else if (_index == _NewProjectSections.projectDependencies) {
         try {
           // Make sure that this project name doesn't already exist in the
           // selected path.
@@ -282,11 +291,50 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                 }
               }
 
-              await FirebasePreConfig.addIOS(
-                projectPath: _path!,
-                googleServicesPlist: <String>[],
-                project: _projectInfo,
-              );
+              List<String> _failedDependencies = <String>[];
+
+              // Add the normal dependencies to the project.
+              if (_dependencies.isNotEmpty) {
+                for (String dependency in _dependencies) {
+                  setState(() => _currentActivity =
+                      'Adding $dependency to dependencies...');
+
+                  bool _result = await addDependencyToProject(
+                    path: _path! + '\\' + _nameController.text,
+                    dependency: dependency,
+                    isDev: false,
+                    isDart: false,
+                  );
+
+                  if (!_result) {
+                    _failedDependencies.add(dependency);
+                  }
+                }
+              }
+
+              // Add the dev dependencies to the project.
+              if (_devDependencies.isNotEmpty) {
+                for (String dev in _devDependencies) {
+                  setState(() =>
+                      _currentActivity = 'Adding $dev to dev dependencies...');
+
+                  bool _result = await addDependencyToProject(
+                    path: _path! + '\\' + _nameController.text,
+                    dependency: dev,
+                    isDev: true,
+                    isDart: false,
+                  );
+
+                  if (!_result) {
+                    _failedDependencies.add(dev);
+                  }
+                }
+              }
+
+              if (_failedDependencies.isNotEmpty) {
+                await logger.file(LogTypeTag.warning,
+                    'Created new Flutter project but failed to add the following dependencies: ${_failedDependencies.join(', ')}');
+              }
 
               Navigator.pop(context);
 
@@ -297,24 +345,24 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                   projectPath: _path! + '\\' + _nameController.text,
                 ),
               );
+            } else {
+              setState(() {
+                _index = _NewProjectSections
+                    .values[_NewProjectSections.values.length - 2];
+                _currentActivity = '';
+              });
 
-              return;
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
+                  _result,
+                  type: SnackBarType.error,
+                ),
+              );
             }
 
-            setState(() {
-              _index = _NewProjectSections
-                  .values[_NewProjectSections.values.length - 2];
-              _currentActivity = '';
-            });
-
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              snackBarTile(
-                context,
-                _result,
-                type: SnackBarType.error,
-              ),
-            );
+            return;
           }
         } catch (_, s) {
           await logger.file(
@@ -425,13 +473,22 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                       isIos: _ios,
                       isWeb: _web,
                     ),
+                  if (_index == _NewProjectSections.projectDependencies)
+                    ProjectDependenciesSection(
+                      dependencies: _dependencies,
+                      devDependencies: _devDependencies,
+                      onDependenciesChanged: (List<String> val) =>
+                          setState(() => _dependencies = val),
+                      onDevDependenciesChanged: (List<String> val) =>
+                          setState(() => _devDependencies = val),
+                    ),
                 ],
               ),
             ),
             // Creating Project Indicator
             if (_index == _NewProjectSections.creatingProject)
               Padding(
-                padding: const EdgeInsets.all(50),
+                padding: const EdgeInsets.fromLTRB(80, 20, 80, 10),
                 child: LoadActivityMessageElement(message: _currentActivity),
               ),
             VSeparators.small(),
@@ -475,5 +532,6 @@ enum _NewProjectSections {
   projectOrgName,
   projectPlatforms,
   preConfigProject,
+  projectDependencies,
   creatingProject,
 }

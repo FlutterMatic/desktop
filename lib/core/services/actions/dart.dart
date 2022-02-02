@@ -15,7 +15,7 @@ class DartActionServices {
           .run('dart create -t ${project.template} ${project.projectName}');
 
       await logger.file(LogTypeTag.info,
-          'Created new Dart project: ${project.toString()} at path: ${project.projectPath}');
+          'Created new Dart project: ${project.toJson()} at path: ${project.projectPath}');
 
       return 'success';
     } catch (_, s) {
@@ -37,4 +37,14 @@ class NewDartProjectInfo {
     required this.projectPath,
     required this.template,
   });
+
+  /// Ability to convert it to a JSON object.
+  /// This is used for the [NewDartProjectInfo] class.
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'projectName': projectName,
+      'projectPath': projectPath,
+      'template': template,
+    };
+  }
 }

@@ -8,13 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/project/add_dependencies.dart';
+import 'package:fluttermatic/components/dialog_templates/project/common/dependencies.dart';
 import 'package:fluttermatic/components/dialog_templates/project/common/name.dart';
 import 'package:fluttermatic/components/dialog_templates/project/created.dart';
 import 'package:fluttermatic/components/dialog_templates/project/dart/sections/template.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
+import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/actions/dart.dart';
@@ -37,6 +39,12 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
   _NewProjectSections _index = _NewProjectSections.projectName;
 
   final GlobalKey<FormState> _createProjectFormKey = GlobalKey<FormState>();
+
+  String _currentActivity = '';
+
+  // Dependencies and Dev Dependencies
+  List<String> _dependencies = <String>[];
+  List<String> _devDependencies = <String>[];
 
   bool _projectNameCondition() =>
       _nameController.text != '' &&
@@ -101,6 +109,8 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
           });
         }
       } else if (_index == _NewProjectSections.projectTemplate) {
+        setState(() => _index = _NewProjectSections.projectDependencies);
+      } else if (_index == _NewProjectSections.projectDependencies) {
         try {
           // Make sure that this project name doesn't already exist in the
           // selected path.
@@ -118,6 +128,52 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
             );
 
             if (_result == 'success') {
+                List<String> _failedDependencies = <String>[];
+
+              // Add the normal dependencies to the project.
+              if (_dependencies.isNotEmpty) {
+                for (String dependency in _dependencies) {
+                  setState(() => _currentActivity =
+                      'Adding $dependency to dependencies...');
+
+                  bool _result = await addDependencyToProject(
+                    path: _path! + '\\' + _nameController.text,
+                    dependency: dependency,
+                    isDev: false,
+                    isDart: true,
+                  );
+
+                  if (!_result) {
+                    _failedDependencies.add(dependency);
+                  }
+                }
+              }
+
+              // Add the dev dependencies to the project.
+              if (_devDependencies.isNotEmpty) {
+                for (String dev in _devDependencies) {
+                  setState(() =>
+                      _currentActivity = 'Adding $dev to dev dependencies...');
+
+                  bool _result = await addDependencyToProject(
+                    path: _path! + '\\' + _nameController.text,
+                    dependency: dev,
+                    isDev: true,
+                    isDart: true,
+                  );
+
+                  if (!_result) {
+                    _failedDependencies.add(dev);
+                  }
+                }
+              }
+
+              if (_failedDependencies.isNotEmpty) {
+                await logger.file(LogTypeTag.warning,
+                    'Created new Dart project but failed to add the following dependencies: ${_failedDependencies.join(', ')}');
+              }
+
+
               Navigator.pop(context);
 
               await showDialog(
@@ -179,7 +235,7 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                       onPressed: () => setState(() => _index =
                           _NewProjectSections.values[_index.index - 1]),
                     )
-                  : const StageTile(stageType: StageType.prerelease),
+                  : const StageTile(stageType: StageType.beta),
             ),
             Form(
               key: _createProjectFormKey,
@@ -199,6 +255,15 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                           setState(() => _template = template),
                       selectedTemplate: _template,
                     ),
+                  if (_index == _NewProjectSections.projectDependencies)
+                    ProjectDependenciesSection(
+                      dependencies: _dependencies,
+                      devDependencies: _devDependencies,
+                      onDependenciesChanged: (List<String> val) =>
+                          setState(() => _dependencies = val),
+                      onDevDependenciesChanged: (List<String> val) =>
+                          setState(() => _devDependencies = val),
+                    ),
                 ],
               ),
             ),
@@ -206,20 +271,8 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
             // Creating Project Indicator
             if (_index == _NewProjectSections.creatingProject)
               Padding(
-                padding: const EdgeInsets.only(left: 50, right: 50, top: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    const CustomLinearProgressIndicator(),
-                    VSeparators.xLarge(),
-                    const Text(
-                      'Creating new project. Hold on tight.',
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.fromLTRB(80, 20, 80, 10),
+                child: LoadActivityMessageElement(message: _currentActivity),
               ),
             VSeparators.small(),
             // Cancel & Next Buttons
@@ -259,5 +312,6 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
 enum _NewProjectSections {
   projectName,
   projectTemplate,
+  projectDependencies,
   creatingProject,
 }

@@ -32,7 +32,7 @@ class FlutterActionServices {
           );
 
       await logger.file(LogTypeTag.info,
-          'Created new Flutter project: ${project.toString()} at path: ${project.projectPath}');
+          'Created new Flutter project: ${project.toJson()} at path: ${project.projectPath}');
 
       return 'success';
     } catch (_, s) {
@@ -70,4 +70,22 @@ class NewFlutterProjectInfo {
     required this.macos,
     required this.linux,
   });
+
+  /// Ability to convert it to a JSON object.
+  /// This is used for the [NewFlutterProjectInfo] class.
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+        'projectName': projectName,
+        'projectPath': projectPath,
+        'description': description,
+        'orgName': orgName,
+        'firebaseJson': firebaseJson,
+        'iOS': iOS,
+        'android': android,
+        'web': web,
+        'windows': windows,
+        'macos': macos,
+        'linux': linux,
+      };
+  }
 }
