@@ -17,7 +17,6 @@ import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -142,10 +141,7 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(
-            title: 'Workflows',
-            leading: StageTile(),
-          ),
+          const DialogHeader(title: 'Workflows'),
           if (_loadingWorkflows)
             const Padding(
               padding: EdgeInsets.all(15),

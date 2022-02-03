@@ -17,7 +17,6 @@ import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
@@ -55,11 +54,7 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              DialogHeader(
-                title: 'Delete Project',
-                leading: const StageTile(),
-                canClose: !_deleting,
-              ),
+              DialogHeader(title: 'Delete Project', canClose: !_deleting),
               if (_gitExists)
                 informationWidget(
                     'You are about to delete this project from your device. We also found that this project is on a git repository, so you should be able to recover it if you ever want to.',

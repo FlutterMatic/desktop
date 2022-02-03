@@ -128,7 +128,7 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
             );
 
             if (_result == 'success') {
-                List<String> _failedDependencies = <String>[];
+              List<String> _failedDependencies = <String>[];
 
               // Add the normal dependencies to the project.
               if (_dependencies.isNotEmpty) {
@@ -172,7 +172,6 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                 await logger.file(LogTypeTag.warning,
                     'Created new Dart project but failed to add the following dependencies: ${_failedDependencies.join(', ')}');
               }
-
 
               Navigator.pop(context);
 
@@ -235,7 +234,7 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                       onPressed: () => setState(() => _index =
                           _NewProjectSections.values[_index.index - 1]),
                     )
-                  : const StageTile(stageType: StageType.beta),
+                  : null,
             ),
             Form(
               key: _createProjectFormKey,

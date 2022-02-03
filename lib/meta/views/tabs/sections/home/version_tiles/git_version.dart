@@ -18,7 +18,6 @@ import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
 import 'package:fluttermatic/core/services/logs.dart';
@@ -126,7 +125,6 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
-                  const StageTile(stageType: StageType.prerelease),
                   HSeparators.normal(),
                   if (!_doneLoading)
                     const Text('- ')

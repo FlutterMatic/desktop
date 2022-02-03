@@ -22,7 +22,6 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/check_response.model.dart';
 import 'package:fluttermatic/core/services/checks/check.services.dart';
 import 'package:fluttermatic/core/services/logs.dart';
@@ -133,7 +132,6 @@ class _HomeFlutterVersionStateTile extends State<HomeDartVersionTile> {
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
-                  const StageTile(),
                   HSeparators.normal(),
                   if (!_doneLoading)
                     const Text('- ')

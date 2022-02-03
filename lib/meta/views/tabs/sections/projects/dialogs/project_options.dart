@@ -8,9 +8,8 @@ import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/coming_soon.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/dialogs/delete_projects.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/projects/dialogs/delete_project.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 import 'package:fluttermatic/meta/views/workflows/views/existing_workflows.dart';
 
@@ -32,10 +31,7 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(
-            title: 'Project Options',
-            leading: StageTile(stageType: StageType.alpha),
-          ),
+          const DialogHeader(title: 'Project Options'),
           Row(
             children: <Widget>[
               Expanded(

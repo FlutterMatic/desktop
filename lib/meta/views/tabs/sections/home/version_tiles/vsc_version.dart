@@ -126,7 +126,7 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
-                  const StageTile(stageType: StageType.prerelease),
+                  const StageTile(stageType: StageType.beta),
                   HSeparators.normal(),
                   if (!_doneLoading)
                     const Text('- ')

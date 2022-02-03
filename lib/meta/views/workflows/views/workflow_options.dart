@@ -12,7 +12,6 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/coming_soon.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -59,10 +58,7 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
     return DialogTemplate(
       child: Column(
         children: <Widget>[
-          const DialogHeader(
-            title: 'Options',
-            leading: StageTile(stageType: StageType.alpha),
-          ),
+          const DialogHeader(title: 'Options'),
           if (_loading) ...<Widget>[
             const Padding(padding: EdgeInsets.all(30), child: Spinner()),
           ] else ...<Widget>[

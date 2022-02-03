@@ -64,11 +64,7 @@ class _ClearCacheDialogState extends State<ClearCacheDialog> {
           outerTapExit: !_isClearing,
           child: Column(
             children: <Widget>[
-              DialogHeader(
-                title: 'Clear Cache',
-                canClose: !_isClearing,
-                leading: const StageTile(stageType: StageType.beta),
-              ),
+              DialogHeader(title: 'Clear Cache', canClose: !_isClearing),
               infoWidget(context,
                   'Tools installed by FlutterMatic will not be deleted, however, you will still need to go through the setup process again.'),
               VSeparators.normal(),
