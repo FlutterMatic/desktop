@@ -445,7 +445,6 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                         bool windows = true,
                         bool macos = true,
                         bool linux = true,
-                        bool isNullSafety = true,
                       }) {
                         setState(() {
                           _ios = ios;

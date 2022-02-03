@@ -98,12 +98,23 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: Text(
-                            (_pubspecInfo.name?.toUpperCase() ??
-                                    'No name found') +
-                                ' - ' +
-                                (_pubspecInfo.version ?? 'No version found'),
-                            maxLines: 1,
+                          child: Builder(
+                            builder: (_) {
+                              String _version = 'No version found';
+
+                              if (_pubspecInfo.version != null) {
+                                _version =
+                                    '${_pubspecInfo.version!.major}.${_pubspecInfo.version!.minor}.${_pubspecInfo.version!.patch}-${_pubspecInfo.version!.preRelease.isNotEmpty ? _pubspecInfo.version!.preRelease : 'stable'}';
+                              }
+
+                              return Text(
+                                (_pubspecInfo.name?.toUpperCase() ??
+                                        'No name found') +
+                                    ' - ' +
+                                    _version,
+                                maxLines: 1,
+                              );
+                            },
                           ),
                         ),
                         HSeparators.normal(),

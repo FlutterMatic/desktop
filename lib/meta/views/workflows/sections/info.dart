@@ -256,9 +256,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                         }
 
                         PubspecInfo _pubspec = extractPubspec(
-                          lines: await _file
-                              .readAsString()
-                              .then((String value) => value.split('\n')),
+                          lines: await File(_file.path).readAsLines(),
                           path: _file.path,
                         );
 
@@ -298,8 +296,12 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
 
                           _header += ' - ';
 
-                          _header +=
-                              widget.pubspecFile?.version ?? 'No version';
+                          if (widget.pubspecFile?.version == null) {
+                            _header += 'No version';
+                          } else {
+                            _header +=
+                                '${widget.pubspecFile?.version!.major}.${widget.pubspecFile?.version!.minor}.${widget.pubspecFile?.version!.patch}-${widget.pubspecFile!.version!.preRelease.isNotEmpty ? widget.pubspecFile?.version!.preRelease.first : '0'}';
+                          }
 
                           return Row(
                             children: <Widget>[
@@ -492,7 +494,7 @@ bool _validateNameAndDescription({
 bool _validatePubspec(PubspecInfo pubspec) {
   List<bool> _conditions = <bool>[
     pubspec.name != null && pubspec.name!.isNotEmpty,
-    pubspec.version != null && pubspec.version!.isNotEmpty,
+    pubspec.version != null,
   ];
 
   return !_conditions.contains(false);

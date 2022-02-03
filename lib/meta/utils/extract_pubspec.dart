@@ -1,92 +1,16 @@
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 PubspecInfo extractPubspec({
   required List<String> lines,
   required String path,
 }) {
   try {
-    for (String e in lines) {
-      print('\'$e\',');
-    }
-    // Dependencies. This includes both the "dependencies" and "dev_dependencies".
-    DependencyExtraction? _dependencies;
+    Pubspec _info = Pubspec.parse(lines.join('\n'));
 
     // Project Configuration
-    bool _isFlutterProject = false;
     bool _isNullSafety = false;
-
-    // Project Information
-    String? _name;
-    String? _version;
-    String? _description;
-    String? _author;
-    String? _homepage;
-    String? _repository;
-
-    // Gets the dependencies from the pubspec file.
-    _dependencies = _extractDependencies(lines);
-
-    // Check if it is a flutter project. We can know if the following exists:
-    // flutter:
-    //  sdk: flutter
-    for (int i = 0; i < lines.length; i++) {
-      if (lines[i].contains('flutter:')) {
-        print(removeSpaces(lines[i]));
-        print('flutter:');
-        print(removeSpaces(lines[i]) == removeSpaces('flutter:'));
-        print(lines[i]);
-        break;
-      }
-      // if (lines[i].contains('flutter:')) {
-      //   print(removeSpaces(lines[i]));
-      //   print('flutter:');
-      //   print(removeSpaces(lines[i]) == removeSpaces('flutter:'));
-      //   print(lines[i + 1]);
-      //   break;
-      // }
-      if (removeSpaces(lines[i]) == 'flutter:') {
-        String _nextLine = lines[i + 1];
-        if (removeSpaces(_nextLine) == 'sdk:flutter') {
-          _isFlutterProject = true;
-          break;
-        }
-      }
-    }
-
-    const List<String> _fields = <String>[
-      'name:',
-      'version:',
-      'description:',
-      'author:',
-      'homepage:',
-      'repository:',
-    ];
-
-    // Gets the fields from the pubspec file.
-    for (String line in lines) {
-      for (String field in _fields) {
-        if (removeSpaces(line).startsWith(field)) {
-          if (field == 'name:') {
-            _name = line.substring(field.length).trim();
-          } else if (field == 'version:') {
-            _version = removeSpaces(line.split(':')[1]);
-            break;
-          } else if (field == 'description:') {
-            _description = line.split(':').sublist(1).join(':').trim();
-            break;
-          } else if (field == 'author:') {
-            _author = line.split(':').sublist(1).join(':').trim();
-            break;
-          } else if (field == 'homepage:') {
-            _homepage = removeSpaces(line.split(':')[1]);
-            break;
-          } else if (field == 'repository:') {
-            _repository = removeSpaces(line.split(':')[1]);
-            break;
-          }
-        }
-      }
-    }
 
     // Checks if the project is null safety. If the dart version is greater than
     // or equal to 2.12.0 then null safe, otherwise not.
@@ -148,22 +72,34 @@ PubspecInfo extractPubspec({
       }
     }
 
+    List<DependenciesInfo> _dependenciesList = <DependenciesInfo>[];
+    List<DependenciesInfo> _devDependenciesList = <DependenciesInfo>[];
+
+    _info.dependencies.forEach((String key, Dependency value) {
+      String _version = value.toString().split(' ').last;
+
+      _dependenciesList
+          .add(DependenciesInfo(name: key, version: _version, isDev: false));
+    });
+
+    _info.devDependencies.forEach((String key, Dependency value) {
+      String _version = value.toString().split(' ').last;
+
+      _devDependenciesList
+          .add(DependenciesInfo(name: key, version: _version, isDev: true));
+    });
+
     return PubspecInfo(
       isValid: true,
-      isFlutterProject: _isFlutterProject,
+      isFlutterProject: _info.flutter != null,
       isNullSafety: _isNullSafety,
-      name: _name,
-      version: _version,
-      description: _description,
-      author: _author,
-      homepage: _homepage,
-      repository: _repository,
-      dependencies: _dependencies.dependencies
-          .where((DependenciesInfo element) => !element.isDev)
-          .toList(),
-      devDependencies: _dependencies.dependencies
-          .where((DependenciesInfo element) => element.isDev)
-          .toList(),
+      name: _info.name,
+      version: _info.version,
+      description: _info.description,
+      homepage: _info.homepage,
+      repository: _info.repository,
+      dependencies: _dependenciesList,
+      devDependencies: _devDependenciesList,
       pathToPubspec: path,
     );
   } catch (_, s) {
@@ -176,7 +112,6 @@ PubspecInfo extractPubspec({
       name: null,
       version: null,
       description: null,
-      author: null,
       homepage: null,
       repository: null,
       dependencies: <DependenciesInfo>[],
@@ -184,81 +119,6 @@ PubspecInfo extractPubspec({
       pathToPubspec: null,
     );
   }
-}
-
-/// Will extract the list of dependencies from a pubspec.yaml file. Returns a list of key value
-/// pairs. The key is the dependency name and the value is the version.
-///
-/// Provide the pubspec.yaml file as a [List<String>]. You can read the pubspec.yaml from memory
-/// by lines. This helps it become easier to perform sorting of the dependencies.
-DependencyExtraction _extractDependencies(List<String> pubspec) {
-  List<DependenciesInfo> _dependencies = <DependenciesInfo>[];
-  List<int> _dependencyLineIndexes = <int>[];
-
-  int _startIndex = 0;
-  int _finalIndex = 0;
-
-  _startIndex = pubspec.indexOf('dependencies:');
-
-  int _flutterDecIndex = pubspec.indexOf('flutter:');
-  _finalIndex = _flutterDecIndex == -1 ? pubspec.length : _flutterDecIndex;
-
-  int _devStartDecIndex = pubspec.indexOf('dev_dependencies:');
-
-  for (int i = 0; i < pubspec.length; i++) {
-    String _line = pubspec[i];
-
-    int _currentIndex = pubspec.indexOf(_line);
-    if (_currentIndex < _startIndex || _currentIndex > _finalIndex) {
-      continue;
-    }
-
-    if (_line.contains(':')) {
-      List<String> _pairs = _line.split(':');
-
-      if (_pairs.length != 2) {
-        continue;
-      }
-
-      // The [_pair[0]] is the possible dependency name while [_pair[1]] is the possible dependency
-      // version. Follow this annotation structure.
-      String _name() {
-        int _startIndex = _pairs[0].indexOf((_pairs[0].split('').firstWhere(
-            (String element) => RegExp('[a-z]').hasMatch(element))));
-
-        return _pairs[0][_startIndex] + _pairs[0].substring(_startIndex + 1);
-      }
-
-      // The conditions that must satisfy in order for it to be considered as a dependency.
-      List<bool> _pairConditions = <bool>[
-        !removeSpaces(_pairs[0]).startsWith('#'),
-        RegExp('[a-z]').hasMatch(removeSpaces(_pairs[0])),
-        _pairs[1].contains(RegExp('[0-9]')) || removeSpaces(_pairs[1]) == 'any',
-      ];
-
-      bool _success = true;
-
-      for (bool element in _pairConditions) {
-        if (!element) {
-          _success = false;
-        }
-      }
-
-      if (_success) {
-        _dependencies.add(DependenciesInfo(
-          name: _name(),
-          version: _pairs[1].startsWith('^') ? _pairs[1] : '^' + _pairs[1],
-          isDev: _devStartDecIndex < i,
-        ));
-        _dependencyLineIndexes.add(i);
-      }
-    }
-  }
-
-  return DependencyExtraction(
-    dependencies: _dependencies,
-    dependenciesIndexes: _dependencyLineIndexes,
-  );
 }
 
 String removeSpaces(String line) {
@@ -270,11 +130,10 @@ class PubspecInfo {
   final bool isFlutterProject;
   final bool isNullSafety;
   final String? name;
-  final String? version;
+  final Version? version;
   final String? description;
-  final String? author;
   final String? homepage;
-  final String? repository;
+  final Uri? repository;
   final String? pathToPubspec;
 
   final List<DependenciesInfo> dependencies;
@@ -290,7 +149,6 @@ class PubspecInfo {
     required this.name,
     required this.version,
     required this.description,
-    required this.author,
     required this.homepage,
     required this.repository,
     required this.dependencies,
@@ -305,11 +163,10 @@ class PubspecInfo {
       'isFlutterProject': isFlutterProject,
       'isNullSafety': isNullSafety,
       'name': name,
-      'version': version,
+      'version': version.toString(),
       'description': description,
-      'author': author,
       'homepage': homepage,
-      'repository': repository,
+      'repository': repository?.path,
       'pathToPubspec': pathToPubspec,
       'dependencies': dependencies
           .map((DependenciesInfo element) => element.toJson())
@@ -327,12 +184,11 @@ class PubspecInfo {
       isFlutterProject: json['isFlutterProject'] as bool,
       isNullSafety: json['isNullSafety'] as bool,
       name: json['name'] as String?,
-      version: json['version'] as String?,
+      version: Version.parse(json['version']),
       description: json['description'] as String?,
-      author: json['author'] as String?,
       homepage: json['homepage'] as String?,
       pathToPubspec: json['pathToPubspec'] as String?,
-      repository: json['repository'] as String?,
+      repository: Uri.tryParse(json['repository']),
       dependencies: (json['dependencies'] as List<dynamic>)
           // ignore: unnecessary_lambdas
           .map((dynamic element) => DependenciesInfo.fromJson(element))
@@ -376,18 +232,4 @@ class DependenciesInfo {
       isDev: json['isDev'] as bool,
     );
   }
-}
-
-class DependencyExtraction {
-  /// The list if file indexes starting from 0 of where there is a dependency
-  /// declaration expected.
-  final List<int> dependenciesIndexes;
-
-  /// The list of dependencies that are fetched from the indexes.
-  final List<DependenciesInfo> dependencies;
-
-  const DependencyExtraction({
-    required this.dependenciesIndexes,
-    required this.dependencies,
-  });
 }
