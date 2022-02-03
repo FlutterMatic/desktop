@@ -47,6 +47,12 @@ class StartUpWorkflow extends StatefulWidget {
 }
 
 class _StartUpWorkflowState extends State<StartUpWorkflow> {
+  // Utils
+  final Duration _syncIntervals = const Duration(seconds: 20);
+  final ReceivePort _saveLocallyPort =
+      ReceivePort('WORKFLOW_AUTO_SYNC_ISOLATE_PORT');
+
+  // Inputs
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _webUrlController = TextEditingController();
@@ -54,14 +60,25 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   final TextEditingController _firebaseProjectIDController =
       TextEditingController();
 
+  // The list of the workflow actions to run when the workflow is run. This is
+  // in order of execution.
   List<WorkflowActionModel> _workflowActions = <WorkflowActionModel>[];
 
+  // The extracted version of the project pubspec.yaml that we will apply the
+  // workflow to.
   PubspecInfo? _pubspecFile;
+
+  // Whether the project pubspec file has been provided to us and we shouldn\'t
+  // allow the user to change it. This is typically when we want to show the
+  // edit option for the workflow.
   bool _forcePubspec = false;
 
+  // The current view the user sees.
   _InterfaceView _interfaceView = _InterfaceView.workflowInfo;
 
-  // Actions Config
+  // Actions Config Depending on whether or not the user has added the workflow
+  // action for each specific one. Not all will be shown to the user depending
+  // on the workflow actions they chose.
   PlatformBuildModes _iOSBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _androidBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _webBuildMode = PlatformBuildModes.release;
@@ -69,6 +86,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   PlatformBuildModes _macOSBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _linuxBuildMode = PlatformBuildModes.release;
   WebRenderers _webRenderer = WebRenderers.canvaskit;
+
+  // Whether they confirmed Firebase details for auto deploy on web.
   bool _isFirebaseDeployVerified = false;
 
   // Utils
@@ -80,18 +99,21 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   bool _addToGitIgnore = false;
   bool _addAllToGitIgnore = false;
 
-  final ReceivePort _saveLocallyPort =
-      ReceivePort('WORKFLOW_AUTO_SYNC_ISOLATE_PORT');
-
+  // Store the last saved content. This is used to compare with the new changes,
+  // and if there are no changes, we don't need to save because it's the same
+  // content (user didn't interact since the last time it was saved).
   Map<String, dynamic> _lastSavedContent = <String, dynamic>{};
-
-  final Duration _syncIntervals = const Duration(seconds: 20);
 
   bool _syncStreamListening = false;
 
+  // The project path. This can be fetched from more than one place (either)
+  // passed in or the user selects in manually. This provides whichever the
+  // case is.
   String get _projectPath =>
       _pubspecFile?.pathToPubspec ?? widget.pubspecPath ?? '';
 
+  // Whether we are syncing in the background or not. This is to show a small
+  // indicator to the user.
   bool get _syncing =>
       (_saveLocalError && !_isSavingLocally || _isSavingLocally);
 
@@ -133,7 +155,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       setState(() => _isSavingLocally = true);
 
-      Isolate _i = await Isolate.spawn(_saveWorkflowWithIsolate, <dynamic>[
+      Isolate _i = await Isolate.spawn(_saveInBgSync, <dynamic>[
         _saveLocallyPort.sendPort,
         _projectPath,
         _pendingChanges,
@@ -734,7 +756,7 @@ enum _InterfaceView {
   done,
 }
 
-Future<void> _saveWorkflowWithIsolate(List<dynamic> data) async {
+Future<void> _saveInBgSync(List<dynamic> data) async {
   // The opened port we can communicate with.
   SendPort _port = data[0];
   Map<String, dynamic> _data = data[2];

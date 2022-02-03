@@ -1,6 +1,9 @@
-import 'package:fluttermatic/core/services/logs.dart';
-import 'package:pubspec_parse/pubspec_parse.dart';
+// 📦 Package imports:
 import 'package:pub_semver/pub_semver.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
+
+// 🌎 Project imports:
+import 'package:fluttermatic/core/services/logs.dart';
 
 PubspecInfo extractPubspec({
   required List<String> lines,
