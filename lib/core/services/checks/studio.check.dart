@@ -37,7 +37,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
   Progress _progress = Progress.none;
   Progress get progress => _progress;
 
-  Future<void> checkAStudio(BuildContext context, FluttermaticAPI? api) async {
+  Future<void> checkAStudio(BuildContext context, FlutterMaticAPI? api) async {
     String _drive = context.read<SpaceCheck>().drive;
 
     _progress = Progress.started;
@@ -212,7 +212,7 @@ class AndroidStudioNotifier extends ChangeNotifier {
   /// Install the Android Studio.
   Future<void> installAndroidStudio(
     BuildContext context, {
-    FluttermaticAPI? api,
+    FlutterMaticAPI? api,
     required String appDir,
     String? archiveType,
   }) async {

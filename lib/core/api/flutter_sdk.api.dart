@@ -17,7 +17,7 @@ class FlutterSDKNotifier with ChangeNotifier {
   String? _sdk;
   FlutterSDK? get sdkMap => _sdkMap;
   String? get sdk => _sdk;
-  Future<void> fetchSDKData(FluttermaticAPI? api) async {
+  Future<void> fetchSDKData(FlutterMaticAPI? api) async {
     http.Response response = await http.get(Uri.parse(
         api!.data!['flutter']['base_url'] + api.data!['flutter'][platform]));
     if (response.statusCode == 200) {

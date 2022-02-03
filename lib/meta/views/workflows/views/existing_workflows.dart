@@ -50,7 +50,7 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
           ? widget.pubspecPath
           : ((widget.pubspecPath.split('\\')..removeLast()).join('\\'));
 
-      Directory _dir = Directory(_path + '\\fmatic');
+      Directory _dir = Directory(_path + '\\$fmWorkflowDir');
 
       if (!await _dir.exists()) {
         setState(() => _loadingWorkflows = false);

@@ -38,7 +38,7 @@ class GitNotifier extends ChangeNotifier {
   Progress get progress => _progress;
 
   /// Check git exists in the system or not.
-  Future<void> checkGit(BuildContext context, FluttermaticAPI? api) async {
+  Future<void> checkGit(BuildContext context, FlutterMaticAPI? api) async {
     try {
       String _drive = context.read<SpaceCheck>().drive;
 

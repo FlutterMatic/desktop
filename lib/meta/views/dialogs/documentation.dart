@@ -15,15 +15,15 @@ import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
-class FMaticDocumentationDialog extends StatefulWidget {
-  const FMaticDocumentationDialog({Key? key}) : super(key: key);
+class DocumentationDialog extends StatefulWidget {
+  const DocumentationDialog({Key? key}) : super(key: key);
 
   @override
-  _FMaticDocumentationDialogState createState() =>
-      _FMaticDocumentationDialogState();
+  _DocumentationDialogState createState() =>
+      _DocumentationDialogState();
 }
 
-class _FMaticDocumentationDialogState extends State<FMaticDocumentationDialog> {
+class _DocumentationDialogState extends State<DocumentationDialog> {
   bool _isLoading = true;
   final List<TabViewObject> _tabs = <TabViewObject>[];
 

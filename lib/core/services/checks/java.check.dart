@@ -36,7 +36,7 @@ class JavaNotifier extends ChangeNotifier {
   Java get sw => _sw;
 
   /// Check java exists in the system or not.
-  Future<void> checkJava(BuildContext context, FluttermaticAPI? api) async {
+  Future<void> checkJava(BuildContext context, FlutterMaticAPI? api) async {
     try {
       String _drive = context.read<SpaceCheck>().drive;
 

@@ -40,12 +40,12 @@ dependencies:
 
 msix_config:
   display_name: FlutterMatic
-  publisher_display_name: Fluttermatic
+  publisher_display_name: FlutterMatic
   msix_version: 0.0.0.2
   # certificate_path: ./CERTIFICATE.pfx
   certificate_password: fluttermatic
   identity_name: fluttermatic
-  publisher: CN=FLUTTERMATIC, O=Fluttermatic
+  publisher: CN=FLUTTERMATIC, O=FlutterMatic
   icons_background_color: transparent
   architecture: x64
   vs_generated_images_folder_path: ./assets/images/app_icons/

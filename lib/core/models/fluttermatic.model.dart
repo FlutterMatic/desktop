@@ -1,9 +1,9 @@
-class FluttermaticAPI {
+class FlutterMaticAPI {
   Map<String, dynamic>? data;
 
-  FluttermaticAPI(this.data);
+  FlutterMaticAPI(this.data);
 
-  factory FluttermaticAPI.fromJson(Map<String, dynamic> content) {
-    return FluttermaticAPI(content);
+  factory FlutterMaticAPI.fromJson(Map<String, dynamic> content) {
+    return FlutterMaticAPI(content);
   }
 }

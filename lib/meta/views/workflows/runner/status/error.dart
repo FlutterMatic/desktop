@@ -101,7 +101,7 @@ class WorkflowError extends StatelessWidget {
                   Navigator.pop(context);
                   showDialog(
                     context: context,
-                    builder: (_) => const FMaticDocumentationDialog(),
+                    builder: (_) => const DocumentationDialog(),
                   );
                 },
               ),

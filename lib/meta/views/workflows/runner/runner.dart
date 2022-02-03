@@ -5,6 +5,7 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/app/constants/constants.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/enum.dart';
@@ -65,11 +66,10 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
 
       // Ensure that the workflow logs directory exists, and create it if it doesn't.
       // Will also create the log file for this workflow session.
-      String _fmatic = 'fmatic';
-      String _footPath = '$_fmatic\\${_template.name}.json';
+      String _footPath = '$fmWorkflowDir\\${_template.name}.json';
 
       _workflowSessionLogs = File(
-        '${widget.workflowPath.substring(0, widget.workflowPath.indexOf(_footPath) + _fmatic.length)}\\logs\\${_template.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
+        '${widget.workflowPath.substring(0, widget.workflowPath.indexOf(_footPath) + fmWorkflowDir.length)}\\logs\\${_template.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
       );
 
       await _workflowSessionLogs.create(recursive: true);

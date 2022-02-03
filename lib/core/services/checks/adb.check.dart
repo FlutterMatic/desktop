@@ -27,7 +27,7 @@ class ADBNotifier extends ChangeNotifier {
   /// [adbVersion] value holds ADB version information
   Version? adbVersion;
 
-  Future<void> checkADB(BuildContext context, FluttermaticAPI? api) async {
+  Future<void> checkADB(BuildContext context, FlutterMaticAPI? api) async {
     try {
       /// Application supporting Directory
       Directory _dir = await getApplicationSupportDirectory();

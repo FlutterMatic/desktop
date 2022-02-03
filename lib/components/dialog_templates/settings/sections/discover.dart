@@ -54,7 +54,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
-                  builder: (_) => const FMaticDocumentationDialog(),
+                  builder: (_) => const DocumentationDialog(),
                 );
               },
               icon: SvgPicture.asset(Assets.doc,

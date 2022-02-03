@@ -145,7 +145,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         await logger.file(
             LogTypeTag.info, 'Running command for workflow: $command');
         await shell
-            .cd(widget.dirPath.substring(0, widget.dirPath.indexOf('fmatic')))
+            .cd(widget.dirPath.substring(0, widget.dirPath.indexOf(fmWorkflowDir)))
             .run(command)
             .asStream()
             .listen(

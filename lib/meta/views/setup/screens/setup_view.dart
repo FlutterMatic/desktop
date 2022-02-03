@@ -126,7 +126,7 @@ class _SetupScreenState extends State<SetupScreen> {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (_) => const FMaticDocumentationDialog(),
+                            builder: (_) => const DocumentationDialog(),
                           );
                         },
                         child: Padding(

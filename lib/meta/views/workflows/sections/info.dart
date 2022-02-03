@@ -113,8 +113,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                               // TODO: Create documentation for required pubspec.yaml parameters.
                               showDialog(
                                 context: context,
-                                builder: (_) =>
-                                    const FMaticDocumentationDialog(),
+                                builder: (_) => const DocumentationDialog(),
                               );
                             },
                           ),
@@ -206,7 +205,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                 children: <Widget>[
                   const Expanded(
                     child: Text(
-                      'Select your Flutter or Dart project pubspec.yaml file. We will use this to make sure it\'s a valid project. Workflow config information will be set in a new directory called fmatic.',
+                      'Select your Flutter or Dart project pubspec.yaml file. We will use this to make sure it\'s a valid project. Workflow config information will be set in a new directory called $fmWorkflowDir.',
                     ),
                   ),
                   HSeparators.normal(),
@@ -372,7 +371,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                         setState(() => _loadingExistingNames = true);
                         File _file = File(widget.pubspecFile!.pathToPubspec!
                                 .replaceAll('\\pubspec.yaml', '') +
-                            '\\fmatic\\${widget.nameController.text}.json');
+                            '\\$fmWorkflowDir\\${widget.nameController.text}.json');
 
                         if (await _file.exists()) {
                           setState(() => _nameExists = true);

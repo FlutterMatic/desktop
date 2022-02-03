@@ -304,7 +304,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                       return WorkflowInfoTile(
                         workflow: e,
                         path: _workflows[i].path +
-                            '\\fmatic\\' +
+                            '\\$fmWorkflowDir\\' +
                             e.name +
                             '.json',
                         onDelete: () {

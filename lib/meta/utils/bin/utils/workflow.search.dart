@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
@@ -24,7 +25,7 @@ class WorkflowSearchUtils {
   /// [WorkflowTemplate] objects.
   static Future<List<WorkflowTemplate>> getWorkflowFromProject(
       String path) async {
-    Directory _path = Directory(path + '\\fmatic');
+    Directory _path = Directory(path + '\\$fmWorkflowDir');
 
     if (await _path.exists()) {
       // Will list all the files in the directory.

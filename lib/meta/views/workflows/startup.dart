@@ -627,7 +627,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       builder: (_) => WorkflowRunnerDialog(
                         workflowPath: _path +
                             '\\' +
-                            'fmatic' +
+                            fmWorkflowDir +
                             '\\' +
                             (_nameController.text) +
                             '.json',
@@ -717,9 +717,9 @@ Future<void> _saveWorkflowWithIsolate(List<dynamic> data) async {
 
     _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
 
-    Directory(_dirPath + '\\fmatic').createSync(recursive: true);
+    Directory(_dirPath + '\\$fmWorkflowDir').createSync(recursive: true);
 
-    await File.fromUri(Uri.file(_dirPath + '\\fmatic\\$_projName.json'))
+    await File.fromUri(Uri.file(_dirPath + '\\$fmWorkflowDir\\$_projName.json'))
         .writeAsString(jsonEncode(_data))
         .timeout(const Duration(seconds: 3));
 
@@ -768,14 +768,14 @@ Future<bool> _saveWorkflow(
 
     _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
 
-    await Directory(_dirPath + '\\fmatic').create(recursive: true);
+    await Directory(_dirPath + '\\$fmWorkflowDir').create(recursive: true);
 
-    await File.fromUri(Uri.file(_dirPath + '\\fmatic\\${template.name}.json'))
+    await File.fromUri(Uri.file(_dirPath + '\\$fmWorkflowDir\\${template.name}.json'))
         .writeAsString(jsonEncode(template.toJson()))
         .timeout(const Duration(seconds: 3));
 
     await logger.file(LogTypeTag.info,
-        'New workflow created at the following path: ${_dirPath + '\\fmatic\\${template.name}.json'}');
+        'New workflow created at the following path: ${_dirPath + '\\$fmWorkflowDir\\${template.name}.json'}');
 
     Navigator.of(context).pop();
 

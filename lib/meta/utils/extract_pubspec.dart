@@ -1,14 +1,19 @@
+import 'package:fluttermatic/core/services/logs.dart';
+
 PubspecInfo extractPubspec({
   required List<String> lines,
   required String path,
 }) {
   try {
+    for (String e in lines) {
+      print('\'$e\',');
+    }
     // Dependencies. This includes both the "dependencies" and "dev_dependencies".
     DependencyExtraction? _dependencies;
 
     // Project Configuration
-    bool isFlutterProject = false;
-    bool isNullSafety = false;
+    bool _isFlutterProject = false;
+    bool _isNullSafety = false;
 
     // Project Information
     String? _name;
@@ -24,11 +29,25 @@ PubspecInfo extractPubspec({
     // Check if it is a flutter project. We can know if the following exists:
     // flutter:
     //  sdk: flutter
-    for (String line in lines) {
-      if (removeSpaces(line) == 'flutter:') {
-        String _nextLine = lines[lines.indexOf(line) + 1];
+    for (int i = 0; i < lines.length; i++) {
+      if (lines[i].contains('flutter:')) {
+        print(removeSpaces(lines[i]));
+        print('flutter:');
+        print(removeSpaces(lines[i]) == removeSpaces('flutter:'));
+        print(lines[i]);
+        break;
+      }
+      // if (lines[i].contains('flutter:')) {
+      //   print(removeSpaces(lines[i]));
+      //   print('flutter:');
+      //   print(removeSpaces(lines[i]) == removeSpaces('flutter:'));
+      //   print(lines[i + 1]);
+      //   break;
+      // }
+      if (removeSpaces(lines[i]) == 'flutter:') {
+        String _nextLine = lines[i + 1];
         if (removeSpaces(_nextLine) == 'sdk:flutter') {
-          isFlutterProject = true;
+          _isFlutterProject = true;
           break;
         }
       }
@@ -53,10 +72,10 @@ PubspecInfo extractPubspec({
             _version = removeSpaces(line.split(':')[1]);
             break;
           } else if (field == 'description:') {
-            _description = line.split(':')[1].trim();
+            _description = line.split(':').sublist(1).join(':').trim();
             break;
           } else if (field == 'author:') {
-            _author = line.split(':')[1].trim();
+            _author = line.split(':').sublist(1).join(':').trim();
             break;
           } else if (field == 'homepage:') {
             _homepage = removeSpaces(line.split(':')[1]);
@@ -122,7 +141,7 @@ PubspecInfo extractPubspec({
           double _versionDouble = double.parse(_min);
 
           if (_versionDouble >= 2.12) {
-            isNullSafety = true;
+            _isNullSafety = true;
             break;
           }
         }
@@ -131,8 +150,8 @@ PubspecInfo extractPubspec({
 
     return PubspecInfo(
       isValid: true,
-      isFlutterProject: isFlutterProject,
-      isNullSafety: isNullSafety,
+      isFlutterProject: _isFlutterProject,
+      isNullSafety: _isNullSafety,
       name: _name,
       version: _version,
       description: _description,
@@ -147,7 +166,9 @@ PubspecInfo extractPubspec({
           .toList(),
       pathToPubspec: path,
     );
-  } catch (_) {
+  } catch (_, s) {
+    logger.file(LogTypeTag.error, 'Failed to extract pubspec file: $_',
+        stackTraces: s);
     return const PubspecInfo(
       isValid: false,
       isFlutterProject: false,
@@ -276,6 +297,52 @@ class PubspecInfo {
     required this.devDependencies,
     required this.pathToPubspec,
   });
+
+  /// Ability to convert to JSON for serialization.
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'isValid': isValid,
+      'isFlutterProject': isFlutterProject,
+      'isNullSafety': isNullSafety,
+      'name': name,
+      'version': version,
+      'description': description,
+      'author': author,
+      'homepage': homepage,
+      'repository': repository,
+      'pathToPubspec': pathToPubspec,
+      'dependencies': dependencies
+          .map((DependenciesInfo element) => element.toJson())
+          .toList(),
+      'devDependencies': devDependencies
+          .map((DependenciesInfo element) => element.toJson())
+          .toList(),
+    };
+  }
+
+  /// Ability to parse from JSON.
+  factory PubspecInfo.fromJson(Map<String, dynamic> json) {
+    return PubspecInfo(
+      isValid: json['isValid'] as bool,
+      isFlutterProject: json['isFlutterProject'] as bool,
+      isNullSafety: json['isNullSafety'] as bool,
+      name: json['name'] as String?,
+      version: json['version'] as String?,
+      description: json['description'] as String?,
+      author: json['author'] as String?,
+      homepage: json['homepage'] as String?,
+      pathToPubspec: json['pathToPubspec'] as String?,
+      repository: json['repository'] as String?,
+      dependencies: (json['dependencies'] as List<dynamic>)
+          // ignore: unnecessary_lambdas
+          .map((dynamic element) => DependenciesInfo.fromJson(element))
+          .toList(),
+      devDependencies: (json['devDependencies'] as List<dynamic>)
+          // ignore: unnecessary_lambdas
+          .map((dynamic element) => DependenciesInfo.fromJson(element))
+          .toList(),
+    );
+  }
 }
 
 class DependenciesInfo {
@@ -291,6 +358,24 @@ class DependenciesInfo {
     required this.version,
     required this.isDev,
   });
+
+  /// Ability to convert to JSON
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'name': name,
+      'version': version,
+      'isDev': isDev,
+    };
+  }
+
+  /// Ability to parse from JSON
+  factory DependenciesInfo.fromJson(Map<String, dynamic> json) {
+    return DependenciesInfo(
+      name: json['name'] as String,
+      version: json['version'] as String,
+      isDev: json['isDev'] as bool,
+    );
+  }
 }
 
 class DependencyExtraction {

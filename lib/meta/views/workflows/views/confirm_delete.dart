@@ -135,14 +135,14 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                                   .whereType<File>();
 
                           // If there are no more workflows, then delete the
-                          // entire "/fmatic" directory.
+                          // entire workflows directory.
                           if (_existingWorkflows.isEmpty) {
                             await Directory((widget.path.split('\\')
                                       ..removeLast())
                                     .join('\\'))
                                 .delete(recursive: true);
                             await logger.file(LogTypeTag.info,
-                                'Deleted project "fmatic" directory because no more workflows exist in it.');
+                                'Deleted project "$fmWorkflowDir" directory because no more workflows exist in it.');
                           }
 
                           await logger.file(LogTypeTag.info,

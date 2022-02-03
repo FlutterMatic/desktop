@@ -27,8 +27,11 @@ bool _showDevControls = true;
 
 bool allowDevControls = (kDebugMode && _showDevControls);
 
-/// Fluttermatic API data object.
-FluttermaticAPI? apiData;
+/// FlutterMatic workflow dir in projects
+const String fmWorkflowDir = '.fmatic';
+
+/// FlutterMatic API data object.
+FlutterMaticAPI? apiData;
 
 /// Flutter-SDK API data object.
 FlutterSDK? sdkData;
@@ -116,7 +119,6 @@ class VSeparators {
 ///  - normal = 15
 ///  - large = 20
 ///  - xLarge = 30
-
 class HSeparators {
   static SizedBox xSmall() => const SizedBox(width: 5);
   static SizedBox small() => const SizedBox(width: 10);

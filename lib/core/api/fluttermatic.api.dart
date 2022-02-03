@@ -14,8 +14,8 @@ import 'package:fluttermatic/core/services/logs.dart';
 
 class FlutterMaticAPINotifier with ChangeNotifier {
   // API Map
-  FluttermaticAPI? _apiMap;
-  FluttermaticAPI? get apiMap => _apiMap;
+  FlutterMaticAPI? _apiMap;
+  FlutterMaticAPI? get apiMap => _apiMap;
 
   // Progress
   Progress _progress = Progress.none;
@@ -23,7 +23,7 @@ class FlutterMaticAPINotifier with ChangeNotifier {
 
   Future<void> fetchAPIData() async {
     await logger.file(LogTypeTag.info,
-        'Fetching Fluttermatic API data - Might be exponential back-off request.');
+        'Fetching FlutterMatic API data - Might be exponential back-off request.');
 
     _progress = Progress.downloading;
     notifyListeners();
@@ -33,7 +33,7 @@ class FlutterMaticAPINotifier with ChangeNotifier {
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
-      _apiMap = FluttermaticAPI.fromJson(jsonDecode(response.body));
+      _apiMap = FlutterMaticAPI.fromJson(jsonDecode(response.body));
       _progress = Progress.done;
       notifyListeners();
     } else {

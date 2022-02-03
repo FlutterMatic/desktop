@@ -34,7 +34,7 @@ class VSCodeNotifier extends ChangeNotifier {
   Progress _progress = Progress.none;
   Progress get progress => _progress;
 
-  Future<void> checkVSCode(BuildContext context, FluttermaticAPI? api) async {
+  Future<void> checkVSCode(BuildContext context, FlutterMaticAPI? api) async {
     Directory dir = await getApplicationSupportDirectory();
     String archiveType = platform == 'linux' ? 'tar.gz' : 'zip';
     try {
