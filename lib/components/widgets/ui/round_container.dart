@@ -40,7 +40,10 @@ class RoundContainer extends StatelessWidget {
         border: Border.all(color: borderColor!, width: borderWith),
         borderRadius: BorderRadius.circular(radius ?? 5),
       ),
-      child: child,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: child,
+      ),
     );
   }
 }

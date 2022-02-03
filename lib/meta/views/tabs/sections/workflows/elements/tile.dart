@@ -95,22 +95,29 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                     ),
                   ),
                   VSeparators.normal(),
-                  Row(
-                    children: <Widget>[
-                      const Icon(Icons.play_circle_outline_rounded,
-                          color: kGreenColor, size: 14),
-                      HSeparators.xSmall(),
-                      Text(
-                        widget.workflow.workflowActions.length.toString() +
-                            ' action${widget.workflow.workflowActions.length == 1 ? '' : 's'}',
-                        style: const TextStyle(color: Colors.grey),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                      ),
-                    ],
-                  ),
+                  if (widget.workflow.workflowActions.isNotEmpty)
+                    Row(
+                      children: <Widget>[
+                        const Icon(Icons.play_circle_outline_rounded,
+                            color: kGreenColor, size: 14),
+                        HSeparators.xSmall(),
+                        Text(
+                          widget.workflow.workflowActions.length.toString() +
+                              ' action${widget.workflow.workflowActions.length == 1 ? '' : 's'}',
+                          style: const TextStyle(color: Colors.grey),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                        ),
+                      ],
+                    ),
                   VSeparators.normal(),
-                  if (widget.workflow.workflowActions.length == 1)
+                  if (widget.workflow.workflowActions.isEmpty)
+                    const RoundContainer(
+                      width: double.infinity,
+                      child: Text(
+                          'No actions - yet. Edit workflow to add actions to run.'),
+                    )
+                  else if (widget.workflow.workflowActions.length == 1)
                     Row(
                       children: <Widget>[
                         const RoundContainer(

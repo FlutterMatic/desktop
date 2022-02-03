@@ -136,24 +136,27 @@ class _SetProjectWorkflowActionsConfigurationState
       children: <Widget>[
         if (!_isBuildActionSelected.contains(true))
           Center(
-            child: Column(
-              children: <Widget>[
-                SvgPicture.asset(Assets.done, height: 30),
-                VSeparators.normal(),
-                const Text(
-                  'Nothing to configure',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                VSeparators.normal(),
-                const SizedBox(
-                  width: 400,
-                  child: Text(
-                    'You have no additional options to configure your workflow\nactions, you can move on.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Column(
+                children: <Widget>[
+                  SvgPicture.asset(Assets.done, height: 30),
+                  VSeparators.normal(),
+                  const Text(
+                    'Nothing to configure',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
-              ],
+                  VSeparators.normal(),
+                  const SizedBox(
+                    width: 400,
+                    child: Text(
+                      'You have no additional options to configure your workflow\nactions, you can move on.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         if (_isDeployWeb)

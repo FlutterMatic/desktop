@@ -23,42 +23,76 @@ class WorkflowStartUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        RoundContainer(
-          width: 500,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(template.name),
-                    VSeparators.xSmall(),
-                    Text(template.description,
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              HSeparators.normal(),
-              SvgPicture.asset(Assets.done, color: kGreenColor, height: 20),
-            ],
-          ),
-        ),
-        VSeparators.normal(),
-        SizedBox(
-          width: 500,
-          child: informationWidget(
+    return SizedBox(
+      width: 500,
+      child: Column(
+        children: <Widget>[
+          informationWidget(
             'You won\'t be able to use FlutterMatic until the workflow is completed.',
             type: InformationType.info,
           ),
-        ),
-        VSeparators.normal(),
-        RectangleButton(
-          child: const Text('Start'),
-          onPressed: onRun,
-        ),
-      ],
+          VSeparators.normal(),
+          RoundContainer(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(template.name),
+                      VSeparators.xSmall(),
+                      Text(template.description,
+                          style: const TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                ),
+                HSeparators.normal(),
+                SvgPicture.asset(Assets.done, color: kGreenColor, height: 20),
+              ],
+            ),
+          ),
+          VSeparators.normal(),
+          RoundContainer(
+            width: double.infinity,
+            child: Row(
+              children: <Widget>[
+                RoundContainer(
+                  radius: 50,
+                  width: 40,
+                  height: 40,
+                  padding: EdgeInsets.zero,
+                  child: Center(
+                      child: Text(template.workflowActions.length.toString())),
+                ),
+                HSeparators.xSmall(),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: template.workflowActions.map((String e) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: RoundContainer(
+                              child: Text(e),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          VSeparators.normal(),
+          RectangleButton(
+            child: const Text('Start'),
+            onPressed: onRun,
+          ),
+        ],
+      ),
     );
   }
 }

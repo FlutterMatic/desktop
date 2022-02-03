@@ -47,7 +47,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
   Future<void> _loadWorkflows([bool notFirstCall = false]) async {
     try {
       if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
-        if (notFirstCall) {
+        if (notFirstCall && mounted) {
           setState(() => _reloadingFromCache = true);
         }
 
@@ -83,8 +83,10 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
 
         if (!_loadWorkflowsCalled) {
           _loadWorkflowsPort.listen((dynamic message) {
-            setState(() => _loadWorkflowsCalled = true);
-            if (message is List) {
+            if (mounted) {
+              setState(() => _loadWorkflowsCalled = true);
+            }
+            if (message is List && mounted) {
               setState(() {
                 _workflowsLoading = false;
                 _workflows.clear();
@@ -112,13 +114,10 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
   }
 
   Future<void> _refreshMonitor() async {
-    if (SharedPref().pref.containsKey(SPConst.projectRefresh) &&
-        !_workflowsLoading && // Make sure we are not already reloading from
-        // cache or initially fetching.
-        !_reloadingFromCache) {
-      while (mounted) {
-        await Future<void>.delayed(Duration(
-            minutes: SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1));
+    while (mounted) {
+      await Future<void>.delayed(Duration(
+          minutes: SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1));
+      if (!_workflowsLoading) {
         await _loadWorkflows(true);
         await logger.file(
             LogTypeTag.info, 'Reloaded workflows tab on project interval.');

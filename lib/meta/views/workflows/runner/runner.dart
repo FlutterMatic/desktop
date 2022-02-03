@@ -22,6 +22,7 @@ import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/status/error.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/status/startup.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/status/success.dart';
+import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class WorkflowRunnerDialog extends StatefulWidget {
   final String workflowPath;
@@ -60,6 +61,29 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
           WorkflowTemplate.fromJson(jsonDecode(await _workflow.readAsString()));
 
       setState(() => _template = _workflowTemplate);
+
+      if (!_template.isSaved) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'This workflow is still in edit more. Finish saving this workflow before you can run it.',
+          type: SnackBarType.warning,
+        ));
+        // ignore: unawaited_futures
+        showDialog(
+          context: context,
+          builder: (_) => StartUpWorkflow(
+            pubspecPath: (widget.workflowPath.split('\\')
+                      ..removeLast()
+                      ..removeLast())
+                    .join('\\') +
+                '\\pubspec.yaml',
+            editWorkflowTemplate: _workflowTemplate,
+          ),
+        );
+        return;
+      }
 
       await logger.file(LogTypeTag.info,
           'Begin loading workflow actions to run workflow. Workflow path: ${_workflow.path}');

@@ -166,3 +166,6 @@ $RECYCLE.BIN/
 secret.dart
 secrets.dart
 pubspec.lock
+
+# All FlutterMatic workflows are hidden.
+.fmatic/

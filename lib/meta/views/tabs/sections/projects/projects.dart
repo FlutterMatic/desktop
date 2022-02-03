@@ -48,7 +48,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   Future<void> _loadProjects([bool notFirstCall = false]) async {
     try {
       if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
-        if (notFirstCall) {
+        if (notFirstCall && mounted) {
           setState(() => _reloadingFromCache = true);
         }
 
@@ -84,8 +84,10 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
 
         if (!_loadProjectsCalled) {
           _loadProjectsPort.listen((dynamic message) {
-            setState(() => _loadProjectsCalled = true);
-            if (message is List) {
+            if (mounted) {
+              setState(() => _loadProjectsCalled = true);
+            }
+            if (message is List && mounted) {
               setState(() {
                 _projectsLoading = false;
 
@@ -151,13 +153,10 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
   }
 
   Future<void> _refreshMonitor() async {
-    if (SharedPref().pref.containsKey(SPConst.projectRefresh) &&
-        !_projectsLoading && // Make sure we are not already reloading from
-        // cache or initially fetching.
-        !_reloadingFromCache) {
-      while (mounted) {
-        await Future<void>.delayed(Duration(
-            minutes: SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1));
+    while (mounted) {
+      await Future<void>.delayed(Duration(
+          minutes: SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1));
+      if (!_projectsLoading) {
         await _loadProjects(true);
         await logger.file(
             LogTypeTag.info, 'Reloaded project tab on project interval.');

@@ -76,6 +76,10 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   bool _saveLocalError = false;
   bool _isSavingLocally = false;
 
+  // .gitignore Preferences for this workflow
+  bool _addToGitIgnore = false;
+  bool _addAllToGitIgnore = false;
+
   final ReceivePort _saveLocallyPort =
       ReceivePort('WORKFLOW_AUTO_SYNC_ISOLATE_PORT');
 
@@ -87,6 +91,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   String get _projectPath =>
       _pubspecFile?.pathToPubspec ?? widget.pubspecPath ?? '';
+
+  bool get _syncing =>
+      (_saveLocalError && !_isSavingLocally || _isSavingLocally);
 
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
@@ -169,8 +176,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       String _path = _projectPath.endsWith('\\pubspec.yaml')
           ? _projectPath
           : (_projectPath + '\\pubspec.yaml');
-      List<String> _pubspec =
-          await File.fromUri(Uri.file(_path, windows: true)).readAsLines();
+
+      List<String> _pubspec = await File(_path).readAsLines();
 
       setState(() {
         _pubspecFile = extractPubspec(lines: _pubspec, path: _path);
@@ -281,6 +288,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           showAlerts: true,
           pubspecInfo: _pubspecFile,
           pubspecPath: _projectPath,
+          addToGitignore: _addToGitIgnore,
+          addAllToGitignore: _addAllToGitIgnore,
           template: WorkflowTemplate(
             name: _nameController.text,
             description: _descriptionController.text,
@@ -315,6 +324,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             showAlerts: false,
             pubspecInfo: _pubspecFile,
             pubspecPath: _projectPath,
+            addToGitignore: _addToGitIgnore,
+            addAllToGitignore: _addAllToGitIgnore,
             template: WorkflowTemplate(
               name: _nameController.text,
               description: _descriptionController.text,
@@ -371,6 +382,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                   showAlerts: false,
                   pubspecInfo: _pubspecFile,
                   pubspecPath: _projectPath,
+                  addToGitignore: _addToGitIgnore,
+                  addAllToGitignore: _addAllToGitIgnore,
                   template: WorkflowTemplate(
                     name: _nameController.text,
                     description: _descriptionController.text,
@@ -515,6 +528,20 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               ),
             if (_interfaceView == _InterfaceView.done)
               SetProjectWorkflowConfirmation(
+                addToGitignore: _addToGitIgnore,
+                addAllToGitignore: _addAllToGitIgnore,
+                onAddAllToGitignore: () => setState(() {
+                  if (_addToGitIgnore) {
+                    _addToGitIgnore = false;
+                  }
+                  _addAllToGitIgnore = !_addAllToGitIgnore;
+                }),
+                onAddToGitignore: () => setState(() {
+                  if (_addAllToGitIgnore) {
+                    _addAllToGitIgnore = false;
+                  }
+                  _addToGitIgnore = !_addToGitIgnore;
+                }),
                 projectName: _pubspecFile?.name ?? 'Unknown',
                 workflowName: _nameController.text,
                 workflowDescription: _descriptionController.text,
@@ -524,6 +551,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
                     pubspecPath: _projectPath,
+                    addToGitignore: _addToGitIgnore,
+                    addAllToGitignore: _addAllToGitIgnore,
                     template: WorkflowTemplate(
                       name: _nameController.text,
                       description: _descriptionController.text,
@@ -569,6 +598,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
                     pubspecPath: _projectPath,
+                    addToGitignore: _addToGitIgnore,
+                    addAllToGitignore: _addAllToGitIgnore,
                     template: WorkflowTemplate(
                       name: _nameController.text,
                       description: _descriptionController.text,
@@ -638,52 +669,54 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               ),
             Align(
               alignment: Alignment.centerLeft,
-              child: Opacity(
-                opacity:
-                    (_saveLocalError && !_isSavingLocally || _isSavingLocally)
-                        ? 1
-                        : 0,
-                child: _isSavingLocally
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Tooltip(
-                          message:
-                              'Saving your workflow data locally so you don\'t lose your work.',
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              const Spinner(size: 10, thickness: 1),
-                              HSeparators.small(),
-                              const Text(
-                                'Syncing workflow...',
-                                style:
-                                    TextStyle(fontSize: 10, color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : _saveLocalError
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Tooltip(
-                              message:
-                                  'Failed to save your workflow. Please try again. If the problem persists, file an issue.',
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  SvgPicture.asset(Assets.error, height: 10),
-                                  HSeparators.small(),
-                                  const Text(
-                                    'Failed sync...',
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.grey),
-                                  ),
-                                ],
-                              ),
+              child: AnimatedOpacity(
+                opacity: _syncing ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Builder(builder: (_) {
+                  if (_isSavingLocally) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Tooltip(
+                        message:
+                            'Saving your workflow data locally so you don\'t lose your work.',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Spinner(size: 10, thickness: 1),
+                            HSeparators.small(),
+                            const Text(
+                              'Syncing workflow...',
+                              style:
+                                  TextStyle(fontSize: 10, color: Colors.grey),
                             ),
-                          )
-                        : const SizedBox.shrink(),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else if (_saveLocalError) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Tooltip(
+                        message:
+                            'Failed to save your workflow. Please try again. If the problem persists, file an issue.',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            SvgPicture.asset(Assets.error, height: 10),
+                            HSeparators.small(),
+                            const Text(
+                              'Failed sync...',
+                              style:
+                                  TextStyle(fontSize: 10, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
               ),
             ),
           ],
@@ -741,6 +774,8 @@ Future<void> _saveWorkflowWithIsolate(List<dynamic> data) async {
 /// succeeds and generally informs the user about the state of the save.
 Future<bool> _saveWorkflow(
   BuildContext context, {
+  required bool addToGitignore,
+  required bool addAllToGitignore,
   required bool showAlerts,
   required String pubspecPath,
   required WorkflowTemplate template,
@@ -770,9 +805,58 @@ Future<bool> _saveWorkflow(
 
     await Directory(_dirPath + '\\$fmWorkflowDir').create(recursive: true);
 
-    await File.fromUri(Uri.file(_dirPath + '\\$fmWorkflowDir\\${template.name}.json'))
+    await File.fromUri(
+            Uri.file(_dirPath + '\\$fmWorkflowDir\\${template.name}.json'))
         .writeAsString(jsonEncode(template.toJson()))
         .timeout(const Duration(seconds: 3));
+
+    // If we saved the project, meaning that this is the final step (user done
+    // setting up the workflow), then we will see if we have to add anything
+    // to .gitignore.
+    if (template.isSaved && (addToGitignore || addAllToGitignore)) {
+      String _addComment =
+          '# Specific FlutterMatic workflow hidden: ${template.name}';
+      String _addAllComment = '# All FlutterMatic workflows are hidden.';
+
+      try {
+        File _git = File(_dirPath + '\\.gitignore');
+
+        // Create the .gitignore file if it doesn't exist.
+        if (!await _git.exists()) {
+          await _git.writeAsString('').timeout(const Duration(seconds: 3));
+        }
+
+        List<String> _gitignoreFile = await _git.readAsLines();
+
+        // We will add the comment if it doesn't already exist.
+        if ((addToGitignore && !_gitignoreFile.contains(_addComment)) ||
+            (addAllToGitignore && !_gitignoreFile.contains(_addAllComment))) {
+          await _git
+              .writeAsString(
+                  '\n' + (addToGitignore ? _addComment : _addAllComment) + '\n',
+                  mode: FileMode.append)
+              .timeout(const Duration(seconds: 3));
+        }
+
+        // Make sure it doesn't already exist.
+        if (addToGitignore &&
+            !_gitignoreFile.contains('$fmWorkflowDir/${template.name}.json')) {
+          await _git
+              .writeAsString('$fmWorkflowDir/${template.name}.json\n',
+                  mode: FileMode.append)
+              .timeout(const Duration(seconds: 3));
+        } else if (addAllToGitignore &&
+            !_gitignoreFile.contains('$fmWorkflowDir/')) {
+          await _git
+              .writeAsString('$fmWorkflowDir/\n', mode: FileMode.append)
+              .timeout(const Duration(seconds: 3));
+        }
+      } catch (_, s) {
+        await logger.file(
+            LogTypeTag.error, 'Couldn\'t add to .gitignore for workflow: $_',
+            stackTraces: s);
+      }
+    }
 
     await logger.file(LogTypeTag.info,
         'New workflow created at the following path: ${_dirPath + '\\$fmWorkflowDir\\${template.name}.json'}');
@@ -784,7 +868,9 @@ Future<bool> _saveWorkflow(
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
           context,
-          'Workflow saved successfully. You can find it in the "Workflows" tab.',
+          template.isSaved
+              ? 'Workflow saved successfully. You can find it in the "Workflows" tab.'
+              : 'We stored a copy of this workflow so you can continue editing it later.',
           type: SnackBarType.done,
         ),
       );
