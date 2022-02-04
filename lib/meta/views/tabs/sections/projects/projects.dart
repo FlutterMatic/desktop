@@ -14,13 +14,13 @@ import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
-import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/project_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
@@ -431,20 +431,10 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
             ),
           ),
         if (_reloadingFromCache)
-          Positioned(
+          const Positioned(
             bottom: 20,
             right: 20,
-            child: Tooltip(
-              message: 'Searching for new projects...',
-              child: RoundContainer(
-                borderWith: 2,
-                borderColor: Colors.blueGrey.withOpacity(0.5),
-                child: const Spinner(thickness: 2),
-                height: 40,
-                width: 40,
-                radius: 60,
-              ),
-            ),
+            child: BgLoadingIndicator('Searching for new projects...'),
           ),
       ],
     );

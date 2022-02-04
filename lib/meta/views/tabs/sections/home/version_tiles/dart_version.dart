@@ -16,7 +16,7 @@ import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
-import 'package:fluttermatic/components/dialog_templates/project/dart/new_dart.dart';
+import 'package:fluttermatic/components/dialog_templates/project/create/dart/new_dart.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';

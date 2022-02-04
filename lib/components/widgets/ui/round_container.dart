@@ -13,6 +13,7 @@ class RoundContainer extends StatelessWidget {
   final double borderWith;
   final Color? borderColor;
   final EdgeInsets? padding;
+  final bool disableInnerRadius;
 
   const RoundContainer({
     Key? key,
@@ -23,6 +24,7 @@ class RoundContainer extends StatelessWidget {
     this.width,
     this.radius,
     this.borderColor = Colors.transparent,
+    this.disableInnerRadius = false,
     this.padding = const EdgeInsets.all(10),
   }) : super(key: key);
 
@@ -40,10 +42,12 @@ class RoundContainer extends StatelessWidget {
         border: Border.all(color: borderColor!, width: borderWith),
         borderRadius: BorderRadius.circular(radius ?? 5),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
-        child: child,
-      ),
+      child: disableInnerRadius
+          ? child
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: child,
+            ),
     );
   }
 }

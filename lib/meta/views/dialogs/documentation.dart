@@ -19,8 +19,7 @@ class DocumentationDialog extends StatefulWidget {
   const DocumentationDialog({Key? key}) : super(key: key);
 
   @override
-  _DocumentationDialogState createState() =>
-      _DocumentationDialogState();
+  _DocumentationDialogState createState() => _DocumentationDialogState();
 }
 
 class _DocumentationDialogState extends State<DocumentationDialog> {
@@ -28,17 +27,16 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
   final List<TabViewObject> _tabs = <TabViewObject>[];
 
   static const List<String> _docsNames = <String>[
-    'flutter.md',
-    'editors.md',
-    'git.md',
-    'java.md',
+    'setup',
+    'new_projects',
+    'workflows',
   ];
 
   Future<void> _loadData() async {
     try {
       for (String name in _docsNames) {
         String _fileContent =
-            await rootBundle.loadString('assets/markdown/documentation/$name');
+            await rootBundle.loadString('assets/documentation/$name.md');
 
         setState(() {
           _tabs.add(
@@ -99,7 +97,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
           context,
-          'Failed to load documentation. Please try again later.',
+          'Failed to load documentation. Please try again later or report this issue if it persists.',
           type: SnackBarType.error,
         ),
       );
@@ -117,6 +115,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
   Widget build(BuildContext context) {
     return DialogTemplate(
       width: 800,
+      height: 600,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -124,7 +123,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
           if (_isLoading)
             const Center(child: Spinner())
           else
-            TabViewWidget(tabs: _tabs),
+            TabViewWidget(tabs: _tabs, height: 520),
         ],
       ),
     );

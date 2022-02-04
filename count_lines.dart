@@ -1,5 +1,7 @@
 // We can fancy with the number of lines we have. Just don't be *too* fancy.
 
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 void main(List<String> args) {

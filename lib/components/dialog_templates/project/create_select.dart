@@ -7,8 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
-import 'package:fluttermatic/components/dialog_templates/project/dart/new_dart.dart';
-import 'package:fluttermatic/components/dialog_templates/project/flutter/new_flutter.dart';
+import 'package:fluttermatic/components/dialog_templates/project/create/dart/new_dart.dart';
+import 'package:fluttermatic/components/dialog_templates/project/create/flutter/new_flutter.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';

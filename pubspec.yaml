@@ -79,7 +79,7 @@ flutter:
     - assets/images/app_icons/
     - assets/images/logos/
     - assets/images/icons/
-    - assets/markdown/documentation/
+    - assets/documentation/
     - CHANGELOG.md
 
   fonts:

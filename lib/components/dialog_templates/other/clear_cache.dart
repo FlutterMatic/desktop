@@ -16,7 +16,6 @@ import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';

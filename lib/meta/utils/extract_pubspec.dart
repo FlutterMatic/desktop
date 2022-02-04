@@ -5,10 +5,8 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/core/services/logs.dart';
 
-PubspecInfo extractPubspec({
-  required List<String> lines,
-  required String path,
-}) {
+PubspecInfo extractPubspec(
+    {required List<String> lines, required String path}) {
   try {
     Pubspec _info = Pubspec.parse(lines.join('\n'));
 
@@ -91,6 +89,9 @@ PubspecInfo extractPubspec({
       _devDependenciesList
           .add(DependenciesInfo(name: key, version: _version, isDev: true));
     });
+
+    // Remove the flutter dependency. We won't deal with it.
+    _dependenciesList.removeWhere((DependenciesInfo e) => e.name == 'flutter');
 
     return PubspecInfo(
       isValid: true,

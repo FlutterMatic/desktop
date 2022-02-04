@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/other/status.dart';
-import 'package:fluttermatic/components/dialog_templates/project/select.dart';
+import 'package:fluttermatic/components/dialog_templates/project/create_select.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';

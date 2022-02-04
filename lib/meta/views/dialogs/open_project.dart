@@ -1,4 +1,5 @@
 // 🐦 Flutter imports:
+
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -41,6 +42,41 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
 
   bool _showEditorSelection = false;
 
+  Future<void> _openProject(String? editor) async {
+    switch (editor) {
+      case 'code':
+        await shell.cd(widget.path).run('code .');
+        Navigator.pop(context);
+        break;
+      case 'studio':
+        // TODO: Support opening projects in Android Studio
+        // if (Platform.isMacOS) {
+        //   await shell.cd(widget.path).run(
+        //       'open -a /Applications/Android\\ Studio.app /${widget.path}');
+        // } else if (Platform.isMacOS) {
+        //   await shell.cd(widget.path).run(
+        //       '"${context.read<SpaceCheck>().drive}:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe" "X:${widget.path}"');
+        // }
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Android Studio not supported yet. Select another editor instead.',
+            type: SnackBarType.warning,
+          ),
+        );
+        Navigator.pop(context);
+        break;
+      default:
+        setState(() => _showEditorSelection = true);
+        await SharedPref().pref.remove(SPConst.defaultEditor);
+        await SharedPref().pref.remove(SPConst.askEditorAlways);
+        await logger.file(LogTypeTag.warning,
+            'Found editor choice conflicts with settings choice.');
+        break;
+    }
+  }
+
   Future<void> _loadProject() async {
     try {
       if (!SharedPref().pref.containsKey(SPConst.askEditorAlways) ||
@@ -60,30 +96,9 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
         if (_editors
                 .contains(SharedPref().pref.getString(SPConst.defaultEditor)) &&
             mounted) {
-          switch (SharedPref().pref.getString(SPConst.defaultEditor)) {
-            case 'code':
-              await shell.cd(widget.path).run('code .');
-              Navigator.pop(context);
-              break;
-            case 'studio64':
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(
-                  context,
-                  'Android Studio not supported yet. Select another editor instead.',
-                  type: SnackBarType.warning,
-                ),
-              );
-              setState(() => _showEditorSelection = true);
-              break;
-            default:
-              setState(() => _showEditorSelection = true);
-              await SharedPref().pref.remove(SPConst.defaultEditor);
-              await SharedPref().pref.remove(SPConst.askEditorAlways);
-              await logger.file(LogTypeTag.warning,
-                  'Found editor choice conflicts with settings choice.');
-              break;
-          }
+          // Open the project with the default set editor.
+          await _openProject(
+              SharedPref().pref.getString(SPConst.defaultEditor));
 
           return;
         } else if (mounted) {
@@ -156,7 +171,7 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
                 Expanded(
                   child: RoundContainer(
                     borderWith: 2,
-                    borderColor: _selectedEditor == 'studio64'
+                    borderColor: _selectedEditor == 'studio'
                         ? kGreenColor
                         : Colors.transparent,
                     padding: EdgeInsets.zero,
@@ -164,7 +179,7 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
                       color: Colors.transparent,
                       height: 100,
                       onPressed: () =>
-                          setState(() => _selectedEditor = 'studio64'),
+                          setState(() => _selectedEditor = 'studio'),
                       child: Center(
                         child: Column(
                           children: <Widget>[
@@ -218,29 +233,12 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
                   }
 
                   if (_rememberChoice) {
-                    await SharedPref()
-                        .pref
-                        .setString(SPConst.defaultEditor, _selectedEditor!);
+                    await SharedPref().pref.setString(
+                        SPConst.defaultEditor, _selectedEditor ?? 'code');
                   }
 
-                  switch (_selectedEditor) {
-                    case 'code':
-                      await shell.cd(widget.path).run('code .');
-                      Navigator.pop(context);
-                      break;
-                    case 'studio64':
-                      // TODO: Support opening Android Studio
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        snackBarTile(
-                          context,
-                          'Android Studio not supported yet. Select another editor instead in settings.',
-                          type: SnackBarType.warning,
-                        ),
-                      );
-                      Navigator.pop(context);
-                      break;
-                  }
+                  // Open the project in the selected editor.
+                  await _openProject(_selectedEditor);
                 },
               ),
             ),

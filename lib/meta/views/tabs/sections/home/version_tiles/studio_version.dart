@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/src/version.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -127,7 +128,7 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
-                  const StageTile(stageType: StageType.prerelease),
+                  const StageTile(stageType: StageType.beta),
                   HSeparators.normal(),
                   if (!_doneLoading)
                     const Text('- ')
@@ -153,8 +154,8 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
                             : 'Never checked for new updates before',
                         icon: const Icon(Icons.refresh_rounded,
                             color: kGreenColor, size: 15),
-                        onPressed: () {},
-                        // TODO: Show update studio dialog
+                        onPressed: () =>
+                            launch('https://developer.android.com/studio'),
                       ),
                       VSeparators.normal(),
                       HoverMessageWithIconAction(
@@ -175,8 +176,8 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
-                  onPressed: () {},
-                  // TODO: Show update studio dialog
+                  onPressed: () =>
+                      launch('https://developer.android.com/studio'),
                 )
               else
                 RectangleButton(

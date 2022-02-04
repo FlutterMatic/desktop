@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/project/outdated_dependencies.dart';
 import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/coming_soon.dart';
@@ -79,12 +80,7 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
           VSeparators.normal(),
           ActionOptions(
             actionButtonBuilder: (_, ActionOptionsObject action) {
-              List<String> _comingSoon = <String>[
-                'Scan pubspec.yaml for new updates',
-                'Create Release',
-              ];
-
-              if (_comingSoon.contains(action.title)) {
+              if ('Create Release'.contains(action.title)) {
                 return const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: ComingSoonTile(),
@@ -109,8 +105,16 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
                       pubspecPath: widget.path + '\\pubspec.yaml'),
                 );
               }),
-              // TODO: Support the following options:
-              ActionOptionsObject('Scan pubspec.yaml for new updates', () {}),
+              ActionOptionsObject('Scan pubspec.yaml for new updates', () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (_) => ScanProjectOutdatedDependenciesDialog(
+                    pubspecPath: widget.path + '\\pubspec.yaml',
+                  ),
+                );
+              }),
+              // TODO: Support the following option:
               ActionOptionsObject('Create Release', () {}),
             ],
           ),

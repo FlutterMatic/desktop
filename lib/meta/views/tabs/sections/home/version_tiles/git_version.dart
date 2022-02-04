@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/src/version.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -90,6 +91,21 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
     }
   }
 
+  String get _updateUrl {
+    String _base = 'https://git-scm.com/download/';
+    String _platform = '';
+    
+    if (Platform.isWindows) {
+      _platform = 'win';
+    } else if (Platform.isMacOS) {
+      _platform = 'mac';
+    } else if (Platform.isLinux) {
+      _platform = 'linux';
+    }
+
+    return '$_base$_platform';
+  }
+
   @override
   void initState() {
     _load();
@@ -151,8 +167,7 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                             : 'Never checked for new updates before',
                         icon: const Icon(Icons.refresh_rounded,
                             color: kGreenColor, size: 15),
-                        onPressed: () {},
-                        // TODO: Show update git dialog
+                        onPressed: () => launch(_updateUrl),
                       ),
                       VSeparators.normal(),
                       HoverMessageWithIconAction(
@@ -173,8 +188,7 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
-                  onPressed: () {},
-                  // TODO: Show update git dialog
+                  onPressed: () => launch(_updateUrl),
                 )
               else
                 RectangleButton(

@@ -13,9 +13,9 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/elements/pub_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
@@ -249,20 +249,10 @@ class _HomePubSectionState extends State<HomePubSection> {
           ],
         ),
         if (_reloadingFromCache)
-          Positioned(
+          const Positioned(
             bottom: 20,
             right: 20,
-            child: Tooltip(
-              message: 'Searching for new pub packages...',
-              child: RoundContainer(
-                borderWith: 2,
-                borderColor: Colors.blueGrey.withOpacity(0.5),
-                child: const Spinner(thickness: 2),
-                height: 40,
-                width: 40,
-                radius: 60,
-              ),
-            ),
+            child: BgLoadingIndicator('Searching for Pub packages...'),
           ),
       ],
     );

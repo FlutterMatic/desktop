@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/src/version.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
@@ -153,8 +154,8 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                             : 'Never checked for new updates before',
                         icon: const Icon(Icons.refresh_rounded,
                             color: kGreenColor, size: 15),
-                        onPressed: () {},
-                        // TODO: Show update vsc dialog
+                        onPressed: () =>
+                            launch('https://code.visualstudio.com/'),
                       ),
                       VSeparators.normal(),
                       HoverMessageWithIconAction(
@@ -175,8 +176,7 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
-                  onPressed: () {},
-                  // TODO: Show update vsc dialog
+                  onPressed: () => launch('https://code.visualstudio.com/'),
                 )
               else
                 RectangleButton(

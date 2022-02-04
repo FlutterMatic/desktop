@@ -23,7 +23,7 @@ final Shell shell = Shell(
 bool completedSetup = false;
 
 /// Whether or not to show the dev controls.
-bool _showDevControls = true;
+bool _showDevControls = false;
 
 bool allowDevControls = (kDebugMode && _showDevControls);
 
