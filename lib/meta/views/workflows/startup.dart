@@ -79,8 +79,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // Actions Config Depending on whether or not the user has added the workflow
   // action for each specific one. Not all will be shown to the user depending
   // on the workflow actions they chose.
-  PlatformBuildModes _iOSBuildMode = PlatformBuildModes.release;
+  AndroidBuildType _androidBuildType = AndroidBuildType.appBundle;
   PlatformBuildModes _androidBuildMode = PlatformBuildModes.release;
+  PlatformBuildModes _iOSBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _webBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _windowsBuildMode = PlatformBuildModes.release;
   PlatformBuildModes _macOSBuildMode = PlatformBuildModes.release;
@@ -125,8 +126,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
         webUrl: _webUrlController.text,
         firebaseProjectName: _firebaseProjectName.text,
         firebaseProjectId: _firebaseProjectIDController.text,
-        iOSBuildMode: _iOSBuildMode,
+        androidBuildType: _androidBuildType,
         androidBuildMode: _androidBuildMode,
+        iOSBuildMode: _iOSBuildMode,
         isFirebaseDeployVerified: _isFirebaseDeployVerified,
         webRenderer: _webRenderer,
         webBuildMode: _webBuildMode,
@@ -319,6 +321,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             firebaseProjectName: _firebaseProjectName.text,
             firebaseProjectId: _firebaseProjectIDController.text,
             iOSBuildMode: _iOSBuildMode,
+            androidBuildType: _androidBuildType,
             androidBuildMode: _androidBuildMode,
             isFirebaseDeployVerified: _isFirebaseDeployVerified,
             webRenderer: _webRenderer,
@@ -355,6 +358,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               firebaseProjectName: _firebaseProjectName.text,
               firebaseProjectId: _firebaseProjectIDController.text,
               iOSBuildMode: _iOSBuildMode,
+              androidBuildType: _androidBuildType,
               androidBuildMode: _androidBuildMode,
               isFirebaseDeployVerified: _isFirebaseDeployVerified,
               webRenderer: _webRenderer,
@@ -413,6 +417,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     firebaseProjectName: _firebaseProjectName.text,
                     firebaseProjectId: _firebaseProjectIDController.text,
                     iOSBuildMode: _iOSBuildMode,
+                    androidBuildType: _androidBuildType,
                     androidBuildMode: _androidBuildMode,
                     isFirebaseDeployVerified: _isFirebaseDeployVerified,
                     webRenderer: _webRenderer,
@@ -503,6 +508,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 isFirebaseValidated: _isFirebaseDeployVerified,
                 defaultWebBuildMode: _webBuildMode,
                 defaultIOSBuildMode: _iOSBuildMode,
+                androidBuildType: _androidBuildType,
                 defaultAndroidBuildMode: _androidBuildMode,
                 defaultLinuxBuildMode: _linuxBuildMode,
                 defaultMacOSBuildMode: _macOSBuildMode,
@@ -510,6 +516,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 defaultWebRenderer: _webRenderer,
                 oniOSBuildModeChanged: (PlatformBuildModes mode) {
                   setState(() => _iOSBuildMode = mode);
+                },
+                onAndroidBuildTypeChanged: (AndroidBuildType type) {
+                  setState(() => _androidBuildType = type);
                 },
                 onAndroidBuildModeChanged: (PlatformBuildModes mode) {
                   setState(() => _androidBuildMode = mode);
@@ -582,6 +591,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       firebaseProjectName: _firebaseProjectName.text,
                       firebaseProjectId: _firebaseProjectIDController.text,
                       iOSBuildMode: _iOSBuildMode,
+                      androidBuildType: _androidBuildType,
                       androidBuildMode: _androidBuildMode,
                       isFirebaseDeployVerified: _isFirebaseDeployVerified,
                       webRenderer: _webRenderer,
@@ -629,6 +639,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       firebaseProjectName: _firebaseProjectName.text,
                       firebaseProjectId: _firebaseProjectIDController.text,
                       iOSBuildMode: _iOSBuildMode,
+                      androidBuildType: _androidBuildType,
                       androidBuildMode: _androidBuildMode,
                       isFirebaseDeployVerified: _isFirebaseDeployVerified,
                       webRenderer: _webRenderer,

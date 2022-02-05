@@ -24,6 +24,7 @@ enum Java { jdk, jre }
 
 enum PlatformBuildModes { release, profile, debug }
 enum WebRenderers { html, canvaskit }
+enum AndroidBuildType { appBundle, apk }
 
 enum WorkflowActionStatus {
   pending,

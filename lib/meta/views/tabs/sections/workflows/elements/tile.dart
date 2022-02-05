@@ -199,7 +199,9 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                   children: <Widget>[
                     if (!widget.workflow.isSaved)
                       Tooltip(
-                        message: 'This workflow has not completed setup yet',
+                        padding: const EdgeInsets.all(5),
+                        message:
+                            'This workflow has not completed setup yet - or, you will need\nto go through setup again because we added some new features that need to be migrated.',
                         child: SvgPicture.asset(Assets.warn, height: 20),
                       ),
                     const Spacer(),

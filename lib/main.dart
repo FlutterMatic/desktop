@@ -29,8 +29,10 @@ import 'meta/views/setup/screens/setup_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Directory _basePath = await getApplicationSupportDirectory();
-  debugPrint('📂 AppData path: ${_basePath.path}');
+  if (kDebugMode) {
+    Directory _basePath = await getApplicationSupportDirectory();
+    print('📂 AppData path: ${_basePath.path}');
+  }
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
     appWindow.alignment = Alignment.center;

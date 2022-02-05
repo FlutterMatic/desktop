@@ -8,7 +8,7 @@ import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
 import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 
-class BuildWebWorkflowActionConfig extends StatefulWidget {
+class BuildWebWorkflowActionConfig extends StatelessWidget {
   final WebRenderers defaultRenderer;
   final Function(WebRenderers renderer) onRendererChanged;
   final PlatformBuildModes defaultBuildMode;
@@ -22,13 +22,6 @@ class BuildWebWorkflowActionConfig extends StatefulWidget {
     required this.onRendererChanged,
   }) : super(key: key);
 
-  @override
-  _BuildWebWorkflowActionConfigState createState() =>
-      _BuildWebWorkflowActionConfigState();
-}
-
-class _BuildWebWorkflowActionConfigState
-    extends State<BuildWebWorkflowActionConfig> {
   @override
   Widget build(BuildContext context) {
     return ConfigureExpandableTile(
@@ -50,8 +43,8 @@ class _BuildWebWorkflowActionConfigState
             Expanded(
               child: selectBuildTypeTile(
                 context,
-                isSelected: widget.defaultRenderer == WebRenderers.html,
-                onSelected: (_) => widget.onRendererChanged(WebRenderers.html),
+                isSelected: defaultRenderer == WebRenderers.html,
+                onSelected: (_) => onRendererChanged(WebRenderers.html),
                 text: 'HTML',
               ),
             ),
@@ -59,9 +52,8 @@ class _BuildWebWorkflowActionConfigState
             Expanded(
               child: selectBuildTypeTile(
                 context,
-                isSelected: widget.defaultRenderer == WebRenderers.canvaskit,
-                onSelected: (_) =>
-                    widget.onRendererChanged(WebRenderers.canvaskit),
+                isSelected: defaultRenderer == WebRenderers.canvaskit,
+                onSelected: (_) => onRendererChanged(WebRenderers.canvaskit),
                 text: 'CanvasKit',
               ),
             ),
@@ -71,8 +63,8 @@ class _BuildWebWorkflowActionConfigState
         const Text('Select the build mode when creating Web builds'),
         VSeparators.normal(),
         WorkflowActionBuildModeSelector(
-          defaultBuildMode: widget.defaultBuildMode,
-          onBuildModeChanged: widget.onBuildModeChanged,
+          defaultBuildMode: defaultBuildMode,
+          onBuildModeChanged: onBuildModeChanged,
         ),
       ],
     );

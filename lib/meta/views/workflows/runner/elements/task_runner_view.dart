@@ -11,8 +11,10 @@ import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/elements/action_scripts.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 
 class TaskRunnerView extends StatefulWidget {
@@ -66,65 +68,125 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
     });
   }
 
-  void _prepareCommands() {
+  String get _projectPath =>
+      widget.dirPath.substring(0, widget.dirPath.indexOf(fmWorkflowDir));
+
+  Future<void> _prepareCommands() async {
     _commands.clear();
 
+    bool _isFlutter = false;
+
+    List<String> _pubspecLines =
+        await File(_projectPath + '\\pubspec.yaml').readAsLines();
+
+    _isFlutter = extractPubspec(
+            lines: _pubspecLines, path: _projectPath + '\\pubspec.yaml')
+        .isFlutterProject;
+
+    // Analyze project
     if (widget.action.id == WorkflowActionsIds.analyzeDartProject) {
-      _commands.add('dart analyze');
-      _commands.add('flutter analyze');
+      _commands.addAll(WorkflowActionScripts.analyzeDartProject(_isFlutter));
       return;
     }
 
+    // Test project
     if (widget.action.id == WorkflowActionsIds.runProjectTests) {
-      _commands.add('flutter test');
+      _commands.addAll(WorkflowActionScripts.runProjectTests(_isFlutter));
       return;
     }
 
+    // Build Web
     if (widget.action.id == WorkflowActionsIds.buildProjectForWeb) {
-      _commands.add('flutter pub get');
-      _commands.add(
-          'flutter build web --${widget.template.iOSBuildMode.name} --web-renderer ${widget.template.webRenderer.name}');
+      _commands.addAll(WorkflowActionScripts.buildProjectForWeb(
+        mode: widget.template.webBuildMode,
+        renderer: widget.template.webRenderer,
+      ));
       return;
     }
 
+    // Build for iOS - (This can only be done on a macOS machine)
     if (widget.action.id == WorkflowActionsIds.buildProjectForIOS) {
-      _commands.add('flutter pub get');
-      _commands.add('flutter build ios --${widget.template.iOSBuildMode.name}');
+      // We will skip if this is not a macOS machine.
+      if (!Platform.isMacOS) {
+        setState(() => _status = WorkflowActionStatus.skipped);
+        await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
+            'Skipped to run build for iOS because you are not on a macOS host.');
+        return;
+      }
+
+      _commands.addAll(WorkflowActionScripts.buildProjectForIos(
+        widget.template.iOSBuildMode,
+      ));
       return;
     }
 
+    // Build for Android
     if (widget.action.id == WorkflowActionsIds.buildProjectForAndroid) {
-      _commands.add('flutter pub get');
-      _commands.add(
-          'flutter build android --${widget.template.androidBuildMode.name}');
+      _commands.addAll(WorkflowActionScripts.buildProjectForAndroid(
+        mode: widget.template.androidBuildMode,
+        type: widget.template.androidBuildType,
+      ));
       return;
     }
 
+    // Build for Windows - (This can only be done on a Windows machine)
     if (widget.action.id == WorkflowActionsIds.buildProjectForWindows) {
-      _commands.add('flutter pub get');
-      _commands.add(
-          'flutter build windows --${widget.template.windowsBuildMode.name}');
+      // We will skip if this is not a Windows machine.
+      if (!Platform.isWindows) {
+        setState(() => _status = WorkflowActionStatus.skipped);
+        await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
+            'Skipped to run build for Windows because you are not on a Windows host.');
+        return;
+      }
+
+      _commands.addAll(WorkflowActionScripts.buildProjectForWindows(
+        widget.template.windowsBuildMode,
+      ));
       return;
     }
 
+    // Build for macOS - (This can only be done on a macOS machine)
     if (widget.action.id == WorkflowActionsIds.buildProjectForMacOS) {
-      _commands.add('flutter pub get');
-      _commands
-          .add('flutter build macos --${widget.template.macosBuildMode.name}');
+      // We will skip if this is not a macOS machine.
+      if (!Platform.isMacOS) {
+        setState(() => _status = WorkflowActionStatus.skipped);
+        await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
+            'Skipped to run build for macOS because you are not on a macOS host.');
+        return;
+      }
+
+      _commands.addAll(WorkflowActionScripts.buildProjectForMacos(
+        widget.template.macosBuildMode,
+      ));
       return;
     }
 
+    // Build for Linux - (This can only be done on a Linux machine)
     if (widget.action.id == WorkflowActionsIds.buildProjectForLinux) {
-      _commands.add('flutter pub get');
-      _commands
-          .add('flutter build linux --${widget.template.linuxBuildMode.name}');
+      // We will skip if this is not a Linux machine.
+      if (!Platform.isLinux) {
+        setState(() => _status = WorkflowActionStatus.skipped);
+        await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
+            'Skipped to run build for Linux because you are not on a Linux host.');
+        return;
+      }
+
+      _commands.addAll(WorkflowActionScripts.buildProjectForLinux(
+        widget.template.linuxBuildMode,
+      ));
       return;
     }
   }
 
   Future<void> _runAction() async {
     try {
-      _prepareCommands();
+      await _prepareCommands();
+
+      // We will check if preparing commands has decided to skip this action.
+      if (_status == WorkflowActionStatus.skipped) {
+        widget.onDone();
+        return;
+      }
 
       await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
           'Prepared workflow commands: $_commands');
@@ -145,7 +207,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         await logger.file(
             LogTypeTag.info, 'Running command for workflow: $command');
         await shell
-            .cd(widget.dirPath.substring(0, widget.dirPath.indexOf(fmWorkflowDir)))
+            .cd(_projectPath)
             .run(command)
             .asStream()
             .listen(
@@ -157,7 +219,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
                         .map((ProcessResult e) => e.stdout.toString())
                         .join(','));
                 if (mounted) {
-                  setState(() => _out.add(line.first.stdout.toString()));
+                  setState(() => _out.add(line.last.stdout.toString()));
                 }
               },
             )
@@ -208,7 +270,11 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
   Widget build(BuildContext context) {
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
-      opacity: _status == WorkflowActionStatus.running ? 1 : 0.2,
+      opacity: _status == WorkflowActionStatus.running
+          ? 1
+          : _status == WorkflowActionStatus.skipped
+              ? 0.5
+              : 0.2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -255,9 +321,14 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
                   style: TextStyle(color: kGreenColor),
                 )
               else if (_status == WorkflowActionStatus.skipped)
-                const Text(
-                  'SKIPPED',
-                  style: TextStyle(color: kYellowColor),
+                const Tooltip(
+                  padding: EdgeInsets.all(5),
+                  message:
+                      'When a workflow action is skipped, it most likely means that it\nwas because this workflow action is not supported on your platform.',
+                  child: Text(
+                    'SKIPPED',
+                    style: TextStyle(color: kYellowColor),
+                  ),
                 )
               else if (_status == WorkflowActionStatus.failed)
                 const Text(
@@ -271,8 +342,6 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
               padding: const EdgeInsets.only(top: 10),
               child: Row(
                 children: <Widget>[
-                  const Spinner(size: 10, thickness: 1),
-                  HSeparators.small(),
                   Expanded(
                     child: Text(
                       _out.last,
@@ -280,6 +349,8 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
                       style: const TextStyle(color: Colors.grey, fontSize: 10),
                     ),
                   ),
+                  HSeparators.small(),
+                  const Spinner(size: 10, thickness: 1),
                 ],
               ),
             ),

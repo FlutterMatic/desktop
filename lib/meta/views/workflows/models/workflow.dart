@@ -10,8 +10,9 @@ class WorkflowTemplate {
   final String webUrl;
   final bool isFirebaseDeployVerified;
   final WebRenderers webRenderer;
-  final PlatformBuildModes iOSBuildMode;
+  final AndroidBuildType androidBuildType;
   final PlatformBuildModes androidBuildMode;
+  final PlatformBuildModes iOSBuildMode;
   final PlatformBuildModes webBuildMode;
   final PlatformBuildModes windowsBuildMode;
   final PlatformBuildModes macosBuildMode;
@@ -25,8 +26,9 @@ class WorkflowTemplate {
     required this.webUrl,
     required this.firebaseProjectName,
     required this.firebaseProjectId,
-    required this.iOSBuildMode,
+    required this.androidBuildType,
     required this.androidBuildMode,
+    required this.iOSBuildMode,
     required this.isFirebaseDeployVerified,
     required this.webRenderer,
     required this.webBuildMode,
@@ -46,8 +48,9 @@ class WorkflowTemplate {
       'firebaseProjectName': firebaseProjectName,
       'isFirebaseDeployVerified': isFirebaseDeployVerified,
       'webUrl': webUrl,
-      'iOSBuildMode': iOSBuildMode.toString(),
+      'androidBuildType': androidBuildType.toString(),
       'androidBuildMode': androidBuildMode.toString(),
+      'iOSBuildMode': iOSBuildMode.toString(),
       'webBuildMode': webBuildMode.toString(),
       'windowsBuildMode': windowsBuildMode.toString(),
       'macosBuildMode': macosBuildMode.toString(),
@@ -62,30 +65,59 @@ class WorkflowTemplate {
   factory WorkflowTemplate.fromJson(Map<String, dynamic> json) {
     try {
       return WorkflowTemplate(
-        name: json['name'] as String,
-        description: json['description'] as String,
-        webUrl: json['webUrl'] as String,
-        firebaseProjectName: json['firebaseProjectName'] as String,
-        firebaseProjectId: json['firebaseProjectId'] as String,
-        isFirebaseDeployVerified: json['isFirebaseDeployVerified'] as bool,
-        iOSBuildMode: PlatformBuildModes.values.firstWhere(
-            (PlatformBuildModes e) => e.toString() == json['iOSBuildMode']),
+        // ...
+        name: (json['name'] as String?) ?? 'No name',
+        // ...
+        description: (json['description'] as String?) ?? 'No description',
+        // ...
+        webUrl: (json['webUrl'] as String?) ?? 'No web url',
+        // ...
+        firebaseProjectName: (json['firebaseProjectName'] as String?) ??
+            'No firebase project name',
+        // ...
+        firebaseProjectId:
+            (json['firebaseProjectId'] as String?) ?? 'No firebase project id',
+        // ...
+        isFirebaseDeployVerified:
+            (json['isFirebaseDeployVerified'] as bool?) ?? false,
+        // ...
+        androidBuildType: AndroidBuildType.values.firstWhere(
+            (AndroidBuildType e) => e.toString() == json['androidBuildType'],
+            orElse: () => AndroidBuildType.appBundle),
+        // ...
         androidBuildMode: PlatformBuildModes.values.firstWhere(
-            (PlatformBuildModes e) => e.toString() == json['androidBuildMode']),
+            (PlatformBuildModes e) => e.toString() == json['androidBuildMode'],
+            orElse: () => PlatformBuildModes.release),
+        // ...
+        iOSBuildMode: PlatformBuildModes.values.firstWhere(
+            (PlatformBuildModes e) => e.toString() == json['iOSBuildMode'],
+            orElse: () => PlatformBuildModes.release),
+        // ...
         webBuildMode: PlatformBuildModes.values.firstWhere(
-            (PlatformBuildModes e) => e.toString() == json['webBuildMode']),
+            (PlatformBuildModes e) => e.toString() == json['webBuildMode'],
+            orElse: () => PlatformBuildModes.release),
+        // ...
         windowsBuildMode: PlatformBuildModes.values.firstWhere(
-            (PlatformBuildModes e) => e.toString() == json['windowsBuildMode']),
+            (PlatformBuildModes e) => e.toString() == json['windowsBuildMode'],
+            orElse: () => PlatformBuildModes.release),
+        // ...
         macosBuildMode: PlatformBuildModes.values.firstWhere(
-            (PlatformBuildModes e) => e.toString() == json['macosBuildMode']),
+            (PlatformBuildModes e) => e.toString() == json['macosBuildMode'],
+            orElse: () => PlatformBuildModes.release),
+        // ...
         linuxBuildMode: PlatformBuildModes.values.firstWhere(
-            (PlatformBuildModes e) => e.toString() == json['linuxBuildMode']),
+            (PlatformBuildModes e) => e.toString() == json['linuxBuildMode'],
+            orElse: () => PlatformBuildModes.release),
+        // ...
         webRenderer: WebRenderers.values.firstWhere(
-            (WebRenderers e) => e.toString() == json['webRenderer']),
-        workflowActions: (json['workflowActions'] as List<dynamic>)
-            .map((dynamic e) => e.toString())
-            .toList(),
-        isSaved: json['isSaved'] as bool,
+            (WebRenderers e) => e.toString() == json['webRenderer'],
+            orElse: () => WebRenderers.canvaskit),
+        // ...
+        workflowActions: ((json['workflowActions'] as List<dynamic>?)
+                ?.map((dynamic e) => e.toString())
+                .toList()) ??
+            <String>[],
+        isSaved: (json['isSaved'] as bool?) ?? false,
       );
     } catch (_, s) {
       logger.file(LogTypeTag.error,

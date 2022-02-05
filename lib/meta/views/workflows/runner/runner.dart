@@ -221,6 +221,17 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                           (WorkflowActionModel e) =>
                               e.id == _workflowActions[i]),
                       currentAction: _currentActionRunning,
+                      onError: (String error) {
+                        setState(() {
+                          _currentActionRunning = 'none';
+                          _isCompleted = true;
+                          _isRunning = false;
+                          _resultType = WorkflowActionStatus.failed;
+                        });
+                        _stopwatch.stop();
+                      },
+                      dirPath: widget.workflowPath
+                          .substring(0, widget.workflowPath.lastIndexOf('\\')),
                       onDone: () async {
                         if (_isCompleted) {
                           return;
@@ -257,17 +268,6 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                               _currentActionRunning = _workflowActions[i + 1]);
                         }
                       },
-                      onError: (String error) {
-                        setState(() {
-                          _currentActionRunning = 'none';
-                          _isCompleted = true;
-                          _isRunning = false;
-                          _resultType = WorkflowActionStatus.failed;
-                        });
-                        _stopwatch.stop();
-                      },
-                      dirPath: widget.workflowPath
-                          .substring(0, widget.workflowPath.lastIndexOf('\\')),
                     ),
                   );
                 },

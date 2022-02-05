@@ -21,6 +21,7 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final TextEditingController webUrlController;
   final TextEditingController firebaseProjectName;
   final TextEditingController firebaseProjectIDController;
+  final AndroidBuildType androidBuildType;
   final PlatformBuildModes defaultAndroidBuildMode;
   final PlatformBuildModes defaultIOSBuildMode;
   final PlatformBuildModes defaultWebBuildMode;
@@ -29,6 +30,7 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final PlatformBuildModes defaultLinuxBuildMode;
   final WebRenderers defaultWebRenderer;
   final List<WorkflowActionModel> workflowActions;
+  final Function(AndroidBuildType type) onAndroidBuildTypeChanged;
   final Function(PlatformBuildModes mode) onAndroidBuildModeChanged;
   final Function(PlatformBuildModes mode) oniOSBuildModeChanged;
   final Function(PlatformBuildModes mode) onBuildWebModeChanged;
@@ -62,6 +64,8 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
     required this.onWindowsBuildModeChanged,
     required this.onMacOSBuildModeChanged,
     required this.onLinuxBuildModeChanged,
+    required this.androidBuildType,
+    required this.onAndroidBuildTypeChanged,
     required this.onNext,
   }) : super(key: key);
 
@@ -72,9 +76,6 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
 
 class _SetProjectWorkflowActionsConfigurationState
     extends State<SetProjectWorkflowActionsConfiguration> {
-  late PlatformBuildModes _iOSBuildMode = widget.defaultIOSBuildMode;
-  late PlatformBuildModes _androidBuildMode = widget.defaultAndroidBuildMode;
-
   bool get _isDeployWeb => widget.workflowActions
       .where((WorkflowActionModel element) =>
           element.id == WorkflowActionsIds.deployProjectWeb)
@@ -176,19 +177,15 @@ class _SetProjectWorkflowActionsConfigurationState
           ),
         if (_isBuildAndroid)
           BuildAndroidWorkflowActionConfig(
-            defaultBuildMode: _androidBuildMode,
-            onBuildModeChanged: (PlatformBuildModes mode) {
-              widget.onAndroidBuildModeChanged(mode);
-              setState(() => _androidBuildMode = mode);
-            },
+            defaultBuildMode: widget.defaultAndroidBuildMode,
+            onBuildModeChanged: widget.onAndroidBuildModeChanged,
+            buildType: widget.androidBuildType,
+            onBuildTypeChanged: widget.onAndroidBuildTypeChanged,
           ),
         if (_isBuildIOS)
           BuildIOSWorkflowActionConfig(
-            defaultBuildMode: _iOSBuildMode,
-            onBuildModeChanged: (PlatformBuildModes mode) {
-              widget.oniOSBuildModeChanged(mode);
-              setState(() => _iOSBuildMode = mode);
-            },
+            defaultBuildMode: widget.defaultIOSBuildMode,
+            onBuildModeChanged: widget.oniOSBuildModeChanged,
           ),
         if (_isBuildWindows)
           BuildWindowsWorkflowActionConfig(
