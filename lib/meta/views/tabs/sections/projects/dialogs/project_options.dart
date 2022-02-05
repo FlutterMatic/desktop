@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/dialog_templates/project/edit_existing.dart';
 import 'package:fluttermatic/components/dialog_templates/project/outdated_dependencies.dart';
 import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -40,15 +41,20 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
                   height: 100,
                   child: Column(
                     children: <Widget>[
-                      // const Expanded(child: Icon(Icons.edit, size: 30)),
-                      // VSeparators.normal(),
-                      const Expanded(child: Center(child: Text('Edit'))),
-                      VSeparators.small(),
-                      const ComingSoonTile(),
+                      const Expanded(
+                          child: Center(child: Icon(Icons.edit, size: 30))),
+                      VSeparators.normal(),
+                      const Text('Edit'),
                     ],
                   ),
-                  // TODO: Implement editing an existing project
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (_) =>
+                          EditExistingProjectDialog(projectPath: widget.path),
+                    );
+                  },
                 ),
               ),
               HSeparators.normal(),
@@ -68,6 +74,7 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
                     ],
                   ),
                   onPressed: () {
+                    Navigator.pop(context);
                     showDialog(
                       context: context,
                       builder: (_) => DeleteProjectDialog(path: widget.path),

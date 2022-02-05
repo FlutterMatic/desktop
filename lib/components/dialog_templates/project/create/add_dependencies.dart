@@ -7,10 +7,11 @@ Future<bool> addDependencyToProject({
   required String dependency,
   required bool isDev,
   required bool isDart,
+  bool remove = false,
 }) async {
   try {
     await shell.cd(path).run(
-        '${isDart ? 'dart' : 'flutter'} pub add $dependency${isDev ? ' --dev' : ''}');
+        '${isDart ? 'dart' : 'flutter'} pub ${remove ? 'remove' : 'add'} $dependency${isDev ? ' --dev' : ''}');
     return true;
   } catch (_, s) {
     await logger.file(LogTypeTag.warning,
