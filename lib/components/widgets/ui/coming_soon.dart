@@ -17,7 +17,7 @@ class _ComingSoonTileState extends State<ComingSoonTile> {
 
   @override
   void initState() {
-    Future<void>.delayed(const Duration(milliseconds: 300)).then((_) {
+    Future<void>.delayed(const Duration(milliseconds: 100)).then((_) {
       if (mounted) {
         setState(() => _isVisible = true);
       }
@@ -28,8 +28,8 @@ class _ComingSoonTileState extends State<ComingSoonTile> {
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
-      opacity: _isVisible ? 0.6 : 0,
-      duration: const Duration(milliseconds: 500),
+      opacity: _isVisible ? 0.8 : 0,
+      duration: const Duration(milliseconds: 300),
       child: RoundContainer(
         padding: const EdgeInsets.fromLTRB(5, 3, 5, 3),
         color: kGreenColor.withOpacity(0.1),

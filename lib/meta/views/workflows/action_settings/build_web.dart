@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/meta/views/workflows/components/assign_timeout.dart';
 import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
 import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 
@@ -13,6 +14,7 @@ class BuildWebWorkflowActionConfig extends StatelessWidget {
   final Function(WebRenderers renderer) onRendererChanged;
   final PlatformBuildModes defaultBuildMode;
   final Function(PlatformBuildModes mode) onBuildModeChanged;
+  final TextEditingController timeoutController;
 
   const BuildWebWorkflowActionConfig({
     Key? key,
@@ -20,6 +22,7 @@ class BuildWebWorkflowActionConfig extends StatelessWidget {
     required this.onBuildModeChanged,
     required this.defaultRenderer,
     required this.onRendererChanged,
+    required this.timeoutController,
   }) : super(key: key);
 
   @override
@@ -29,6 +32,10 @@ class BuildWebWorkflowActionConfig extends StatelessWidget {
       subtitle: 'Compile your Flutter app for Web',
       icon: const Icon(Icons.web),
       children: <Widget>[
+        const Text('Assign a timeout'),
+        VSeparators.normal(),
+        SelectActionTimeout(controller: timeoutController),
+        VSeparators.normal(),
         const Text('Select the canvas mode'),
         VSeparators.normal(),
         infoWidget(

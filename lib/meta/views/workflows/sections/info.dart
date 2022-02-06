@@ -21,13 +21,13 @@ import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 
 class SetProjectWorkflowInfo extends StatefulWidget {
-  final Function() onNext;
   final TextEditingController nameController;
   final TextEditingController descriptionController;
   final PubspecInfo? pubspecFile;
   final Function(PubspecInfo pubspec) onPubspecUpdate;
   final bool showLastPage;
   final bool disableChangePubspec;
+  final Function() onNext;
 
   const SetProjectWorkflowInfo({
     Key? key,

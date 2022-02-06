@@ -166,8 +166,11 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                         },
                       );
                     }).toList(),
+                    VSeparators.small(),
                     const Text(
-                        'As we are preparing for more upcoming features, we will be adding more guides here.'),
+                      'As we are preparing for more upcoming features, we will be adding more guides here.',
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ],
                 ),
               ),

@@ -22,11 +22,13 @@ import 'package:fluttermatic/meta/views/workflows/views/log_history.dart';
 class ShowWorkflowTileOptions extends StatefulWidget {
   final String workflowPath;
   final Function() onDelete;
+  final Function() onReload;
 
   const ShowWorkflowTileOptions({
     Key? key,
     required this.workflowPath,
     required this.onDelete,
+    required this.onReload,
   }) : super(key: key);
 
   @override
@@ -96,6 +98,8 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                       ],
                     ),
                     onPressed: () async {
+                      Navigator.pop(context);
+
                       Map<String, dynamic> _workflow = jsonDecode(
                           await File(widget.workflowPath).readAsString());
 
@@ -111,6 +115,8 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                               WorkflowTemplate.fromJson(_workflow),
                         ),
                       );
+
+                      await widget.onReload();
                     },
                   ),
                 ),
@@ -187,9 +193,9 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                         const Text('Delete'),
                       ],
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.pop(context);
-                      showDialog(
+                      await showDialog(
                         context: context,
                         builder: (_) => ConfirmWorkflowDelete(
                           path: widget.workflowPath,
@@ -202,6 +208,7 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                           },
                         ),
                       );
+                      widget.onReload();
                     },
                   ),
                 ),

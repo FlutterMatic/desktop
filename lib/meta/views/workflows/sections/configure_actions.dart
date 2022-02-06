@@ -18,9 +18,20 @@ import 'package:fluttermatic/meta/views/workflows/action_settings/deploy_web.dar
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 
 class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
+  // Input Controllers
   final TextEditingController webUrlController;
   final TextEditingController firebaseProjectName;
   final TextEditingController firebaseProjectIDController;
+
+  // ... Timeout Controllers
+  final TextEditingController buildAndroidTimeController;
+  final TextEditingController buildIOSTimeController;
+  final TextEditingController buildWindowsTimeController;
+  final TextEditingController buildLinuxTimeController;
+  final TextEditingController buildMacOSTimeController;
+  final TextEditingController buildWebTimeController;
+
+  // Build Modes & Types
   final AndroidBuildType androidBuildType;
   final PlatformBuildModes defaultAndroidBuildMode;
   final PlatformBuildModes defaultIOSBuildMode;
@@ -29,7 +40,8 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final PlatformBuildModes defaultMacOSBuildMode;
   final PlatformBuildModes defaultLinuxBuildMode;
   final WebRenderers defaultWebRenderer;
-  final List<WorkflowActionModel> workflowActions;
+
+  // Trigger Callbacks
   final Function(AndroidBuildType type) onAndroidBuildTypeChanged;
   final Function(PlatformBuildModes mode) onAndroidBuildModeChanged;
   final Function(PlatformBuildModes mode) oniOSBuildModeChanged;
@@ -38,6 +50,11 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final Function(PlatformBuildModes mode) onMacOSBuildModeChanged;
   final Function(PlatformBuildModes mode) onLinuxBuildModeChanged;
   final Function(WebRenderers renderer) onWebRendererChanged;
+
+  // Workflow Actions
+  final List<WorkflowActionModel> workflowActions;
+
+  // Utils
   final Function(bool isFirebaseValidated) onFirebaseValidatedChanged;
   final bool isFirebaseValidated;
   final Function() onNext;
@@ -66,6 +83,12 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
     required this.onLinuxBuildModeChanged,
     required this.androidBuildType,
     required this.onAndroidBuildTypeChanged,
+    required this.buildAndroidTimeController,
+    required this.buildIOSTimeController,
+    required this.buildWindowsTimeController,
+    required this.buildLinuxTimeController,
+    required this.buildMacOSTimeController,
+    required this.buildWebTimeController,
     required this.onNext,
   }) : super(key: key);
 
@@ -174,6 +197,7 @@ class _SetProjectWorkflowActionsConfigurationState
             onBuildModeChanged: widget.onBuildWebModeChanged,
             defaultRenderer: widget.defaultWebRenderer,
             onRendererChanged: widget.onWebRendererChanged,
+            timeoutController: widget.buildWebTimeController,
           ),
         if (_isBuildAndroid)
           BuildAndroidWorkflowActionConfig(
@@ -181,14 +205,17 @@ class _SetProjectWorkflowActionsConfigurationState
             onBuildModeChanged: widget.onAndroidBuildModeChanged,
             buildType: widget.androidBuildType,
             onBuildTypeChanged: widget.onAndroidBuildTypeChanged,
+            timeoutController: widget.buildAndroidTimeController,
           ),
         if (_isBuildIOS)
           BuildIOSWorkflowActionConfig(
             defaultBuildMode: widget.defaultIOSBuildMode,
             onBuildModeChanged: widget.oniOSBuildModeChanged,
+            timeoutController: widget.buildIOSTimeController,
           ),
         if (_isBuildWindows)
           BuildWindowsWorkflowActionConfig(
+            timeoutController: widget.buildWindowsTimeController,
             onBuildModeChanged: widget.onWindowsBuildModeChanged,
             defaultBuildMode: widget.defaultWindowsBuildMode,
           ),
@@ -196,11 +223,13 @@ class _SetProjectWorkflowActionsConfigurationState
           BuildMacOSWorkflowActionConfig(
             onBuildModeChanged: widget.onMacOSBuildModeChanged,
             defaultBuildMode: widget.defaultMacOSBuildMode,
+            timeoutController: widget.buildMacOSTimeController,
           ),
         if (_isBuildLinux)
           BuildLinuxWorkflowActionConfig(
             onBuildModeChanged: widget.onLinuxBuildModeChanged,
             defaultBuildMode: widget.defaultLinuxBuildMode,
+            timeoutController: widget.buildLinuxTimeController,
           ),
         Align(
           alignment: Alignment.centerRight,

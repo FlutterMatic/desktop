@@ -21,6 +21,7 @@ class TaskRunnerView extends StatefulWidget {
   final File logFile;
   final WorkflowTemplate template;
   final List<String> completedActions;
+  final WorkflowActionStatus status;
   final WorkflowActionModel action;
   final String currentAction;
   final Function onDone;
@@ -37,6 +38,7 @@ class TaskRunnerView extends StatefulWidget {
     required this.completedActions,
     required this.logFile,
     required this.onError,
+    required this.status,
   }) : super(key: key);
 
   @override
@@ -44,6 +46,9 @@ class TaskRunnerView extends StatefulWidget {
 }
 
 class _TaskRunnerViewState extends State<TaskRunnerView> {
+  final Stopwatch _timeoutStopwatch = Stopwatch();
+  int _timeoutMinutes = 0;
+
   WorkflowActionStatus _status = WorkflowActionStatus.pending;
 
   // Command Utils
@@ -56,6 +61,22 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
     Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (widget.currentAction == widget.action.id && mounted) {
         setState(() => _seconds += 1);
+        // Check to see if the timeout has been reached
+        if (_timeoutStopwatch.elapsed.inMinutes >= _timeoutMinutes &&
+            _timeoutMinutes != 0) {
+          _timeoutStopwatch.stop();
+          _timeoutStopwatch.reset();
+          _timeoutMinutes = 0;
+          setState(() => _status = WorkflowActionStatus.timeout);
+          // Write a log informing this
+          writeWorkflowSessionLog(widget.logFile, LogTypeTag.warning,
+                  'Timeout reached for a workflow action: ${widget.action.id}')
+              .then((_) {
+            widget.onDone();
+            t.cancel();
+          });
+        }
+
         if (_status == WorkflowActionStatus.done ||
             widget.completedActions.contains(widget.action.id)) {
           t.cancel();
@@ -97,6 +118,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
 
     // Build Web
     if (widget.action.id == WorkflowActionsIds.buildProjectForWeb) {
+      _timeoutMinutes = widget.template.webBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForWeb(
         mode: widget.template.webBuildMode,
         renderer: widget.template.webRenderer,
@@ -114,6 +136,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
+      _timeoutMinutes = widget.template.iOSBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForIos(
         widget.template.iOSBuildMode,
       ));
@@ -122,6 +145,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
 
     // Build for Android
     if (widget.action.id == WorkflowActionsIds.buildProjectForAndroid) {
+      _timeoutMinutes = widget.template.androidBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForAndroid(
         mode: widget.template.androidBuildMode,
         type: widget.template.androidBuildType,
@@ -139,6 +163,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
+      _timeoutMinutes = widget.template.windowsBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForWindows(
         widget.template.windowsBuildMode,
       ));
@@ -155,6 +180,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
+      _timeoutMinutes = widget.template.macosBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForMacos(
         widget.template.macosBuildMode,
       ));
@@ -171,6 +197,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
+      _timeoutMinutes = widget.template.linuxBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForLinux(
         widget.template.linuxBuildMode,
       ));
@@ -203,9 +230,13 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         setState(() => _status = WorkflowActionStatus.running);
       }
 
+      // Start the timeout timer
+      _timeoutStopwatch.start();
+
       for (String command in _commands) {
         await logger.file(
             LogTypeTag.info, 'Running command for workflow: $command');
+
         await shell
             .cd(_projectPath)
             .run(command)
@@ -284,7 +315,17 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(widget.action.name),
+                    Row(
+                      children: <Widget>[
+                        Text(widget.action.name),
+                        if (_timeoutMinutes != 0)
+                          Text(
+                            ' ($_timeoutMinutes minute${_timeoutMinutes > 1 ? 's' : ''} timeout)',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                      ],
+                    ),
                     VSeparators.xSmall(),
                     Text(
                       widget.action.description,
@@ -329,6 +370,11 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
                     'SKIPPED',
                     style: TextStyle(color: kYellowColor),
                   ),
+                )
+              else if (_status == WorkflowActionStatus.timeout)
+                const Text(
+                  'TIME',
+                  style: TextStyle(color: kRedColor),
                 )
               else if (_status == WorkflowActionStatus.failed)
                 const Text(

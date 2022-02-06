@@ -174,7 +174,7 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
   }
 }
 
-/// Generates a random string that contains [total] characters. This will 
+/// Generates a random string that contains [total] characters. This will
 /// contain numbers, uppercase and lowercase letters.
 String generateRandomString(int total) {
   const String _chars =

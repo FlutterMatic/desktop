@@ -73,27 +73,19 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       /// Application supporting Directory
       Directory _dir = await getApplicationSupportDirectory();
 
-      /// Check for temporary Directory to download files
-      bool _logsDir = await Directory(_dir.path + '\\logs').exists();
-      bool _cacheDir = await Directory(_dir.path + '\\cache').exists();
-      bool _tmpDir = await Directory(_dir.path + '\\tmp').exists();
+      // List of directories that needs to be ensured that they exist.
+      List<String> _dirsToCreate = <String>[
+        '\\logs',
+        '\\cache',
+        '\\tmp',
+      ];
 
-      // If _logsDir is false, then create a cache directory.
-      if (!_logsDir) {
-        await Directory(_dir.path + '\\logs').create();
-        await logger.file(LogTypeTag.info, 'Created logs directory.');
-      }
-
-      // If cacheDir is false, then create a cache directory.
-      if (!_cacheDir) {
-        await Directory(_dir.path + '\\cache').create();
-        await logger.file(LogTypeTag.info, 'Created cache directory.');
-      }
-
-      /// If tmpDir is false, then create a temporary directory.
-      if (!_tmpDir) {
-        await Directory(_dir.path + '\\tmp').create();
-        await logger.file(LogTypeTag.info, 'Created tmp directory.');
+      // Create each directory if they are missing.
+      for (String dirName in _dirsToCreate) {
+        Directory _dirToCreate = Directory(_dir.path + dirName);
+        if (!await _dirToCreate.exists()) {
+          await _dirToCreate.create(recursive: true);
+        }
       }
 
       // Initialize shared preference.

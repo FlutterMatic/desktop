@@ -302,6 +302,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                     content: _workflows[i].workflows.map((WorkflowTemplate e) {
                       return WorkflowInfoTile(
                         workflow: e,
+                        onReload: () => _loadWorkflows(true),
                         path: _workflows[i].path +
                             '\\$fmWorkflowDir\\' +
                             e.name +

@@ -20,7 +20,7 @@ import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 class ConfirmWorkflowDelete extends StatefulWidget {
   final String path;
   final WorkflowTemplate template;
-  final Function(bool) onClose;
+  final Function(bool hasDeleted) onClose;
 
   const ConfirmWorkflowDelete({
     Key? key,

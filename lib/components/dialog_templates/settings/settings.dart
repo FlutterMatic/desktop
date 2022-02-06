@@ -9,6 +9,7 @@ import 'package:fluttermatic/components/dialog_templates/settings/sections/githu
 import 'package:fluttermatic/components/dialog_templates/settings/sections/overview.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/projects.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/sections/troubleshoot.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/sections/updates.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 
@@ -31,6 +32,8 @@ class SettingDialog extends StatelessWidget {
         return 'Troubleshoot';
       case SettingsPage.discover:
         return 'Discover';
+      case SettingsPage.updates:
+        return 'Updates';
       default:
         return null;
     }
@@ -53,6 +56,7 @@ class SettingDialog extends StatelessWidget {
               TabViewObject('GitHub', GitHubSettingsSection()),
               TabViewObject('Troubleshoot', TroubleShootSettingsSection()),
               TabViewObject('Discover', DiscoverSettingsSection()),
+              TabViewObject('Updates', UpdatesSettingsSection()),
             ],
           ),
         ],
@@ -68,4 +72,5 @@ enum SettingsPage {
   github,
   troubleshoot,
   discover,
+  updates,
 }

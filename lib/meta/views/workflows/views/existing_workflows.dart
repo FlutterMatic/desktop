@@ -170,6 +170,7 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
                     child: _WorkflowTile(
                       template: _workflows[i],
                       path: _workflowPaths[i],
+                      onReload: _loadWorkflows,
                       onDelete: () => setState(() {
                         _workflows.removeAt(i);
                         _workflowPaths.removeAt(i);
@@ -216,12 +217,14 @@ class _WorkflowTile extends StatefulWidget {
   final String path;
   final WorkflowTemplate template;
   final Function() onDelete;
+  final Function() onReload;
 
   const _WorkflowTile({
     Key? key,
     required this.template,
     required this.path,
     required this.onDelete,
+    required this.onReload,
   }) : super(key: key);
 
   @override
@@ -278,6 +281,7 @@ class __WorkflowTileState extends State<_WorkflowTile> {
                               builder: (_) => ShowWorkflowTileOptions(
                                 workflowPath: widget.path,
                                 onDelete: widget.onDelete,
+                                onReload: widget.onReload,
                               ),
                             );
                           },

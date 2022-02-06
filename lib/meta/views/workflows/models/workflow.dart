@@ -5,10 +5,8 @@ import 'package:fluttermatic/core/services/logs.dart';
 class WorkflowTemplate {
   final String name;
   final String description;
-  final String firebaseProjectId;
-  final String firebaseProjectName;
-  final String webUrl;
-  final bool isFirebaseDeployVerified;
+
+  // Build Modes & Types
   final WebRenderers webRenderer;
   final AndroidBuildType androidBuildType;
   final PlatformBuildModes androidBuildMode;
@@ -17,6 +15,20 @@ class WorkflowTemplate {
   final PlatformBuildModes windowsBuildMode;
   final PlatformBuildModes macosBuildMode;
   final PlatformBuildModes linuxBuildMode;
+
+  // Timeouts
+  final int androidBuildTimeout;
+  final int iOSBuildTimeout;
+  final int webBuildTimeout;
+  final int windowsBuildTimeout;
+  final int macosBuildTimeout;
+  final int linuxBuildTimeout;
+
+  // Utils
+  final String webUrl;
+  final String firebaseProjectId;
+  final String firebaseProjectName;
+  final bool isFirebaseDeployVerified;
   final List<String> workflowActions;
   final bool isSaved;
 
@@ -37,6 +49,12 @@ class WorkflowTemplate {
     required this.windowsBuildMode,
     required this.macosBuildMode,
     required this.linuxBuildMode,
+    required this.androidBuildTimeout,
+    required this.iOSBuildTimeout,
+    required this.webBuildTimeout,
+    required this.windowsBuildTimeout,
+    required this.macosBuildTimeout,
+    required this.linuxBuildTimeout,
   });
 
   // Ability to convert to a JSON
@@ -48,6 +66,12 @@ class WorkflowTemplate {
       'firebaseProjectName': firebaseProjectName,
       'isFirebaseDeployVerified': isFirebaseDeployVerified,
       'webUrl': webUrl,
+      'androidBuildTimeout': androidBuildTimeout,
+      'iOSBuildTimeout': iOSBuildTimeout,
+      'webBuildTimeout': webBuildTimeout,
+      'windowsBuildTimeout': windowsBuildTimeout,
+      'macosBuildTimeout': macosBuildTimeout,
+      'linuxBuildTimeout': linuxBuildTimeout,
       'androidBuildType': androidBuildType.toString(),
       'androidBuildMode': androidBuildMode.toString(),
       'iOSBuildMode': iOSBuildMode.toString(),
@@ -84,6 +108,18 @@ class WorkflowTemplate {
         androidBuildType: AndroidBuildType.values.firstWhere(
             (AndroidBuildType e) => e.toString() == json['androidBuildType'],
             orElse: () => AndroidBuildType.appBundle),
+        // ...
+        androidBuildTimeout: (json['androidBuildTimeout'] as int?) ?? 0,
+        // ...
+        iOSBuildTimeout: (json['iOSBuildTimeout'] as int?) ?? 0,
+        // ...
+        linuxBuildTimeout: (json['linuxBuildTimeout'] as int?) ?? 0,
+        // ...
+        macosBuildTimeout: (json['macosBuildTimeout'] as int?) ?? 0,
+        // ...
+        webBuildTimeout: (json['webBuildTimeout'] as int?) ?? 0,
+        // ...
+        windowsBuildTimeout: (json['windowsBuildTimeout'] as int?) ?? 0,
         // ...
         androidBuildMode: PlatformBuildModes.values.firstWhere(
             (PlatformBuildModes e) => e.toString() == json['androidBuildMode'],

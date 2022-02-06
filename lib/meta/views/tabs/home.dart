@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeTabObject('Home', Assets.home, HomeMainSection()),
     HomeTabObject('Projects', Assets.project, HomeProjectsSection()),
     HomeTabObject('Pub Packages', Assets.package, HomePubSection()),
-    HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections(), 'Beta'),
+    HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections()),
   ];
 
   Future<void> _checkUpdates() async {
@@ -330,7 +330,6 @@ Widget _tabTile(
       child: RectangleButton(
         width: 200,
         hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         color: selected

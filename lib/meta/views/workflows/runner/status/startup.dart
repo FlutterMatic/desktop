@@ -87,9 +87,23 @@ class WorkflowStartUp extends StatelessWidget {
             ),
           ),
           VSeparators.normal(),
-          RectangleButton(
-            child: const Text('Start'),
-            onPressed: onRun,
+          Row(
+            children: <Widget>[
+              const Icon(Icons.lock_rounded, size: 15),
+              HSeparators.xSmall(),
+              const Expanded(
+                child: Text(
+                  'This workflow runs locally on your system. Nothing will be sent to any external resources by us, unless required by the workflow action.',
+                  style: TextStyle(fontSize: 10),
+                ),
+              ),
+              HSeparators.normal(),
+              RectangleButton(
+                width: 100,
+                child: const Text('Start'),
+                onPressed: onRun,
+              ),
+            ],
           ),
         ],
       ),

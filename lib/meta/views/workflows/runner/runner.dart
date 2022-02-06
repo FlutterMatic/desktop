@@ -10,17 +10,20 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/task_runner_view.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/status/error.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/status/startup.dart';
+import 'package:fluttermatic/meta/views/workflows/runner/status/stopped.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/status/success.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
@@ -152,7 +155,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
         ? _seconds.toString() + ' second${_seconds == 1 ? '' : 's'}'
         : '';
 
-    return _message;
+    return _message.isEmpty ? 'Just started' : _message;
   }
 
   @override
@@ -198,13 +201,18 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                   logFile: _workflowSessionLogs,
                   path: widget.workflowPath,
                 )
+              else if (_resultType == WorkflowActionStatus.stopped)
+                WorkflowStopped(
+                  logFile: _workflowSessionLogs,
+                  path: widget.workflowPath,
+                )
               else if (_resultType == WorkflowActionStatus.done)
                 WorkflowSuccess(
                   elapsedTime: _composeTimeElapsed(),
                   template: _template,
                   logFile: _workflowSessionLogs,
                 )
-            ] else if (_isRunning && !_isCompleted)
+            ] else if (_isRunning && !_isCompleted) ...<Widget>[
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -214,9 +222,10 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                   return Padding(
                     padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
                     child: TaskRunnerView(
+                      template: _template,
+                      status: _resultType,
                       logFile: _workflowSessionLogs,
                       completedActions: _completedActions,
-                      template: _template,
                       action: workflowActionModels.firstWhere(
                           (WorkflowActionModel e) =>
                               e.id == _workflowActions[i]),
@@ -272,6 +281,29 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                   );
                 },
               ),
+              VSeparators.normal(),
+              if (_isRunning)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: SquareButton(
+                    tooltip: 'Stop',
+                    icon: const Icon(Icons.stop, color: AppTheme.errorColor),
+                    onPressed: () async {
+                      _stopwatch.stop();
+                      await writeWorkflowSessionLog(
+                        _workflowSessionLogs,
+                        LogTypeTag.warning,
+                        'Workflow session force stopped.',
+                      );
+                      setState(() {
+                        _isRunning = false;
+                        _isCompleted = true;
+                        _resultType = WorkflowActionStatus.stopped;
+                      });
+                    },
+                  ),
+                ),
+            ],
           ],
         ),
       ),

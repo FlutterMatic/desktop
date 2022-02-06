@@ -30,7 +30,6 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onEditCompleted;
   final TextEditingController? controller;
   final bool? autofocus;
-  final double? width;
   final bool readOnly;
   final TextCapitalization? textCapitalization;
   final FocusNode? focusNode;
@@ -54,7 +53,6 @@ class CustomTextField extends StatelessWidget {
     this.color,
     this.hintText,
     this.focusNode,
-    this.width,
     this.onEditCompleted,
     this.readOnly = false,
     this.textCapitalization,

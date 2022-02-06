@@ -7,20 +7,20 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
-import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 
-class WorkflowError extends StatelessWidget {
+class WorkflowStopped extends StatelessWidget {
   final String path;
   final File logFile;
 
-  const WorkflowError({
+  const WorkflowStopped({
     Key? key,
     required this.path,
     required this.logFile,
@@ -28,28 +28,22 @@ class WorkflowError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> _logFile = File(logFile.path).readAsLinesSync();
     return Column(
       children: <Widget>[
         RoundContainer(
           height: 230,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text('.... Click on "Logs" to view entire log'),
-              Expanded(
-                child: LogViewBuilder(
-                  logs: logFile
-                      .readAsLinesSync()
-                      .sublist(logFile.readAsLinesSync().length - 6),
-                ),
-              ),
-            ],
+          child: LogViewBuilder(
+            logs: _logFile
+                .sublist((_logFile.length - 6) > 0 ? _logFile.length - 6 : 0),
           ),
         ),
         VSeparators.normal(),
+        infoWidget(context,
+            'Note that the last running workflow action may continue to run in the background until it finishes.'),
+        VSeparators.normal(),
         informationWidget(
-          'The workflow failed to complete because of some error. Check the logs to see what went wrong.',
-          type: InformationType.error,
+          'You force stopped this workflow. You can restart it by clicking the button below.',
         ),
         VSeparators.normal(),
         Center(
@@ -68,19 +62,7 @@ class WorkflowError extends StatelessWidget {
               HSeparators.small(),
               RectangleButton(
                 width: 100,
-                child: const Text('Logs'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: context,
-                    builder: (_) => ViewWorkflowSessionLogs(path: logFile.path),
-                  );
-                },
-              ),
-              HSeparators.small(),
-              RectangleButton(
-                width: 100,
-                child: const Text('Re-run'),
+                child: const Text('Restart'),
                 onPressed: () {
                   Navigator.pop(context);
                   showDialog(

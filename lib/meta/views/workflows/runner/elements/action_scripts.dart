@@ -1,3 +1,4 @@
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants/enum.dart';
 
 class WorkflowActionScripts {
@@ -46,8 +47,6 @@ class WorkflowActionScripts {
     required PlatformBuildModes mode,
     required AndroidBuildType type,
   }) {
-    // TODO: Support options to choose whether builds APK or App Bundle for
-    // Android.
     return <String>[
       'flutter pub get',
       if (type == AndroidBuildType.appBundle)

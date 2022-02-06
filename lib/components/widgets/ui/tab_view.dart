@@ -50,7 +50,7 @@ class _TabViewWidgetState extends State<TabViewWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: widget.tabs.map(
             (TabViewObject e) {
-              return tabItemWidget(
+              return _tabItemWidget(
                 context,
                 name: e.name,
                 selected: _index == widget.tabs.indexOf(e),
@@ -79,7 +79,7 @@ class TabViewObject {
   const TabViewObject(this.name, this.widget);
 }
 
-Widget tabItemWidget(
+Widget _tabItemWidget(
   BuildContext context, {
   required String name,
   required Function() onPressed,
@@ -88,7 +88,6 @@ Widget tabItemWidget(
   return RectangleButton(
     width: 130,
     hoverColor: Colors.transparent,
-    focusColor: Colors.transparent,
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     color: selected

@@ -27,7 +27,7 @@ class _StageTileState extends State<StageTile> {
 
   @override
   void initState() {
-    Future<void>.delayed(const Duration(milliseconds: 300)).then((_) {
+    Future<void>.delayed(const Duration(milliseconds: 100)).then((_) {
       if (mounted) {
         setState(() => _isVisible = true);
       }
@@ -39,7 +39,7 @@ class _StageTileState extends State<StageTile> {
   Widget build(BuildContext context) {
     return AnimatedOpacity(
       opacity: _isVisible ? 0.6 : 0,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       child: InkWell(
         onTap: widget.stageType == StageType.prerelease
             ? null

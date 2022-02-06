@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
+import 'package:fluttermatic/meta/views/workflows/components/assign_timeout.dart';
 import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
 import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 
@@ -13,6 +14,7 @@ class BuildAndroidWorkflowActionConfig extends StatelessWidget {
   final Function(PlatformBuildModes mode) onBuildModeChanged;
   final AndroidBuildType buildType;
   final Function(AndroidBuildType type) onBuildTypeChanged;
+  final TextEditingController timeoutController;
 
   const BuildAndroidWorkflowActionConfig({
     Key? key,
@@ -20,6 +22,7 @@ class BuildAndroidWorkflowActionConfig extends StatelessWidget {
     required this.onBuildModeChanged,
     required this.onBuildTypeChanged,
     required this.buildType,
+    required this.timeoutController,
   }) : super(key: key);
 
   @override
@@ -29,6 +32,10 @@ class BuildAndroidWorkflowActionConfig extends StatelessWidget {
       subtitle: 'Compile your Flutter app for Android',
       icon: const Icon(Icons.phone_android_rounded),
       children: <Widget>[
+        const Text('Assign a timeout'),
+        VSeparators.normal(),
+        SelectActionTimeout(controller: timeoutController),
+        VSeparators.normal(),
         const Text('Select the build type'),
         VSeparators.normal(),
         infoWidget(

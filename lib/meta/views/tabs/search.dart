@@ -9,6 +9,8 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/other/status.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create_select.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
@@ -27,7 +29,7 @@ class HomeSearchComponent extends StatefulWidget {
 
 class _HomeSearchComponentState extends State<HomeSearchComponent> {
   final TextEditingController _searchController = TextEditingController();
-  // final bool _loadingSearch = false;
+  final bool _loadingSearch = false;
 
   final FocusNode _searchNode = FocusNode();
   final List<ProjectObject> _searchResults = <ProjectObject>[];
@@ -113,15 +115,8 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                 isCollapsed: true,
                               ),
                               controller: _searchController,
-                              onChanged: (String val) {
-                                setState(() {});
-                                // if (val.isEmpty) {
-                                //   setState(() => _searchText = val);
-                                //   // _startSearch();
-                                // } else {
-                                //   setState(() => _searchText = val);
-                                //   // _startSearch();
-                                // }
+                              onChanged: (_) {
+                                // Call search
                               },
                             ),
                           ),
@@ -215,15 +210,15 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                   ),
                                 ],
                               ),
-                              // VSeparators.normal(),
-                              // if (_loadingSearch)
-                              //   const CustomLinearProgressIndicator(
-                              //       includeBox: false)
-                              // else
-                              //   informationWidget(
-                              //     'There are no results for your search query. Try using another term instead.',
-                              //     type: InformationType.error,
-                              //   ),
+                              VSeparators.normal(),
+                              if (_loadingSearch)
+                                const CustomLinearProgressIndicator(
+                                    includeBox: false)
+                              else
+                                informationWidget(
+                                  'There are no results for your search query. Try using another term instead.',
+                                  type: InformationType.error,
+                                ),
                             ]
                           : <Widget>[
                               // TODO: Implement the search.

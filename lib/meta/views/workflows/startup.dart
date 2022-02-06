@@ -52,13 +52,27 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   final ReceivePort _saveLocallyPort =
       ReceivePort('WORKFLOW_AUTO_SYNC_ISOLATE_PORT');
 
-  // Inputs
+  // Input Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _webUrlController = TextEditingController();
   final TextEditingController _firebaseProjectName = TextEditingController();
   final TextEditingController _firebaseProjectIDController =
       TextEditingController();
+
+  // Timeout Controllers - (Default is 0, meaning no timeout)
+  final TextEditingController _buildAndroidTimeController =
+      TextEditingController()..text = '0';
+  final TextEditingController _buildIOSTimeController = TextEditingController()
+    ..text = '0';
+  final TextEditingController _buildMacOSTimeController =
+      TextEditingController()..text = '0';
+  final TextEditingController _buildLinuxTimeController =
+      TextEditingController()..text = '0';
+  final TextEditingController _buildWindowsTimeController =
+      TextEditingController()..text = '0';
+  final TextEditingController _buildWebTimeController = TextEditingController()
+    ..text = '0';
 
   // The list of the workflow actions to run when the workflow is run. This is
   // in order of execution.
@@ -118,30 +132,40 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   bool get _syncing =>
       (_saveLocalError && !_isSavingLocally || _isSavingLocally);
 
+  // Store the workflow template so we can use it anywhere to access the state
+  // of the workflow so far.
+  WorkflowTemplate get _workflowTemplate {
+    return WorkflowTemplate(
+      androidBuildTimeout: int.tryParse(_buildAndroidTimeController.text) ?? 0,
+      iOSBuildTimeout: int.tryParse(_buildIOSTimeController.text) ?? 0,
+      linuxBuildTimeout: int.tryParse(_buildLinuxTimeController.text) ?? 0,
+      macosBuildTimeout: int.tryParse(_buildMacOSTimeController.text) ?? 0,
+      webBuildTimeout: int.tryParse(_buildWebTimeController.text) ?? 0,
+      windowsBuildTimeout: int.tryParse(_buildWindowsTimeController.text) ?? 0,
+      name: _nameController.text,
+      description: _descriptionController.text,
+      webUrl: _webUrlController.text,
+      firebaseProjectName: _firebaseProjectName.text,
+      firebaseProjectId: _firebaseProjectIDController.text,
+      iOSBuildMode: _iOSBuildMode,
+      androidBuildType: _androidBuildType,
+      androidBuildMode: _androidBuildMode,
+      isFirebaseDeployVerified: _isFirebaseDeployVerified,
+      webRenderer: _webRenderer,
+      webBuildMode: _webBuildMode,
+      workflowActions:
+          _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
+      linuxBuildMode: _linuxBuildMode,
+      macosBuildMode: _macOSBuildMode,
+      windowsBuildMode: _windowsBuildMode,
+      isSaved: true,
+    );
+  }
+
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
-      Map<String, dynamic> _pendingChanges = WorkflowTemplate(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        webUrl: _webUrlController.text,
-        firebaseProjectName: _firebaseProjectName.text,
-        firebaseProjectId: _firebaseProjectIDController.text,
-        androidBuildType: _androidBuildType,
-        androidBuildMode: _androidBuildMode,
-        iOSBuildMode: _iOSBuildMode,
-        isFirebaseDeployVerified: _isFirebaseDeployVerified,
-        webRenderer: _webRenderer,
-        webBuildMode: _webBuildMode,
-        workflowActions:
-            _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
-        isSaved: false,
-        linuxBuildMode: _linuxBuildMode,
-        macosBuildMode: _macOSBuildMode,
-        windowsBuildMode: _windowsBuildMode,
-      ).toJson();
-
       List<bool> _stopConditions = <bool>[
-        _pendingChanges == _lastSavedContent,
+        (_workflowTemplate.toJson()) == _lastSavedContent,
         _pubspecFile == null,
         _nameController.text.isEmpty,
         _interfaceView == _InterfaceView.workflowInfo,
@@ -160,7 +184,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       Isolate _i = await Isolate.spawn(_saveInBgSync, <dynamic>[
         _saveLocallyPort.sendPort,
         _projectPath,
-        _pendingChanges,
+        _workflowTemplate.toJson(),
         _nameController.text,
       ]).timeout(const Duration(seconds: 5), onTimeout: () {
         setState(() {
@@ -237,6 +261,22 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           widget.editWorkflowTemplate?.firebaseProjectName ?? '';
       _firebaseProjectIDController.text =
           widget.editWorkflowTemplate?.firebaseProjectId ?? '';
+
+      // Set the timeouts
+      _buildAndroidTimeController.text =
+          widget.editWorkflowTemplate?.androidBuildTimeout.toString() ?? '0';
+      _buildIOSTimeController.text =
+          widget.editWorkflowTemplate?.iOSBuildTimeout.toString() ?? '0';
+      _buildLinuxTimeController.text =
+          widget.editWorkflowTemplate?.linuxBuildTimeout.toString() ?? '0';
+      _buildMacOSTimeController.text =
+          widget.editWorkflowTemplate?.macosBuildTimeout.toString() ?? '0';
+      _buildWebTimeController.text =
+          widget.editWorkflowTemplate?.webBuildTimeout.toString() ?? '0';
+      _buildWindowsTimeController.text =
+          widget.editWorkflowTemplate?.windowsBuildTimeout.toString() ?? '0';
+
+      // Set the build modes & types
       _iOSBuildMode = widget.editWorkflowTemplate?.iOSBuildMode ??
           PlatformBuildModes.release;
       _androidBuildMode = widget.editWorkflowTemplate?.androidBuildMode ??
@@ -314,25 +354,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           pubspecPath: _projectPath,
           addToGitignore: _addToGitIgnore,
           addAllToGitignore: _addAllToGitIgnore,
-          template: WorkflowTemplate(
-            name: _nameController.text,
-            description: _descriptionController.text,
-            webUrl: _webUrlController.text,
-            firebaseProjectName: _firebaseProjectName.text,
-            firebaseProjectId: _firebaseProjectIDController.text,
-            iOSBuildMode: _iOSBuildMode,
-            androidBuildType: _androidBuildType,
-            androidBuildMode: _androidBuildMode,
-            isFirebaseDeployVerified: _isFirebaseDeployVerified,
-            webRenderer: _webRenderer,
-            webBuildMode: _webBuildMode,
-            workflowActions:
-                _workflowActions.map((WorkflowActionModel e) => e.id).toList(),
-            linuxBuildMode: _linuxBuildMode,
-            macosBuildMode: _macOSBuildMode,
-            windowsBuildMode: _windowsBuildMode,
-            isSaved: false,
-          ),
+          template: _workflowTemplate,
         );
 
         return true;
@@ -351,26 +373,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             pubspecPath: _projectPath,
             addToGitignore: _addToGitIgnore,
             addAllToGitignore: _addAllToGitIgnore,
-            template: WorkflowTemplate(
-              name: _nameController.text,
-              description: _descriptionController.text,
-              webUrl: _webUrlController.text,
-              firebaseProjectName: _firebaseProjectName.text,
-              firebaseProjectId: _firebaseProjectIDController.text,
-              iOSBuildMode: _iOSBuildMode,
-              androidBuildType: _androidBuildType,
-              androidBuildMode: _androidBuildMode,
-              isFirebaseDeployVerified: _isFirebaseDeployVerified,
-              webRenderer: _webRenderer,
-              webBuildMode: _webBuildMode,
-              workflowActions: _workflowActions
-                  .map((WorkflowActionModel e) => e.id)
-                  .toList(),
-              isSaved: false,
-              linuxBuildMode: _linuxBuildMode,
-              macosBuildMode: _macOSBuildMode,
-              windowsBuildMode: _windowsBuildMode,
-            ),
+            template: _workflowTemplate,
           );
 
           Navigator.pop(context);
@@ -410,26 +413,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                   pubspecPath: _projectPath,
                   addToGitignore: _addToGitIgnore,
                   addAllToGitignore: _addAllToGitIgnore,
-                  template: WorkflowTemplate(
-                    name: _nameController.text,
-                    description: _descriptionController.text,
-                    webUrl: _webUrlController.text,
-                    firebaseProjectName: _firebaseProjectName.text,
-                    firebaseProjectId: _firebaseProjectIDController.text,
-                    iOSBuildMode: _iOSBuildMode,
-                    androidBuildType: _androidBuildType,
-                    androidBuildMode: _androidBuildMode,
-                    isFirebaseDeployVerified: _isFirebaseDeployVerified,
-                    webRenderer: _webRenderer,
-                    webBuildMode: _webBuildMode,
-                    workflowActions: _workflowActions
-                        .map((WorkflowActionModel e) => e.id)
-                        .toList(),
-                    isSaved: false,
-                    linuxBuildMode: _linuxBuildMode,
-                    macosBuildMode: _macOSBuildMode,
-                    windowsBuildMode: _windowsBuildMode,
-                  ),
+                  template: _workflowTemplate,
                 );
 
                 Navigator.pop(context);
@@ -497,6 +481,12 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               ),
             if (_interfaceView == _InterfaceView.configureActions)
               SetProjectWorkflowActionsConfiguration(
+                buildAndroidTimeController: _buildAndroidTimeController,
+                buildIOSTimeController: _buildIOSTimeController,
+                buildLinuxTimeController: _buildLinuxTimeController,
+                buildMacOSTimeController: _buildMacOSTimeController,
+                buildWindowsTimeController: _buildWindowsTimeController,
+                buildWebTimeController: _buildWebTimeController,
                 workflowActions: _workflowActions,
                 webUrlController: _webUrlController,
                 firebaseProjectName: _firebaseProjectName,
@@ -584,26 +574,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     pubspecPath: _projectPath,
                     addToGitignore: _addToGitIgnore,
                     addAllToGitignore: _addAllToGitIgnore,
-                    template: WorkflowTemplate(
-                      name: _nameController.text,
-                      description: _descriptionController.text,
-                      webUrl: _webUrlController.text,
-                      firebaseProjectName: _firebaseProjectName.text,
-                      firebaseProjectId: _firebaseProjectIDController.text,
-                      iOSBuildMode: _iOSBuildMode,
-                      androidBuildType: _androidBuildType,
-                      androidBuildMode: _androidBuildMode,
-                      isFirebaseDeployVerified: _isFirebaseDeployVerified,
-                      webRenderer: _webRenderer,
-                      webBuildMode: _webBuildMode,
-                      workflowActions: _workflowActions
-                          .map((WorkflowActionModel e) => e.id)
-                          .toList(),
-                      linuxBuildMode: _linuxBuildMode,
-                      macosBuildMode: _macOSBuildMode,
-                      windowsBuildMode: _windowsBuildMode,
-                      isSaved: true,
-                    ),
+                    template: _workflowTemplate,
                   );
 
                   if (_hasSaved) {
@@ -632,26 +603,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     pubspecPath: _projectPath,
                     addToGitignore: _addToGitIgnore,
                     addAllToGitignore: _addAllToGitIgnore,
-                    template: WorkflowTemplate(
-                      name: _nameController.text,
-                      description: _descriptionController.text,
-                      webUrl: _webUrlController.text,
-                      firebaseProjectName: _firebaseProjectName.text,
-                      firebaseProjectId: _firebaseProjectIDController.text,
-                      iOSBuildMode: _iOSBuildMode,
-                      androidBuildType: _androidBuildType,
-                      androidBuildMode: _androidBuildMode,
-                      isFirebaseDeployVerified: _isFirebaseDeployVerified,
-                      webRenderer: _webRenderer,
-                      webBuildMode: _webBuildMode,
-                      workflowActions: _workflowActions
-                          .map((WorkflowActionModel e) => e.id)
-                          .toList(),
-                      linuxBuildMode: _linuxBuildMode,
-                      macosBuildMode: _macOSBuildMode,
-                      windowsBuildMode: _windowsBuildMode,
-                      isSaved: true,
-                    ),
+                    template: _workflowTemplate,
                   );
 
                   if (_hasSaved) {

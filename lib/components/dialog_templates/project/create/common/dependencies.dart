@@ -111,11 +111,11 @@ class _ProjectDependenciesSectionState
       Map<String, dynamic> _cachePackages =
           jsonDecode(await _cache.readAsString());
 
-      bool _isCacheValid = DateTime.now()
-              .difference(DateTime.fromMillisecondsSinceEpoch(
-                  _cachePackages['last_updated']))
-              .inMinutes <
-          10;
+      DateTime _lastUpdated =
+          DateTime.fromMillisecondsSinceEpoch(_cachePackages['last_updated']);
+
+      bool _isCacheValid =
+          DateTime.now().difference(_lastUpdated).inMinutes < 10;
 
       if (_cachePackages['last_updated'] != null && _isCacheValid) {
         setState(() => _pubPackages =
@@ -269,8 +269,7 @@ class _ProjectDependenciesSectionState
                         children: widget.dependencies.map((String e) {
                           return _dependencyTile(context, name: e,
                               onRemove: () {
-                            List<String> _newDependencies =
-                                widget.dependencies;
+                            List<String> _newDependencies = widget.dependencies;
 
                             _newDependencies.remove(e);
 
@@ -308,8 +307,7 @@ class _ProjectDependenciesSectionState
 
                               _newDependencies.remove(e);
 
-                              widget.onDevDependenciesChanged(
-                                  _newDependencies);
+                              widget.onDevDependenciesChanged(_newDependencies);
 
                               setState(() {});
                             },
