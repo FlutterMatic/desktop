@@ -103,70 +103,78 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
   Future<void> _generateReport() async {
     try {
+      late String _p;
+
+      _p = _savePath!;
+
       Isolate _i = await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
         _generatePort.sendPort,
         (await getApplicationSupportDirectory()).path,
-        _savePath,
+        _p,
         _fileName,
       ]);
 
-      if (!_isListening) {
-        _generatePort.asBroadcastStream(onListen: (_) {
-          if (mounted) {
-            setState(() => _isListening = true);
-          }
-        }).listen((dynamic message) async {
-          if (message is bool == false && mounted) {
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              snackBarTile(
-                context,
-                'Something really weird is happening, and you need to report it! Make an exception and don\'t about uploading a report. Just make sure to describe it well!',
-                type: SnackBarType.error,
-              ),
-            );
-            _i.kill();
-            return;
-          }
-
-          if (message && mounted) {
-            Navigator.pop(context);
-            // Opens file viewer app to show the output.
-            if (Platform.isWindows) {
-              await shell.run('explorer ' + _savePath!);
-            } else if (Platform.isMacOS) {
-              await shell.run('open ' + _savePath!);
-            } else if (Platform.isLinux) {
-              await shell.run('xdg-open ' + _savePath!);
-            }
-
-            _i.kill();
-
-            await Future<void>.delayed(const Duration(seconds: 5));
-
+      try {
+        if (!_isListening) {
+          _generatePort.asBroadcastStream(onListen: (_) {
             if (mounted) {
-              Navigator.pop(context);
+              setState(() => _isListening = true);
+            }
+          }).listen((dynamic message) async {
+            if (message is bool == false && mounted) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
+                  'Something really weird is happening, and you need to report it! Make an exception and don\'t about uploading a report. Just make sure to describe it well!',
+                  type: SnackBarType.error,
+                ),
+              );
+              _i.kill();
+              return;
             }
 
-            _generatePort.close();
-            return;
-          } else if (mounted) {
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              snackBarTile(
-                context,
-                'Failed to generate issue report. Please try again.',
-                type: SnackBarType.error,
-              ),
-            );
+            if (message && mounted) {
+              Navigator.pop(context);
+              // Opens file viewer app to show the output.
+              if (Platform.isWindows) {
+                await shell.run('explorer $_p');
+              } else if (Platform.isMacOS) {
+                await shell.run('open $_p');
+              } else if (Platform.isLinux) {
+                await shell.run('xdg-open $_p');
+              }
 
-            setState(() => _savePath = null);
+              _i.kill();
 
-            _i.kill();
-            _generatePort.close();
-            return;
-          }
-        });
+              await Future<void>.delayed(const Duration(seconds: 5));
+
+              if (mounted) {
+                Navigator.pop(context);
+              }
+
+              _generatePort.close();
+              return;
+            } else if (mounted) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
+                  'Failed to generate issue report. Please try again.',
+                  type: SnackBarType.error,
+                ),
+              );
+
+              setState(() => _savePath = null);
+
+              _i.kill();
+              _generatePort.close();
+              return;
+            }
+          });
+        }
+      } catch (_) {
+        // ..Ignore..
       }
 
       setState(() => _savePath = null);

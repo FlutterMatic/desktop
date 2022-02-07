@@ -11,13 +11,17 @@ class CustomCloseButton extends StatelessWidget {
   final Color iconColor;
   final Color? onHoverColor;
 
-  const CustomCloseButton(
-      {Key? key, this.onClose, this.iconColor = kRedColor, this.onHoverColor})
-      : super(key: key);
+  const CustomCloseButton({
+    Key? key,
+    this.onClose,
+    this.iconColor = kRedColor,
+    this.onHoverColor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SquareButton(
+      tooltip: 'Close',
       icon: Icon(
         Icons.close_rounded,
         color: iconColor,

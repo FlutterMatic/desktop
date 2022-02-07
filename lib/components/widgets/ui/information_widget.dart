@@ -9,30 +9,45 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
-Widget informationWidget(String text,
-    {InformationType type = InformationType.warning, bool showIcon = true}) {
-  return RoundContainer(
-    color: _getColor(type).withOpacity(0.1),
-    borderColor: _getColor(type),
-    radius: 5,
-    borderWith: 1.5,
-    child: Row(
-      children: <Widget>[
-        if (showIcon)
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: type == InformationType.info
-                ? const Icon(Icons.info_rounded)
-                : SvgPicture.asset(
-                    type == InformationType.warning
-                        ? Assets.warn
-                        : type == InformationType.error
-                            ? Assets.error
-                            : Assets.done,
-                    height: 20),
-          ),
-        Expanded(child: SelectableText(text)),
-      ],
+Widget informationWidget(
+  String text, {
+  InformationType type = InformationType.warning,
+  bool showIcon = true,
+}) {
+  String _typeLabel = (type == InformationType.green
+      ? 'Success'
+      : type == InformationType.info
+          ? 'Info'
+          : type == InformationType.error
+              ? 'Error'
+              : 'Warning');
+  return MergeSemantics(
+    child: Semantics(
+      label: _typeLabel + ': ' + text,
+      child: RoundContainer(
+        color: _getColor(type).withOpacity(0.1),
+        borderColor: _getColor(type),
+        radius: 5,
+        borderWith: 1.5,
+        child: Row(
+          children: <Widget>[
+            if (showIcon)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: type == InformationType.info
+                    ? const Icon(Icons.info_rounded)
+                    : SvgPicture.asset(
+                        type == InformationType.warning
+                            ? Assets.warn
+                            : type == InformationType.error
+                                ? Assets.error
+                                : Assets.done,
+                        height: 20),
+              ),
+            Expanded(child: SelectableText(text)),
+          ],
+        ),
+      ),
     ),
   );
 }

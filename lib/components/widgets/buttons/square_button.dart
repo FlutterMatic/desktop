@@ -25,9 +25,9 @@ class SquareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: tooltip,
-      child: MergeSemantics(
+    return MergeSemantics(
+      child: Semantics(
+        label: tooltip,
         child: Tooltip(
           message: tooltip ?? '',
           waitDuration: const Duration(seconds: 1),

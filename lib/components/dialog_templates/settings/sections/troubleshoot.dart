@@ -33,26 +33,37 @@ class _TroubleShootSettingsSectionState
 
   void _checkTroubleShoot() {
     setState(() => _requireTruShoot = false);
+
+    if (!_all && !_flutter && !_studio && !_vsc) {
+      setState(() => _all = true);
+      return;
+    }
+
+    if (_flutter && _studio && _vsc) {
+      setState(() {
+        _all = true;
+        _flutter = false;
+        _studio = false;
+        _vsc = false;
+      });
+      return;
+    }
+
     if (_all) {
       setState(() {
         _flutter = false;
         _studio = false;
         _vsc = false;
       });
+      return;
     }
   }
 
   void _startTroubleshoot() {
-    setState(() => _requireTruShoot = false);
-    List<bool> _troubleshoot = <bool>[_all, _flutter, _studio, _vsc];
-    if (!_troubleshoot.contains(true)) {
-      setState(() => _requireTruShoot = true);
-    } else {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTile(context, 'This feature is not yet implemented'));
-      // TODO: Implement troubleshoot
-    }
+    // TODO: #61 Implement troubleshoot
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+        snackBarTile(context, 'This feature is not yet implemented'));
   }
 
   @override
@@ -74,52 +85,57 @@ class _TroubleShootSettingsSectionState
                       type: InformationType.error,
                     ),
                   ),
-                RoundContainer(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      CheckBoxElement(
-                        onChanged: (bool? val) {
-                          setState(() => _all = !_all);
-                          _checkTroubleShoot();
-                        },
-                        value: _all,
-                        text: 'All Applications',
+                IgnorePointer(
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: RoundContainer(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          CheckBoxElement(
+                            onChanged: (bool? val) {
+                              setState(() => _all = !_all);
+                              _checkTroubleShoot();
+                            },
+                            value: _all,
+                            text: 'All Applications',
+                          ),
+                          CheckBoxElement(
+                            onChanged: (bool? val) {
+                              setState(() {
+                                _flutter = !_flutter;
+                                _all = false;
+                              });
+                              _checkTroubleShoot();
+                            },
+                            value: _flutter,
+                            text: 'Flutter',
+                          ),
+                          CheckBoxElement(
+                            onChanged: (bool? val) {
+                              setState(() {
+                                _studio = !_studio;
+                                _all = false;
+                              });
+                              _checkTroubleShoot();
+                            },
+                            value: _studio,
+                            text: 'Android Studio',
+                          ),
+                          CheckBoxElement(
+                            onChanged: (bool? val) {
+                              setState(() {
+                                _vsc = !_vsc;
+                                _all = false;
+                              });
+                              _checkTroubleShoot();
+                            },
+                            value: _vsc,
+                            text: 'Visual Studio Code',
+                          ),
+                        ],
                       ),
-                      CheckBoxElement(
-                        onChanged: (bool? val) {
-                          setState(() {
-                            _flutter = !_flutter;
-                            _all = false;
-                          });
-                          _checkTroubleShoot();
-                        },
-                        value: _flutter,
-                        text: 'Flutter',
-                      ),
-                      CheckBoxElement(
-                        onChanged: (bool? val) {
-                          setState(() {
-                            _studio = !_studio;
-                            _all = false;
-                          });
-                          _checkTroubleShoot();
-                        },
-                        value: _studio,
-                        text: 'Android Studio',
-                      ),
-                      CheckBoxElement(
-                        onChanged: (bool? val) {
-                          setState(() {
-                            _vsc = !_vsc;
-                            _all = false;
-                          });
-                          _checkTroubleShoot();
-                        },
-                        value: _vsc,
-                        text: 'Visual Studio Code',
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 VSeparators.normal(),
