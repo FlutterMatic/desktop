@@ -170,6 +170,12 @@ class _ProjectDependenciesSectionState
   }
 
   @override
+  void dispose() {
+    _searchNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_pubPackages.isEmpty && _isError) {
       return Column(

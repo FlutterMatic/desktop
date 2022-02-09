@@ -55,9 +55,15 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
     for (FileSystemEntity logFile in _logsDir) {
       List<String> _logs = <String>[];
 
-      _logs.add('---- LOG ---- \n' +
-          logFile.path.split('\\').last.replaceAll('.log', '') +
-          '\n---- LOG ----\n');
+      _logs.add(
+        '''
+
+---- LOG ----
+${logFile.path.split('\\').last.split('.').first}
+---- LOG ----
+
+''',
+      );
 
       _logs.addAll(await File(logFile.path).readAsLines());
 

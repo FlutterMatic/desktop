@@ -148,10 +148,13 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
               children: <Widget>[
                 Expanded(
                   child: Tooltip(
+                    padding: const EdgeInsets.all(5),
                     message: !WorkflowTemplate.fromJson(jsonDecode(
                                 File(widget.workflowPath).readAsStringSync()))
                             .isSaved
-                        ? 'This workflow is not saved yet. You can edit it, but you will need to save it before you can run it.'
+                        ? '''
+This workflow is not saved yet. You can edit it, 
+but you will need to save it before you can run it.'''
                         : '',
                     child: RectangleButton(
                       height: 100,

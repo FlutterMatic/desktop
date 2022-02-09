@@ -15,8 +15,12 @@ import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
+enum DocTabs { setup, newProjects, workflows }
+
 class DocumentationDialog extends StatefulWidget {
-  const DocumentationDialog({Key? key}) : super(key: key);
+  final DocTabs? tab;
+
+  const DocumentationDialog({Key? key, this.tab}) : super(key: key);
 
   @override
   _DocumentationDialogState createState() => _DocumentationDialogState();
@@ -105,6 +109,19 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
     }
   }
 
+  String? _getTab() {
+    switch (widget.tab) {
+      case DocTabs.setup:
+        return 'Setup';
+      case DocTabs.newProjects:
+        return 'New Projects';
+      case DocTabs.workflows:
+        return 'Workflows';
+      default:
+        return null;
+    }
+  }
+
   @override
   void initState() {
     _loadData();
@@ -123,7 +140,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
           if (_isLoading)
             const Center(child: Spinner())
           else
-            TabViewWidget(tabs: _tabs, height: 520),
+            TabViewWidget(defaultPage: _getTab(), tabs: _tabs, height: 520),
         ],
       ),
     );

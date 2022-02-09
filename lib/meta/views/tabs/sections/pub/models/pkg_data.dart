@@ -234,24 +234,24 @@ class PkgViewData {
             'Refetching pub packages cache -- cache exists but is stale/expired.',
             logDir: Directory(_path),
           );
+
+          _pubPackages.clear();
         }
       }
 
-      SearchResults _search1 = await PubClient().search('', page: 1);
-      SearchResults _search2 = await PubClient().search('', page: 2);
+      List<String> _search = await PubClient().fetchFlutterFavorites();
 
-      List<PackageResult> _packages = <PackageResult>[
-        ..._search1.packages,
-        ..._search2.packages
-      ];
+      for (String e in _search) {
+        if (_search.indexOf(e) >= _loadCount) {
+          break;
+        }
 
-      for (PackageResult e in _packages) {
-        PubPackage _info = await _pub.packageInfo(e.package);
-        PackageMetrics? _data = await _pub.packageMetrics(e.package);
-        PackagePublisher _author = await _pub.packagePublisher(e.package);
+        PubPackage _info = await _pub.packageInfo(e);
+        PackageMetrics? _data = await _pub.packageMetrics(e);
+        PackagePublisher _author = await _pub.packagePublisher(e);
 
         _pubPackages.add(PkgViewData(
-          name: e.package,
+          name: e,
           info: _info,
           metrics: _data,
           publisher: _author,

@@ -134,7 +134,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   // Store the workflow template so we can use it anywhere to access the state
   // of the workflow so far.
-  WorkflowTemplate get _workflowTemplate {
+  WorkflowTemplate _workflowTemplate([bool? isSaved]) {
     return WorkflowTemplate(
       androidBuildTimeout: int.tryParse(_buildAndroidTimeController.text) ?? 0,
       iOSBuildTimeout: int.tryParse(_buildIOSTimeController.text) ?? 0,
@@ -158,14 +158,14 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       linuxBuildMode: _linuxBuildMode,
       macosBuildMode: _macOSBuildMode,
       windowsBuildMode: _windowsBuildMode,
-      isSaved: true,
+      isSaved: isSaved ?? false,
     );
   }
 
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
       List<bool> _stopConditions = <bool>[
-        (_workflowTemplate.toJson()) == _lastSavedContent,
+        (_workflowTemplate().toJson()) == _lastSavedContent,
         _pubspecFile == null,
         _nameController.text.isEmpty,
         _interfaceView == _InterfaceView.workflowInfo,
@@ -184,7 +184,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       Isolate _i = await Isolate.spawn(_saveInBgSync, <dynamic>[
         _saveLocallyPort.sendPort,
         _projectPath,
-        _workflowTemplate.toJson(),
+        _workflowTemplate().toJson(),
         _nameController.text,
       ]).timeout(const Duration(seconds: 5), onTimeout: () {
         setState(() {
@@ -354,7 +354,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           pubspecPath: _projectPath,
           addToGitignore: _addToGitIgnore,
           addAllToGitignore: _addAllToGitIgnore,
-          template: _workflowTemplate,
+          template: _workflowTemplate(),
         );
 
         return true;
@@ -373,7 +373,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             pubspecPath: _projectPath,
             addToGitignore: _addToGitIgnore,
             addAllToGitignore: _addAllToGitIgnore,
-            template: _workflowTemplate,
+            template: _workflowTemplate(),
           );
 
           Navigator.pop(context);
@@ -413,7 +413,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                   pubspecPath: _projectPath,
                   addToGitignore: _addToGitIgnore,
                   addAllToGitignore: _addAllToGitIgnore,
-                  template: _workflowTemplate,
+                  template: _workflowTemplate(),
                 );
 
                 Navigator.pop(context);
@@ -574,7 +574,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     pubspecPath: _projectPath,
                     addToGitignore: _addToGitIgnore,
                     addAllToGitignore: _addAllToGitIgnore,
-                    template: _workflowTemplate,
+                    template: _workflowTemplate(true),
                   );
 
                   if (_hasSaved) {
@@ -603,7 +603,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     pubspecPath: _projectPath,
                     addToGitignore: _addToGitIgnore,
                     addAllToGitignore: _addAllToGitIgnore,
-                    template: _workflowTemplate,
+                    template: _workflowTemplate(true),
                   );
 
                   if (_hasSaved) {

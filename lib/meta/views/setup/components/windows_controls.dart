@@ -10,11 +10,11 @@ import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 Widget windowControls(BuildContext context, {bool disabled = false}) {
-  return AnimatedOpacity(
-    duration: const Duration(milliseconds: 300),
-    opacity: disabled ? 0.2 : 1,
-    child: IgnorePointer(
-      ignoring: disabled,
+  return IgnorePointer(
+    ignoring: disabled,
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: disabled ? 0.2 : 1,
       child: Align(
         alignment: Alignment.centerRight,
         child: Row(

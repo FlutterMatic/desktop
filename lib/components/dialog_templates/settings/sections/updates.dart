@@ -36,8 +36,9 @@ class UpdatesSettingsSection extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 10),
                   child: Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message:
-                        'This is the stage that we recommend you stay in for the best experience.\nWe will be releasing stable updates only to this channel.',
+                    message: '''
+This is the stage that we recommend you stay in for the best experience. 
+We will be releasing stable updates only to this channel.''',
                     child: SvgPicture.asset(Assets.done, height: 15),
                   ),
                 );
@@ -46,8 +47,9 @@ class UpdatesSettingsSection extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 10),
                   child: Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message:
-                        'This is more stable than Alpha, but less stable than the normal release.\nJoin if you are interested in seeing upcoming features earlier.',
+                    message: '''
+This is more stable than Alpha, but less stable than the normal release. 
+Join if you are interested in seeing upcoming features earlier.''',
                     child: SvgPicture.asset(Assets.warn, height: 15),
                   ),
                 );
@@ -56,8 +58,9 @@ class UpdatesSettingsSection extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 10),
                   child: Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message:
-                        'This preview stage is not recommended unless you are ok with risky\nunstable builds.',
+                    message: '''
+This preview stage is not recommended unless you are ok with risky unstable 
+builds.''',
                     child: SvgPicture.asset(Assets.error, height: 15),
                   ),
                 );

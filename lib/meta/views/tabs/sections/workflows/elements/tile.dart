@@ -212,8 +212,9 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                 if (!widget.workflow.isSaved)
                   Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message:
-                        'This workflow has not completed setup yet - or, you will need\nto go through setup again because we added some new features that need to be migrated.',
+                    message: '''
+This workflow has not completed setup yet - or, you will need to go through 
+setup again because we added some new features that need to be migrated.''',
                     child: SvgPicture.asset(Assets.warn, height: 20),
                   ),
                 const Spacer(),
@@ -240,6 +241,8 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                               WorkflowTemplate.fromJson(_workflow),
                         ),
                       );
+
+                      widget.onReload();
                     },
                   ),
                 ),
@@ -270,7 +273,7 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                       width: 40,
                       height: 40,
                       child: const Icon(Icons.delete_forever_rounded,
-                          color: AppTheme.errorColor, size: 22),
+                          color: AppTheme.errorColor, size: 20),
                       onPressed: () async {
                         WorkflowTemplate _template = WorkflowTemplate.fromJson(
                             jsonDecode(await File(widget.path).readAsString()));
@@ -279,7 +282,7 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                           builder: (_) => ConfirmWorkflowDelete(
                             onClose: (bool deleted) {
                               if (deleted) {
-                                widget.onReload();
+                                widget.onDelete();
                               }
                             },
                             path: widget.path,

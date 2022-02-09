@@ -110,10 +110,11 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                           action: snackBarAction(
                             text: 'Learn more',
                             onPressed: () {
-                              // TODO: Create documentation for required pubspec.yaml parameters.
                               showDialog(
                                 context: context,
-                                builder: (_) => const DocumentationDialog(),
+                                builder: (_) => const DocumentationDialog(
+                                  tab: DocTabs.workflows,
+                                ),
                               );
                             },
                           ),

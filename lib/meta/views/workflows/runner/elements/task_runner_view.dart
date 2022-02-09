@@ -364,8 +364,9 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
               else if (_status == WorkflowActionStatus.skipped)
                 const Tooltip(
                   padding: EdgeInsets.all(5),
-                  message:
-                      'When a workflow action is skipped, it most likely means that it\nwas because this workflow action is not supported on your platform.',
+                  message: '''
+When a workflow action is skipped, it most likely means that it was 
+because this workflow action is not supported on your platform.''',
                   child: Text(
                     'SKIPPED',
                     style: TextStyle(color: kYellowColor),

@@ -105,10 +105,8 @@ class _HomePubSectionState extends State<HomePubSection> {
                       .addAll((message.first as GetPkgResponseModel).packages);
                   break;
                 case GetPkgResponse.error:
-                  setState(() {
-                    _errorPage = true;
-                    _pubPackages.clear();
-                  });
+                  _errorPage = true;
+                  _pubPackages.clear();
                   break;
                 case GetPkgResponse.pending:
                   _pubPackages.clear();

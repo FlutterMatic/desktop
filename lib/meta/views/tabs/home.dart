@@ -21,7 +21,7 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/check_new_version.dart';
 import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/update_fluttermatic.dart';
-import 'package:fluttermatic/meta/views/tabs/search.dart';
+import 'package:fluttermatic/meta/views/tabs/search/search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/pub.dart';

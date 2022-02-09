@@ -181,7 +181,7 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
       child: Column(
         children: <Widget>[
           DialogHeader(
-            title: 'Logs History',
+            title: 'Logs History - ${_logs.length}',
             leading: _logs.isEmpty
                 ? null
                 : SquareButton(
