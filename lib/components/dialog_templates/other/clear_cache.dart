@@ -39,8 +39,6 @@ class _ClearCacheDialogState extends State<ClearCacheDialog> {
 
       await _dir.delete(recursive: true);
 
-      await SharedPref().pref.clear();
-
       RestartWidget.restartApp(context);
     } catch (_, s) {
       await logger.file(

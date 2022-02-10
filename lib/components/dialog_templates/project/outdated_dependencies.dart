@@ -38,6 +38,9 @@ class _ScanProjectOutdatedDependenciesDialogState
   bool _isLoading = true;
   String _activityMessage = '';
 
+  int _totalChecked = 0;
+  int _totalAvailable = 0;
+
   // Dependencies that are outdated and their indexes.
 
   //... Regular dependencies.
@@ -76,6 +79,11 @@ class _ScanProjectOutdatedDependenciesDialogState
       // Extracts the pubspec.yaml file so we can access its attributes.
       PubspecInfo _pubspecInfo =
           extractPubspec(lines: _pubspecLines, path: widget.pubspecPath);
+
+      setState(() {
+        _totalAvailable = (_pubspecInfo.dependencies.length +
+            _pubspecInfo.devDependencies.length);
+      });
 
       // Get the outdated dependencies.
       _oldDependencies.addAll(await _getDepInfo(
@@ -162,6 +170,8 @@ class _ScanProjectOutdatedDependenciesDialogState
             'Could not find the package ${packages[i].name} in the pubspec.yaml file.');
         continue;
       }
+
+      setState(() => _totalChecked++);
     }
 
     return _outdatedDependencies;
@@ -217,9 +227,10 @@ class _ScanProjectOutdatedDependenciesDialogState
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Scan pubspec.yaml'),
-          if (_isLoading)
-            LoadActivityMessageElement(message: _activityMessage)
-          else ...<Widget>[
+          if (_isLoading) ...<Widget>[
+            LoadActivityMessageElement(
+                message: '$_totalChecked - $_totalAvailable ' + _activityMessage)
+          ] else ...<Widget>[
             if (_oldDependencies.isEmpty && _oldDevDependencies.isEmpty)
               informationWidget(
                 'There are no outdated dependencies found in this project, cheers!',
