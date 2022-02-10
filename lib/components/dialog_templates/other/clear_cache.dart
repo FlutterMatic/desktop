@@ -19,7 +19,6 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 
 class ClearCacheDialog extends StatefulWidget {
   const ClearCacheDialog({Key? key}) : super(key: key);

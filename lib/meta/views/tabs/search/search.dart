@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
 import 'package:fluttermatic/meta/utils/bin/utils/search.dart';
@@ -163,12 +164,23 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
 
       setState(() => _loadingSearch = false);
     } catch (_, s) {
-      setState(() => _loadingSearch = false);
+      setState(() {
+        _projectResults.clear();
+        _workflowResults.clear();
+        _packageResults.clear();
+        _searchController.clear();
+        _loadingSearch = false;
+      });
 
       await logger.file(
           LogTypeTag.error, 'Failed to search in main component: $_',
           stackTraces: s);
-      // TODO: Show indicator of search error
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+        context,
+        'Failed to search for some reason. Please try again.',
+        type: SnackBarType.error,
+      ));
     }
   }
 

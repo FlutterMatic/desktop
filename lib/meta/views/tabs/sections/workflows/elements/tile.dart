@@ -17,8 +17,8 @@ import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
-import 'package:fluttermatic/meta/views/workflows/views/confirm_delete.dart';
-import 'package:fluttermatic/meta/views/workflows/views/workflow_options.dart';
+import 'package:fluttermatic/meta/views/workflows/views/delete.dart';
+import 'package:fluttermatic/meta/views/workflows/views/options.dart';
 
 class WorkflowInfoTile extends StatefulWidget {
   final String path;

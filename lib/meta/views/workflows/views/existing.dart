@@ -21,7 +21,7 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
-import 'package:fluttermatic/meta/views/workflows/views/workflow_options.dart';
+import 'package:fluttermatic/meta/views/workflows/views/options.dart';
 
 class ShowExistingWorkflows extends StatefulWidget {
   final String pubspecPath;

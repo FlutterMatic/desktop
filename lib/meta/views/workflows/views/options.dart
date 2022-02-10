@@ -9,15 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/coming_soon.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
-import 'package:fluttermatic/meta/views/workflows/views/confirm_delete.dart';
-import 'package:fluttermatic/meta/views/workflows/views/log_history.dart';
+import 'package:fluttermatic/meta/views/workflows/views/delete.dart';
+import 'package:fluttermatic/meta/views/workflows/views/logs.dart';
+import 'package:fluttermatic/meta/views/workflows/views/preview.dart';
 
 class ShowWorkflowTileOptions extends StatefulWidget {
   final String workflowPath;
@@ -71,16 +71,26 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                     height: 100,
                     child: Column(
                       children: <Widget>[
-                        // const Expanded(
-                        //     child: Icon(Icons.preview_rounded, size: 25)),
-                        // VSeparators.small(),
-                        const Expanded(child: Center(child: Text('Preview'))),
+                        const Expanded(
+                          child: Center(
+                              child: Icon(Icons.preview_rounded, size: 25)),
+                        ),
                         VSeparators.small(),
-                        const ComingSoonTile(),
+                        const Text('Preview'),
                       ],
                     ),
-                    // TODO: Open preview
-                    onPressed: () {},
+                    onPressed: () async {
+                      Navigator.pop(context);
+
+                      Map<String, dynamic> _workflow = jsonDecode(
+                          await File(widget.workflowPath).readAsString());
+
+                      await showDialog(
+                        context: context,
+                        builder: (_) => PreviewWorkflowDialog(
+                            template: WorkflowTemplate.fromJson(_workflow)),
+                      );
+                    },
                   ),
                 ),
                 HSeparators.normal(),

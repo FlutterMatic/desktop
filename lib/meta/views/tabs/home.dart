@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -44,6 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ReceivePort('CHECK_UPDATES_PORT');
 
   // Utils
+  late bool _collapse =
+      SharedPref().pref.getBool(SPConst.homePageTabsShow) ?? false;
   bool _animateFinish = false;
 
   // Update Status
@@ -78,6 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
           await Future<void>.delayed(const Duration(minutes: 5));
           continue;
         }
+
+        await Future<void>.delayed(const Duration(seconds: 5));
 
         Isolate _i = await Isolate.spawn(checkNewFlutterMaticVersion, <dynamic>[
           _checkUpdatesPort.sendPort,
@@ -150,9 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedTab = _tabs.first;
       }
     });
-    Future<void>.delayed(const Duration(milliseconds: 500), () async {
-      setState(() => _animateFinish = true);
-    });
+    Future<void>.delayed(const Duration(milliseconds: 100),
+        () => setState(() => _animateFinish = true));
     _checkUpdates();
     _cleanLogs();
     super.initState();
@@ -169,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
 
-    bool _showShortView = _size.width < 900;
+    bool _showShortView = _size.width < 900 || _collapse;
     return SafeArea(
       child: Scaffold(
         body: GestureDetector(
@@ -178,79 +183,61 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              AnimatedOpacity(
-                opacity: _animateFinish ? 1 : 0.1,
-                duration: const Duration(milliseconds: 300),
-                child: SizedBox(
-                  width: _showShortView ? 50 : 230,
-                  child: ColoredBox(
-                    color: Colors.blueGrey.withOpacity(0.08),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: _showShortView ? 5 : 15,
-                        vertical: _showShortView ? 5 : 20,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          ..._tabs.map(
-                            (HomeTabObject e) {
-                              return _tabTile(
-                                context,
-                                stageType: e.stageType,
-                                icon: SvgPicture.asset(
-                                  e.icon,
-                                  color: context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                                name: e.name,
-                                onPressed: () =>
-                                    setState(() => _selectedTab = e),
-                                selected: _selectedTab == e,
-                              );
-                            },
-                          ),
-                          const Spacer(),
-                          // Short view
-                          if (_showShortView)
-                            Column(
-                              children: <Widget>[
-                                if (_updateAvailable)
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: UpdateAppButton(
-                                        downloadUrl: _updateDownloadUrl),
-                                  ),
-                                _tabTile(
+              GestureDetector(
+                onDoubleTap: () {
+                  setState(() => _collapse = !_collapse);
+                  SharedPref()
+                      .pref
+                      .setBool(SPConst.homePageTabsShow, _collapse);
+                },
+                child: Center(
+                  child: SizedBox(
+                    width: _showShortView ? 50 : 230,
+                    child: ColoredBox(
+                      color: Colors.blueGrey.withOpacity(0.08),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: _showShortView ? 5 : 15,
+                          vertical: _showShortView ? 5 : 20,
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            ..._tabs.map(
+                              (HomeTabObject e) {
+                                return _tabTile(
                                   context,
-                                  stageType: null,
+                                  _collapse,
+                                  stageType: e.stageType,
                                   icon: SvgPicture.asset(
-                                    Assets.settings,
+                                    e.icon,
                                     color: context
                                             .read<ThemeChangeNotifier>()
                                             .isDarkTheme
                                         ? Colors.white
                                         : Colors.black,
                                   ),
-                                  name: 'Settings',
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (_) => const SettingDialog(),
-                                    );
-                                  },
-                                  selected: false,
-                                ),
-                              ],
-                            )
-                          else
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _tabTile(
+                                  name: e.name,
+                                  onPressed: () =>
+                                      setState(() => _selectedTab = e),
+                                  selected: _selectedTab == e,
+                                );
+                              },
+                            ),
+                            const Spacer(),
+                            // Short view
+                            if (_showShortView)
+                              Column(
+                                children: <Widget>[
+                                  if (_updateAvailable)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: UpdateAppButton(
+                                          downloadUrl: _updateDownloadUrl),
+                                    ),
+                                  _tabTile(
                                     context,
+                                    _collapse,
                                     stageType: null,
                                     icon: SvgPicture.asset(
                                       Assets.settings,
@@ -269,17 +256,47 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     selected: false,
                                   ),
-                                ),
-                                if (_updateAvailable)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, bottom: 10),
-                                    child: UpdateAppButton(
-                                        downloadUrl: _updateDownloadUrl),
+                                ],
+                              )
+                            else
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: _tabTile(
+                                      context,
+                                      _collapse,
+                                      stageType: null,
+                                      icon: SvgPicture.asset(
+                                        Assets.settings,
+                                        color: context
+                                                .read<ThemeChangeNotifier>()
+                                                .isDarkTheme
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                      name: 'Settings',
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => const SettingDialog(),
+                                        );
+                                      },
+                                      selected: false,
+                                    ),
                                   ),
-                              ],
-                            ),
-                        ],
+                                  if (_updateAvailable)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, bottom: 10),
+                                      child: UpdateAppButton(
+                                          downloadUrl: _updateDownloadUrl),
+                                    ),
+                                ],
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -294,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     AnimatedOpacity(
                       opacity: _animateFinish ? 1 : 0.1,
-                      duration: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 200),
                       child: const HomeSearchComponent(),
                     ),
                   ],
@@ -309,7 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Widget _tabTile(
-  BuildContext context, {
+  BuildContext context,
+  bool forceShort, {
   required Widget icon,
   required String name,
   required Function() onPressed,
@@ -318,7 +336,7 @@ Widget _tabTile(
 }) {
   Size _size = MediaQuery.of(context).size;
 
-  bool _showShortView = _size.width < 900;
+  bool _showShortView = forceShort || _size.width < 900;
 
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
@@ -342,9 +360,9 @@ Widget _tabTile(
           child: !_showShortView
               ? Row(
                   children: <Widget>[
-                    icon,
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
+                    Flexible(child: icon),
+                    HSeparators.small(),
+                    Expanded(
                       child: Text(
                         name,
                         style: TextStyle(
@@ -356,14 +374,12 @@ Widget _tabTile(
                         ),
                       ),
                     ),
-                    if (stageType != null) ...<Widget>[
-                      const Spacer(),
+                    if (stageType != null)
                       Padding(
                         padding: const EdgeInsets.only(left: 5),
                         child: Text(stageType,
                             style: const TextStyle(color: kGreenColor)),
                       ),
-                    ],
                   ],
                 )
               : Center(child: icon),
@@ -414,114 +430,3 @@ class UpdateAppButton extends StatelessWidget {
     );
   }
 }
-
-// // We do not need to make a request to the pub API because this won't be
-// // called every time the user types.
-// // We will filter out the [_pub] list and set the results to the
-// // [_searchResults].
-// Future<void> _startSearch() async {
-//   int _max = 5;
-
-//   setState(() {
-//     _loadingSearch = true;
-//     _searchResults.clear();
-//   });
-//   if (_fastSearch) {
-//     if (_pubs.isEmpty) {
-//       await _getInitialPackages();
-//     }
-
-//     if (_searchText.isEmpty) {
-//       setState(_searchResults.clear);
-//       return;
-//     }
-//     // The total results for the current search. This shouldn't be greater than
-//     // the [_maxResults].
-//     int _resultsCount = 0;
-
-//     // Filters the results based on the [_searchText].
-//     List<dynamic> _flexResults = _pubs.where((dynamic e) {
-//       String _name = e.toString().replaceAll('_', '');
-
-//       // Filters the pub packages down to the user search.
-//       bool _hasMatch() {
-//         if (_name.toLowerCase().contains(_searchText
-//             .toLowerCase()
-//             .replaceAll(' ', '')
-//             .replaceAll('_', ''))) {
-//           return true;
-//         } else {
-//           return false;
-//         }
-//       }
-
-//       // Returns true of false depending on if the package name matches.
-//       if (_resultsCount < _max && _hasMatch()) {
-//         _resultsCount++;
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     }).toList();
-
-//     // Sets the results of no more than [_maxResults] to the [_searchResults].
-//     setState(() => _searchResults.addAll(_flexResults
-//         .map((dynamic e) => PubPackageObject(name: e.toString()))
-//         .toList()));
-//   } else {
-//     if (_searchText.isEmpty) {
-//       setState(_searchResults.clear);
-//       return;
-//     }
-
-//     List<String> _flexResults = <String>[];
-
-//     // TODO: Consider isolating this task to avoid clogging UI.
-//     await PubClient().search(_searchText).then((_) =>
-//         _flexResults.addAll(_.packages.map((PackageResult e) => e.package)));
-
-//     // Sets the results of no more than [_maxResults] to the [_searchResults].
-//     setState(() => _searchResults.addAll(_flexResults
-//         .sublist(0, _flexResults.length > _max ? _max : _flexResults.length)
-//         .map((dynamic e) => PubPackageObject(name: e.toString()))
-//         .toList()));
-//   }
-
-//   setState(() => _loadingSearch = false);
-// }
-
-// Future<void> _startSearch() async {
-//   setState(() => _loadingSearch = true);
-
-//   List<ProjectObject> _results = <ProjectObject>[];
-
-//   if (_searchText.isEmpty) {
-//     setState(_searchResults.clear);
-//     return;
-//   }
-
-//   String _q = removeSpaces(_searchText.toLowerCase());
-
-//   for (ProjectObject _project in _projects) {
-//     if (_results.length >= 5) {
-//       break;
-//     }
-
-//     List<bool> _matches = <bool>[
-//       removeSpaces(_project.name.toLowerCase()).contains(_q),
-//       _project.path.toLowerCase().contains(_q),
-//       if (_project.description != null)
-//         removeSpaces(_project.description!.toLowerCase()).contains(_q),
-//     ];
-
-//     if (_matches.contains(true)) {
-//       _results.add(_project);
-//     }
-//   }
-
-//   setState(() {
-//     _searchResults.clear();
-//     _searchResults.addAll(_results);
-//     _loadingSearch = false;
-//   });
-// }

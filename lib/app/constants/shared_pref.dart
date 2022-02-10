@@ -49,6 +49,7 @@ class SPConst {
   static String projectRefresh = 'PROJECT_REFRESH_INTERVALS';
 
   // Tile Collapse Memory
+  static String homePageTabsShow = 'HOME_PAGE_TABS_SHOW';
   static String dartProjectsCollapsed = 'DART_PROJECTS_COLLAPSED';
   static String pinnedProjectsCollapsed = 'PINNED_PROJECTS_COLLAPSED';
   static String flutterProjectsCollapsed = 'FLUTTER_PROJECTS_COLLAPSED';

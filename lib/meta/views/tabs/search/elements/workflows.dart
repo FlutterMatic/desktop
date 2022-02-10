@@ -6,7 +6,7 @@ import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
-import 'package:fluttermatic/meta/views/workflows/views/workflow_options.dart';
+import 'package:fluttermatic/meta/views/workflows/views/options.dart';
 
 class SearchWorkflowsTile extends StatelessWidget {
   final ProjectWorkflowsGrouped workflow;

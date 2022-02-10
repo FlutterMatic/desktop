@@ -13,7 +13,7 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/dialogs/delete_project.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
-import 'package:fluttermatic/meta/views/workflows/views/existing_workflows.dart';
+import 'package:fluttermatic/meta/views/workflows/views/existing.dart';
 
 class ProjectOptionsDialog extends StatefulWidget {
   final String path;

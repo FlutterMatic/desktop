@@ -10,7 +10,7 @@ import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/dialogs/project_options.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
-import 'package:fluttermatic/meta/views/workflows/views/existing_workflows.dart';
+import 'package:fluttermatic/meta/views/workflows/views/existing.dart';
 
 class ProjectInfoTile extends StatefulWidget {
   final ProjectObject project;

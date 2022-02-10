@@ -69,10 +69,11 @@ class _UpdateFlutterDialogState extends State<UpdateFlutterDialog> {
     await shell
         .run('flutter upgrade')
         .asStream()
-        .listen((List<ProcessResult> event) {
+        .listen((List<ProcessResult> event) async {
           if (event.isNotEmpty && mounted) {
             setState(() => _activityMessage =
                 event.last.stdout.toString().split('\n').first);
+            await logger.file(LogTypeTag.info, event.last.stdout.toString());
           }
         })
         .asFuture()
