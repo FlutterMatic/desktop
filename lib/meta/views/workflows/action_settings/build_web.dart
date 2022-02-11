@@ -7,7 +7,6 @@ import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/meta/views/workflows/components/assign_timeout.dart';
 import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
-import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 
 class BuildWebWorkflowActionConfig extends StatelessWidget {
   final WebRenderers defaultRenderer;
@@ -27,10 +26,8 @@ class BuildWebWorkflowActionConfig extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConfigureExpandableTile(
-      title: 'Build Web',
-      subtitle: 'Compile your Flutter app for Web',
-      icon: const Icon(Icons.web),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text('Assign a timeout'),
         VSeparators.normal(),

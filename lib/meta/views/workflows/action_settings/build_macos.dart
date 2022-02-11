@@ -6,7 +6,6 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/meta/views/workflows/components/assign_timeout.dart';
 import 'package:fluttermatic/meta/views/workflows/components/build_mode_selector.dart';
-import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 
 class BuildMacOSWorkflowActionConfig extends StatelessWidget {
   final PlatformBuildModes defaultBuildMode;
@@ -22,10 +21,8 @@ class BuildMacOSWorkflowActionConfig extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConfigureExpandableTile(
-      title: 'Build macOS',
-      subtitle: 'Compile your Flutter app for macOS',
-      icon: const Icon(Icons.window_rounded),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text('Assign a timeout'),
         VSeparators.normal(),

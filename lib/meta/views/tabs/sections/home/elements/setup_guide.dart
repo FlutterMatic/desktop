@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/components/dialog_templates/project/create/flutter/new_flutter.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create_select.dart';
+import 'package:fluttermatic/components/dialog_templates/project/outdated_dependencies.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:file_selector/file_selector.dart' as file;
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/circle_chart.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
@@ -166,11 +169,6 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                         },
                       );
                     }).toList(),
-                    VSeparators.small(),
-                    const Text(
-                      'As we are preparing for more upcoming features, we will be adding more guides here.',
-                      style: TextStyle(color: Colors.grey),
-                    ),
                   ],
                 ),
               ),
@@ -367,14 +365,36 @@ final List<_GuideModel> _guides = <_GuideModel>[
       builder: (_) => const StartUpWorkflow(),
     ),
   ),
-  // _GuideModel(
-  //   text:
-  //       'Scan your project\'s dependencies to make sure that they are all up-to-date.',
-  //   onPressed: (_) {},
-  // ),
-  // _GuideModel(
-  //   text:
-  //       'Add your own pubspec.yaml structure for new projects or packages created to include a default set of dependencies.',
-  //   onPressed: (_) {},
-  // ),
+  _GuideModel(
+    text: 'Scan your project\'s dependencies to see if there are any updates.',
+    onPressed: (_) async {
+      file.XFile? _file = await file.openFile();
+
+      if (_file != null) {
+        if (_file.path.split('\\').last == 'pubspec.yaml') {
+          return showDialog(
+            context: (_),
+            builder: (_) =>
+                ScanProjectOutdatedDependenciesDialog(pubspecPath: _file.path),
+          );
+        } else {
+          ScaffoldMessenger.of(_).clearSnackBars();
+          ScaffoldMessenger.of(_).showSnackBar(snackBarTile(
+            _,
+            'Please select your project pubspec.yaml file.',
+            type: SnackBarType.error,
+          ));
+          return;
+        }
+      }
+    },
+  ),
+  _GuideModel(
+    text:
+        'Integrate your Flutter project with your Firebase database by letting us setup your Firebase project for you.',
+    onPressed: (_) => showDialog(
+      context: _,
+      builder: (_) => const NewFlutterProjectDialog(),
+    ),
+  ),
 ];

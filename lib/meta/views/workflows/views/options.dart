@@ -88,7 +88,9 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                       await showDialog(
                         context: context,
                         builder: (_) => PreviewWorkflowDialog(
-                            template: WorkflowTemplate.fromJson(_workflow)),
+                            onReload: widget.onReload,
+                            template: WorkflowTemplate.fromJson(_workflow),
+                            workflowPath: widget.workflowPath),
                       );
                     },
                   ),

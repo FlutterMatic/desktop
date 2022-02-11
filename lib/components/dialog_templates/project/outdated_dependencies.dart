@@ -229,7 +229,8 @@ class _ScanProjectOutdatedDependenciesDialogState
           const DialogHeader(title: 'Scan pubspec.yaml'),
           if (_isLoading) ...<Widget>[
             LoadActivityMessageElement(
-                message: '$_totalChecked - $_totalAvailable ' + _activityMessage)
+                message:
+                    '$_totalChecked - $_totalAvailable ' + _activityMessage)
           ] else ...<Widget>[
             if (_oldDependencies.isEmpty && _oldDevDependencies.isEmpty)
               informationWidget(
@@ -237,98 +238,104 @@ class _ScanProjectOutdatedDependenciesDialogState
                 type: InformationType.green,
               )
             else
-              RoundContainer(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    if (_oldDependencies.isNotEmpty ||
-                        _oldDevDependencies.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: informationWidget(
-                          'Please be aware that there might be some dependencies conflicts that you may experience. In that case, please try to solve it by downgrading whichever dependency is relying on an older version.',
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 400),
+                child: SingleChildScrollView(
+                  child: RoundContainer(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        if (_oldDependencies.isNotEmpty ||
+                            _oldDevDependencies.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: informationWidget(
+                              'Please be aware that there might be some dependencies conflicts that you may experience. In that case, please try to solve it by downgrading whichever dependency is relying on an older version.',
+                            ),
+                          ),
+                        const Text('Outdated dependencies'),
+                        VSeparators.xSmall(),
+                        if (_oldDependencies.isNotEmpty) ...<Widget>[
+                          Text(
+                              _oldDependencies.length.toString() +
+                                  ' ${_oldDependencies.length == 1 ? 'dependency' : 'dependencies'}',
+                              style: const TextStyle(color: Colors.grey)),
+                          VSeparators.small(),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Wrap(
+                                  spacing: 5,
+                                  runSpacing: 5,
+                                  children: _oldDependencies
+                                      .map((_OutdatedPackageModel e) =>
+                                          _DependencyTile(name: e.pkgName))
+                                      .toList(),
+                                ),
+                              ),
+                              HSeparators.normal(),
+                              SquareButton(
+                                tooltip: 'Upgrade All',
+                                color: Colors.transparent,
+                                icon: const Icon(Icons.upgrade, size: 15),
+                                onPressed: () async {
+                                  await _updatePubspecDependency(
+                                      _oldDependencies);
+                                  setState(_oldDependencies.clear);
+                                },
+                              ),
+                            ],
+                          ),
+                        ] else
+                          const Text('None - All are up to date.'),
+                        VSeparators.small(),
+                        RoundContainer(
+                          height: 2,
+                          width: double.infinity,
+                          padding: EdgeInsets.zero,
+                          color: Colors.blueGrey.withOpacity(0.4),
+                          child: const SizedBox.shrink(),
                         ),
-                      ),
-                    const Text('Outdated dependencies'),
-                    VSeparators.xSmall(),
-                    if (_oldDependencies.isNotEmpty) ...<Widget>[
-                      Text(
-                          _oldDependencies.length.toString() +
-                              ' ${_oldDependencies.length == 1 ? 'dependency' : 'dependencies'}',
-                          style: const TextStyle(color: Colors.grey)),
-                      VSeparators.small(),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Wrap(
-                              spacing: 5,
-                              runSpacing: 5,
-                              children: _oldDependencies
-                                  .map((_OutdatedPackageModel e) =>
-                                      _DependencyTile(name: e.pkgName))
-                                  .toList(),
-                            ),
+                        VSeparators.small(),
+                        const Text('Outdated dev dependencies'),
+                        VSeparators.xSmall(),
+                        if (_oldDevDependencies.isNotEmpty) ...<Widget>[
+                          Text(
+                              _oldDevDependencies.length.toString() +
+                                  ' ${_oldDevDependencies.length == 1 ? 'dependency' : 'dependencies'}',
+                              style: const TextStyle(color: Colors.grey)),
+                          VSeparators.small(),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Wrap(
+                                  spacing: 5,
+                                  runSpacing: 5,
+                                  children: _oldDevDependencies
+                                      .map((_OutdatedPackageModel e) =>
+                                          _DependencyTile(name: e.pkgName))
+                                      .toList(),
+                                ),
+                              ),
+                              HSeparators.normal(),
+                              SquareButton(
+                                tooltip: 'Upgrade All',
+                                color: Colors.transparent,
+                                icon: const Icon(Icons.upgrade, size: 15),
+                                onPressed: () async {
+                                  await _updatePubspecDependency(
+                                      _oldDevDependencies);
+                                  setState(_oldDevDependencies.clear);
+                                },
+                              ),
+                            ],
                           ),
-                          HSeparators.normal(),
-                          SquareButton(
-                            tooltip: 'Upgrade All',
-                            color: Colors.transparent,
-                            icon: const Icon(Icons.upgrade, size: 15),
-                            onPressed: () async {
-                              await _updatePubspecDependency(_oldDependencies);
-                              setState(_oldDependencies.clear);
-                            },
-                          ),
-                        ],
-                      ),
-                    ] else
-                      const Text('None - All are up to date.'),
-                    VSeparators.small(),
-                    RoundContainer(
-                      height: 2,
-                      width: double.infinity,
-                      padding: EdgeInsets.zero,
-                      color: Colors.blueGrey.withOpacity(0.4),
-                      child: const SizedBox.shrink(),
+                        ] else
+                          const Text('None - All are up to date.'),
+                      ],
                     ),
-                    VSeparators.small(),
-                    const Text('Outdated dev dependencies'),
-                    VSeparators.xSmall(),
-                    if (_oldDevDependencies.isNotEmpty) ...<Widget>[
-                      Text(
-                          _oldDevDependencies.length.toString() +
-                              ' ${_oldDevDependencies.length == 1 ? 'dependency' : 'dependencies'}',
-                          style: const TextStyle(color: Colors.grey)),
-                      VSeparators.small(),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Wrap(
-                              spacing: 5,
-                              runSpacing: 5,
-                              children: _oldDevDependencies
-                                  .map((_OutdatedPackageModel e) =>
-                                      _DependencyTile(name: e.pkgName))
-                                  .toList(),
-                            ),
-                          ),
-                          HSeparators.normal(),
-                          SquareButton(
-                            tooltip: 'Upgrade All',
-                            color: Colors.transparent,
-                            icon: const Icon(Icons.upgrade, size: 15),
-                            onPressed: () async {
-                              await _updatePubspecDependency(
-                                  _oldDevDependencies);
-                              setState(_oldDevDependencies.clear);
-                            },
-                          ),
-                        ],
-                      ),
-                    ] else
-                      const Text('None - All are up to date.'),
-                  ],
+                  ),
                 ),
               ),
           ],

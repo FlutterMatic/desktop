@@ -352,9 +352,19 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                   child: RoundContainer(
                                     child: Column(
                                       children: <Widget>[
-                                        Text(widget.pkgInfo.metrics!.score
-                                            .grantedPoints
-                                            .toString()),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Text(widget.pkgInfo.metrics!.score
+                                                .grantedPoints
+                                                .toString()),
+                                            const Text(
+                                              ' of 130',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          ],
+                                        ),
                                         VSeparators.small(),
                                         const Text('Pub Points'),
                                       ],

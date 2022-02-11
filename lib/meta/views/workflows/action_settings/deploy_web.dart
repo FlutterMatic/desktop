@@ -13,7 +13,6 @@ import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/views/workflows/components/expandable_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 
 class DeployWebWorkflowActionConfig extends StatefulWidget {
@@ -44,10 +43,8 @@ class _DeployWebWorkflowActionStateConfig
 
   @override
   Widget build(BuildContext context) {
-    return ConfigureExpandableTile(
-      title: 'Deploy Web - Firebase',
-      subtitle: 'Deploy web workflow action',
-      icon: SvgPicture.asset(Assets.firebase, height: 20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (widget.isValidated)
           RoundContainer(
@@ -304,7 +301,7 @@ class _DeployWebWorkflowActionStateConfig
               }
             },
           ),
-        ]
+        ],
       ],
     );
   }
