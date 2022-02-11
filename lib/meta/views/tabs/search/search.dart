@@ -1,17 +1,8 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/search.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
-import 'package:fluttermatic/meta/views/tabs/search/elements/package.dart';
-import 'package:fluttermatic/meta/views/tabs/search/elements/projects.dart';
-import 'package:fluttermatic/meta/views/tabs/search/elements/workflows.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
-import 'package:path_provider/path_provider.dart';
 
 // 📦 Package imports:
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
@@ -21,12 +12,22 @@ import 'package:fluttermatic/components/dialog_templates/project/create_select.d
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
+import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/projects.model.dart';
 import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
+import 'package:fluttermatic/meta/utils/bin/utils/search.dart';
+import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
 import 'package:fluttermatic/meta/views/dialogs/notifications/notification_view.dart';
+import 'package:fluttermatic/meta/views/tabs/search/elements/package.dart';
+import 'package:fluttermatic/meta/views/tabs/search/elements/projects.dart';
+import 'package:fluttermatic/meta/views/tabs/search/elements/workflows.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class HomeSearchComponent extends StatefulWidget {

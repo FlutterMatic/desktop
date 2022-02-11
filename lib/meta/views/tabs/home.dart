@@ -7,13 +7,12 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
@@ -22,6 +21,7 @@ import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/check_new_version.dart';
 import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
+import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/dialogs/update_fluttermatic.dart';
 import 'package:fluttermatic/meta/views/tabs/search/search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
