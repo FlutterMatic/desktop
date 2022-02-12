@@ -84,6 +84,7 @@ class Assets {
   static const String doc = '${_imagesIconsBase}doc.svg';
   static const String git = '${_imagesLogosBase}git.svg';
   static const String appLogo = 'assets/images/logo.png';
+  static const String appFrame = 'assets/images/frame.png';
 }
 
 const Color kRedColor = Color(0xffE44516);

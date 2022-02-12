@@ -214,10 +214,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Image.asset(Assets.appLogo),
-                      ),
                       Expanded(child: MoveWindow()),
                       if (Platform.isWindows) windowControls(context)
                     ],

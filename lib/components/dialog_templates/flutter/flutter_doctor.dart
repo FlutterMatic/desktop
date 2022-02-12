@@ -93,24 +93,31 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
               canClose: !_running,
             ),
             if (_done) ...<Widget>[
-              RoundContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _status.map((String e) {
-                    if (e.startsWith('Doctor summary')) {
-                      return const SizedBox.shrink();
-                    }
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 500),
+                child: SingleChildScrollView(
+                  child: RoundContainer(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _status.map((String e) {
+                        if (e.startsWith('Doctor summary')) {
+                          return const SizedBox.shrink();
+                        }
 
-                    e = e.replaceAll('[âˆš]', '✅');
-                    e = e.replaceAll('â€¢', '🟢');
+                        e = e.replaceAll('[âˆš]', '✅');
+                        e = e.replaceAll('â€¢', '🟢');
+                        e = e.replaceAll('[â˜ ]', '🔴');
+                        e = e.replaceAll('X', '❌');
 
-                    bool _isLast = _status.last == e;
+                        bool _isLast = _status.last == e;
 
-                    return Padding(
-                      padding: EdgeInsets.all(_isLast ? 0 : 4),
-                      child: SelectableText(e),
-                    );
-                  }).toList(),
+                        return Padding(
+                          padding: EdgeInsets.all(_isLast ? 0 : 4),
+                          child: SelectableText(e),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
               )
             ] else ...<Widget>[
@@ -118,6 +125,7 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                   'We will now run a Flutter diagnostic test for Flutter on your device to see everything is working as expected.'),
               VSeparators.normal(),
               CheckBoxElement(
+                disable: _running,
                 onChanged: (bool? val) {
                   setState(() => _verbose = val ?? false);
                 },

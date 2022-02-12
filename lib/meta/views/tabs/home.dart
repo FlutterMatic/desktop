@@ -191,111 +191,121 @@ class _HomeScreenState extends State<HomeScreen> {
                       .setBool(SPConst.homePageTabsShow, _collapse);
                 },
                 child: Center(
-                  child: SizedBox(
-                    width: _showShortView ? 50 : 230,
-                    child: ColoredBox(
-                      color: Colors.blueGrey.withOpacity(0.08),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: _showShortView ? 5 : 15,
-                          vertical: _showShortView ? 5 : 20,
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            ..._tabs.map(
-                              (HomeTabObject e) {
-                                return _tabTile(
-                                  context,
-                                  _collapse,
-                                  stageType: e.stageType,
-                                  icon: SvgPicture.asset(
-                                    e.icon,
-                                    color: context
-                                            .read<ThemeChangeNotifier>()
-                                            .isDarkTheme
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                  name: e.name,
-                                  onPressed: () =>
-                                      setState(() => _selectedTab = e),
-                                  selected: _selectedTab == e,
-                                );
-                              },
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SizedBox(
+                      width: _showShortView ? 50 : 230,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(10)),
+                        child: ColoredBox(
+                          color: Colors.blueGrey.withOpacity(0.08),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: _showShortView ? 5 : 15,
+                              vertical: _showShortView ? 5 : 20,
                             ),
-                            const Spacer(),
-                            // Short view
-                            if (_showShortView)
-                              Column(
-                                children: <Widget>[
-                                  if (_updateAvailable)
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10),
-                                      child: UpdateAppButton(
-                                          downloadUrl: _updateDownloadUrl),
-                                    ),
-                                  _tabTile(
-                                    context,
-                                    _collapse,
-                                    stageType: null,
-                                    icon: SvgPicture.asset(
-                                      Assets.settings,
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    name: 'Settings',
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) => const SettingDialog(),
-                                      );
-                                    },
-                                    selected: false,
-                                  ),
-                                ],
-                              )
-                            else
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: _tabTile(
+                            child: Column(
+                              children: <Widget>[
+                                ..._tabs.map(
+                                  (HomeTabObject e) {
+                                    return _tabTile(
                                       context,
                                       _collapse,
-                                      stageType: null,
+                                      stageType: e.stageType,
                                       icon: SvgPicture.asset(
-                                        Assets.settings,
+                                        e.icon,
                                         color: context
                                                 .read<ThemeChangeNotifier>()
                                                 .isDarkTheme
                                             ? Colors.white
                                             : Colors.black,
                                       ),
-                                      name: 'Settings',
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (_) => const SettingDialog(),
-                                        );
-                                      },
-                                      selected: false,
-                                    ),
+                                      name: e.name,
+                                      onPressed: () =>
+                                          setState(() => _selectedTab = e),
+                                      selected: _selectedTab == e,
+                                    );
+                                  },
+                                ),
+                                const Spacer(),
+                                // Short view
+                                if (_showShortView)
+                                  Column(
+                                    children: <Widget>[
+                                      if (_updateAvailable)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: UpdateAppButton(
+                                              downloadUrl: _updateDownloadUrl),
+                                        ),
+                                      _tabTile(
+                                        context,
+                                        _collapse,
+                                        stageType: null,
+                                        icon: SvgPicture.asset(
+                                          Assets.settings,
+                                          color: context
+                                                  .read<ThemeChangeNotifier>()
+                                                  .isDarkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        name: 'Settings',
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) =>
+                                                const SettingDialog(),
+                                          );
+                                        },
+                                        selected: false,
+                                      ),
+                                    ],
+                                  )
+                                else
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: _tabTile(
+                                          context,
+                                          _collapse,
+                                          stageType: null,
+                                          icon: SvgPicture.asset(
+                                            Assets.settings,
+                                            color: context
+                                                    .read<ThemeChangeNotifier>()
+                                                    .isDarkTheme
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                          name: 'Settings',
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  const SettingDialog(),
+                                            );
+                                          },
+                                          selected: false,
+                                        ),
+                                      ),
+                                      if (_updateAvailable)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, bottom: 10),
+                                          child: UpdateAppButton(
+                                              downloadUrl: _updateDownloadUrl),
+                                        ),
+                                    ],
                                   ),
-                                  if (_updateAvailable)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10, bottom: 10),
-                                      child: UpdateAppButton(
-                                          downloadUrl: _updateDownloadUrl),
-                                    ),
-                                ],
-                              ),
-                          ],
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -303,18 +313,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Expanded(
-                child: Stack(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 60),
-                      child: _selectedTab.child,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: Stack(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 60),
+                          child: _selectedTab.child,
+                        ),
+                        AnimatedOpacity(
+                          opacity: _animateFinish ? 1 : 0.1,
+                          duration: const Duration(milliseconds: 200),
+                          child: const HomeSearchComponent(),
+                        ),
+                      ],
                     ),
-                    AnimatedOpacity(
-                      opacity: _animateFinish ? 1 : 0.1,
-                      duration: const Duration(milliseconds: 200),
-                      child: const HomeSearchComponent(),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],

@@ -49,7 +49,6 @@ msix_config:
   publisher: CN=FLUTTERMATIC, O=FlutterMatic
   icons_background_color: transparent
   architecture: x64
-  vs_generated_images_folder_path: ./assets/images/app_icons/
   capabilities: "internetClient"
   # We want to be able to release this app on the Windows Store
   store: true
@@ -76,7 +75,6 @@ flutter:
   assets:
     - assets/fonts/
     - assets/images/
-    - assets/images/app_icons/
     - assets/images/logos/
     - assets/images/icons/
     - assets/documentation/

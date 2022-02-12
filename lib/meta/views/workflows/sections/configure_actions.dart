@@ -153,80 +153,79 @@ class _SetProjectWorkflowActionsConfigurationState
     ];
   }
 
-  late final List<_TabObject> _tabs = <_TabObject>[
-    if (_isDeployWeb)
-      _TabObject(
-        name: 'Deploy Web',
-        content: DeployWebWorkflowActionConfig(
-          firebaseProjectIDController: widget.firebaseProjectIDController,
-          firebaseProjectName: widget.firebaseProjectName,
-          webUrlController: widget.webUrlController,
-          isValidated: widget.isFirebaseValidated,
-          onFirebaseValidated: widget.onFirebaseValidatedChanged,
-        ),
-      ),
-    if (_isBuildWeb)
-      _TabObject(
-        name: 'Build Web',
-        content: BuildWebWorkflowActionConfig(
-          defaultBuildMode: widget.defaultWebBuildMode,
-          onBuildModeChanged: widget.onBuildWebModeChanged,
-          defaultRenderer: widget.defaultWebRenderer,
-          onRendererChanged: widget.onWebRendererChanged,
-          timeoutController: widget.buildWebTimeController,
-        ),
-      ),
-    if (_isBuildAndroid)
-      _TabObject(
-        name: 'Build Android',
-        content: BuildAndroidWorkflowActionConfig(
-          defaultBuildMode: widget.defaultAndroidBuildMode,
-          onBuildModeChanged: widget.onAndroidBuildModeChanged,
-          buildType: widget.androidBuildType,
-          onBuildTypeChanged: widget.onAndroidBuildTypeChanged,
-          timeoutController: widget.buildAndroidTimeController,
-        ),
-      ),
-    if (_isBuildIOS)
-      _TabObject(
-        name: 'Build iOS',
-        content: BuildIOSWorkflowActionConfig(
-          defaultBuildMode: widget.defaultIOSBuildMode,
-          onBuildModeChanged: widget.oniOSBuildModeChanged,
-          timeoutController: widget.buildIOSTimeController,
-        ),
-      ),
-    if (_isBuildWindows)
-      _TabObject(
-        name: 'Build Windows',
-        content: BuildWindowsWorkflowActionConfig(
-          timeoutController: widget.buildWindowsTimeController,
-          onBuildModeChanged: widget.onWindowsBuildModeChanged,
-          defaultBuildMode: widget.defaultWindowsBuildMode,
-        ),
-      ),
-    if (_isBuildMacOS)
-      _TabObject(
-        name: 'Build macOS',
-        content: BuildMacOSWorkflowActionConfig(
-          onBuildModeChanged: widget.onMacOSBuildModeChanged,
-          defaultBuildMode: widget.defaultMacOSBuildMode,
-          timeoutController: widget.buildMacOSTimeController,
-        ),
-      ),
-    if (_isBuildLinux)
-      _TabObject(
-        name: 'Build Linux',
-        content: BuildLinuxWorkflowActionConfig(
-          onBuildModeChanged: widget.onLinuxBuildModeChanged,
-          defaultBuildMode: widget.defaultLinuxBuildMode,
-          timeoutController: widget.buildLinuxTimeController,
-        ),
-      ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    List<_TabObject> _tabs = <_TabObject>[
+      if (_isDeployWeb)
+        _TabObject(
+          name: 'Deploy Web',
+          content: DeployWebWorkflowActionConfig(
+            firebaseProjectIDController: widget.firebaseProjectIDController,
+            firebaseProjectName: widget.firebaseProjectName,
+            webUrlController: widget.webUrlController,
+            isValidated: widget.isFirebaseValidated,
+            onFirebaseValidated: widget.onFirebaseValidatedChanged,
+          ),
+        ),
+      if (_isBuildWeb)
+        _TabObject(
+          name: 'Build Web',
+          content: BuildWebWorkflowActionConfig(
+            defaultBuildMode: widget.defaultWebBuildMode,
+            onBuildModeChanged: widget.onBuildWebModeChanged,
+            defaultRenderer: widget.defaultWebRenderer,
+            onRendererChanged: widget.onWebRendererChanged,
+            timeoutController: widget.buildWebTimeController,
+          ),
+        ),
+      if (_isBuildAndroid)
+        _TabObject(
+          name: 'Build Android',
+          content: BuildAndroidWorkflowActionConfig(
+            defaultBuildMode: widget.defaultAndroidBuildMode,
+            onBuildModeChanged: widget.onAndroidBuildModeChanged,
+            buildType: widget.androidBuildType,
+            onBuildTypeChanged: widget.onAndroidBuildTypeChanged,
+            timeoutController: widget.buildAndroidTimeController,
+          ),
+        ),
+      if (_isBuildIOS)
+        _TabObject(
+          name: 'Build iOS',
+          content: BuildIOSWorkflowActionConfig(
+            defaultBuildMode: widget.defaultIOSBuildMode,
+            onBuildModeChanged: widget.oniOSBuildModeChanged,
+            timeoutController: widget.buildIOSTimeController,
+          ),
+        ),
+      if (_isBuildWindows)
+        _TabObject(
+          name: 'Build Windows',
+          content: BuildWindowsWorkflowActionConfig(
+            timeoutController: widget.buildWindowsTimeController,
+            onBuildModeChanged: widget.onWindowsBuildModeChanged,
+            defaultBuildMode: widget.defaultWindowsBuildMode,
+          ),
+        ),
+      if (_isBuildMacOS)
+        _TabObject(
+          name: 'Build macOS',
+          content: BuildMacOSWorkflowActionConfig(
+            onBuildModeChanged: widget.onMacOSBuildModeChanged,
+            defaultBuildMode: widget.defaultMacOSBuildMode,
+            timeoutController: widget.buildMacOSTimeController,
+          ),
+        ),
+      if (_isBuildLinux)
+        _TabObject(
+          name: 'Build Linux',
+          content: BuildLinuxWorkflowActionConfig(
+            onBuildModeChanged: widget.onLinuxBuildModeChanged,
+            defaultBuildMode: widget.defaultLinuxBuildMode,
+            timeoutController: widget.buildLinuxTimeController,
+          ),
+        ),
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -266,16 +265,20 @@ class _SetProjectWorkflowActionsConfigurationState
                       tabs: _tabs
                           .map(
                             (_) => Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Tooltip(
-                                  message: _.name,
-                                  waitDuration: const Duration(seconds: 1),
+                              padding: const EdgeInsets.only(bottom: 5),
+                              child: Tooltip(
+                                message: _.name,
+                                waitDuration: const Duration(milliseconds: 300),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 3),
                                   child: Text(_.name,
                                       maxLines: 1,
                                       softWrap: true,
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis),
-                                )),
+                                ),
+                              ),
+                            ),
                           )
                           .toList()),
                   VSeparators.small(),
@@ -291,15 +294,13 @@ class _SetProjectWorkflowActionsConfigurationState
               ),
             ),
           ),
+        VSeparators.xSmall(),
         Align(
           alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 15),
-            child: RectangleButton(
-              width: 100,
-              child: const Text('Next'),
-              onPressed: widget.onNext,
-            ),
+          child: RectangleButton(
+            width: 100,
+            child: const Text('Next'),
+            onPressed: widget.onNext,
           ),
         ),
       ],
