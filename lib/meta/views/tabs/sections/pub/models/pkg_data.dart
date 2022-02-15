@@ -132,17 +132,19 @@ class PkgViewData {
           // the code block from the [_plainReadMe] string and also the documentation
           // that was before the code block.
           if (_plainReadMe.substring(0, _startCode).isNotEmpty) {
-            _readMe.add('docs:' + _plainReadMe.substring(0, _startCode));
+            // print('Doc');
+            _readMe.add('<docs>' + _plainReadMe.substring(0, _startCode));
           }
+          // print('Code');
           // TODO: Temporary avoid code blocks. Resolve.
-          _readMe.add('docs:' + _code);
+          _readMe.add('<docs>' + _code);
           _plainReadMe = _plainReadMe.substring(_endCode + _endCodeTag.length);
         }
       }
 
       // Print all the code snippets.
       for (String block in _readMe) {
-        if (block.startsWith('code:')) {
+        if (block.startsWith('<code>')) {
           // TODO: Fix to ignore blocks directly as <code></code> tags.
         }
       }

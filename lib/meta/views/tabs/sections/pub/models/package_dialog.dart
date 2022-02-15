@@ -284,11 +284,12 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                               VSeparators.xSmall(),
                               Expanded(
                                 child: SingleChildScrollView(
+                                  // TODO: #62 Fix rendering of pub package documentation
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: _data!.length,
                                     itemBuilder: (_, int i) {
-                                      if (_data![i].startsWith('code:')) {
+                                      if (_data![i].startsWith('<code>')) {
                                         return MarkdownBlock(
                                             data: _data![i].substring(5));
                                       } else {

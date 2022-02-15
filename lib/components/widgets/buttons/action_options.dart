@@ -80,7 +80,7 @@ Widget _buttonListTile(
         if (icon != null)
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: icon,
+            child: SizedBox(width: 18, child: icon),
           ),
         Expanded(
           child: Text(

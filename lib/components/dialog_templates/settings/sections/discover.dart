@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/about/about_us.dart';
+import 'package:fluttermatic/components/dialog_templates/fun/type_test.dart';
 import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
@@ -26,11 +27,15 @@ class DiscoverSettingsSection extends StatelessWidget {
         ActionOptions(
           actions: <ActionOptionsObject>[
             ActionOptionsObject(
-              'GitHub',
-              () => launch('https://github.com/FlutterMatic/desktop'),
-              icon: SvgPicture.asset(Assets.github,
-                  color: Theme.of(context).isDarkTheme ? null : Colors.black,
-                  height: 14),
+              'Typing speed',
+              () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (_) => const TypeTestChallengeDialog(),
+                );
+              },
+              icon: const Icon(Icons.keyboard_rounded, size: 15),
             ),
             ActionOptionsObject(
               'Twitter',
