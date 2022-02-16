@@ -48,9 +48,26 @@ class ProjectSearchUtils {
             .where((FileSystemEntity e) => e.path.endsWith('\\pubspec.yaml'))
             .toList();
 
+        List<String> _skipNames = <String>[
+          'ephemeral',
+        ];
+
         // Adds to the projects list the parent path of the pubspec.yaml file
         for (FileSystemEntity file in _files) {
           String _parentName = file.parent.path.split('\\').last;
+
+          bool _skip = false;
+
+          for (String name in file.path.split('\\')) {
+            if (_skipNames.contains(name)) {
+              _skip = true;
+              break;
+            }
+          }
+
+          if (_skip) {
+            continue;
+          }
 
           // We will skip if this project is an example project for a project.
           if (_parentName == 'example') {
