@@ -145,19 +145,23 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                 ),
                 HSeparators.xSmall(),
                 HSeparators.xSmall(),
-                RectangleButton(
-                  width: 40,
-                  height: 40,
-                  padding: EdgeInsets.zero,
-                  child:
-                      const Icon(Icons.play_arrow_rounded, color: kGreenColor),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => ShowExistingWorkflows(
-                          pubspecPath: widget.project.path),
-                    );
-                  },
+                Tooltip(
+                  message: 'Workflows',
+                  waitDuration: const Duration(seconds: 1),
+                  child: RectangleButton(
+                    width: 40,
+                    height: 40,
+                    padding: EdgeInsets.zero,
+                    child: const Icon(Icons.play_arrow_rounded,
+                        color: kGreenColor),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => ShowExistingWorkflows(
+                            pubspecPath: widget.project.path),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

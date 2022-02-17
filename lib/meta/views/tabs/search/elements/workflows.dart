@@ -24,18 +24,21 @@ class SearchWorkflowsTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                  workflow.path.split('\\').last.split('_').map((String e) {
-                    // Capitalize first letter
-                    return e.substring(0, 1).toUpperCase() + e.substring(1);
-                  }).join(' '),
-                  style: const TextStyle(fontSize: 18)),
-            ),
-            const StageTile(stageType: StageType.prerelease),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                    workflow.path.split('\\').last.split('_').map((String e) {
+                      // Capitalize first letter
+                      return e.substring(0, 1).toUpperCase() + e.substring(1);
+                    }).join(' '),
+                    style: const TextStyle(fontSize: 18)),
+              ),
+              const StageTile(stageType: StageType.prerelease),
+            ],
+          ),
         ),
         VSeparators.small(),
         SizedBox(
@@ -68,7 +71,7 @@ class _WorkflowTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 15),
+      padding: const EdgeInsets.only(right: 5, left: 10),
       child: RoundContainer(
         height: 150,
         width: 200,

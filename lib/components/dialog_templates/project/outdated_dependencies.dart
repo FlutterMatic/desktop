@@ -278,7 +278,7 @@ class _ScanProjectOutdatedDependenciesDialogState
                               SquareButton(
                                 tooltip: 'Upgrade All',
                                 color: Colors.transparent,
-                                icon: const Icon(Icons.upgrade, size: 15),
+                                icon: const Icon(Icons.download_rounded, size: 15),
                                 onPressed: () async {
                                   await _updatePubspecDependency(
                                       _oldDependencies);
@@ -322,7 +322,7 @@ class _ScanProjectOutdatedDependenciesDialogState
                               SquareButton(
                                 tooltip: 'Upgrade All',
                                 color: Colors.transparent,
-                                icon: const Icon(Icons.upgrade, size: 15),
+                                icon: const Icon(Icons.download_rounded, size: 15),
                                 onPressed: () async {
                                   await _updatePubspecDependency(
                                       _oldDevDependencies);

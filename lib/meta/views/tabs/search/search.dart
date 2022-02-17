@@ -355,7 +355,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.blueGrey.withOpacity(0.4)),
                   ),
-                  padding: const EdgeInsets.all(10),
+                  // padding: const EdgeInsets.all(10),
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,14 +392,19 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                             ]
                           : <Widget>[
                               if (_projectResults.isNotEmpty) ...<Widget>[
-                                Row(
-                                  children: const <Widget>[
-                                    Expanded(
-                                      child: Text('Projects',
-                                          style: TextStyle(fontSize: 18)),
-                                    ),
-                                    StageTile(stageType: StageType.prerelease),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
+                                  child: Row(
+                                    children: const <Widget>[
+                                      Expanded(
+                                        child: Text('Projects',
+                                            style: TextStyle(fontSize: 18)),
+                                      ),
+                                      StageTile(
+                                          stageType: StageType.prerelease),
+                                    ],
+                                  ),
                                 ),
                                 VSeparators.small(),
                                 Padding(
@@ -423,14 +428,19 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                     padding: const EdgeInsets.only(bottom: 15),
                                     child: SearchWorkflowsTile(workflow: _))),
                               if (_packageResults.isNotEmpty) ...<Widget>[
-                                Row(
-                                  children: const <Widget>[
-                                    Expanded(
-                                      child: Text('Pub Packages',
-                                          style: TextStyle(fontSize: 18)),
-                                    ),
-                                    StageTile(stageType: StageType.prerelease),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
+                                  child: Row(
+                                    children: const <Widget>[
+                                      Expanded(
+                                        child: Text('Pub Packages',
+                                            style: TextStyle(fontSize: 18)),
+                                      ),
+                                      StageTile(
+                                          stageType: StageType.prerelease),
+                                    ],
+                                  ),
                                 ),
                                 VSeparators.small(),
                                 SizedBox(

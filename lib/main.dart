@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:fluttermatic/components/dialog_templates/other/unofficial_release.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -316,12 +317,23 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         ],
                       );
                     },
-                    home: _isChecking
-                        ? const Scaffold(
-                            body: Center(child: Spinner(thickness: 2)))
-                        : !completedSetup
-                            ? const SetupScreen()
-                            : const HomeScreen(),
+                    home: Builder(
+                      builder: (_) {
+                        // Make sure this is an official build of the app.
+                        if (appBuild.isEmpty || appVersion.isEmpty) {
+                          return const UnofficialReleaseDialog();
+                        }
+
+                        if (_isChecking) {
+                          return const Scaffold(
+                              body: Center(child: Spinner(thickness: 2)));
+                        } else if (!completedSetup) {
+                          return const SetupScreen();
+                        } else {
+                          return const HomeScreen();
+                        }
+                      },
+                    ),
                   ),
                 ),
               ],

@@ -17,7 +17,7 @@ class SearchProjectTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(right: 5, left: 10),
       child: RoundContainer(
         height: 150,
         width: 200,
