@@ -238,13 +238,13 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                             snackBarTile(
                               context,
                               'You must select a pubspec.yaml file to continue setting up this workflow.',
-                              type: SnackBarType.error,
+                              type: SnackBarType.warning,
                             ),
                           );
                           return;
                         }
 
-                        if (!_file.path.endsWith('\\pubspec.yaml')) {
+                        if (_file.path.split('\\').last != 'pubspec.yaml') {
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(
@@ -260,6 +260,18 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                           lines: await File(_file.path).readAsLines(),
                           path: _file.path,
                         );
+
+                        if (!_pubspec.isValid) {
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            snackBarTile(
+                              context,
+                              'Invalid pubspec.yaml file. Please make sure you have a valid pubspec.yaml file.',
+                              type: SnackBarType.error,
+                            ),
+                          );
+                          return;
+                        }
 
                         widget.onPubspecUpdate(_pubspec);
 
