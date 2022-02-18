@@ -72,7 +72,7 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
   @override
   Widget build(BuildContext context) {
     return DialogTemplate(
-      width: 800,
+      width: 600,
       child: Column(
         children: <Widget>[
           // const DialogHeader(title: 'Type Speed Test'),
@@ -197,124 +197,125 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
             ],
           ),
           VSeparators.xLarge(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: RoundContainer(
-              width: double.infinity,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const NeverScrollableScrollPhysics(),
-                child: Row(
-                  children: <Widget>[
-                    for (int i = 0; i < _words.length - _currentWord; i++)
-                      Text(
-                        _words.elementAt(i + _currentWord) + ' ',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: _currentWord == (i + _currentWord)
-                              ? (_errorWord ? AppTheme.errorColor : kGreenColor)
-                              : Colors.grey,
-                        ),
-                      )
-                  ],
-                ),
+          RoundContainer(
+            width: double.infinity,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const NeverScrollableScrollPhysics(),
+              child: Row(
+                children: <Widget>[
+                  for (int i = 0; i < _words.length - _currentWord; i++)
+                    Text(
+                      _words.elementAt(i + _currentWord) + ' ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: _currentWord == (i + _currentWord)
+                            ? (_errorWord ? AppTheme.errorColor : kGreenColor)
+                            : Colors.grey,
+                      ),
+                    )
+                ],
               ),
             ),
           ),
           VSeparators.normal(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: RoundContainer(
-              padding: EdgeInsets.zero,
-              child: TextFormField(
-                inputFormatters: <TextInputFormatter>[
-                  TextInputFormatter.withFunction(
-                    (TextEditingValue oldValue, TextEditingValue newValue) {
-                      if (!_startedCountdown) {
-                        _startCountdown();
+          RoundContainer(
+            padding: EdgeInsets.zero,
+            child: TextFormField(
+              inputFormatters: <TextInputFormatter>[
+                TextInputFormatter.withFunction(
+                  (TextEditingValue oldValue, TextEditingValue newValue) {
+                    if (!_startedCountdown) {
+                      _startCountdown();
+                    }
+
+                    // Ignore if only white spaces
+                    if (newValue.text.length != newValue.text.trim().length &&
+                        newValue.text.trim().isEmpty) {
+                      return oldValue;
+                    }
+
+                    if (_words.elementAt(_currentWord).length <
+                        newValue.text.trim().length) {
+                      setState(() {
+                        _errorWord = true;
+                      });
+                    }
+
+                    // If it ends with a space, that means we need to confirm
+                    // and compare to move on to the next word.
+                    if (newValue.text.endsWith(' ')) {
+                      // If the word is correct, add to correct words
+                      if (_words.elementAt(_currentWord) ==
+                          newValue.text.trim()) {
+                        setState(() {
+                          _totalCorrectWords++;
+                          _totalCharsPerMin +=
+                              newValue.text.trim().length; // Without spaces
+                          _errorWord = false;
+                          _currentWord++;
+                        });
+                      } else {
+                        setState(() {
+                          _totalWrongWords++;
+                          _errorWord = false;
+                          _currentWord++;
+                        });
                       }
+                      return const TextEditingValue(text: '');
+                    }
 
-                      // Ignore if only white spaces
-                      if (newValue.text.length != newValue.text.trim().length &&
-                          newValue.text.trim().isEmpty) {
-                        return oldValue;
-                      }
-
-                      // If it ends with a space, that means we need to confirm
-                      // and compare to move on to the next word.
-                      if (newValue.text.endsWith(' ')) {
-                        // If the word is correct, add to correct words
-                        if (_words.elementAt(_currentWord) ==
-                            newValue.text.trim()) {
-                          setState(() {
-                            _totalCorrectWords++;
-                            _totalCharsPerMin +=
-                                newValue.text.trim().length; // Without spaces
-                            _errorWord = false;
-                            _currentWord++;
-                          });
-                        } else {
-                          setState(() {
-                            _totalWrongWords++;
-                            _errorWord = false;
-                            _currentWord++;
-                          });
-                        }
-                        return const TextEditingValue(text: '');
-                      }
-
-                      // Remove all if attempting to clear input box
-                      if (newValue.text.trim().isEmpty) {
-                        return newValue;
-                      }
-
-                      // --- Validate the word so far.
-                      List<String> _correctLetters =
-                          _words.elementAt(_currentWord).split('').toList();
-
-                      List<String> _inputLetters =
-                          newValue.text.trim().split('').toList();
-
-                      bool _soFarCorrect = true;
-
-                      // Check if the input is correct so far
-                      for (int i = 0; i < _inputLetters.length; i++) {
-                        if (_correctLetters.elementAt(i) !=
-                            _inputLetters.elementAt(i)) {
-                          _soFarCorrect = false;
-                          break;
-                        }
-                      }
-
-                      setState(() => _errorWord = !_soFarCorrect);
-
+                    // Remove all if attempting to clear input box
+                    if (newValue.text.trim().isEmpty) {
                       return newValue;
-                    },
-                  ),
-                ],
-                autofocus: true,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  hintText: _currentWord == 0 && _secondsLeft == 60
-                      ? 'Start whenever you are ready'
-                      : 'Type here...',
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
-                  border: const OutlineInputBorder(),
-                  fillColor: Colors.transparent,
-                  iconColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  prefixIconColor: Colors.transparent,
-                  suffixIconColor: Colors.transparent,
+                    }
+
+                    // --- Validate the word so far.
+                    List<String> _correctLetters =
+                        _words.elementAt(_currentWord).split('').toList();
+
+                    List<String> _inputLetters =
+                        newValue.text.trim().split('').toList();
+
+                    bool _soFarCorrect = true;
+
+                    // Check if the input is correct so far
+                    for (int i = 0; i < _inputLetters.length; i++) {
+                      if (_correctLetters.elementAt(i) !=
+                          _inputLetters.elementAt(i)) {
+                        _soFarCorrect = false;
+                        break;
+                      }
+                    }
+
+                    setState(() => _errorWord = !_soFarCorrect);
+
+                    return newValue;
+                  },
                 ),
+              ],
+              autofocus: true,
+              autocorrect: false,
+              decoration: InputDecoration(
+                hintText: _currentWord == 0 && _secondsLeft == 60
+                    ? 'Start whenever you are ready'
+                    : 'Type here...',
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.transparent),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.transparent),
+                ),
+                border: const OutlineInputBorder(),
+                fillColor: Colors.transparent,
+                iconColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                prefixIconColor: Colors.transparent,
+                suffixIconColor: Colors.transparent,
               ),
-              width: double.infinity,
             ),
+            width: double.infinity,
           ),
         ],
       ),

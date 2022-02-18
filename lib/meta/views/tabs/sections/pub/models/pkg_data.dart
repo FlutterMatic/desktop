@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 // 📦 Package imports:
-import 'package:http/http.dart' as http;
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
@@ -48,115 +47,6 @@ class PkgViewData {
           LogTypeTag.error, 'Failed to parse json package: $_, json: $json',
           stackTraces: s);
       rethrow;
-    }
-  }
-
-  /// Returns the package's README by crawling the package's homepage.
-  ///
-  /// This method is meant to always run on an isolate. Requires an input of
-  /// type list with the following information in order:
-  ///
-  /// [<SendPort> port, <String> packageName]
-  static Future<void> getPkgReadMeIsolate(List<dynamic> data) async {
-    SendPort _port = data[0];
-    String _pkgName = data[1];
-
-    try {
-      List<String> _readMe = <String>[];
-
-      // Will crawl the package's readme from the Pub.dev website.
-      http.Response _response =
-          await http.get(Uri.parse('https://pub.dev/packages/$_pkgName'));
-
-      // Everything between `<section class="tab-content detail-tab-readme-content -active markdown-body">`
-      // and `</section>` is the README.md markdown data.
-
-      String _startTxt =
-          '<section class="tab-content detail-tab-readme-content -active markdown-body">';
-      String _endTxt = '</section>';
-
-      int _start = _response.body.indexOf(_startTxt) + _startTxt.length;
-
-      int _end = 0;
-
-      while (_end < _start) {
-        _end = _response.body.indexOf(_endTxt, _end + 1);
-      }
-
-      String _plainReadMe = _response.body.substring(_start, _end);
-
-      // We will extract the <code></code> tags and replace them with markdown
-      // code blocks.
-      List<String> _codeStartTags = <String>[
-        '<code>',
-        '<pre><code>',
-        '<pre><code class="language-dart">',
-        '<pre><code class="language-java">',
-        '<pre><code class="language-swift">',
-        '<pre><code class="language-javascript">',
-        '<pre><code class="language-python">',
-        '<pre><code class="language-html">',
-        '<pre><code class="language-typescript">',
-      ];
-
-      List<String> _codeEndTags = <String>[
-        '</code>',
-        '</code></pre>',
-      ];
-
-      for (String tag in _codeStartTags) {
-        while (_plainReadMe.contains(tag)) {
-          int _startCode = _plainReadMe.indexOf(tag);
-          int _endCode = -1;
-
-          String _endCodeTag = '';
-
-          for (String endTag in _codeEndTags) {
-            _endCode = _plainReadMe.indexOf(endTag, _startCode + 1);
-            _endCodeTag = endTag;
-
-            if (_endCode != -1) {
-              break;
-            }
-          }
-
-          if (_endCode == -1) {
-            break;
-          }
-
-          String _code =
-              _plainReadMe.substring(_startCode + tag.length, _endCode);
-
-          // Add to the [_readMe] list the documentation before the code block. Then
-          // we will add the code block to the list. After that, we will remove
-          // the code block from the [_plainReadMe] string and also the documentation
-          // that was before the code block.
-          if (_plainReadMe.substring(0, _startCode).isNotEmpty) {
-            // print('Doc');
-            _readMe.add('<docs>' + _plainReadMe.substring(0, _startCode));
-          }
-          // print('Code');
-          // TODO: Temporary avoid code blocks. Resolve.
-          _readMe.add('<docs>' + _code);
-          _plainReadMe = _plainReadMe.substring(_endCode + _endCodeTag.length);
-        }
-      }
-
-      // Print all the code snippets.
-      for (String block in _readMe) {
-        if (block.startsWith('<code>')) {
-          // TODO: Fix to ignore blocks directly as <code></code> tags.
-        }
-      }
-
-      _port.send(_readMe);
-      return;
-    } catch (_, s) {
-      await logger.file(
-          LogTypeTag.error, 'Failed to fetch README for package: $_pkgName',
-          stackTraces: s);
-      _port.send(false);
-      return;
     }
   }
 
