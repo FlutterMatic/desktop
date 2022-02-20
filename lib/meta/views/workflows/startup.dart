@@ -78,6 +78,10 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // in order of execution.
   List<WorkflowActionModel> _workflowActions = <WorkflowActionModel>[];
 
+  // List of custom commands in the order to run. This is only empty if workflow
+  // actions doesn't have this checked.
+  List<String> _customCommands = <String>[];
+
   // The extracted version of the project pubspec.yaml that we will apply the
   // workflow to.
   PubspecInfo? _pubspecFile;
@@ -158,6 +162,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       linuxBuildMode: _linuxBuildMode,
       macosBuildMode: _macOSBuildMode,
       windowsBuildMode: _windowsBuildMode,
+      customCommands: _customCommands,
       isSaved: isSaved ?? false,
     );
   }
@@ -424,8 +429,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 disableChangePubspec: _forcePubspec,
                 showLastPage:
                     _showInfoLast || widget.editWorkflowTemplate != null,
-                onPubspecUpdate: (PubspecInfo pubspec) =>
-                    setState(() => _pubspecFile = pubspec),
+                onPubspecUpdate: (_) => setState(() => _pubspecFile = _),
                 onNext: () {
                   if (_pubspecFile == null) {
                     ScaffoldMessenger.of(context).clearSnackBars();
@@ -452,8 +456,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 workflowDescription: _descriptionController.text,
                 projectName: _pubspecFile?.name ?? 'Unknown',
                 actions: _workflowActions,
-                onActionsUpdate: (List<WorkflowActionModel> actions) =>
-                    setState(() => _workflowActions = actions),
+                onActionsUpdate: (_) => setState(() => _workflowActions = _),
                 onNext: () {
                   if (_workflowActions.isEmpty) {
                     ScaffoldMessenger.of(context).clearSnackBars();
@@ -474,8 +477,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               SetProjectWorkflowActionsOrder(
                 workflowName: _nameController.text,
                 workflowActions: _workflowActions,
-                onReorder: (List<WorkflowActionModel> list) =>
-                    setState(() => _workflowActions = list),
+                onReorder: (_) => setState(() => _workflowActions = _),
                 onNext: () => setState(
                     () => _interfaceView = _InterfaceView.configureActions),
               ),
@@ -491,10 +493,8 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 webUrlController: _webUrlController,
                 firebaseProjectName: _firebaseProjectName,
                 firebaseProjectIDController: _firebaseProjectIDController,
-                onFirebaseValidatedChanged: (bool isFirebaseValidated) {
-                  setState(
-                      () => _isFirebaseDeployVerified = isFirebaseValidated);
-                },
+                onFirebaseValidatedChanged: (_) =>
+                    setState(() => _isFirebaseDeployVerified = _),
                 isFirebaseValidated: _isFirebaseDeployVerified,
                 defaultWebBuildMode: _webBuildMode,
                 defaultIOSBuildMode: _iOSBuildMode,
@@ -504,47 +504,56 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 defaultMacOSBuildMode: _macOSBuildMode,
                 defaultWindowsBuildMode: _windowsBuildMode,
                 defaultWebRenderer: _webRenderer,
-                oniOSBuildModeChanged: (PlatformBuildModes mode) {
-                  setState(() => _iOSBuildMode = mode);
-                },
-                onAndroidBuildTypeChanged: (AndroidBuildType type) {
-                  setState(() => _androidBuildType = type);
-                },
-                onAndroidBuildModeChanged: (PlatformBuildModes mode) {
-                  setState(() => _androidBuildMode = mode);
-                },
-                onBuildWebModeChanged: (PlatformBuildModes mode) {
-                  setState(() => _webBuildMode = mode);
-                },
-                onLinuxBuildModeChanged: (PlatformBuildModes mode) {
-                  setState(() => _linuxBuildMode = mode);
-                },
-                onMacOSBuildModeChanged: (PlatformBuildModes mode) {
-                  setState(() => _macOSBuildMode = mode);
-                },
-                onWindowsBuildModeChanged: (PlatformBuildModes mode) {
-                  setState(() => _windowsBuildMode = mode);
-                },
-                onWebRendererChanged: (WebRenderers renderer) =>
-                    setState(() => _webRenderer = renderer),
+                customCommands: _customCommands,
+                oniOSBuildModeChanged: (_) => setState(() => _iOSBuildMode = _),
+                onAndroidBuildTypeChanged: (_) =>
+                    setState(() => _androidBuildType = _),
+                onAndroidBuildModeChanged: (_) =>
+                    setState(() => _androidBuildMode = _),
+                onBuildWebModeChanged: (_) => setState(() => _webBuildMode = _),
+                onLinuxBuildModeChanged: (_) =>
+                    setState(() => _linuxBuildMode = _),
+                onMacOSBuildModeChanged: (_) =>
+                    setState(() => _macOSBuildMode = _),
+                onWindowsBuildModeChanged: (_) =>
+                    setState(() => _windowsBuildMode = _),
+                onWebRendererChanged: (_) => setState(() => _webRenderer = _),
+                onCustomCommandsChanged: (_) =>
+                    setState(() => _customCommands = _),
                 onNext: () {
-                  if (_workflowActions.any((WorkflowActionModel e) =>
-                      e.id == WorkflowActionsIds.deployProjectWeb)) {
-                    if (_isFirebaseDeployVerified) {
-                      setState(() => _interfaceView = _InterfaceView.done);
-                    } else {
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        snackBarTile(
-                          context,
-                          'Please verify your Firebase project info to continue.',
-                          type: SnackBarType.error,
-                        ),
-                      );
-                    }
-                  } else {
-                    setState(() => _interfaceView = _InterfaceView.done);
+                  // Make sure if we have custom commands that there is at
+                  // least one command set.
+                  if (_workflowActions.any((_) =>
+                          _.id == WorkflowActionsIds.runCustomCommands) &&
+                      _customCommands.isEmpty) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'Please enter at least one custom command to continue.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                    return;
                   }
+
+                  // See if we have deploy web project to Firebase enabled but
+                  // not validated.
+                  if (_workflowActions.any(
+                          (_) => _.id == WorkflowActionsIds.deployProjectWeb) &&
+                      !_isFirebaseDeployVerified) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'Please verify your Firebase project info to continue.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                    return;
+                  }
+
+                  setState(() => _interfaceView = _InterfaceView.done);
                 },
               ),
             if (_interfaceView == _InterfaceView.done)

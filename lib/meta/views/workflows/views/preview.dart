@@ -33,7 +33,7 @@ class PreviewWorkflowDialog extends StatelessWidget {
         children: <Widget>[
           const DialogHeader(
             title: 'Preview Workflow',
-            leading: StageTile(stageType: StageType.prerelease),
+            leading: StageTile(stageType: StageType.beta),
           ),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 400),
@@ -70,11 +70,40 @@ class PreviewWorkflowDialog extends StatelessWidget {
 
                       return Padding(
                         padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
-                        child: _stepItem(
-                          i,
-                          title: _actionModel.name,
-                          description: _actionModel.description,
-                          timeout: _getTimeout(),
+                        child: Builder(
+                          builder: (_) {
+                            if (_actionModel.id ==
+                                WorkflowActionsIds.runCustomCommands) {
+                              return RoundContainer(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    _stepItem(
+                                      i,
+                                      title: _actionModel.name,
+                                      description: _actionModel.description,
+                                      timeout: _getTimeout(),
+                                    ),
+                                    VSeparators.normal(),
+                                    ...template.customCommands.map((_) {
+                                      return Text(
+                                        '   - ' + _,
+                                        style:
+                                            const TextStyle(color: Colors.grey),
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return _stepItem(
+                              i,
+                              title: _actionModel.name,
+                              description: _actionModel.description,
+                              timeout: _getTimeout(),
+                            );
+                          },
                         ),
                       );
                     },
@@ -101,7 +130,8 @@ class PreviewWorkflowDialog extends StatelessWidget {
                         ),
                       ],
                       Expanded(
-                        child: Text('''
+                        child: Text(
+                            '''
 You have a total of ${template.workflowActions.length} action${template.workflowActions.length == 1 ? '' : 's'} that will be executed in order. 
 
 If any of them takes longer than the timeout set, the workflow will be stopped. 

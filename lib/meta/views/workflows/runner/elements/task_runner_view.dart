@@ -203,6 +203,14 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
       ));
       return;
     }
+
+    // Custom Commands
+    if (widget.action.id == WorkflowActionsIds.runCustomCommands) {
+      await writeWorkflowSessionLog(
+          widget.logFile, LogTypeTag.info, 'Running custom commands');
+      _commands.addAll(widget.template.customCommands);
+      return;
+    }
   }
 
   Future<void> _runAction() async {
@@ -311,6 +319,14 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         children: <Widget>[
           Row(
             children: <Widget>[
+              if (widget.action.id ==
+                  WorkflowActionsIds.runCustomCommands) ...<Widget>[
+                Tooltip(
+                  message: widget.action.description,
+                  child: const Icon(Icons.play_circle_outline_rounded),
+                ),
+                HSeparators.normal(),
+              ],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,7 +380,8 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
               else if (_status == WorkflowActionStatus.skipped)
                 const Tooltip(
                   padding: EdgeInsets.all(5),
-                  message: '''
+                  message:
+                      '''
 When a workflow action is skipped, it most likely means that it was 
 because this workflow action is not supported on your platform.''',
                   child: Text(

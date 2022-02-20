@@ -14,6 +14,7 @@ import 'package:fluttermatic/meta/views/workflows/action_settings/build_linux.da
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_macos.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_web.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_windows.dart';
+import 'package:fluttermatic/meta/views/workflows/action_settings/custom_commands.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/deploy_web.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 
@@ -50,9 +51,13 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
   final Function(PlatformBuildModes mode) onMacOSBuildModeChanged;
   final Function(PlatformBuildModes mode) onLinuxBuildModeChanged;
   final Function(WebRenderers renderer) onWebRendererChanged;
+  final Function(List<String> commands) onCustomCommandsChanged;
 
   // Workflow Actions
   final List<WorkflowActionModel> workflowActions;
+
+  // Custom Commands
+  final List<String> customCommands;
 
   // Utils
   final Function(bool isFirebaseValidated) onFirebaseValidatedChanged;
@@ -90,6 +95,8 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
     required this.buildMacOSTimeController,
     required this.buildWebTimeController,
     required this.onNext,
+    required this.onCustomCommandsChanged,
+    required this.customCommands,
   }) : super(key: key);
 
   @override
@@ -100,44 +107,50 @@ class SetProjectWorkflowActionsConfiguration extends StatefulWidget {
 class _SetProjectWorkflowActionsConfigurationState
     extends State<SetProjectWorkflowActionsConfiguration> {
   bool get _isDeployWeb => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.deployProjectWeb)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.deployProjectWeb)
       .toList()
       .isNotEmpty;
 
   bool get _isBuildIOS => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.buildProjectForIOS)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.buildProjectForIOS)
       .toList()
       .isNotEmpty;
 
   bool get _isBuildAndroid => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.buildProjectForAndroid)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.buildProjectForAndroid)
       .toList()
       .isNotEmpty;
 
   bool get _isBuildWeb => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.buildProjectForWeb)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.buildProjectForWeb)
       .toList()
       .isNotEmpty;
 
   bool get _isBuildWindows => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.buildProjectForWindows)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.buildProjectForWindows)
       .toList()
       .isNotEmpty;
 
   bool get _isBuildMacOS => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.buildProjectForMacOS)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.buildProjectForMacOS)
       .toList()
       .isNotEmpty;
 
   bool get _isBuildLinux => widget.workflowActions
-      .where((WorkflowActionModel element) =>
-          element.id == WorkflowActionsIds.buildProjectForLinux)
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.buildProjectForLinux)
+      .toList()
+      .isNotEmpty;
+
+  bool get _isCustomCommands => widget.workflowActions
+      .where((WorkflowActionModel _) =>
+          _.id == WorkflowActionsIds.runCustomCommands)
       .toList()
       .isNotEmpty;
 
@@ -150,6 +163,7 @@ class _SetProjectWorkflowActionsConfigurationState
       _isBuildWindows,
       _isBuildMacOS,
       _isBuildLinux,
+      _isCustomCommands,
     ];
   }
 
@@ -225,76 +239,95 @@ class _SetProjectWorkflowActionsConfigurationState
             timeoutController: widget.buildLinuxTimeController,
           ),
         ),
+      if (_isCustomCommands)
+        _TabObject(
+          name: 'Custom Commands',
+          content: CustomCommandsWorkflowActionsConfig(
+            commands: widget.customCommands,
+            onCommandsChanged: widget.onCustomCommandsChanged,
+          ),
+        ),
     ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (!_isBuildActionSelected.contains(true))
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Column(
-                children: <Widget>[
-                  SvgPicture.asset(Assets.done, height: 30),
-                  VSeparators.normal(),
-                  const Text(
-                    'Nothing to configure',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Builder(
+          builder: (_) {
+            if (_tabs.length == 1) {
+              return _tabs.first.content;
+            } else if (!_isBuildActionSelected.contains(true)) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Column(
+                    children: <Widget>[
+                      SvgPicture.asset(Assets.done, height: 30),
+                      VSeparators.normal(),
+                      const Text(
+                        'Nothing to configure',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      VSeparators.normal(),
+                      const SizedBox(
+                        width: 400,
+                        child: Text(
+                          'You have no additional options to configure your workflow\nactions, you can move on.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ),
+                    ],
                   ),
-                  VSeparators.normal(),
-                  const SizedBox(
-                    width: 400,
-                    child: Text(
-                      'You have no additional options to configure your workflow\nactions, you can move on.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        else
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 450),
-            child: DefaultTabController(
-              length: _tabs.length,
-              child: Column(
-                children: <Widget>[
-                  TabBar(
-                      tabs: _tabs
-                          .map(
-                            (_) => Padding(
-                              padding: const EdgeInsets.only(bottom: 5),
-                              child: Tooltip(
-                                message: _.name,
-                                waitDuration: const Duration(milliseconds: 300),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 3),
-                                  child: Text(_.name,
-                                      maxLines: 1,
-                                      softWrap: true,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis),
+                ),
+              );
+            } else {
+              return ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 450),
+                child: DefaultTabController(
+                  length: _tabs.length,
+                  child: Column(
+                    children: <Widget>[
+                      TabBar(
+                          tabs: _tabs
+                              .map(
+                                (_) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  child: Tooltip(
+                                    message: _.name,
+                                    waitDuration:
+                                        const Duration(milliseconds: 300),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 3),
+                                      child: Text(_.name,
+                                          maxLines: 1,
+                                          softWrap: true,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
-                          .toList()),
-                  VSeparators.small(),
-                  Expanded(
-                    child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: _tabs
-                          .map((_) => SingleChildScrollView(child: _.content))
-                          .toList(),
-                    ),
+                              )
+                              .toList()),
+                      VSeparators.small(),
+                      Expanded(
+                        child: TabBarView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: _tabs
+                              .map((_) =>
+                                  SingleChildScrollView(child: _.content))
+                              .toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
-        VSeparators.xSmall(),
+                ),
+              );
+            }
+          },
+        ),
+        VSeparators.small(),
         Align(
           alignment: Alignment.centerRight,
           child: RectangleButton(

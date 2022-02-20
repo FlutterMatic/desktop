@@ -30,6 +30,9 @@ class WorkflowTemplate {
   final String firebaseProjectName;
   final bool isFirebaseDeployVerified;
   final List<String> workflowActions;
+  final List<String> customCommands;
+
+  // Extra
   final bool isSaved;
 
   const WorkflowTemplate({
@@ -55,6 +58,7 @@ class WorkflowTemplate {
     required this.windowsBuildTimeout,
     required this.macosBuildTimeout,
     required this.linuxBuildTimeout,
+    required this.customCommands,
   });
 
   // Ability to convert to a JSON
@@ -81,6 +85,7 @@ class WorkflowTemplate {
       'linuxBuildMode': linuxBuildMode.toString(),
       'webRenderer': webRenderer.toString(),
       'workflowActions': workflowActions,
+      'customCommands': customCommands,
       'isSaved': isSaved,
     };
   }
@@ -153,6 +158,12 @@ class WorkflowTemplate {
                 ?.map((dynamic e) => e.toString())
                 .toList()) ??
             <String>[],
+        // ...
+        customCommands: ((json['customCommands'] as List<dynamic>?)
+                ?.map((dynamic e) => e.toString())
+                .toList()) ??
+            <String>[],
+        // ...
         isSaved: (json['isSaved'] as bool?) ?? false,
       );
     } catch (_, s) {

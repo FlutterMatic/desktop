@@ -48,6 +48,13 @@ final List<WorkflowActionModel> workflowActionModels = <WorkflowActionModel>{
     description: 'Build the project for Linux.',
     type: WorkflowActionForType.flutter,
   ),
+  const WorkflowActionModel(
+    id: WorkflowActionsIds.runCustomCommands,
+    name: 'Custom Commands',
+    description: 'Add a set of custom commands',
+    type: WorkflowActionForType.both,
+  ),
+
   // const WorkflowActionModel(
   //   id: WorkflowActionsIds.deployProjectWeb,
   //   name: 'Deploy Web',
@@ -68,6 +75,7 @@ class WorkflowActionsIds {
   static const String buildProjectForWindows = 'build_project_for_windows';
   static const String buildProjectForMacOS = 'build_project_for_macos';
   static const String buildProjectForLinux = 'build_project_for_linux';
+  static const String runCustomCommands = 'run_custom_commands';
   static const String deployProjectWeb = 'deploy_project_web';
 }
 

@@ -172,15 +172,17 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                                 child: SizedBox.shrink(),
                               ),
                             HSeparators.xSmall(),
-                            Text(
-                              workflowActionModels
-                                  .firstWhere((WorkflowActionModel element) {
-                                return element.id ==
-                                    widget.workflow.workflowActions.last;
-                              }).name,
-                              style: const TextStyle(color: Colors.grey),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                            Expanded(
+                              child: Text(
+                                workflowActionModels
+                                    .firstWhere((WorkflowActionModel element) {
+                                  return element.id ==
+                                      widget.workflow.workflowActions.last;
+                                }).name,
+                                style: const TextStyle(color: Colors.grey),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                           ],
                         );
