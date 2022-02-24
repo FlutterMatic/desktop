@@ -7,7 +7,7 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/pub/models/package_dialog.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/dialogs/package_info.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class SearchPackageTile extends StatelessWidget {
@@ -21,7 +21,7 @@ class SearchPackageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(right: 5, left: 10),
       child: RoundContainer(
         height: 150,
         width: 200,

@@ -1,5 +1,8 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 
 // 📦 Package imports:
 import 'package:path_provider/path_provider.dart';
@@ -42,6 +45,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
   final TextEditingController _searchController = TextEditingController();
 
   // Utils
+  bool _loadingPub = false;
   bool _loadingSearch = false;
   final FocusNode _searchNode = FocusNode();
 
@@ -140,7 +144,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
         // is typing a query, and the search results are being updated
         // as the user types but couldn't catch up with the user typing
         // the query.
-        if (_searchController.text != _forQuery) {
+        if (_searchController.text != _forQuery && _type != 'loading') {
           return;
         }
 
@@ -160,7 +164,16 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
             _packageResults
                 .addAll(_results.map((dynamic d) => d as PkgViewData));
             break;
+          case 'loading':
+            if (_results[0] == 'pub') {
+              _loadingPub = _forQuery != 'done';
+              if (_forQuery == 'error') {
+                logger.file(LogTypeTag.error, 'Pub search error');
+              }
+            }
         }
+
+        setState(() {});
       });
 
       setState(() => _loadingSearch = false);
@@ -357,14 +370,16 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                   ),
                   // padding: const EdgeInsets.all(10),
                   child: SingleChildScrollView(
+                    key: const ValueKey<String>('search-results'),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: <dynamic>[
-                        ..._packageResults,
-                        ..._projectResults,
-                        ..._workflowResults
-                      ].isEmpty
+                      children: (<dynamic>[
+                                ..._packageResults,
+                                ..._projectResults,
+                                ..._workflowResults
+                              ].isEmpty &&
+                              !_loadingPub)
                           ? <Widget>[
                               if (!_loadingSearch) ...<Widget>[
                                 Padding(
@@ -372,8 +387,7 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                       const EdgeInsets.fromLTRB(10, 10, 10, 0),
                                   child: Row(
                                     children: <Widget>[
-                                      const StageTile(
-                                          stageType: StageType.prerelease),
+                                      const StageTile(),
                                       HSeparators.normal(),
                                       const Expanded(
                                         child: Text(
@@ -396,7 +410,11 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                     ),
                                   ),
                               ] else
-                                const LoadActivityMessageElement(message: ''),
+                                const Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child:
+                                      LoadActivityMessageElement(message: ''),
+                                ),
                             ]
                           : <Widget>[
                               if (_projectResults.isNotEmpty) ...<Widget>[
@@ -409,19 +427,20 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                                         child: Text('Projects',
                                             style: TextStyle(fontSize: 18)),
                                       ),
-                                      StageTile(
-                                          stageType: StageType.prerelease),
+                                      StageTile(),
                                     ],
                                   ),
                                 ),
                                 VSeparators.small(),
                                 Padding(
-                                  padding: const EdgeInsets.only(bottom: 15),
+                                  padding: const EdgeInsets.only(bottom: 10),
                                   child: SizedBox(
                                     height: 150,
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       scrollDirection: Axis.horizontal,
+                                      key: const ValueKey<String>(
+                                          'project-list'),
                                       itemCount: _projectResults.length,
                                       itemBuilder: (_, int i) {
                                         return SearchProjectTile(
@@ -433,34 +452,78 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                               ],
                               if (_workflowResults.isNotEmpty)
                                 ..._workflowResults.map((_) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 15),
+                                    padding: const EdgeInsets.only(bottom: 10),
                                     child: SearchWorkflowsTile(workflow: _))),
+                              if (_loadingPub && _packageResults.isEmpty)
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      10,
+                                      <dynamic>[
+                                        ..._packageResults,
+                                        ..._projectResults,
+                                        ..._workflowResults
+                                      ].isEmpty
+                                          ? 10
+                                          : 0,
+                                      10,
+                                      10),
+                                  child: const LoadActivityMessageElement(
+                                      message: 'Searching Pub packages'),
+                                )
+                              else if (!_loadingPub && _packageResults.isEmpty)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                  child: RoundContainer(
+                                    child: Row(
+                                      children: <Widget>[
+                                        SvgPicture.asset(Assets.package,
+                                            color: context
+                                                    .read<ThemeChangeNotifier>()
+                                                    .isDarkTheme
+                                                ? Colors.white
+                                                : Colors.blueGrey,
+                                            height: 20),
+                                        HSeparators.xSmall(),
+                                        const Text(
+                                            'No packages found with your search query.'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               if (_packageResults.isNotEmpty) ...<Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10, top: 10),
                                   child: Row(
-                                    children: const <Widget>[
-                                      Expanded(
+                                    children: <Widget>[
+                                      const Expanded(
                                         child: Text('Pub Packages',
                                             style: TextStyle(fontSize: 18)),
                                       ),
-                                      StageTile(
-                                          stageType: StageType.prerelease),
+                                      if (_loadingPub)
+                                        const Spinner(size: 14, thickness: 2),
+                                      HSeparators.small(),
+                                      const StageTile(),
                                     ],
                                   ),
                                 ),
                                 VSeparators.small(),
-                                SizedBox(
-                                  height: 150,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _packageResults.length,
-                                    itemBuilder: (_, int i) {
-                                      return SearchPackageTile(
-                                          package: _packageResults[i]);
-                                    },
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: SizedBox(
+                                    height: 150,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      key: const ValueKey<String>(
+                                          'package-list'),
+                                      itemCount: _packageResults.length,
+                                      itemBuilder: (_, int i) {
+                                        return SearchPackageTile(
+                                            package: _packageResults[i]);
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],

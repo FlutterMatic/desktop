@@ -53,7 +53,6 @@ String appBuild = const String.fromEnvironment('RELEASE_TYPE').toUpperCase();
 const String _placeholderBase = 'assets/images/placeholders/';
 const String _imagesIconsBase = 'assets/images/icons/';
 const String _imagesLogosBase = 'assets/images/logos/';
-const String _lottieBase = 'assets/lottie/';
 
 /// Class for assets
 class Assets {
@@ -65,17 +64,14 @@ class Assets {
   static const String package = '${_imagesIconsBase}package.svg';
   static const String project = '${_imagesIconsBase}project.svg';
   static const String flutter = '${_imagesLogosBase}flutter.svg';
-  static const String codingLottie = '${_lottieBase}coding.json';
   static const String twitter = '${_imagesLogosBase}twitter.svg';
   static const String vscode = '${_imagesLogosBase}vs_code.svg';
-  static const String packages = '${_lottieBase}packages.json';
   static const String logo = '${_imagesLogosBase}app_logo.svg';
   static const String coding = '${_placeholderBase}coding.svg';
   static const String editor = '${_imagesIconsBase}editor.svg';
   static const String github = '${_imagesLogosBase}github.svg';
   static const String xCode = '${_imagesLogosBase}xcode.png';
   static const String error = '${_imagesIconsBase}error.svg';
-  static const String ghosts = '${_lottieBase}ghosts.json';
   static const String home = '${_imagesIconsBase}home.svg';
   static const String dart = '${_imagesLogosBase}dart.svg';
   static const String done = '${_imagesIconsBase}done.svg';

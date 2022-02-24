@@ -24,8 +24,7 @@ class AppGlobalSearch {
       /// SEARCHES FOR PROJECTS
       List<ProjectObject> _projectsResults = <ProjectObject>[];
 
-      int _projectsLength = 10;
-      int _maxProjects = projects.length;
+      int _maxProjects = 10;
 
       // Remove from package results if not found in the query.
       _projectsResults.addAll(projects.where((_) {
@@ -34,8 +33,7 @@ class AppGlobalSearch {
       }).toList());
 
       if (_projectsResults.isNotEmpty) {
-        _projectsResults = _projectsResults.sublist(
-            0, _maxProjects > _projectsLength ? _projectsLength : _maxProjects);
+        _projectsResults = _projectsResults.take(_maxProjects).toList();
       }
 
       // Share the projects result if any.
@@ -47,8 +45,7 @@ class AppGlobalSearch {
       List<ProjectWorkflowsGrouped> _workflowResults =
           <ProjectWorkflowsGrouped>[];
 
-      int _workflowLength = 2;
-      int _maxWorkflows = workflows.length;
+      int _maxWorkflows = 2;
 
       // Remove from workflow results if not found in the query.
       _workflowResults.addAll(workflows.where((_) {
@@ -73,9 +70,35 @@ class AppGlobalSearch {
         return (_totalWorkflowMatches / _.workflows.length * 100 >= 60);
       }).toList());
 
+      // List<String> _workflowPaths = <String>[];
+
+      // List<ProjectWorkflowsGrouped> _copyWorkflows =
+      //     <ProjectWorkflowsGrouped>[];
+
+      // List<ProjectWorkflowsGrouped> _finalWorkflows =
+      //     <ProjectWorkflowsGrouped>[];
+
+      // _copyWorkflows.addAll(_workflowResults);
+
+      // for (int j = 0; j < _copyWorkflows.length; j++) {
+      //   ProjectWorkflowsGrouped _workflow = _copyWorkflows[j];
+      //   if (!_workflowPaths.contains(_workflow.path)) {
+      //     _finalWorkflows.add(_workflow);
+      //     _workflowPaths.add(_workflow.path);
+      //   }
+      // }
+
+      // if (_finalWorkflows.isNotEmpty) {
+      //   _finalWorkflows = _finalWorkflows.take(_maxWorkflows).toList();
+      // }
+
+      // // Share the workflows if any.
+      // if (_finalWorkflows.isNotEmpty) {
+      //   yield <dynamic>['workflows', _finalWorkflows, query];
+      // }
+
       if (_workflowResults.isNotEmpty) {
-        _workflowResults = _workflowResults.sublist(0,
-            _maxWorkflows > _workflowLength ? _workflowLength : _maxWorkflows);
+        _workflowResults = _workflowResults.take(_maxWorkflows).toList();
       }
 
       // Share the workflows if any.
@@ -87,13 +110,21 @@ class AppGlobalSearch {
       List<PkgViewData> _pkgResults = <PkgViewData>[];
 
       try {
+        yield <dynamic>[
+          'loading',
+          <String>['pub'],
+          'start'
+        ];
+
         SearchResults _pubResults =
             await _pubClient.search(query).timeout(const Duration(seconds: 3));
 
         int _maxPub = 3;
-        int _length = _pubResults.packages.length;
+        int _pubLength = _pubResults.packages.length;
 
-        for (int i = 0; i < (_length > _maxPub ? _maxPub : _length); i++) {
+        for (int i = 0;
+            i < (_pubLength > _maxPub ? _maxPub : _pubLength);
+            i++) {
           String _name = _pubResults.packages[i].package;
 
           // Package Details
@@ -111,13 +142,29 @@ class AppGlobalSearch {
             ),
           );
         }
-      } catch (_) {}
+      } catch (_) {
+        yield <dynamic>[
+          'loading',
+          <String>['pub'],
+          'error'
+        ];
+        return;
+      }
+
+      yield <dynamic>[
+        'loading',
+        <String>['pub'],
+        'done'
+      ];
 
       // Share the package results if available.
       if (_pkgResults.isNotEmpty) {
         yield <dynamic>['packages', _pkgResults, query];
       }
+      return;
     } catch (_, s) {
+      print(_);
+      print(s);
       await logger.file(
           LogTypeTag.error, 'Failed to perform app global search: $_',
           stackTraces: s, logDir: Directory(path));

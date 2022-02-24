@@ -85,16 +85,92 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
             leading: const StageTile(stageType: StageType.beta),
           ),
           if (_pkgOptions?.isDiscontinued == true)
-            informationWidget(
-              'Attention: This package is currently discontinued and will not receive any future updates.${_pkgOptions?.replacedBy != null ? '\nSuggested replacement: ${_pkgOptions!.replacedBy}' : ''}',
-              type: InformationType.warning,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: informationWidget(
+                'Attention: This package is currently discontinued and will not receive any future updates.${_pkgOptions?.replacedBy != null ? '\nSuggested replacement: ${_pkgOptions!.replacedBy}' : ''}',
+                type: InformationType.warning,
+              ),
             ),
-          VSeparators.normal(),
           Builder(
             builder: (BuildContext context) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: <Widget>[
+                              ...<String>[
+                                'platform:android',
+                                'platform:ios',
+                                'platform:windows',
+                                'platform:linux',
+                                'platform:macos',
+                                'platform:web',
+                              ].map(
+                                (String e) {
+                                  if (!widget
+                                      .pkgInfo.metrics!.scorecard.derivedTags
+                                      .contains(e)) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 5),
+                                    child: RoundContainer(
+                                      child:
+                                          Text(e.substring(e.indexOf(':') + 1)),
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      HSeparators.xSmall(),
+                      RoundContainer(
+                        child: ColorFiltered(
+                          colorFilter: ColorFilter.mode(
+                              Theme.of(context).isDarkTheme
+                                  ? (widget.pkgInfo.metrics!.scorecard
+                                          .derivedTags
+                                          .contains('is:null-safe')
+                                      ? kGreenColor
+                                      : kYellowColor)
+                                  : (widget.pkgInfo.metrics!.scorecard
+                                          .derivedTags
+                                          .contains('is:null-safe')
+                                      ? kGreenColor
+                                      : Colors.redAccent),
+                              BlendMode.srcATop),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                widget.pkgInfo.metrics!.scorecard.derivedTags
+                                        .contains('is:null-safe')
+                                    ? Icons.done_all_rounded
+                                    : Icons.do_not_disturb_alt_rounded,
+                                size: 13,
+                              ),
+                              HSeparators.xSmall(),
+                              const Tooltip(
+                                message:
+                                    'Whether or not null safety is enabled',
+                                waitDuration: Duration(seconds: 1),
+                                child: Text('Safety'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  VSeparators.small(),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -124,9 +200,8 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                         child: RoundContainer(
                           child: Column(
                             children: <Widget>[
-                              Text(NumberFormat.percentPattern().format(
-                                  widget.pkgInfo.metrics!.score
-                                      .popularityScore)),
+                              Text(NumberFormat.percentPattern().format(widget
+                                  .pkgInfo.metrics!.score.popularityScore)),
                               VSeparators.small(),
                               const Text('Popularity'),
                             ],

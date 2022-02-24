@@ -36,7 +36,7 @@ class SearchWorkflowsTile extends StatelessWidget {
                     }).join(' '),
                     style: const TextStyle(fontSize: 18)),
               ),
-              const StageTile(stageType: StageType.prerelease),
+              const StageTile(),
             ],
           ),
         ),
@@ -45,6 +45,7 @@ class SearchWorkflowsTile extends StatelessWidget {
           height: 150,
           child: ListView.builder(
             shrinkWrap: true,
+            key: ValueKey<String>(workflow.path),
             scrollDirection: Axis.horizontal,
             itemCount: workflow.workflows.length,
             itemBuilder: (_, int i) {

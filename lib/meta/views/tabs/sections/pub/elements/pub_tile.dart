@@ -12,7 +12,7 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/pub/models/package_dialog.dart';
+import 'package:fluttermatic/meta/views/tabs/sections/pub/dialogs/package_info.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
 class PubPkgTile extends StatefulWidget {
