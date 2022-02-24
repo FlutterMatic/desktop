@@ -6,32 +6,37 @@ labels: bug, triage
 
 ---
 
-**Describe the bug**
+## Describe the bug ##
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+## To Reproduce ##
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error...
 
-**Expected behavior**
+## Expected behavior ##
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+## Screenshots ##
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+## Desktop ##
  - OS: [e.g. Windows, macOS, Linux]
 
-**Logs (please upload the logs file by following the instructions):**
- - Go to settings
- - Click on the Troubleshoot tab
- - Click on "Generate Logs" button
- - Follow the instructions to generate the logs
- - Upload the generated ".log" file to the issue here on GitHub
+## Logs ##
 
-**Additional context**
+Option 1:
+   - Go to settings
+   - Click on the Troubleshoot tab
+   - Click on "Generate Logs" button
+   - Follow the instructions to generate the logs
+   - Upload the generated ".log" file to the issue here on GitHub
+
+Option 2:
+   - provide the losg you found in the debug console/terminal.
+
+## Additional context ##
 Add any other context about the problem here.
 
