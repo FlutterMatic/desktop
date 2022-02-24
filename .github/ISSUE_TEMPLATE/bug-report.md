@@ -1,9 +1,8 @@
 ---
-name: "[\U0001F41B] - Bug report"
+name: "Bug report"
 about: Create a bug ticket with the crash report.
-title: "[\U0001F41B] Your issue title here"
-labels: bug
-assignees: yahu1031
+title: "Your issue title here"
+labels: bug, triage
 
 ---
 
