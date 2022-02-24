@@ -34,6 +34,10 @@ Future<void> main() async {
     Directory _basePath = await getApplicationSupportDirectory();
     print('📂 AppData path: ${_basePath.path}');
   }
+
+  // Initialize shared preference.
+  await SharedPref.init();
+
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
     appWindow.alignment = Alignment.center;
@@ -88,9 +92,6 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
           await _dirToCreate.create(recursive: true);
         }
       }
-
-      // Initialize shared preference.
-      await SharedPref.init();
 
       // Calculate the space on the disk(s).
       await SpaceCheck().checkSpace();

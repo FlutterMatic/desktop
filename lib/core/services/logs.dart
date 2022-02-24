@@ -31,10 +31,10 @@ class Logger {
     }
   }
 
-  static Future<File> _localFile(Directory? dir) async {
+  static Future<File> currentFile(Directory? dir) async {
     String _path = await _localPath(dir);
     String _date = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    if (kDebugMode || kProfileMode) {
+    if (!kReleaseMode) {
       return File(_path + '\\fm-${Platform.operatingSystem}-debug-$_date.log');
     } else {
       return File(_path + '\\fm-${Platform.operatingSystem}-$_date.log');
@@ -50,7 +50,7 @@ class Logger {
     StackTrace? stackTraces,
     Directory? logDir,
   }) async {
-    File _file = await _localFile(logDir);
+    File _file = await currentFile(logDir);
     DateTime _now = DateTime.now();
 
     String _addZero(int number) {

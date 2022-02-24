@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-// 📦 Package imports:
-import 'package:shared_preferences/shared_preferences.dart';
-
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/core/services/logs.dart';
@@ -20,19 +17,18 @@ class ThemeChangeNotifier with ChangeNotifier {
     loadThemePref();
   }
 
-  Future<void> loadThemePref() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    _isSystemTheme = _pref.getBool(SPConst.isSystemTheme) ?? false;
+  void loadThemePref() {
+    _isSystemTheme = SharedPref().pref.getBool(SPConst.isSystemTheme) ?? false;
     if (_isSystemTheme) {
       Brightness brightness =
           SchedulerBinding.instance!.window.platformBrightness;
       _isDarkTheme = brightness == Brightness.dark;
     } else {
-      if (_pref.containsKey(SPConst.isDarkTheme)) {
-        darkTheme = _pref.getBool(SPConst.isDarkTheme)!;
+      if (SharedPref().pref.containsKey(SPConst.isDarkTheme)) {
+        darkTheme = SharedPref().pref.getBool(SPConst.isDarkTheme)!;
       } else {
         darkTheme = true;
-        await _pref.setBool(SPConst.isDarkTheme, true);
+        SharedPref().pref.setBool(SPConst.isDarkTheme, true);
       }
     }
   }

@@ -367,25 +367,33 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
                       ].isEmpty
                           ? <Widget>[
                               if (!_loadingSearch) ...<Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    const StageTile(
-                                        stageType: StageType.prerelease),
-                                    HSeparators.normal(),
-                                    const Expanded(
-                                      child: Text(
-                                          'The search feature is still an experimental feature and you have access to an early preview.'),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const StageTile(
+                                          stageType: StageType.prerelease),
+                                      HSeparators.normal(),
+                                      const Expanded(
+                                        child: Text(
+                                            'The search feature is still an experimental feature and you have access to an early preview.'),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 VSeparators.normal(),
                                 if (_loadingSearch)
                                   const CustomLinearProgressIndicator(
                                       includeBox: false)
                                 else
-                                  informationWidget(
-                                    'There are no results for your search query. Try using another term instead.',
-                                    type: InformationType.error,
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        10, 0, 10, 10),
+                                    child: informationWidget(
+                                      'There are no results for your search query. Try using another term instead.',
+                                      type: InformationType.error,
+                                    ),
                                   ),
                               ] else
                                 const LoadActivityMessageElement(message: ''),

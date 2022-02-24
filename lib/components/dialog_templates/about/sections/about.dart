@@ -38,7 +38,10 @@ class AboutSection extends StatelessWidget {
             onPressed: () {
               showLicensePage(
                 context: context,
-                applicationIcon: Image.asset(Assets.appLogo),
+                applicationIcon: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Image.asset(Assets.appLogo, height: 70),
+                ),
                 applicationName: 'FlutterMatic',
                 applicationVersion: appVersion + ' ($appBuild)',
               );

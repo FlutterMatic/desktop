@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 
 class UpdatesSettingsSection extends StatelessWidget {
@@ -18,9 +19,41 @@ class UpdatesSettingsSection extends StatelessWidget {
     return TabViewTabHeadline(
       title: 'FlutterMatic Programs',
       content: <Widget>[
-        informationWidget(
-            'Version: $appVersion (${appBuild.substring(0, 1).toUpperCase() + appBuild.substring(1).toLowerCase()}) - Latest',
-            type: InformationType.green),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: RoundContainer(
+                height: 100,
+                child: Column(
+                  children: <Widget>[
+                    const Expanded(
+                      child: Icon(Icons.pin_rounded, size: 30, color: kGreenColor),
+                    ),
+                    VSeparators.normal(),
+                    Text(appVersion),
+                  ],
+                ),
+              ),
+            ),
+            HSeparators.normal(),
+            Expanded(
+              child: RoundContainer(
+                height: 100,
+                child: Column(
+                  children: <Widget>[
+                    const Expanded(
+                      child: Icon(Icons.account_tree_rounded,
+                          size: 30, color: kGreenColor),
+                    ),
+                    VSeparators.normal(),
+                    Text(appBuild.substring(0, 1).toUpperCase() +
+                        appBuild.substring(1).toLowerCase()),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
         if (appBuild.toLowerCase() != 'stable')
           Padding(
             padding: const EdgeInsets.only(top: 10),
@@ -36,7 +69,8 @@ class UpdatesSettingsSection extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 10),
                   child: Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message: '''
+                    message:
+                        '''
 This is the stage that we recommend you stay in for the best experience. 
 We will be releasing stable updates only to this channel.''',
                     child: SvgPicture.asset(Assets.done, height: 15),
@@ -47,7 +81,8 @@ We will be releasing stable updates only to this channel.''',
                   padding: const EdgeInsets.only(right: 10),
                   child: Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message: '''
+                    message:
+                        '''
 This is more stable than Alpha, but less stable than the normal release. 
 Join if you are interested in seeing upcoming features earlier.''',
                     child: SvgPicture.asset(Assets.warn, height: 15),
@@ -58,7 +93,8 @@ Join if you are interested in seeing upcoming features earlier.''',
                   padding: const EdgeInsets.only(right: 10),
                   child: Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message: '''
+                    message:
+                        '''
 This preview stage is not recommended unless you are ok with risky unstable 
 builds.''',
                     child: SvgPicture.asset(Assets.error, height: 15),

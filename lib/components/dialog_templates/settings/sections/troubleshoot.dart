@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/flutter/flutter_doctor.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
+import 'package:fluttermatic/components/dialog_templates/logs/debug_logs_view.dart';
 import 'package:fluttermatic/components/dialog_templates/other/clear_cache.dart';
 import 'package:fluttermatic/components/dialog_templates/other/reset_fluttermatic.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
@@ -170,6 +171,15 @@ class _TroubleShootSettingsSectionState
                               showDialog(
                                 context: context,
                                 builder: (_) => const BuildLogsDialog(),
+                              );
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Debug'),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const ViewDebugLogsDialog(),
                               );
                             },
                           ),
