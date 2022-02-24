@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:fluttermatic/components/dialog_templates/other/unofficial_release.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/app/providers/multi_providers.dart';
+import 'package:fluttermatic/components/dialog_templates/other/unofficial_release.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
