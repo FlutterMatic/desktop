@@ -59,32 +59,45 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
 
   Future<void> _load() async {
     while (mounted) {
-      Directory _logPath = await getApplicationSupportDirectory();
-      Isolate _i =
-          await Isolate.spawn(_check, <dynamic>[_port.sendPort, _logPath.path])
-              .timeout(const Duration(minutes: 1), onTimeout: () async {
-        await logger.file(LogTypeTag.error, 'Git version check timeout');
-        setState(() => _error = true);
+      // Avoid an isolate if this is on macOS because of some complications.
+      if (Platform.isMacOS) {
+        ServiceCheckResponse _info = await CheckServices.checkGit();
 
-        return Isolate.current;
-      });
-
-      if (mounted && !_listening) {
-        _port.listen((dynamic data) {
-          _i.kill();
-          setState(() => _listening = true);
-          if (mounted) {
-            setState(() {
-              _error = false;
-              _doneLoading = true;
-              if (data[0] == null) {
-                _version = null;
-              } else {
-                _version = Version?.parse(data[0] as String);
-              }
-            });
-          }
+        setState(() {
+          _version = _info.version;
+          _doneLoading = true;
         });
+
+        // Close the unnecessary ports
+        _port.close();
+      } else {
+        Directory _logPath = await getApplicationSupportDirectory();
+        Isolate _i = await Isolate.spawn(
+                _check, <dynamic>[_port.sendPort, _logPath.path])
+            .timeout(const Duration(minutes: 1), onTimeout: () async {
+          await logger.file(LogTypeTag.error, 'Git version check timeout');
+          setState(() => _error = true);
+
+          return Isolate.current;
+        });
+
+        if (mounted && !_listening) {
+          _port.listen((dynamic data) {
+            _i.kill();
+            setState(() => _listening = true);
+            if (mounted) {
+              setState(() {
+                _error = false;
+                _doneLoading = true;
+                if (data[0] == null) {
+                  _version = null;
+                } else {
+                  _version = Version?.parse(data[0] as String);
+                }
+              });
+            }
+          });
+        }
       }
 
       await Future<void>.delayed(const Duration(minutes: 30));
@@ -94,7 +107,7 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
   String get _updateUrl {
     String _base = 'https://git-scm.com/download/';
     String _platform = '';
-    
+
     if (Platform.isWindows) {
       _platform = 'win';
     } else if (Platform.isMacOS) {
