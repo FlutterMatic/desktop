@@ -2,7 +2,7 @@
 name: "Feature request"
 about: Suggest an idea or feature for this project. If the feature was accepted, then
   it will be added to enhancement.
-title: "Your feature request title"
+title: "[✨] - Your feature request title"
 labels: feature, triage
 
 ---
