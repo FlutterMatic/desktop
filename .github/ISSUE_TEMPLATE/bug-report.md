@@ -1,7 +1,7 @@
 ---
 name: "Bug report"
 about: Create a bug ticket with the crash report.
-title: "Your issue title here"
+title: "[🐛] - Your issue title here"
 labels: bug, triage
 
 ---
@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 
 ## Logs ##
 
-Option 1:
+Option 1: (Preferred)
    - Go to settings
    - Click on the Troubleshoot tab
    - Click on "Generate Logs" button
