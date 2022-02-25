@@ -1,7 +1,7 @@
 ---
 name: "Bug report"
 about: Create a bug ticket with the crash report.
-title: "[🐛] - Your issue title here"
+title: "Your issue title here"
 labels: bug, triage
 
 ---
