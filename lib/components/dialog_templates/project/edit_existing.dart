@@ -241,7 +241,7 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
             DialogHeader(
               title: 'Edit Project',
               canClose: !_isLoading,
-              leading: const StageTile(stageType: StageType.prerelease),
+              leading: const StageTile(),
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 400),
@@ -298,7 +298,7 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                               ],
                             ),
                           ),
-                          VSeparators.normal(),
+                          VSeparators.small(),
                           ProjectDependenciesSection(
                             dependencies: _pubspecInfo.dependencies
                                 .map((_) => _.name)

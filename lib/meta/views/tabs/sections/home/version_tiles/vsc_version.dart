@@ -167,17 +167,17 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                             : 'Never checked for new updates before',
                         icon: const Icon(Icons.refresh_rounded,
                             color: kGreenColor, size: 15),
-                        onPressed: () =>
-                            launch('https://code.visualstudio.com/'),
+                        onPressed: () {
+                          SharedPref().pref.setString(
+                              SPConst.lastVSCodeUpdateCheck,
+                              DateTime.now().toIso8601String());
+                          launch('https://code.visualstudio.com/');
+                        },
                       ),
                       VSeparators.normal(),
-                      HoverMessageWithIconAction(
-                        message: SharedPref()
-                                .pref
-                                .containsKey(SPConst.lastVSCodeUpdate)
-                            ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastVSCodeUpdate) ?? '...'))}'
-                            : 'Never updated before',
-                        icon: const Icon(Icons.check_rounded,
+                      const HoverMessageWithIconAction(
+                        message: 'Make sure to always keep your IDE up to date',
+                        icon: Icon(Icons.check_rounded,
                             color: kGreenColor, size: 15),
                       ),
                     ],
@@ -189,7 +189,11 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
-                  onPressed: () => launch('https://code.visualstudio.com/'),
+                  onPressed: () {
+                    SharedPref().pref.setString(SPConst.lastVSCodeUpdateCheck,
+                        DateTime.now().toIso8601String());
+                    launch('https://code.visualstudio.com/');
+                  },
                 )
               else
                 RectangleButton(

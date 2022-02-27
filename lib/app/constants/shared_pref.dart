@@ -63,10 +63,6 @@ class SPConst {
   static String lastAndroidStudioUpdateCheck = 'LAST_STUDIO_UPDATE_CHECK';
 
   // Last Update
-  static String lastGitUpdate = 'LAST_GIT_UPDATE';
-  static String lastJavaUpdate = 'LAST_JAVA_UPDATE';
   static String lastDartUpdate = 'LAST_DART_UPDATE';
   static String lastFlutterUpdate = 'LAST_FLUTTER_UPDATE';
-  static String lastVSCodeUpdate = 'LAST_VISUAL_CODE_UPDATE';
-  static String lastAndroidStudioUpdate = 'LAST_STUDIO_UPDATE';
 }

@@ -45,6 +45,9 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
 
   Future<void> _loadWorkflows() async {
     try {
+      _workflows.clear();
+      _workflowPaths.clear();
+
       String _path = !widget.pubspecPath.endsWith('\\pubspec.yaml')
           ? widget.pubspecPath
           : ((widget.pubspecPath.split('\\')..removeLast()).join('\\'));
@@ -253,10 +256,12 @@ class __WorkflowTileState extends State<_WorkflowTile> {
             HSeparators.normal(),
             if (!widget.template.isSaved)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Tooltip(
-                  message:
-                      'This workflow is not completed yet. You can edit it, but you will need to save it before you can run it.',
+                padding: const EdgeInsets.all(5),
+                  message: '''
+This workflow is not completed yet. You can edit it, 
+but you will need to save it before you can run it.''',
                   child: SvgPicture.asset(Assets.warn, height: 20),
                 ),
               ),

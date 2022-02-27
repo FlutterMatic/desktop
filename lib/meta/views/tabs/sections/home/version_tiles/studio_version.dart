@@ -167,17 +167,18 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
                             : 'Never checked for new updates before',
                         icon: const Icon(Icons.refresh_rounded,
                             color: kGreenColor, size: 15),
-                        onPressed: () =>
-                            launch('https://developer.android.com/studio'),
+                        onPressed: () {
+                          SharedPref().pref.setString(
+                              SPConst.lastAndroidStudioUpdateCheck,
+                              DateTime.now().toIso8601String());
+                          launch('https://developer.android.com/studio');
+                        },
                       ),
                       VSeparators.normal(),
-                      HoverMessageWithIconAction(
-                        message: SharedPref()
-                                .pref
-                                .containsKey(SPConst.lastAndroidStudioUpdate)
-                            ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastAndroidStudioUpdate) ?? '...'))}'
-                            : 'Never updated before',
-                        icon: const Icon(Icons.check_rounded,
+                      const HoverMessageWithIconAction(
+                        message:
+                            'Make sure to always keep Android Studio up to date',
+                        icon: Icon(Icons.check_rounded,
                             color: kGreenColor, size: 15),
                       ),
                     ],
@@ -189,8 +190,12 @@ class _HomeStudioVersionStateTile extends State<HomeStudioVersionTile> {
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
-                  onPressed: () =>
-                      launch('https://developer.android.com/studio'),
+                  onPressed: () {
+                    SharedPref().pref.setString(
+                        SPConst.lastAndroidStudioUpdateCheck,
+                        DateTime.now().toIso8601String());
+                    launch('https://developer.android.com/studio');
+                  },
                 )
               else
                 RectangleButton(

@@ -99,7 +99,7 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
 
                               if (_pubspecInfo.version != null) {
                                 _version =
-                                    '${_pubspecInfo.version!.major}.${_pubspecInfo.version!.minor}.${_pubspecInfo.version!.patch}-${_pubspecInfo.version!.preRelease.isNotEmpty ? _pubspecInfo.version!.preRelease : 'stable'}';
+                                    '${_pubspecInfo.version!.major}.${_pubspecInfo.version!.minor}.${_pubspecInfo.version!.patch}-${_pubspecInfo.version!.preRelease.isNotEmpty ? _pubspecInfo.version!.preRelease.first : 'stable'}';
                               }
 
                               return Text(

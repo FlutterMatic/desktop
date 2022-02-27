@@ -180,16 +180,17 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                             : 'Never checked for new updates before',
                         icon: const Icon(Icons.refresh_rounded,
                             color: kGreenColor, size: 15),
-                        onPressed: () => launch(_updateUrl),
+                        onPressed: () {
+                          SharedPref().pref.setString(
+                              SPConst.lastGitUpdateCheck,
+                              DateTime.now().toIso8601String());
+                          launch(_updateUrl);
+                        },
                       ),
                       VSeparators.normal(),
-                      HoverMessageWithIconAction(
-                        message: SharedPref()
-                                .pref
-                                .containsKey(SPConst.lastGitUpdate)
-                            ? 'Last updated ${getTimeAgo(DateTime.parse(SharedPref().pref.getString(SPConst.lastGitUpdate) ?? '...'))}'
-                            : 'Never updated before',
-                        icon: const Icon(Icons.check_rounded,
+                      const HoverMessageWithIconAction(
+                        message: 'Make sure to always keep Git up to date',
+                        icon: Icon(Icons.check_rounded,
                             color: kGreenColor, size: 15),
                       ),
                     ],
@@ -201,7 +202,11 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                 RectangleButton(
                   child: const Text('Check Updates'),
                   width: double.infinity,
-                  onPressed: () => launch(_updateUrl),
+                  onPressed: () {
+                    SharedPref().pref.setString(SPConst.lastGitUpdateCheck,
+                        DateTime.now().toIso8601String());
+                    launch(_updateUrl);
+                  },
                 )
               else
                 RectangleButton(
