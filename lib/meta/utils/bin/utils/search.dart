@@ -163,8 +163,6 @@ class AppGlobalSearch {
       }
       return;
     } catch (_, s) {
-      print(_);
-      print(s);
       await logger.file(
           LogTypeTag.error, 'Failed to perform app global search: $_',
           stackTraces: s, logDir: Directory(path));
