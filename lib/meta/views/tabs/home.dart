@@ -1,5 +1,4 @@
 // 🎯 Dart imports:
-import 'dart:io';
 import 'dart:isolate';
 
 // 🐦 Flutter imports:
@@ -15,14 +14,10 @@ import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
 import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/check_new_version.dart';
 import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
 import 'package:fluttermatic/meta/utils/shared_pref.dart';
-import 'package:fluttermatic/meta/views/dialogs/update_fluttermatic.dart';
 import 'package:fluttermatic/meta/views/tabs/search/search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
@@ -42,17 +37,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // Isolate Receive Ports
   static final ReceivePort _clearLogsPort = ReceivePort('CLEAR_OLD_LOGS_PORT');
-  static final ReceivePort _checkUpdatesPort =
-      ReceivePort('CHECK_UPDATES_PORT');
 
   // Utils
   late bool _collapse =
       SharedPref().pref.getBool(SPConst.homePageTabsShow) ?? false;
   bool _animateFinish = false;
-
-  // Update Status
-  String? _updateDownloadUrl;
-  bool _updateAvailable = false;
 
   // Tabs
   late HomeTabObject _selectedTab;
@@ -63,52 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeTabObject('Pub Packages', Assets.package, HomePubSection()),
     HomeTabObject('Workflows', Assets.workflow, HomeWorkflowSections()),
   ];
-
-  Future<void> _checkUpdates() async {
-    try {
-      while (mounted) {
-        if (!context.read<ConnectionNotifier>().isOnline) {
-          await Future<void>.delayed(const Duration(seconds: 5));
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-            context,
-            'Please check your network connection to use FlutterMatic at its best.',
-            type: SnackBarType.warning,
-          ));
-
-          await logger.file(LogTypeTag.warning,
-              'FlutterMatic is not online. Couldn\'t check for updates.');
-
-          await Future<void>.delayed(const Duration(minutes: 5));
-          continue;
-        }
-
-        await Future<void>.delayed(const Duration(seconds: 5));
-
-        Isolate _i = await Isolate.spawn(checkNewFlutterMaticVersion, <dynamic>[
-          _checkUpdatesPort.sendPort,
-          (await getApplicationSupportDirectory()).path,
-          Platform.operatingSystem.toLowerCase()
-        ]);
-
-        _checkUpdatesPort.asBroadcastStream().listen((dynamic message) {
-          if (mounted) {
-            _i.kill();
-            setState(() {
-              _updateAvailable = message[0];
-              _updateDownloadUrl = message[1];
-            });
-          }
-        });
-
-        // Keep checking for new updates every hour.
-        await Future<void>.delayed(const Duration(hours: 1));
-      }
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Couldn\'t check for updates: $_',
-          stackTraces: s);
-    }
-  }
 
   Future<void> _cleanLogs() async {
     try {
@@ -158,7 +101,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     Future<void>.delayed(const Duration(milliseconds: 100),
         () => setState(() => _animateFinish = true));
-    _checkUpdates();
     _cleanLogs();
     super.initState();
   }
@@ -166,7 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _clearLogsPort.close();
-    _checkUpdatesPort.close();
     super.dispose();
   }
 
@@ -231,77 +172,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const Spacer(),
                                 // Short view
                                 if (_showShortView)
-                                  Column(
-                                    children: <Widget>[
-                                      if (_updateAvailable)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: UpdateAppButton(
-                                              downloadUrl: _updateDownloadUrl),
-                                        ),
-                                      _tabTile(
-                                        context,
-                                        _collapse,
-                                        stageType: null,
-                                        icon: SvgPicture.asset(
-                                          Assets.settings,
-                                          color: context
-                                                  .read<ThemeChangeNotifier>()
-                                                  .isDarkTheme
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                        name: 'Settings',
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (_) =>
-                                                const SettingDialog(),
-                                          );
-                                        },
-                                        selected: false,
-                                      ),
-                                    ],
+                                  _tabTile(
+                                    context,
+                                    _collapse,
+                                    stageType: null,
+                                    icon: SvgPicture.asset(
+                                      Assets.settings,
+                                      color: context
+                                              .read<ThemeChangeNotifier>()
+                                              .isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    name: 'Settings',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => const SettingDialog(),
+                                      );
+                                    },
+                                    selected: false,
                                   )
                                 else
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: _tabTile(
-                                          context,
-                                          _collapse,
-                                          stageType: null,
-                                          icon: SvgPicture.asset(
-                                            Assets.settings,
-                                            color: context
-                                                    .read<ThemeChangeNotifier>()
-                                                    .isDarkTheme
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                          name: 'Settings',
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  const SettingDialog(),
-                                            );
-                                          },
-                                          selected: false,
-                                        ),
-                                      ),
-                                      if (_updateAvailable)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, bottom: 10),
-                                          child: UpdateAppButton(
-                                              downloadUrl: _updateDownloadUrl),
-                                        ),
-                                    ],
+                                  _tabTile(
+                                    context,
+                                    _collapse,
+                                    stageType: null,
+                                    icon: SvgPicture.asset(
+                                      Assets.settings,
+                                      color: context
+                                              .read<ThemeChangeNotifier>()
+                                              .isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    name: 'Settings',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => const SettingDialog(),
+                                      );
+                                    },
+                                    selected: false,
                                   ),
                               ],
                             ),
@@ -411,37 +323,4 @@ class HomeTabObject {
   final String? stageType;
 
   const HomeTabObject(this.name, this.icon, this.child, [this.stageType]);
-}
-
-class UpdateAppButton extends StatelessWidget {
-  final String? downloadUrl;
-
-  const UpdateAppButton({
-    Key? key,
-    required this.downloadUrl,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: 'Update FlutterMatic',
-      waitDuration: const Duration(seconds: 1),
-      child: RectangleButton(
-        width: 40,
-        height: 40,
-        color: Colors.transparent,
-        hoverColor: Colors.transparent,
-        focusColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        child: const Icon(Icons.download_rounded, color: kGreenColor),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (_) => UpdateFlutterMaticDialog(downloadUrl: downloadUrl),
-          );
-        },
-      ),
-    );
-  }
 }
