@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
+import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/views/options.dart';
@@ -103,12 +103,8 @@ class _WorkflowTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (_) => ShowWorkflowTileOptions(
-                        workflowPath: path +
-                            '\\' +
-                            fmWorkflowDir +
-                            '\\' +
-                            workflow.name +
-                            '.json',
+                        workflowPath:
+                            '$path\\$fmWorkflowDir\\${workflow.name}.json',
                         onDelete: () {},
                         onReload: () {},
                       ),
@@ -127,12 +123,8 @@ class _WorkflowTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (_) => WorkflowRunnerDialog(
-                          workflowPath: path +
-                              '\\' +
-                              fmWorkflowDir +
-                              '\\' +
-                              workflow.name +
-                              '.json'),
+                          workflowPath:
+                              '$path\\$fmWorkflowDir\\${workflow.name}.json'),
                     );
                   },
                 ),

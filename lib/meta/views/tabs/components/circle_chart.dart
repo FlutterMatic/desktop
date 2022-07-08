@@ -5,8 +5,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 enum ArcType { half, full }
 

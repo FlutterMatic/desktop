@@ -3,30 +3,30 @@ import 'package:ansicolor/ansicolor.dart';
 import 'package:process_run/shell.dart';
 
 // Color utilities for showing styled text in the CLI.
-AnsiPen errorPen = AnsiPen()
+final AnsiPen errorPen = AnsiPen()
   ..red(bg: true)
   ..rgb(r: 0, g: 0, b: 0);
-AnsiPen warningPen = AnsiPen()
+final AnsiPen warningPen = AnsiPen()
   ..yellow(bg: true)
   ..rgb(r: 0, g: 0, b: 0);
-AnsiPen infoPen = AnsiPen()..blue(bold: true);
-AnsiPen whitePen = AnsiPen()
+final AnsiPen infoPen = AnsiPen()..blue(bold: true);
+final AnsiPen whitePen = AnsiPen()
   ..rgb(r: 255, g: 192, b: 203, bg: true)
   ..rgb(r: 0, g: 0, b: 0);
-AnsiPen purplePen = AnsiPen()
+final AnsiPen purplePen = AnsiPen()
   ..magenta(bg: true, bold: true)
   ..rgb(r: 0, g: 0, b: 0);
-AnsiPen greenPen = AnsiPen()
+final AnsiPen greenPen = AnsiPen()
   ..green(bg: true, bold: true)
   ..rgb(r: 0, g: 0, b: 0);
 
-Shell shell = Shell(
+final Shell shell = Shell(
   verbose: false,
   commandVerbose: false,
   commentVerbose: false,
 );
 
-String helpMessage = '''
+const String helpMessage = '''
 Usage: script [options] [script]
 
 Options:

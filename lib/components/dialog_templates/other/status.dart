@@ -1,9 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -11,8 +11,6 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/installation_status.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
-import 'package:fluttermatic/core/models/check_response.model.dart';
-import 'package:fluttermatic/core/services/checks/check.services.dart';
 
 class StatusDialog extends StatefulWidget {
   const StatusDialog({Key? key}) : super(key: key);
@@ -32,24 +30,26 @@ class _StatusDialogState extends State<StatusDialog> {
   bool _studioInstalled = false;
 
   Future<void> _loadStatus() async {
-    ServiceCheckResponse _flutter = await CheckServices.checkFlutter();
-    ServiceCheckResponse _dart = await CheckServices.checkDart();
-    ServiceCheckResponse _git = await CheckServices.checkGit();
-    ServiceCheckResponse _java = await CheckServices.checkJava();
-    ServiceCheckResponse _vscode = await CheckServices.checkVSCode();
-    ServiceCheckResponse _adb = await CheckServices.checkADBridge();
+    // TODO: Load status from state
 
-    if (mounted) {
-      setState(() {
-        _flutterInstalled = _flutter.version != null;
-        _dartInstalled = _dart.version != null;
-        _javaInstalled = _java.version != null;
-        _vscodeInstalled = _vscode.version != null;
-        _studioInstalled = _adb.version != null;
-        _gitInstalled = _git.version != null;
-        _loading = false;
-      });
-    }
+    // ServiceCheckResponse _flutter = await CheckServices.checkFlutter();
+    // ServiceCheckResponse _dart = await CheckServices.checkDart();
+    // ServiceCheckResponse _git = await CheckServices.checkGit();
+    // ServiceCheckResponse _java = await CheckServices.checkJava();
+    // ServiceCheckResponse _vscode = await CheckServices.checkVSCode();
+    // ServiceCheckResponse _adb = await CheckServices.checkADBridge();
+
+    // if (mounted) {
+    //   setState(() {
+    //     _flutterInstalled = _flutter.version != null;
+    //     _dartInstalled = _dart.version != null;
+    //     _javaInstalled = _java.version != null;
+    //     _vscodeInstalled = _vscode.version != null;
+    //     _studioInstalled = _adb.version != null;
+    //     _gitInstalled = _git.version != null;
+    //     _loading = false;
+    //   });
+    // }
   }
 
   @override

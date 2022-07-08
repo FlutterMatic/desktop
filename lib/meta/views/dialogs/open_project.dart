@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
@@ -18,7 +18,7 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class OpenProjectInEditor extends StatefulWidget {
   final String path;
@@ -47,7 +47,10 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
     switch (editor) {
       case 'code':
         await shell.cd(widget.path).run('code .');
-        Navigator.pop(context);
+
+        if (mounted) {
+          Navigator.pop(context);
+        }
         break;
       case 'studio':
         // TODO: Support opening projects in Android Studio
@@ -111,13 +114,16 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t open project',
           stackTraces: s);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-        context,
-        'Couldn\'t open this project! Please report this issue on GitHub.',
-        type: SnackBarType.error,
-      ));
-      Navigator.pop(context);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'Couldn\'t open this project! Please report this issue on GitHub.',
+          type: SnackBarType.error,
+        ));
+        Navigator.pop(context);
+      }
     }
   }
 

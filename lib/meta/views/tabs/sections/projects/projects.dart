@@ -4,22 +4,22 @@ import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 // 📦 Package imports:
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/elements/project_tile.dart';
@@ -62,7 +62,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           supportDir: (await getApplicationSupportDirectory()).path,
         );
 
-        Isolate _i = await Isolate.spawn(
+        Isolate i = await Isolate.spawn(
           ProjectServicesModel.getProjectsIsolate,
           <dynamic>[
             _loadProjectsPort.sendPort,
@@ -73,11 +73,13 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
           await logger.file(LogTypeTag.error, 'Failed to get projects: $_',
               stackTraces: s);
 
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(context, 'Couldn\'t get the projects.',
-                type: SnackBarType.error),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(context, 'Couldn\'t get the projects.',
+                  type: SnackBarType.error),
+            );
+          }
 
           return Isolate.current;
         });
@@ -103,22 +105,22 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                         .pinnedProjects);
 
                 // Will sort the Dart and Flutter projects.
-                List<ProjectObject> _dart = <ProjectObject>[];
-                List<ProjectObject> _flutter = <ProjectObject>[];
+                List<ProjectObject> dart = <ProjectObject>[];
+                List<ProjectObject> flutter = <ProjectObject>[];
 
                 // Sort
                 for (ProjectObject project
                     in (message.first as ProjectIsolateFetchResult).projects) {
                   try {
-                    PubspecInfo _pubspec = extractPubspec(
-                        lines: File(project.path + '\\pubspec.yaml')
+                    PubspecInfo pubspec = extractPubspec(
+                        lines: File('${project.path}\\pubspec.yaml')
                             .readAsLinesSync(),
-                        path: project.path + '\\pubspec.yaml');
+                        path: '${project.path}\\pubspec.yaml');
 
-                    if (_pubspec.isFlutterProject) {
-                      _flutter.add(project);
+                    if (pubspec.isFlutterProject) {
+                      flutter.add(project);
                     } else {
-                      _dart.add(project);
+                      dart.add(project);
                     }
                   } catch (_, s) {
                     logger.file(LogTypeTag.warning,
@@ -128,14 +130,14 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                 }
 
                 // Add
-                _dartProjects.addAll(_dart);
-                _flutterProjects.addAll(_flutter);
+                _dartProjects.addAll(dart);
+                _flutterProjects.addAll(flutter);
 
                 _reloadingFromCache = message[2] == true;
               });
 
               if (message[1] == true) {
-                _i.kill();
+                i.kill();
               }
             }
           });
@@ -308,14 +310,14 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                               // Get the information about this project whether
                               // it is Flutter or Dart so we can add it to the
                               // correct list.
-                              PubspecInfo _pubspec = extractPubspec(
-                                  lines: File(e.path + '\\pubspec.yaml')
+                              PubspecInfo pubspec = extractPubspec(
+                                  lines: File('${e.path}\\pubspec.yaml')
                                       .readAsLinesSync(),
-                                  path: e.path + '\\pubspec.yaml');
+                                  path: '${e.path}\\pubspec.yaml');
 
                               // Remove it from the pinned list and add it to
                               // the Flutter list.
-                              ProjectObject _project = ProjectObject(
+                              ProjectObject project = ProjectObject(
                                 name: e.name,
                                 modDate: e.modDate,
                                 path: e.path,
@@ -326,10 +328,10 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                               setState(() {
                                 _pinnedProjects.remove(e);
 
-                                if (_pubspec.isFlutterProject) {
-                                  _flutterProjects.add(_project);
+                                if (pubspec.isFlutterProject) {
+                                  _flutterProjects.add(project);
                                 } else {
-                                  _dartProjects.add(_project);
+                                  _dartProjects.add(project);
                                 }
                               });
                             },
@@ -366,7 +368,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                             onPinChanged: () {
                               // Remove it from the flutter projects list and
                               // add it to the pinned list.
-                              ProjectObject _project = ProjectObject(
+                              ProjectObject project = ProjectObject(
                                 name: e.name,
                                 modDate: e.modDate,
                                 path: e.path,
@@ -376,7 +378,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
 
                               setState(() {
                                 _flutterProjects.remove(e);
-                                _pinnedProjects.add(_project);
+                                _pinnedProjects.add(project);
                               });
                             },
                           );
@@ -410,7 +412,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
                           onPinChanged: () {
                             // Remove it from the flutter projects list and
                             // add it to the pinned list.
-                            ProjectObject _project = ProjectObject(
+                            ProjectObject project = ProjectObject(
                               name: e.name,
                               modDate: e.modDate,
                               path: e.path,
@@ -420,7 +422,7 @@ class _HomeProjectsSectionState extends State<HomeProjectsSection> {
 
                             setState(() {
                               _dartProjects.remove(e);
-                              _pinnedProjects.add(_project);
+                              _pinnedProjects.add(project);
                             });
                           },
                         );

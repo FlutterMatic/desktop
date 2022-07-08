@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/dialogs/project_options.dart';
 

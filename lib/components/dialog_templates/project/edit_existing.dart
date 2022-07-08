@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/add_dependencies.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/common/dependencies.dart';
@@ -18,8 +18,8 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 
 class EditExistingProjectDialog extends StatefulWidget {
   final String projectPath;
@@ -106,16 +106,16 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
       // We will remove all the dependencies that are not in the list of
       // dependencies or dev dependencies.
       for (DependenciesInfo dependency in _pubspecInfo.dependencies) {
-        bool _exists = false;
+        bool exists = false;
 
         for (String dependency2 in _dependencies) {
           if (dependency2 == dependency.name) {
-            _exists = true;
+            exists = true;
             break;
           }
         }
 
-        if (!_exists) {
+        if (!exists) {
           setState(() =>
               _activityMessage = 'Removing dependency ${dependency.name}...');
           try {
@@ -133,16 +133,16 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
       }
 
       for (DependenciesInfo dependency in _pubspecInfo.devDependencies) {
-        bool _exists = false;
+        bool exists = false;
 
         for (String dependency2 in _devDependencies) {
           if (dependency2 == dependency.name) {
-            _exists = true;
+            exists = true;
             break;
           }
         }
 
-        if (!_exists) {
+        if (!exists) {
           setState(() => _activityMessage =
               'Removing dev dependency ${dependency.name}...');
           try {
@@ -162,39 +162,41 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
       // We will update the pubspec.yaml file with the new name and description
       setState(() => _activityMessage = 'Updating pubspec.yaml...');
       List<String> pubspecLines =
-          await File(widget.projectPath + '\\pubspec.yaml').readAsLines();
+          await File('${widget.projectPath}\\pubspec.yaml').readAsLines();
 
-      bool _addedName = false;
-      bool _addedDescription = false;
+      bool addedName = false;
+      bool addedDescription = false;
 
       // We will update the name and description
       for (int i = 0; i < pubspecLines.length; i++) {
         if (pubspecLines[i].startsWith('name: ')) {
           pubspecLines[i] = 'name: ${_projectNameController.text}';
-          _addedName = true;
+          addedName = true;
         } else if (pubspecLines[i].startsWith('description: ')) {
           pubspecLines[i] =
               'description: ${_projectDescriptionController.text}';
-          _addedDescription = true;
+          addedDescription = true;
         }
 
-        if (_addedName && _addedDescription) {
+        if (addedName && addedDescription) {
           break;
         }
       }
 
       // We will now write the new pubspec.yaml file
-      await File(widget.projectPath + '\\pubspec.yaml')
+      await File('${widget.projectPath}\\pubspec.yaml')
           .writeAsString(pubspecLines.join('\n'));
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-        context,
-        'Updated your project information.',
-        type: SnackBarType.done,
-      ));
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'Updated your project information.',
+          type: SnackBarType.done,
+        ));
 
-      Navigator.pop(context);
+        Navigator.pop(context);
+      }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to save project edit: $_',
           stackTraces: s);
@@ -206,12 +208,12 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
   }
 
   Future<void> _loadData() async {
-    File _pubspec = File(widget.projectPath + '\\pubspec.yaml');
+    File pubspec = File('${widget.projectPath}\\pubspec.yaml');
 
-    List<String> _lines = await _pubspec.readAsLines();
+    List<String> lines = await pubspec.readAsLines();
 
     setState(() {
-      _pubspecInfo = extractPubspec(lines: _lines, path: _pubspec.path);
+      _pubspecInfo = extractPubspec(lines: lines, path: pubspec.path);
       _projectNameController.text = _pubspecInfo.name ?? 'No name provided';
       _projectDescriptionController.text = _pubspecInfo.description ??
           'No description. Add this field manually.';
@@ -328,16 +330,16 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                 children: <Widget>[
                   Expanded(
                     child: RectangleButton(
-                      child: const Text('Cancel'),
                       hoverColor: AppTheme.errorColor,
                       onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
                     ),
                   ),
                   HSeparators.normal(),
                   Expanded(
                     child: RectangleButton(
-                      child: const Text('Save'),
                       onPressed: _save,
+                      child: const Text('Save'),
                     ),
                   ),
                 ],

@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
@@ -14,7 +14,7 @@ import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 
 class ConfirmWorkflowDelete extends StatefulWidget {
@@ -92,7 +92,10 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                     onPressed: () async {
                       if (!_loading) {
                         await widget.onClose(false);
-                        Navigator.of(context).pop();
+
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
                       }
                     },
                   ),
@@ -101,7 +104,6 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                 Expanded(
                   child: RectangleButton(
                     loading: _loading,
-                    child: const Text('Delete'),
                     hoverColor: AppTheme.errorColor,
                     onPressed: () async {
                       try {
@@ -115,20 +117,16 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
 
                           // Check to see if this workflow has any logs and
                           // delete them as well.
-                          Directory _logsDir = Directory((widget.path
-                                      .split('\\')
-                                    ..removeLast())
-                                  .join('\\') +
-                              '\\logs\\' +
-                              widget.path.split('\\').last.split('.').first);
+                          Directory logsDir = Directory(
+                              '${(widget.path.split('\\')..removeLast()).join('\\')}\\logs\\${widget.path.split('\\').last.split('.').first}');
 
-                          if (await _logsDir.exists()) {
-                            await _logsDir.delete(recursive: true);
+                          if (await logsDir.exists()) {
+                            await logsDir.delete(recursive: true);
                             await logger.file(LogTypeTag.info,
                                 'Deleted logs for workflow ${widget.path.split('\\').last}');
                           }
 
-                          Iterable<FileSystemEntity> _existingWorkflows =
+                          Iterable<FileSystemEntity> existingWorkflows =
                               Directory((widget.path.split('\\')..removeLast())
                                       .join('\\'))
                                   .listSync()
@@ -136,7 +134,7 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
 
                           // If there are no more workflows, then delete the
                           // entire workflows directory.
-                          if (_existingWorkflows.isEmpty) {
+                          if (existingWorkflows.isEmpty) {
                             await Directory((widget.path.split('\\')
                                       ..removeLast())
                                     .join('\\'))
@@ -148,7 +146,10 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                           await logger.file(LogTypeTag.info,
                               'Deleted a workflow file from ${widget.path}');
                           await widget.onClose(true);
-                          Navigator.of(context).pop();
+
+                          if (mounted) {
+                            Navigator.pop(context);
+                          }
                         } else {
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context)
@@ -163,17 +164,21 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                             LogTypeTag.error, 'Failed to delete workflow',
                             stackTraces: s);
                         widget.onClose(false);
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          snackBarTile(
-                            context,
-                            'Failed to delete workflow. Please try again.',
-                            type: SnackBarType.error,
-                          ),
-                        );
+
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            snackBarTile(
+                              context,
+                              'Failed to delete workflow. Please try again.',
+                              type: SnackBarType.error,
+                            ),
+                          );
+                        }
                       }
                       setState(() => _loading = false);
                     },
+                    child: const Text('Delete'),
                   ),
                 ),
               ],

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/setup_guide.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/dart_version.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/version_tiles/flutter_version.dart';

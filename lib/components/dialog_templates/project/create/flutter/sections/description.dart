@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
@@ -21,7 +21,8 @@ class FlutterProjectDescriptionSection extends StatefulWidget {
       _FlutterProjectDescriptionSectionState();
 }
 
-class _FlutterProjectDescriptionSectionState extends State<FlutterProjectDescriptionSection> {
+class _FlutterProjectDescriptionSectionState
+    extends State<FlutterProjectDescriptionSection> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,8 +37,8 @@ class _FlutterProjectDescriptionSectionState extends State<FlutterProjectDescrip
           numLines: 4,
           hintText: 'Description',
           onChanged: (_) => setState(() {}),
-          validator: (String? _pDesc) =>
-              _pDesc!.isEmpty ? 'Please enter project description' : null,
+          validator: (String? pDesc) =>
+              pDesc!.isEmpty ? 'Please enter project description' : null,
           maxLength: 150,
         ),
         VSeparators.normal(),

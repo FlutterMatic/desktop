@@ -1,8 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-
-// 🌎 Project imports:
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 class RoundContainer extends StatelessWidget {
   final Widget child;
@@ -30,24 +31,30 @@ class RoundContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      padding: padding,
-      decoration: BoxDecoration(
-        color: color ??
-            (Theme.of(context).isDarkTheme
-                ? Colors.blueGrey.withOpacity(0.2)
-                : AppTheme.lightCardColor),
-        border: Border.all(color: borderColor!, width: borderWith),
-        borderRadius: BorderRadius.circular(radius ?? 5),
-      ),
-      child: disableInnerRadius
-          ? child
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: child,
-            ),
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        return Container(
+          height: height,
+          width: width,
+          padding: padding,
+          decoration: BoxDecoration(
+            color: color ??
+                (themeState.isDarkTheme
+                    ? Colors.blueGrey.withOpacity(0.2)
+                    : AppTheme.lightCardColor),
+            border: Border.all(color: borderColor!, width: borderWith),
+            borderRadius: BorderRadius.circular(radius ?? 5),
+          ),
+          child: disableInnerRadius
+              ? child
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: child,
+                ),
+        );
+      },
     );
   }
 }

@@ -9,11 +9,11 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/app/constants.dart';
 
 bool _failedRequest = false;
 
@@ -56,8 +56,8 @@ class _ContributorsAboutSectionState extends State<ContributorsAboutSection> {
               HSeparators.small(),
               RectangleButton(
                 width: 90,
-                onPressed: () =>
-                    launch('https://github.com/FlutterMatic/desktop'),
+                onPressed: () => launchUrl(
+                    Uri.parse('https://github.com/FlutterMatic/desktop')),
                 child: const Text('Get Started'),
               ),
             ],
@@ -114,22 +114,22 @@ class _ContributorTileState extends State<_ContributorTile> {
   late String _profileURL;
 
   Future<void> _loadProfile() async {
-    Map<String, String> _header = <String, String>{
+    Map<String, String> header = <String, String>{
       'Content-type': 'application/json',
       'Accept': 'application/json',
     };
 
-    http.Response _result = await http.get(
+    http.Response result = await http.get(
       Uri.parse('https://api.github.com/user/${widget.gitHubId}'),
-      headers: _header,
+      headers: header,
     );
 
-    if (_result.statusCode == 200 && mounted) {
-      dynamic _responseJSON = json.decode(_result.body);
+    if (result.statusCode == 200 && mounted) {
+      dynamic responseJSON = json.decode(result.body);
       setState(() {
-        _userId = _responseJSON['login'];
-        _userName = _responseJSON['name'];
-        _profileURL = _responseJSON['avatar_url'];
+        _userId = responseJSON['login'];
+        _userName = responseJSON['name'];
+        _profileURL = responseJSON['avatar_url'];
         _failed = false;
         _loading = false;
       });
@@ -160,7 +160,8 @@ class _ContributorTileState extends State<_ContributorTile> {
           width: double.infinity,
           color: Colors.blueGrey.withOpacity(0.1),
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          onPressed: () => launch('https://www.github.com/$_userId'),
+          onPressed: () =>
+              launchUrl(Uri.parse('https://www.github.com/$_userId')),
           child: Builder(
             builder: (_) {
               if (_loading) {

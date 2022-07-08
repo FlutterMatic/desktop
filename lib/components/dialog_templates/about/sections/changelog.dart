@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 
 // 📦 Package imports:
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ChangelogAboutSection extends StatefulWidget {
   const ChangelogAboutSection({Key? key}) : super(key: key);
@@ -25,8 +27,8 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
   Future<void> _loadData() async {
     String data = await rootBundle.loadString('CHANGELOG.md');
 
-    List<String> _releases = <String>[];
-    String _currentRelease = '';
+    List<String> releases = <String>[];
+    String currentRelease = '';
 
     bool _isReleaseLine(String line) {
       line.trim();
@@ -44,9 +46,9 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
       }
 
       // See if the first part is a version number.
-      List<String> _versionParts = parts[1].split('.');
+      List<String> versionParts = parts[1].split('.');
 
-      for (String part in _versionParts) {
+      for (String part in versionParts) {
         if (part.startsWith('v')) {
           part = part.substring(1);
         }
@@ -61,9 +63,9 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
       }
 
       // Make sure that the last part is a release type.
-      List<String> _releaseTypes = <String>['beta', 'alpha', 'stable'];
+      List<String> releaseTypes = <String>['beta', 'alpha', 'stable'];
 
-      if (!_releaseTypes.contains(parts[3].toLowerCase())) {
+      if (!releaseTypes.contains(parts[3].toLowerCase())) {
         return false;
       }
 
@@ -73,18 +75,18 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
     data.split('\n').forEach((String line) {
       // Splits each release chunks into a list of lines.
       if (_isReleaseLine(line)) {
-        _releases.add(_currentRelease);
-        _currentRelease = line;
+        releases.add(currentRelease);
+        currentRelease = line;
       } else {
-        _currentRelease += line;
+        currentRelease += line;
       }
     });
 
-    _releases.add(_currentRelease);
+    releases.add(currentRelease);
 
     setState(() {
       _loading = false;
-      _data.addAll(_releases);
+      _data.addAll(releases);
     });
   }
 
@@ -99,56 +101,62 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
     if (_loading) {
       return const Center(child: Spinner());
     } else {
-      return ListView.builder(
-        shrinkWrap: true,
-        itemCount: _data.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: RoundContainer(
-              child: MarkdownBody(
-                data: _data[index],
-                selectable: true,
-                styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
-                extensionSet: md.ExtensionSet(
-                  md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-                  <md.InlineSyntax>[
-                    md.EmojiSyntax(),
-                    ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
-                  ],
+      return Consumer(
+        builder: (_, ref, __) {
+          ThemeState themeState = ref.watch(themeStateController);
+
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: _data.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: RoundContainer(
+                  child: MarkdownBody(
+                    data: _data[index],
+                    selectable: true,
+                    styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
+                    extensionSet: md.ExtensionSet(
+                      md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+                      <md.InlineSyntax>[
+                        md.EmojiSyntax(),
+                        ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
+                      ],
+                    ),
+                    styleSheet: MarkdownStyleSheet(
+                      p: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w400,
+                        color: themeState.isDarkTheme
+                            ? Colors.grey[100]
+                            : Colors.grey[900],
+                      ),
+                      h1: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        color: themeState.isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      h2: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: themeState.isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      h3: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: themeState.isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
                 ),
-                styleSheet: MarkdownStyleSheet(
-                  p: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w400,
-                    color: Theme.of(context).isDarkTheme
-                        ? Colors.grey[100]
-                        : Colors.grey[900],
-                  ),
-                  h1: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).isDarkTheme
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                  h2: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).isDarkTheme
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                  h3: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).isDarkTheme
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              ),
-            ),
+              );
+            },
           );
         },
       );

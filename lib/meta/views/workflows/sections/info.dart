@@ -6,17 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 📦 Package imports:
-import 'package:file_selector/file_selector.dart' as file;
+import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 
@@ -129,12 +129,12 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
 
                   // Validate the name and description tag.
                   if (_selectedIndex == 2) {
-                    bool _isValidNameAndDescription =
+                    bool isValidNameAndDescription =
                         _validateNameAndDescription(
                             context: context,
                             descriptionController: widget.descriptionController,
                             nameController: widget.nameController);
-                    if (_isValidNameAndDescription) {
+                    if (isValidNameAndDescription) {
                       if (_nameExists) {
                         ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -220,69 +220,81 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                         widget.pubspecFile == null ? 'Select' : 'Change',
                       ),
                       onPressed: () async {
-                        file.XFile? _file = await file.openFile();
-                        if (_file == null && widget.pubspecFile != null) {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'You can still change this file if you changed your mind.',
-                            ),
-                          );
+                        file_selector.XFile? file =
+                            await file_selector.openFile();
+
+                        if (file == null && widget.pubspecFile != null) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'You can still change this file if you changed your mind.',
+                              ),
+                            );
+                          }
                           return;
                         }
 
-                        if (_file == null) {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'You must select a pubspec.yaml file to continue setting up this workflow.',
-                              type: SnackBarType.warning,
-                            ),
-                          );
+                        if (file == null) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'You must select a pubspec.yaml file to continue setting up this workflow.',
+                                type: SnackBarType.warning,
+                              ),
+                            );
+                          }
                           return;
                         }
 
-                        if (_file.path.split('\\').last != 'pubspec.yaml') {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Invalid file selected. The file must be named pubspec.yaml.',
-                              type: SnackBarType.error,
-                            ),
-                          );
+                        if (file.path.split('\\').last != 'pubspec.yaml') {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Invalid file selected. The file must be named pubspec.yaml.',
+                                type: SnackBarType.error,
+                              ),
+                            );
+                          }
                           return;
                         }
 
-                        PubspecInfo _pubspec = extractPubspec(
-                          lines: await File(_file.path).readAsLines(),
-                          path: _file.path,
+                        PubspecInfo pubspec = extractPubspec(
+                          lines: await File(file.path).readAsLines(),
+                          path: file.path,
                         );
 
-                        if (!_pubspec.isValid) {
+                        if (!pubspec.isValid) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Invalid pubspec.yaml file. Please make sure you have a valid pubspec.yaml file.',
+                                type: SnackBarType.error,
+                              ),
+                            );
+                          }
+                          return;
+                        }
+
+                        widget.onPubspecUpdate(pubspec);
+
+                        if (mounted) {
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(
                               context,
-                              'Invalid pubspec.yaml file. Please make sure you have a valid pubspec.yaml file.',
-                              type: SnackBarType.error,
+                              'Your pubspec.yaml file has been added successfully.',
+                              type: SnackBarType.done,
                             ),
                           );
-                          return;
                         }
-
-                        widget.onPubspecUpdate(_pubspec);
-
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          snackBarTile(
-                            context,
-                            'Your pubspec.yaml file has been added successfully.',
-                            type: SnackBarType.done,
-                          ),
-                        );
                       },
                     ),
                   ),
@@ -302,17 +314,17 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       VSeparators.normal(),
                       Builder(
                         builder: (_) {
-                          String _header = '';
+                          String header = '';
 
-                          _header = (widget.pubspecFile?.name ?? 'Unknown')
+                          header = (widget.pubspecFile?.name ?? 'Unknown')
                               .toUpperCase();
 
-                          _header += ' - ';
+                          header += ' - ';
 
                           if (widget.pubspecFile?.version == null) {
-                            _header += 'No version';
+                            header += 'No version';
                           } else {
-                            _header +=
+                            header +=
                                 '${widget.pubspecFile?.version!.major}.${widget.pubspecFile?.version!.minor}.${widget.pubspecFile?.version!.patch}-${widget.pubspecFile!.version!.preRelease.isNotEmpty ? widget.pubspecFile?.version!.preRelease.first : '0'}';
                           }
 
@@ -320,7 +332,7 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                             children: <Widget>[
                               SvgPicture.asset(Assets.done, height: 20),
                               HSeparators.normal(),
-                              Expanded(child: Text(_header)),
+                              Expanded(child: Text(header)),
                               if (widget.pubspecFile?.isFlutterProject == true)
                                 Tooltip(
                                   message: 'This is a Flutter project.',
@@ -384,11 +396,10 @@ class _SetProjectWorkflowInfoState extends State<SetProjectWorkflowInfo> {
                       ],
                       onChanged: (String val) async {
                         setState(() => _loadingExistingNames = true);
-                        File _file = File(widget.pubspecFile!.pathToPubspec!
-                                .replaceAll('\\pubspec.yaml', '') +
-                            '\\$fmWorkflowDir\\${widget.nameController.text}.json');
+                        File file = File(
+                            '${widget.pubspecFile!.pathToPubspec!.replaceAll('\\pubspec.yaml', '')}\\$fmWorkflowDir\\${widget.nameController.text}.json');
 
-                        if (await _file.exists()) {
+                        if (await file.exists()) {
                           setState(() => _nameExists = true);
                         } else {
                           setState(() => _nameExists = false);
@@ -505,10 +516,10 @@ bool _validateNameAndDescription({
 }
 
 bool _validatePubspec(PubspecInfo pubspec) {
-  List<bool> _conditions = <bool>[
+  List<bool> conditions = <bool>[
     pubspec.name != null && pubspec.name!.isNotEmpty,
     pubspec.version != null,
   ];
 
-  return !_conditions.contains(false);
+  return !conditions.contains(false);
 }

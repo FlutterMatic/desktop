@@ -66,132 +66,131 @@ class PkgViewData {
   /// filter the results as the user types.
   /// This is done to avoid making too many requests to the pub API.
   static Future<void> getPackagesIsolate(List<dynamic> data) async {
-    SendPort _port = data[0];
-    String _path = data[1];
+    SendPort port = data[0];
+    String path = data[1];
 
-    List<PkgViewData> _pubPackages = <PkgViewData>[];
-    File _cache = File(_path + '\\cache\\pub_cache.map.json');
+    List<PkgViewData> pubPackages = <PkgViewData>[];
+    File cache = File('$path\\cache\\pub_cache.map.json');
 
     try {
-      if (await _cache.exists()) {
-        Map<String, dynamic> _cacheFile =
-            jsonDecode(await _cache.readAsString());
+      if (await cache.exists()) {
+        Map<String, dynamic> cacheFile = jsonDecode(await cache.readAsString());
 
-        DateTime _time = DateTime.parse(_cacheFile['timestamp']);
+        DateTime time = DateTime.parse(cacheFile['timestamp']);
 
         await logger.file(LogTypeTag.info,
-            'Fetching pub packages from cache after ${_time.difference(DateTime.now()).inMinutes.abs()} minute(s) since stored.',
-            logDir: Directory(_path));
+            'Fetching pub packages from cache after ${time.difference(DateTime.now()).inMinutes.abs()} minute(s) since stored.',
+            logDir: Directory(path));
 
-        List<dynamic> _pendingPkg =
-            (_cacheFile['packages'] as List<dynamic>).toList();
+        List<dynamic> pendingPkg =
+            (cacheFile['packages'] as List<dynamic>).toList();
 
-        _pendingPkg = _pendingPkg.length > _loadCount
-            ? _pendingPkg.sublist(0, _loadCount)
-            : _pendingPkg;
+        pendingPkg = pendingPkg.length > _loadCount
+            ? pendingPkg.sublist(0, _loadCount)
+            : pendingPkg;
 
-        for (dynamic pkg in _pendingPkg) {
-          File _pkg = File(_path + '\\cache\\packages\\$pkg.json');
+        for (dynamic pkgName in pendingPkg) {
+          File pkg = File('$path\\cache\\packages\\$pkgName.json');
 
-          if (await _pkg.exists()) {
-            String _pkgInfo = await _pkg.readAsString();
-            _pubPackages.add(PkgViewData.fromJson(jsonDecode(_pkgInfo)));
+          if (await pkg.exists()) {
+            String pkgInfo = await pkg.readAsString();
+            pubPackages.add(PkgViewData.fromJson(jsonDecode(pkgInfo)));
           } else {
             await logger.file(
               LogTypeTag.error,
               'Failed to find package: $pkg in cache, even though declared in cache map.',
-              logDir: Directory(_path),
+              logDir: Directory(path),
             );
           }
         }
 
         // Make sure it hasn't been more than an hour since the last time we updated
         // the cache.
-        if (_time.difference(DateTime.now()).inMinutes.abs() < _cacheTimeout) {
-          GetPkgResponseModel _response = GetPkgResponseModel(
-              response: GetPkgResponse.done, packages: _pubPackages);
+        if (time.difference(DateTime.now()).inMinutes.abs() < _cacheTimeout) {
+          GetPkgResponseModel response = GetPkgResponseModel(
+              response: GetPkgResponse.done, packages: pubPackages);
 
           // Kill isolate
-          _port.send(<dynamic>[_response, true, false]);
+          port.send(<dynamic>[response, true, false]);
           return;
         } else {
-          GetPkgResponseModel _response = GetPkgResponseModel(
-              response: GetPkgResponse.pending, packages: _pubPackages);
+          GetPkgResponseModel response = GetPkgResponseModel(
+              response: GetPkgResponse.pending, packages: pubPackages);
 
           // Don't kill isolate. Will refetch with cache.
-          _port.send(<dynamic>[_response, false, true]);
+          port.send(<dynamic>[response, false, true]);
 
           await logger.file(
             LogTypeTag.info,
             'Refetching pub packages cache -- cache exists but is stale/expired.',
-            logDir: Directory(_path),
+            logDir: Directory(path),
           );
 
-          _pubPackages.clear();
+          pubPackages.clear();
         }
       }
 
-      List<String> _search = await PubClient().fetchFlutterFavorites();
+      List<String> search = await PubClient().fetchFlutterFavorites();
 
-      for (String e in _search) {
-        if (_search.indexOf(e) >= _loadCount) {
+      for (String e in search) {
+        if (search.indexOf(e) >= _loadCount) {
           break;
         }
 
-        PubPackage _info = await _pub.packageInfo(e);
-        PackageMetrics? _data = await _pub.packageMetrics(e);
-        PackagePublisher _author = await _pub.packagePublisher(e);
+        PubPackage info = await _pub.packageInfo(e);
+        PackageMetrics? data = await _pub.packageMetrics(e);
+        PackagePublisher author = await _pub.packagePublisher(e);
 
-        _pubPackages.add(PkgViewData(
+        pubPackages.add(PkgViewData(
           name: e,
-          info: _info,
-          metrics: _data,
-          publisher: _author,
+          info: info,
+          metrics: data,
+          publisher: author,
         ));
       }
 
       // Set the cache after we have loaded the packages.
-      await _cache.writeAsString(
+      await cache.writeAsString(
         jsonEncode(<String, dynamic>{
           'timestamp': DateTime.now().toIso8601String(),
-          'packages': _pubPackages.map((PkgViewData e) => e.name).toList(),
+          'packages': pubPackages.map((PkgViewData e) => e.name).toList(),
         }),
       );
 
       // Create the directory for projects if it doesn't exist.
-      if (!Directory(_path + '\\cache\\packages').existsSync()) {
-        Directory(_path + '\\cache\\packages').createSync(recursive: true);
+      if (!Directory('$path\\cache\\packages').existsSync()) {
+        Directory('$path\\cache\\packages').createSync(recursive: true);
       }
 
       // Save it locally as cache for later use.
-      for (PkgViewData e in _pubPackages) {
-        File _pkg = File(_path + '\\cache\\packages\\${e.name}.json');
+      for (PkgViewData e in pubPackages) {
+        File pkg = File('$path\\cache\\packages\\${e.name}.json');
 
-        if (await _pkg.exists()) {
-          await _pkg.delete();
+        if (await pkg.exists()) {
+          await pkg.delete();
         }
 
-        await _pkg.writeAsString(jsonEncode(e.toJson()));
+        await pkg.writeAsString(jsonEncode(e.toJson()));
       }
       await logger.file(LogTypeTag.info,
-          'Added packages ${_pubPackages.map((PkgViewData e) => e.name + ', ')} to cache.',
-          logDir: Directory(_path));
+          'Added packages ${pubPackages.map((PkgViewData e) => '${e.name}, ')} to cache.',
+          logDir: Directory(path));
 
-      GetPkgResponseModel _response = GetPkgResponseModel(
-          response: GetPkgResponse.done, packages: _pubPackages);
+      GetPkgResponseModel response = GetPkgResponseModel(
+          response: GetPkgResponse.done, packages: pubPackages);
 
       // Kill isolate
-      _port.send(<dynamic>[_response, true, false]);
+      port.send(<dynamic>[response, true, false]);
       return;
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to fetch pub packages.',
-          stackTraces: s, logDir: Directory(_path));
+          stackTraces: s, logDir: Directory(path));
 
-      GetPkgResponseModel _response = GetPkgResponseModel(
-          response: GetPkgResponse.error, packages: _pubPackages);
+      GetPkgResponseModel response = GetPkgResponseModel(
+          response: GetPkgResponse.error, packages: pubPackages);
 
       // Kill isolate
-      _port.send(<dynamic>[_response, true, false]);
+      port.send(<dynamic>[response, true, false]);
       return;
     }
   }

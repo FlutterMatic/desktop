@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:provider/src/provider.dart';
-
-// 🌎 Project imports:
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 Widget windowControls(BuildContext context, {bool disabled = false}) {
   return IgnorePointer(
@@ -60,12 +59,18 @@ Widget _control(
           ? Colors.blueGrey.withOpacity(0.2)
           : AppTheme.errorColor,
       onPressed: onPressed,
-      child: Icon(
-        icon,
-        size: 15,
-        color: !context.watch<ThemeChangeNotifier>().isDarkTheme
-            ? AppTheme.lightTheme.iconTheme.color
-            : AppTheme.darkTheme.iconTheme.color,
+      child: Consumer(
+        builder: (_, ref, __) {
+          ThemeState themeState = ref.watch(themeStateController);
+
+          return Icon(
+            icon,
+            size: 15,
+            color: !themeState.isDarkTheme
+                ? AppTheme.lightTheme.iconTheme.color
+                : AppTheme.darkTheme.iconTheme.color,
+          );
+        },
       ),
     ),
   );

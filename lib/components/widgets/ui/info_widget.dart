@@ -7,7 +7,7 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 Widget infoWidget(BuildContext context, String text) {
   return MergeSemantics(
     child: Semantics(
-      label: 'Info: ' + text,
+      label: 'Info: $text',
       child: RoundContainer(
         radius: 5,
         child: Row(

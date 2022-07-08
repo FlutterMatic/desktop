@@ -6,4 +6,4 @@ To get started, we allow people to create pull requests, or PRs. When creating a
   - Are there any breaking changes that we should know about?
   - Did you write tests for the changes you have made if applicable?
   
- We take the time to check out each PR and it will be merged if we think it's a great addition to the source code.
+We take the time to check out each PR and it will be merged if we think it's a great addition to the source code.

@@ -7,8 +7,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -16,7 +16,7 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/task_runner_view.dart';
@@ -58,45 +58,45 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
 
   Future<void> _loadWorkflow() async {
     try {
-      File _workflow = File(widget.workflowPath);
+      File workflow = File(widget.workflowPath);
 
-      WorkflowTemplate _workflowTemplate =
-          WorkflowTemplate.fromJson(jsonDecode(await _workflow.readAsString()));
+      WorkflowTemplate workflowTemplate =
+          WorkflowTemplate.fromJson(jsonDecode(await workflow.readAsString()));
 
-      setState(() => _template = _workflowTemplate);
+      setState(() => _template = workflowTemplate);
 
       if (!_template.isSaved) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context,
-          'This workflow is still in edit more. Finish saving this workflow before you can run it.',
-          type: SnackBarType.warning,
-        ));
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+            context,
+            'This workflow is still in edit more. Finish saving this workflow before you can run it.',
+            type: SnackBarType.warning,
+          ));
+        }
         // ignore: unawaited_futures
         showDialog(
           context: context,
           builder: (_) => StartUpWorkflow(
-            pubspecPath: (widget.workflowPath.split('\\')
-                      ..removeLast()
-                      ..removeLast())
-                    .join('\\') +
-                '\\pubspec.yaml',
-            editWorkflowTemplate: _workflowTemplate,
+            pubspecPath: '${(widget.workflowPath.split('\\')
+              ..removeLast()
+              ..removeLast()).join('\\')}\\pubspec.yaml',
+            editWorkflowTemplate: workflowTemplate,
           ),
         );
         return;
       }
 
       await logger.file(LogTypeTag.info,
-          'Begin loading workflow actions to run workflow. Workflow path: ${_workflow.path}');
+          'Begin loading workflow actions to run workflow. Workflow path: ${workflow.path}');
 
       // Ensure that the workflow logs directory exists, and create it if it doesn't.
       // Will also create the log file for this workflow session.
-      String _footPath = '$fmWorkflowDir\\${_template.name}.json';
+      String footPath = '$fmWorkflowDir\\${_template.name}.json';
 
       _workflowSessionLogs = File(
-        '${widget.workflowPath.substring(0, widget.workflowPath.indexOf(_footPath) + fmWorkflowDir.length)}\\logs\\${_template.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
+        '${widget.workflowPath.substring(0, widget.workflowPath.indexOf(footPath) + fmWorkflowDir.length)}\\logs\\${_template.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
       );
 
       await _workflowSessionLogs.create(recursive: true);
@@ -105,7 +105,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
           _workflowSessionLogs, LogTypeTag.info, 'Workflow session started.');
 
       setState(() {
-        _workflowActions.addAll(_workflowTemplate.workflowActions);
+        _workflowActions.addAll(workflowTemplate.workflowActions);
         _currentActionRunning = _workflowActions.first;
         _loading = false;
       });
@@ -121,41 +121,39 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
             LogTypeTag.error, 'Failed to write workflow session log: $_',
             stackTraces: s);
       }
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Sorry, we failed to load the workflow.',
-          type: SnackBarType.error,
-        ),
-      );
-      Navigator.pop(context);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Sorry, we failed to load the workflow.',
+            type: SnackBarType.error,
+          ),
+        );
+        Navigator.pop(context);
+      }
     }
   }
 
   String _composeTimeElapsed() {
-    int _hours = _stopwatch.elapsed.inHours % 24;
-    int _minutes = _stopwatch.elapsed.inMinutes % 60;
-    int _seconds = _stopwatch.elapsed.inSeconds % 60 % 60;
+    int hours = _stopwatch.elapsed.inHours % 24;
+    int minutes = _stopwatch.elapsed.inMinutes % 60;
+    int seconds = _stopwatch.elapsed.inSeconds % 60 % 60;
 
-    String _message = '';
+    String message = '';
 
-    _message +=
-        _hours > 0 ? _hours.toString() + ' hour${_hours == 1 ? '' : 's'}' : '';
+    message += hours > 0 ? '$hours hour${hours == 1 ? '' : 's'}' : '';
 
-    _message += _minutes > 0
-        ? _minutes.toString() + ' minute${_minutes == 1 ? '' : 's'}'
-        : '';
+    message += minutes > 0 ? '$minutes minute${minutes == 1 ? '' : 's'}' : '';
 
-    if (_message.isNotEmpty) {
-      _message += ' and ';
+    if (message.isNotEmpty) {
+      message += ' and ';
     }
 
-    _message += _seconds > 0
-        ? _seconds.toString() + ' second${_seconds == 1 ? '' : 's'}'
-        : '';
+    message += seconds > 0 ? '$seconds second${seconds == 1 ? '' : 's'}' : '';
 
-    return _message.isEmpty ? 'Just started' : _message;
+    return message.isEmpty ? 'Just started' : message;
   }
 
   @override
@@ -218,9 +216,9 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _workflowActions.length,
                 itemBuilder: (_, int i) {
-                  bool _isLast = i == _workflowActions.length - 1;
+                  bool isLast = i == _workflowActions.length - 1;
                   return Padding(
-                    padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
+                    padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                     child: TaskRunnerView(
                       template: _template,
                       status: _resultType,

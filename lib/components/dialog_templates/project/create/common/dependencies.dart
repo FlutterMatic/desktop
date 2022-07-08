@@ -4,14 +4,16 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 
 // 📦 Package imports:
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/src/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
@@ -19,8 +21,6 @@ import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
 
 class ProjectDependenciesSection extends StatefulWidget {
   final List<String> dependencies;
@@ -63,29 +63,29 @@ class _ProjectDependenciesSectionState
       return;
     }
 
-    List<String> _split = q.split(' ');
+    List<String> split = q.split(' ');
 
-    List<String> _results = _pubPackages.where((String package) {
+    List<String> results = _pubPackages.where((String package) {
       if (package.toLowerCase() == q) {
         return true;
       }
 
-      int _totalMatches = 0;
+      int totalMatches = 0;
 
       // Needs to have 80% of the words to be a match
-      for (String word in _split) {
+      for (String word in split) {
         if (package.toLowerCase().contains(word)) {
-          _totalMatches++;
+          totalMatches++;
         }
       }
 
-      return _totalMatches == _split.length;
+      return totalMatches == split.length;
     }).toList();
 
     setState(() {
-      _searchResults = _results.length > _maxResults
-          ? _results.sublist(0, _maxResults)
-          : _results;
+      _searchResults = results.length > _maxResults
+          ? results.sublist(0, _maxResults)
+          : results;
 
       if (_searchResults.isEmpty) {
         _searchResults = _pubPackages.length > _maxResults
@@ -102,24 +102,23 @@ class _ProjectDependenciesSectionState
   }
 
   Future<void> _getPubPackages() async {
-    File _cache = File((await getApplicationSupportDirectory()).path +
-        '\\cache\\pub_packages.json');
+    File cache = File(
+        '${(await getApplicationSupportDirectory()).path}\\cache\\pub_packages.json');
 
-    if (await _cache.exists()) {
+    if (await cache.exists()) {
       // Will make sure it has been less than 10 minutes since the last time we
       // updated the cache.
-      Map<String, dynamic> _cachePackages =
-          jsonDecode(await _cache.readAsString());
+      Map<String, dynamic> cachePackages =
+          jsonDecode(await cache.readAsString());
 
-      DateTime _lastUpdated =
-          DateTime.fromMillisecondsSinceEpoch(_cachePackages['last_updated']);
+      DateTime lastUpdated =
+          DateTime.fromMillisecondsSinceEpoch(cachePackages['last_updated']);
 
-      bool _isCacheValid =
-          DateTime.now().difference(_lastUpdated).inMinutes < 10;
+      bool isCacheValid = DateTime.now().difference(lastUpdated).inMinutes < 10;
 
-      if (_cachePackages['last_updated'] != null && _isCacheValid) {
+      if (cachePackages['last_updated'] != null && isCacheValid) {
         setState(() => _pubPackages =
-            (_cachePackages['packages'] as List<dynamic>)
+            (cachePackages['packages'] as List<dynamic>)
                 .map((_) => _.toString())
                 .toList()
                 .where((String e) =>
@@ -130,22 +129,22 @@ class _ProjectDependenciesSectionState
       }
     }
 
-    String _url = 'https://pub.dev/api/package-name-completion-data';
+    String url = 'https://pub.dev/api/package-name-completion-data';
 
-    http.Response _response = await http.get(Uri.parse(_url));
+    http.Response response = await http.get(Uri.parse(url));
 
-    if (_response.statusCode != 200 && mounted) {
+    if (response.statusCode != 200 && mounted) {
       setState(() => _isError = true);
       await Future<void>.delayed(const Duration(seconds: 5));
       // ignore: unawaited_futures
       _getPubPackages();
       return;
     } else if (mounted) {
-      List<dynamic> _packages =
-          ((jsonDecode(_response.body) as Map<String, dynamic>).entries.first)
+      List<dynamic> packages =
+          ((jsonDecode(response.body) as Map<String, dynamic>).entries.first)
               .value as List<dynamic>;
 
-      setState(() => _pubPackages.addAll(_packages
+      setState(() => _pubPackages.addAll(packages
           .map((_) => _.toString())
           .toList()
           .where((String e) =>
@@ -154,12 +153,12 @@ class _ProjectDependenciesSectionState
           .toList()));
 
       // Will update the cache file.
-      Map<String, dynamic> _cacheData = <String, dynamic>{
+      Map<String, dynamic> cacheData = <String, dynamic>{
         'last_updated': DateTime.now().millisecondsSinceEpoch,
-        'packages': _packages.map((_) => _.toString()).toList(),
+        'packages': packages.map((_) => _.toString()).toList(),
       };
 
-      await _cache.writeAsString(jsonEncode(_cacheData));
+      await cache.writeAsString(jsonEncode(cacheData));
     }
   }
 
@@ -197,227 +196,244 @@ class _ProjectDependenciesSectionState
         ],
       );
     } else {
-      return Stack(
-        children: <Widget>[
-          Column(
+      return Consumer(
+        builder: (_, ref, __) {
+          ThemeState themeState = ref.watch(themeStateController);
+
+          return Stack(
             children: <Widget>[
-              RoundContainer(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextFormField(
-                        focusNode: _searchNode,
-                        style: TextStyle(
-                          color: (Theme.of(context).isDarkTheme
-                                  ? Colors.white
-                                  : Colors.black)
-                              .withOpacity(0.8),
+              Column(
+                children: <Widget>[
+                  RoundContainer(
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            focusNode: _searchNode,
+                            style: TextStyle(
+                              color: (themeState.isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black)
+                                  .withOpacity(0.8),
+                            ),
+                            cursorRadius: const Radius.circular(5),
+                            decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                color: (themeState.isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black)
+                                    .withOpacity(0.6),
+                                fontSize: 14,
+                              ),
+                              hintText: 'Search dependencies to add',
+                              border: InputBorder.none,
+                              isCollapsed: true,
+                            ),
+                            controller: _searchController,
+                            onChanged: _performSearch,
+                          ),
                         ),
-                        cursorRadius: const Radius.circular(5),
-                        decoration: InputDecoration(
-                          hintStyle: TextStyle(
-                            color: (Theme.of(context).isDarkTheme
+                        HSeparators.xSmall(),
+                        if (_searchController.text.isEmpty ||
+                            !_searchNode.hasFocus)
+                          const Icon(Icons.search_rounded, size: 16)
+                        else
+                          Tooltip(
+                            message: 'Cancel',
+                            waitDuration: const Duration(seconds: 1),
+                            child: RectangleButton(
+                              width: 30,
+                              height: 30,
+                              padding: const EdgeInsets.all(5),
+                              child: Icon(
+                                Icons.close_rounded,
+                                size: 13,
+                                color: themeState.isDarkTheme
                                     ? Colors.white
-                                    : Colors.black)
-                                .withOpacity(0.6),
-                            fontSize: 14,
+                                    : Colors.black,
+                              ),
+                              onPressed: () => setState(() {
+                                _searchNode.unfocus();
+                                _searchController.clear();
+                              }),
+                            ),
                           ),
-                          hintText: 'Search dependencies to add',
-                          border: InputBorder.none,
-                          isCollapsed: true,
-                        ),
-                        controller: _searchController,
-                        onChanged: _performSearch,
-                      ),
+                      ],
                     ),
-                    HSeparators.xSmall(),
-                    if (_searchController.text.isEmpty || !_searchNode.hasFocus)
-                      const Icon(Icons.search_rounded, size: 16)
-                    else
-                      Tooltip(
-                        message: 'Cancel',
-                        waitDuration: const Duration(seconds: 1),
-                        child: RectangleButton(
-                          width: 30,
-                          height: 30,
-                          padding: const EdgeInsets.all(5),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 13,
-                            color: Theme.of(context).isDarkTheme
-                                ? Colors.white
-                                : Colors.black,
+                  ),
+                  VSeparators.small(),
+                  RoundContainer(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text('Dependencies'),
+                        VSeparators.normal(),
+                        if (widget.dependencies.isEmpty)
+                          const Text('No dependencies added',
+                              style: TextStyle(color: Colors.grey))
+                        else
+                          Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: widget.dependencies.map((String e) {
+                              return _dependencyTile(
+                                context,
+                                name: e,
+                                isDarkTheme: themeState.isDarkTheme,
+                                onRemove: () {
+                                  List<String> newDependencies =
+                                      widget.dependencies;
+
+                                  newDependencies.remove(e);
+
+                                  widget.onDependenciesChanged(newDependencies);
+
+                                  setState(() {});
+                                },
+                              );
+                            }).toList(),
                           ),
-                          onPressed: () => setState(() {
-                            _searchNode.unfocus();
-                            _searchController.clear();
-                          }),
+                      ],
+                    ),
+                  ),
+                  VSeparators.small(),
+                  RoundContainer(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text('Dev Dependencies'),
+                        VSeparators.normal(),
+                        if (widget.devDependencies.isEmpty)
+                          const Text('No dev dependencies added',
+                              style: TextStyle(color: Colors.grey))
+                        else
+                          Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: widget.devDependencies.map((String e) {
+                              return _dependencyTile(
+                                context,
+                                name: e,
+                                isDarkTheme: themeState.isDarkTheme,
+                                onRemove: () {
+                                  List<String> newDependencies =
+                                      widget.devDependencies;
+
+                                  newDependencies.remove(e);
+
+                                  widget.onDevDependenciesChanged(
+                                      newDependencies);
+
+                                  setState(() {});
+                                },
+                              );
+                            }).toList(),
+                          )
+                      ],
+                    ),
+                  ),
+                  if (_searchController.text.isNotEmpty) ...<Widget>[
+                    VSeparators.xLarge(),
+                    VSeparators.xLarge(),
+                  ],
+                ],
+              ),
+              if (_searchController.text.isNotEmpty)
+                Positioned(
+                  top: 45,
+                  left: 0,
+                  right: 0,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 250),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: RoundContainer(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        color: themeState.isDarkTheme
+                            ? Colors.blueGrey[900]
+                            : Colors.blueGrey[50],
+                        borderColor: themeState.isDarkTheme
+                            ? Colors.blueGrey[600]
+                            : Colors.blueGrey[200],
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _searchResults.length > 100
+                              ? 100
+                              : _searchResults.length,
+                          itemBuilder: (_, int i) {
+                            bool isFirst = i == 0;
+
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: 5, top: isFirst ? 5 : 0),
+                              child: _PackageTile(
+                                packageName: _searchResults[i],
+                                onAdd: () {
+                                  List<String> newDependencies =
+                                      widget.dependencies;
+
+                                  if (newDependencies
+                                      .contains(_searchResults[i])) {
+                                    ScaffoldMessenger.of(context)
+                                        .clearSnackBars();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBarTile(
+                                      context,
+                                      'This dependency has already been added.',
+                                      type: SnackBarType.done,
+                                    ));
+                                    return;
+                                  }
+
+                                  newDependencies.add(_searchResults[i]);
+
+                                  widget.onDependenciesChanged(newDependencies);
+
+                                  setState(() {
+                                    _searchController.clear();
+                                    _searchNode.unfocus();
+                                  });
+                                },
+                                onAddAsDev: () {
+                                  List<String> newDependencies =
+                                      widget.devDependencies;
+
+                                  if (newDependencies
+                                      .contains(_searchResults[i])) {
+                                    ScaffoldMessenger.of(context)
+                                        .clearSnackBars();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBarTile(
+                                      context,
+                                      'This dev dependency has already been added.',
+                                      type: SnackBarType.done,
+                                    ));
+                                    return;
+                                  }
+
+                                  newDependencies.add(_searchResults[i]);
+
+                                  widget.onDevDependenciesChanged(
+                                      newDependencies);
+
+                                  setState(() {
+                                    _searchController.clear();
+                                    _searchNode.unfocus();
+                                  });
+                                },
+                              ),
+                            );
+                          },
                         ),
                       ),
-                  ],
-                ),
-              ),
-              VSeparators.small(),
-              RoundContainer(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text('Dependencies'),
-                    VSeparators.normal(),
-                    if (widget.dependencies.isEmpty)
-                      const Text('No dependencies added',
-                          style: TextStyle(color: Colors.grey))
-                    else
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
-                        children: widget.dependencies.map((String e) {
-                          return _dependencyTile(context, name: e,
-                              onRemove: () {
-                            List<String> _newDependencies = widget.dependencies;
-
-                            _newDependencies.remove(e);
-
-                            widget.onDependenciesChanged(_newDependencies);
-
-                            setState(() {});
-                          });
-                        }).toList(),
-                      ),
-                  ],
-                ),
-              ),
-              VSeparators.small(),
-              RoundContainer(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text('Dev Dependencies'),
-                    VSeparators.normal(),
-                    if (widget.devDependencies.isEmpty)
-                      const Text('No dev dependencies added',
-                          style: TextStyle(color: Colors.grey))
-                    else
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
-                        children: widget.devDependencies.map((String e) {
-                          return _dependencyTile(
-                            context,
-                            name: e,
-                            onRemove: () {
-                              List<String> _newDependencies =
-                                  widget.devDependencies;
-
-                              _newDependencies.remove(e);
-
-                              widget.onDevDependenciesChanged(_newDependencies);
-
-                              setState(() {});
-                            },
-                          );
-                        }).toList(),
-                      )
-                  ],
-                ),
-              ),
-              if (_searchController.text.isNotEmpty) ...<Widget>[
-                VSeparators.xLarge(),
-                VSeparators.xLarge(),
-              ],
-            ],
-          ),
-          if (_searchController.text.isNotEmpty)
-            Positioned(
-              top: 45,
-              left: 0,
-              right: 0,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 250),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: RoundContainer(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    color: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? Colors.blueGrey[900]
-                        : Colors.blueGrey[50],
-                    borderColor: context.read<ThemeChangeNotifier>().isDarkTheme
-                        ? Colors.blueGrey[600]
-                        : Colors.blueGrey[200],
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _searchResults.length > 100
-                          ? 100
-                          : _searchResults.length,
-                      itemBuilder: (_, int i) {
-                        bool _isFirst = i == 0;
-
-                        return Padding(
-                          padding:
-                              EdgeInsets.only(bottom: 5, top: _isFirst ? 5 : 0),
-                          child: _PackageTile(
-                            packageName: _searchResults[i],
-                            onAdd: () {
-                              List<String> _newDependencies =
-                                  widget.dependencies;
-
-                              if (_newDependencies
-                                  .contains(_searchResults[i])) {
-                                ScaffoldMessenger.of(context).clearSnackBars();
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBarTile(
-                                  context,
-                                  'This dependency has already been added.',
-                                  type: SnackBarType.done,
-                                ));
-                                return;
-                              }
-
-                              _newDependencies.add(_searchResults[i]);
-
-                              widget.onDependenciesChanged(_newDependencies);
-
-                              setState(() {
-                                _searchController.clear();
-                                _searchNode.unfocus();
-                              });
-                            },
-                            onAddAsDev: () {
-                              List<String> _newDependencies =
-                                  widget.devDependencies;
-
-                              if (_newDependencies
-                                  .contains(_searchResults[i])) {
-                                ScaffoldMessenger.of(context).clearSnackBars();
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBarTile(
-                                  context,
-                                  'This dev dependency has already been added.',
-                                  type: SnackBarType.done,
-                                ));
-                                return;
-                              }
-
-                              _newDependencies.add(_searchResults[i]);
-
-                              widget.onDevDependenciesChanged(_newDependencies);
-
-                              setState(() {
-                                _searchController.clear();
-                                _searchNode.unfocus();
-                              });
-                            },
-                          ),
-                        );
-                      },
                     ),
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          );
+        },
       );
     }
   }
@@ -425,12 +441,12 @@ class _ProjectDependenciesSectionState
 
 Widget _dependencyTile(
   BuildContext context, {
+  required bool isDarkTheme,
   required String name,
   required Function() onRemove,
 }) {
   return RoundContainer(
-    color: Colors.blueGrey.withOpacity(
-        context.read<ThemeChangeNotifier>().isDarkTheme ? 0.2 : 0.1),
+    color: Colors.blueGrey.withOpacity(isDarkTheme ? 0.2 : 0.1),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -478,11 +494,13 @@ class __PackageTileState extends State<_PackageTile> {
             HSeparators.normal(),
             if (_isHovering) ...<Widget>[
               InkWell(
-                  child: const Text('Add as dev'), onTap: widget.onAddAsDev),
+                onTap: widget.onAddAsDev,
+                child: const Text('Add as dev'),
+              ),
               HSeparators.xSmall(),
               const Text('•'),
               HSeparators.xSmall(),
-              InkWell(child: const Text('Add'), onTap: widget.onAdd),
+              InkWell(onTap: widget.onAdd, child: const Text('Add')),
             ]
           ],
         ),

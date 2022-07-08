@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
@@ -50,7 +50,7 @@ class SearchPackageTile extends StatelessWidget {
                   icon: const Icon(Icons.copy_rounded, size: 12),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(
-                        text: package.name + ': ^' + package.info.version));
+                        text: '${package.name}: ^${package.info.version}'));
 
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(snackBarTile(

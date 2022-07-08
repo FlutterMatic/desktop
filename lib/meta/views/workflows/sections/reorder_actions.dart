@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -71,7 +71,7 @@ class _SetProjectWorkflowActionsOrderState
                   child: Row(
                     children: <Widget>[
                       Text(
-                        (i + 1).toString() + ' - ',
+                        '${i + 1} - ',
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
@@ -243,249 +243,242 @@ class _ShowSuggestionsDialog extends StatelessWidget {
 }
 
 List<String> _suggestions(List<WorkflowActionModel> workflowActions) {
-  List<String> _suggestions = <String>[];
+  List<String> suggestions = <String>[];
 
   // Check to see if the user chose to deploy to web before building.
   // If they did, then we can suggest to build the web before deploying.
-  bool _containsBuildWeb = workflowActions.any(
+  bool containsBuildWeb = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.buildProjectForWeb);
-  bool _containsBuildAndroid = workflowActions.any((WorkflowActionModel e) =>
+  bool containsBuildAndroid = workflowActions.any((WorkflowActionModel e) =>
       e.id == WorkflowActionsIds.buildProjectForAndroid);
-  bool _containsBuildIos = workflowActions.any(
+  bool containsBuildIos = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.buildProjectForIOS);
-  bool _containsAnalyzeCode = workflowActions.any(
+  bool containsAnalyzeCode = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.analyzeDartProject);
-  bool _containsTestCode = workflowActions.any(
+  bool containsTestCode = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
-  bool _containsBuildWindows = workflowActions.any((WorkflowActionModel e) =>
+  bool containsBuildWindows = workflowActions.any((WorkflowActionModel e) =>
       e.id == WorkflowActionsIds.buildProjectForWindows);
-  bool _containsBuildMacOS = workflowActions.any((WorkflowActionModel e) =>
+  bool containsBuildMacOS = workflowActions.any((WorkflowActionModel e) =>
       e.id == WorkflowActionsIds.buildProjectForMacOS);
-  bool _containsBuildLinux = workflowActions.any((WorkflowActionModel e) =>
+  bool containsBuildLinux = workflowActions.any((WorkflowActionModel e) =>
       e.id == WorkflowActionsIds.buildProjectForLinux);
-  bool _containsDeployWeb = workflowActions.any(
+  bool containsDeployWeb = workflowActions.any(
       (WorkflowActionModel e) => e.id == WorkflowActionsIds.deployProjectWeb);
 
   // If we are deploying web but building after deploying.
-  if (_containsBuildWeb && _containsDeployWeb) {
-    int _buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+  if (containsBuildWeb && containsDeployWeb) {
+    int buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForWeb);
 
-    int _deployWebIndex = workflowActions.indexWhere(
+    int deployWebIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.deployProjectWeb);
 
-    if (_buildWebIndex > _deployWebIndex) {
-      _suggestions.add(
+    if (buildWebIndex > deployWebIndex) {
+      suggestions.add(
         'Build the web project before deploying it. You can also build the web project after deploying it.',
       );
     }
   }
 
   // If we are testing code but analyzing the code after testing.
-  if (_containsAnalyzeCode && _containsTestCode) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsTestCode) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_analyzeCodeIndex > _testCodeIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > testCodeIndex) {
+      suggestions.add(
         'Analyze the code before running tests. This way you can be sure there are no syntax errors before running the tests.',
       );
     }
   }
 
   // If we are testing code after performing web build.
-  if (_containsBuildWeb && _containsTestCode) {
-    int _buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+  if (containsBuildWeb && containsTestCode) {
+    int buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForWeb);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_buildWebIndex < _testCodeIndex) {
-      _suggestions.add(
+    if (buildWebIndex < testCodeIndex) {
+      suggestions.add(
         'Test the code before building for web. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
 
   // If we are testing code after performing Android build.
-  if (_containsBuildAndroid && _containsTestCode) {
-    int _buildAndroidIndex = workflowActions.indexWhere(
+  if (containsBuildAndroid && containsTestCode) {
+    int buildAndroidIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.buildProjectForAndroid);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_buildAndroidIndex < _testCodeIndex) {
-      _suggestions.add(
+    if (buildAndroidIndex < testCodeIndex) {
+      suggestions.add(
         'Test the code before building for Android. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
 
   // If we are testing code after performing iOS build.
-  if (_containsBuildIos && _containsTestCode) {
-    int _buildIosIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+  if (containsBuildIos && containsTestCode) {
+    int buildIosIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForIOS);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_buildIosIndex < _testCodeIndex) {
-      _suggestions.add(
+    if (buildIosIndex < testCodeIndex) {
+      suggestions.add(
         'Test the code before building for iOS. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
 
   // If we are testing code after performing Windows build.
-  if (_containsBuildWindows && _containsTestCode) {
-    int _buildWindowsIndex = workflowActions.indexWhere(
+  if (containsBuildWindows && containsTestCode) {
+    int buildWindowsIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.buildProjectForWindows);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_buildWindowsIndex < _testCodeIndex) {
-      _suggestions.add(
+    if (buildWindowsIndex < testCodeIndex) {
+      suggestions.add(
         'Test the code before building for Windows. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
 
   // If we are testing code after performing macOS build.
-  if (_containsBuildMacOS && _containsTestCode) {
-    int _buildMacOSIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+  if (containsBuildMacOS && containsTestCode) {
+    int buildMacOSIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForMacOS);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_buildMacOSIndex < _testCodeIndex) {
-      _suggestions.add(
+    if (buildMacOSIndex < testCodeIndex) {
+      suggestions.add(
         'Test the code before building for macOS. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
 
   // If we are testing code after performing Linux build.
-  if (_containsBuildLinux && _containsTestCode) {
-    int _buildLinuxIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+  if (containsBuildLinux && containsTestCode) {
+    int buildLinuxIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForLinux);
 
-    int _testCodeIndex = workflowActions.indexWhere(
+    int testCodeIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) => e.id == WorkflowActionsIds.runProjectTests);
 
-    if (_buildLinuxIndex < _testCodeIndex) {
-      _suggestions.add(
+    if (buildLinuxIndex < testCodeIndex) {
+      suggestions.add(
         'Test the code before building for Linux. This way we can make sure there are no syntax errors before attempting build.',
       );
     }
   }
 
   // If contains analyze and also a Web build.
-  if (_containsAnalyzeCode && _containsBuildWeb) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsBuildWeb) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+    int buildWebIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForWeb);
 
-    if (_analyzeCodeIndex > _buildWebIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > buildWebIndex) {
+      suggestions.add(
         'Analyze the code before building for web. This way you can be sure there are no syntax errors before building the web.',
       );
     }
   }
 
   // If contains analyze and also an Android build.
-  if (_containsAnalyzeCode && _containsBuildAndroid) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsBuildAndroid) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildAndroidIndex = workflowActions.indexWhere(
+    int buildAndroidIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.buildProjectForAndroid);
 
-    if (_analyzeCodeIndex > _buildAndroidIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > buildAndroidIndex) {
+      suggestions.add(
         'Analyze the code before building for Android. This way you can be sure there are no syntax errors before building the Android.',
       );
     }
   }
 
   // If contains analyze and also an iOS build.
-  if (_containsAnalyzeCode && _containsBuildIos) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsBuildIos) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildIosIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+    int buildIosIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForIOS);
 
-    if (_analyzeCodeIndex > _buildIosIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > buildIosIndex) {
+      suggestions.add(
         'Analyze the code before building for iOS. This way you can be sure there are no syntax errors before building the iOS.',
       );
     }
   }
 
   // If contains analyze and also a Windows build.
-  if (_containsAnalyzeCode && _containsBuildWindows) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsBuildWindows) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildWindowsIndex = workflowActions.indexWhere(
+    int buildWindowsIndex = workflowActions.indexWhere(
         (WorkflowActionModel e) =>
             e.id == WorkflowActionsIds.buildProjectForWindows);
 
-    if (_analyzeCodeIndex > _buildWindowsIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > buildWindowsIndex) {
+      suggestions.add(
         'Analyze the code before building for Windows. This way you can be sure there are no syntax errors before building the Windows.',
       );
     }
   }
 
   // If contains analyze and also a macOS build.
-  if (_containsAnalyzeCode && _containsBuildMacOS) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsBuildMacOS) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildMacOSIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+    int buildMacOSIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForMacOS);
 
-    if (_analyzeCodeIndex > _buildMacOSIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > buildMacOSIndex) {
+      suggestions.add(
         'Analyze the code before building for macOS. This way you can be sure there are no syntax errors before building the MacOS.',
       );
     }
   }
 
   // If contains analyze and also a Linux build.
-  if (_containsAnalyzeCode && _containsBuildLinux) {
-    int _analyzeCodeIndex = workflowActions.indexWhere(
-        (WorkflowActionModel e) =>
-            e.id == WorkflowActionsIds.analyzeDartProject);
+  if (containsAnalyzeCode && containsBuildLinux) {
+    int analyzeCodeIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+        e.id == WorkflowActionsIds.analyzeDartProject);
 
-    int _buildLinuxIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
+    int buildLinuxIndex = workflowActions.indexWhere((WorkflowActionModel e) =>
         e.id == WorkflowActionsIds.buildProjectForLinux);
 
-    if (_analyzeCodeIndex > _buildLinuxIndex) {
-      _suggestions.add(
+    if (analyzeCodeIndex > buildLinuxIndex) {
+      suggestions.add(
         'Analyze the code before building for Linux. This way you can be sure there are no syntax errors before building the Linux.',
       );
     }
   }
 
-  return _suggestions;
+  return suggestions;
 }

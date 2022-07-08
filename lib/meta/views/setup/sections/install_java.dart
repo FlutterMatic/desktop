@@ -1,21 +1,20 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-
-// 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/bullet_point.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
-import 'package:fluttermatic/core/services/checks/java.check.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/notifiers/models/state/checks/java.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/setup/components/button.dart';
 import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
@@ -30,8 +29,12 @@ Widget installJava(
   required bool isInstalling,
   required bool doneInstalling,
 }) {
-  return Consumer<JavaNotifier>(
-    builder: (BuildContext context, JavaNotifier javaNotifier, _) {
+  return Consumer(
+    builder: (_, ref, __) {
+      JavaState javaState = ref.watch(javaNotifierController);
+
+      ThemeState themeState = ref.watch(themeStateController);
+
       return Column(
         children: <Widget>[
           setUpHeaderTitle(
@@ -43,29 +46,29 @@ Widget installJava(
           VSeparators.normal(),
           Builder(
             builder: (_) {
-              if (javaNotifier.progress == Progress.started ||
-                  javaNotifier.progress == Progress.checking) {
+              if (javaState.progress == Progress.started ||
+                  javaState.progress == Progress.checking) {
                 return hLoadingIndicator(context: context);
-              } else if (javaNotifier.progress == Progress.downloading) {
+              } else if (javaState.progress == Progress.downloading) {
                 return const CustomProgressIndicator();
-              } else if (javaNotifier.progress == Progress.extracting) {
+              } else if (javaState.progress == Progress.extracting) {
                 return hLoadingIndicator(context: context);
-              } else if (javaNotifier.progress == Progress.done) {
+              } else if (javaState.progress == Progress.done) {
                 return setUpToolInstalled(
                   context,
                   title:
-                      'Java Installed - v${javaNotifier.javaVersion ?? 'Unknown'}',
+                      'Java Installed - v${javaState.javaVersion ?? 'Unknown'}',
                   message:
                       'Java installed successfully on your device. Continue to the next step.',
                 );
-              } else if (javaNotifier.progress == Progress.none) {
+              } else if (javaState.progress == Progress.none) {
                 return infoWidget(context,
                     'Java can be essential for Android development. We recommend installing Java if you will be developing Android apps.');
-              } else if (javaNotifier.progress == Progress.done) {
+              } else if (javaState.progress == Progress.done) {
                 return setUpToolInstalled(
                   context,
                   title:
-                      'Java Installed - v${javaNotifier.javaVersion ?? 'Unknown'}',
+                      'Java Installed - v${javaState.javaVersion ?? 'Unknown'}',
                   message:
                       'You have successfully installed Java. Click continue to wrap up.',
                 );
@@ -78,10 +81,10 @@ Widget installJava(
           SetUpButton(
             onContinue: onContinue,
             onInstall: onInstall,
-            progress: javaNotifier.progress,
+            progress: javaState.progress,
           ),
           VSeparators.large(),
-          if (javaNotifier.progress == Progress.none)
+          if (javaState.progress == Progress.none)
             TextButton(
               onPressed: () {
                 showDialog(
@@ -106,20 +109,18 @@ Widget installJava(
                           children: <Widget>[
                             Expanded(
                               child: RectangleButton(
-                                child: Text(
-                                  'Skip',
-                                  style: TextStyle(
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Colors.white
-                                          : Colors.black),
-                                ),
                                 hoverColor: AppTheme.errorColor,
                                 onPressed: () {
                                   Navigator.pop(context);
                                   onSkip();
                                 },
+                                child: Text(
+                                  'Skip',
+                                  style: TextStyle(
+                                      color: themeState.isDarkTheme
+                                          ? Colors.white
+                                          : Colors.black),
+                                ),
                               ),
                             ),
                             HSeparators.small(),
@@ -128,9 +129,7 @@ Widget installJava(
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
+                                      color: themeState.isDarkTheme
                                           ? Colors.white
                                           : Colors.black),
                                 ),

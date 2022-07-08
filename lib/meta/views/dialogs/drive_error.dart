@@ -1,17 +1,16 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-
-// 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/main.dart';
 
 class SystemDriveErrorDialog extends StatelessWidget {
@@ -34,10 +33,16 @@ class SystemDriveErrorDialog extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'System Drives: ${context.read<SpaceCheck>().conflictingDrives.join(', ')}',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                  Consumer(
+                    builder: (_, ref, __) {
+                      SpaceState spaceState = ref.watch(spaceStateController);
+
+                      return Text(
+                        'System Drives: ${spaceState.conflictingDrives.join(', ')}',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      );
+                    },
                   ),
                 ],
               ),

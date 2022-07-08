@@ -1,4 +1,4 @@
-Paths paths = Paths();
+final Paths paths = Paths();
 
 class Paths {
   String? flutter;

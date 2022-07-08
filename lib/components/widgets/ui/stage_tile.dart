@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -122,8 +122,8 @@ class _BetaInfoDialog extends StatelessWidget {
                 child: RectangleButton(
                   child: const Text('Report Issue'),
                   onPressed: () {
-                    launch(
-                        'https://github.com/fluttermatic/desktop/issues/new/choose');
+                    launchUrl(Uri.parse(
+                        'https://github.com/fluttermatic/desktop/issues/new/choose'));
                     Navigator.pop(context);
                   },
                 ),
@@ -163,8 +163,8 @@ class _AlphaInfoDialog extends StatelessWidget {
                 child: RectangleButton(
                   child: const Text('Report Issue'),
                   onPressed: () {
-                    launch(
-                        'https://github.com/fluttermatic/desktop/issues/new/choose');
+                    launchUrl(Uri.parse(
+                        'https://github.com/fluttermatic/desktop/issues/new/choose'));
                     Navigator.pop(context);
                   },
                 ),

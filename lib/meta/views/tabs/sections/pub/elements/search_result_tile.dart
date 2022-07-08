@@ -1,16 +1,18 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 
 // 📦 Package imports:
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/dialogs/package_info.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 
@@ -31,12 +33,12 @@ class _PubPackageSearchResultTileState
 
   Future<void> _fetchPkgInfo() async {
     try {
-      PackagePublisher _info = await PubClient()
+      PackagePublisher info = await PubClient()
           .packagePublisher(widget.package.name)
           .timeout(const Duration(seconds: 5));
 
       if (mounted) {
-        setState(() => _pkgInfo = _info);
+        setState(() => _pkgInfo = info);
       }
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to get package info.',
@@ -58,83 +60,87 @@ class _PubPackageSearchResultTileState
 
   @override
   Widget build(BuildContext context) {
-    return RectangleButton(
-      width: 500,
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (_) => PubPackageDialog(pkgInfo: widget.package),
-        );
-      },
-      padding: const EdgeInsets.all(5),
-      child: Row(
-        children: <Widget>[
-          HSeparators.xSmall(),
-          Expanded(
-            child: Text(
-              widget.package.name,
-              style: TextStyle(
-                color:
-                    Theme.of(context).isDarkTheme ? Colors.white : Colors.black,
-              ),
-            ),
-          ),
-          Row(
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        return RectangleButton(
+          width: 500,
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => PubPackageDialog(pkgInfo: widget.package),
+            );
+          },
+          padding: const EdgeInsets.all(5),
+          child: Row(
             children: <Widget>[
-              const Tooltip(
-                message: 'Verified Publisher',
-                child: Icon(Icons.verified, size: 15, color: kGreenColor),
-              ),
               HSeparators.xSmall(),
-              if (_pkgInfo == null)
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Spinner(size: 8, thickness: 1),
-                )
-              else
-                Text(
-                  _pkgInfo!.publisherId ?? 'Unknown',
-                  overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Text(
+                  widget.package.name,
                   style: TextStyle(
-                    fontSize: 13.5,
-                    color: (Theme.of(context).isDarkTheme
-                            ? Colors.white
-                            : Colors.black)
-                        .withOpacity(0.5),
+                    color: themeState.isDarkTheme ? Colors.white : Colors.black,
                   ),
                 ),
-              HSeparators.xSmall(),
-              // Show a copy icon to copy the dependency directly on when
-              // hovering to avoid UI distraction.
-              RectangleButton(
-                width: 30,
-                height: 30,
-                padding: EdgeInsets.zero,
-                color: Colors.transparent,
-                hoverColor: Colors.blueGrey.withOpacity(0.2),
-                child: Icon(
-                  Icons.content_copy,
-                  size: 13,
-                  color: (Theme.of(context).isDarkTheme
-                          ? Colors.white
-                          : Colors.black)
-                      .withOpacity(0.5),
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      'Dependency has been copied to your clipboard.',
-                      type: SnackBarType.done,
+              ),
+              Row(
+                children: <Widget>[
+                  const Tooltip(
+                    message: 'Verified Publisher',
+                    child: Icon(Icons.verified, size: 15, color: kGreenColor),
+                  ),
+                  HSeparators.xSmall(),
+                  if (_pkgInfo == null)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Spinner(size: 8, thickness: 1),
+                    )
+                  else
+                    Text(
+                      _pkgInfo!.publisherId ?? 'Unknown',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: (themeState.isDarkTheme
+                                ? Colors.white
+                                : Colors.black)
+                            .withOpacity(0.5),
+                      ),
                     ),
-                  );
-                },
+                  HSeparators.xSmall(),
+                  // Show a copy icon to copy the dependency directly on when
+                  // hovering to avoid UI distraction.
+                  RectangleButton(
+                    width: 30,
+                    height: 30,
+                    padding: EdgeInsets.zero,
+                    color: Colors.transparent,
+                    hoverColor: Colors.blueGrey.withOpacity(0.2),
+                    child: Icon(
+                      Icons.content_copy,
+                      size: 13,
+                      color:
+                          (themeState.isDarkTheme ? Colors.white : Colors.black)
+                              .withOpacity(0.5),
+                    ),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarTile(
+                          context,
+                          'Dependency has been copied to your clipboard.',
+                          type: SnackBarType.done,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -19,9 +19,8 @@ Future<void> writeWorkflowSessionLog(
     }
   }
 
-  String _time = DateTime.now().toString();
+  String time = DateTime.now().toString();
 
-  await file.writeAsString(
-      '\n' + _type() + '<date_log>' + _time + '</date_log>' + message,
+  await file.writeAsString('\n${_type()}<date_log>$time</date_log>$message',
       mode: FileMode.writeOnlyAppend);
 }

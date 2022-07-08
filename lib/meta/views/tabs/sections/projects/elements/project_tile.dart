@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/meta/views/dialogs/open_project.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/dialogs/project_options.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
@@ -60,12 +60,6 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                       padding: EdgeInsets.zero,
                       hoverColor: Colors.transparent,
                       color: Colors.transparent,
-                      child: Icon(
-                          widget.project.pinned
-                              ? Icons.push_pin_rounded
-                              : Icons.push_pin_outlined,
-                          color: widget.project.pinned ? kYellowColor : null,
-                          size: 14),
                       onPressed: () async {
                         await ProjectServicesModel.updateProjectPinStatus(
                             widget.project.path, !widget.project.pinned);
@@ -75,12 +69,17 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                       radius: BorderRadius.circular(2),
                       width: 22,
                       height: 22,
+                      child: Icon(
+                          widget.project.pinned
+                              ? Icons.push_pin_rounded
+                              : Icons.push_pin_outlined,
+                          color: widget.project.pinned ? kYellowColor : null,
+                          size: 14),
                     ),
                   ),
                   HSeparators.xSmall(),
                   RectangleButton(
                     padding: EdgeInsets.zero,
-                    child: const Icon(Icons.more_vert, size: 14),
                     color: Colors.transparent,
                     onPressed: () {
                       showDialog(
@@ -92,6 +91,7 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                     radius: BorderRadius.circular(2),
                     width: 22,
                     height: 22,
+                    child: const Icon(Icons.more_vert, size: 14),
                   ),
                 ],
               ],

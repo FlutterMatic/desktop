@@ -4,26 +4,26 @@ import 'dart:io';
 import 'dart:isolate';
 
 // 📦 Package imports:
+import 'package:fluttermatic/meta/utils/search/projects_search.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/models/projects.model.dart';
+import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
 
 class ProjectServicesModel {
   /// Gets the cache about the projects information and about the projects path
   /// where they can be found.
   static Future<ProjectCacheResult?> getProjectCache(String supportDir) async {
-    File _file = File(supportDir + '\\cache\\projects_cache_settings.json');
+    File file = File('$supportDir\\cache\\projects_cache_settings.json');
 
-    if (!await _file.exists()) {
+    if (!await file.exists()) {
       return null;
     }
 
-    Map<String, dynamic> _cache = jsonDecode((await _file.readAsString()));
+    Map<String, dynamic> cache = jsonDecode((await file.readAsString()));
 
-    return ProjectCacheResult.fromJson(_cache);
+    return ProjectCacheResult.fromJson(cache);
   }
 
   /// Updates the cache with the new information.
@@ -34,19 +34,19 @@ class ProjectServicesModel {
     required String supportDir,
     required ProjectCacheResult cache,
   }) async {
-    File _file = File(supportDir + '\\cache\\projects_cache_settings.json');
+    File file = File('$supportDir\\cache\\projects_cache_settings.json');
 
-    Map<String, dynamic> _oldCache = <String, dynamic>{};
+    Map<String, dynamic> oldCache = <String, dynamic>{};
 
     // If the old cache exists, we will merge it with the new one.
-    if (await _file.exists()) {
-      _oldCache = jsonDecode((await _file.readAsString()));
+    if (await file.exists()) {
+      oldCache = jsonDecode((await file.readAsString()));
     }
 
     dynamic _getValue(String key) =>
-        (_oldCache.containsKey(key) ? _oldCache[key] : null);
+        (oldCache.containsKey(key) ? oldCache[key] : null);
 
-    ProjectCacheResult _newCache = ProjectCacheResult(
+    ProjectCacheResult newCache = ProjectCacheResult(
       projectsPath: cache.projectsPath ?? _getValue('projectsPath'),
       refreshIntervals: cache.refreshIntervals ??
           int.tryParse(_getValue('refreshIntervals') ?? '1'),
@@ -56,19 +56,19 @@ class ProjectServicesModel {
           DateTime.tryParse(_getValue('lastWorkflowsReload') ?? ''),
     );
 
-    await _file.writeAsString(jsonEncode(_newCache.toJson()));
+    await file.writeAsString(jsonEncode(newCache.toJson()));
   }
 
   /// Will update the cache for the projects locally and set the new pinned
   /// status for the provided project path.
   static Future<void> updateProjectPinStatus(String path, bool isPinned) async {
     try {
-      Directory _dir = await getApplicationSupportDirectory();
+      Directory dir = await getApplicationSupportDirectory();
 
       // Gets the existing cache so that we can alter it with the new pinned
       // status.
-      List<ProjectObject> _cache =
-          await ProjectSearchUtils.getProjectsFromCache(_dir.path);
+      List<ProjectObject> cache =
+          await ProjectSearchUtils.getProjectsFromCache(dir.path);
 
       // Projects cache structure:
       // [
@@ -82,12 +82,12 @@ class ProjectServicesModel {
       //   }
       // ]
 
-      List<Map<String, dynamic>> _newCache = <Map<String, dynamic>>[];
+      List<Map<String, dynamic>> newCache = <Map<String, dynamic>>[];
 
       // Will find the project that matches the provided path and update the
       // pinned status.
-      for (ProjectObject project in _cache) {
-        ProjectObject _newProject = ProjectObject(
+      for (ProjectObject project in cache) {
+        ProjectObject newProject = ProjectObject(
           name: project.name,
           modDate: project.modDate,
           path: project.path,
@@ -95,12 +95,12 @@ class ProjectServicesModel {
           pinned: project.path == path ? isPinned : project.pinned,
         );
 
-        _newCache.add(_newProject.toJson());
+        newCache.add(newProject.toJson());
       }
 
       // Now we will write the new cache to the file.
-      await File(ProjectSearchUtils.getProjectCachePath(_dir.path))
-          .writeAsString(jsonEncode(_newCache));
+      await File(ProjectSearchUtils.getProjectCachePath(dir.path))
+          .writeAsString(jsonEncode(newCache));
     } catch (_, s) {
       await logger.file(LogTypeTag.error,
           'Failed to update the pinned status for the project: $path :$_',
@@ -120,70 +120,70 @@ class ProjectServicesModel {
   /// **RESPONSE FORMAT**:
   /// [<List> projects, <boolean> killIsolate, <boolean> isExpectedAnotherResponse]
   static Future<void> getProjectsIsolate(List<dynamic> data) async {
-    SendPort _port = data[0];
-    String _supportDir = data[1];
-    bool _force = data[2]; // Whether to force to refetch from scratch even if
+    SendPort port = data[0];
+    String supportDir = data[1];
+    bool force = data[2]; // Whether to force to refetch from scratch even if
     // we have cache that is not expired.
 
-    if (await ProjectSearchUtils.hasCache(_supportDir)) {
+    if (await ProjectSearchUtils.hasCache(supportDir)) {
       await logger.file(
           LogTypeTag.info, 'Fetching projects from cache. Cache found.',
-          logDir: Directory(_supportDir));
+          logDir: Directory(supportDir));
 
-      List<ProjectObject> _projectsCache =
-          await ProjectSearchUtils.getProjectsFromCache(_supportDir);
+      List<ProjectObject> projectsCache =
+          await ProjectSearchUtils.getProjectsFromCache(supportDir);
 
-      ProjectIsolateFetchResult _result = ProjectIsolateFetchResult(
-        projects: _projectsCache.where((ProjectObject e) => !e.pinned).toList(),
+      ProjectIsolateFetchResult result = ProjectIsolateFetchResult(
+        projects: projectsCache.where((ProjectObject e) => !e.pinned).toList(),
         pinnedProjects:
-            _projectsCache.where((ProjectObject e) => e.pinned).toList(),
+            projectsCache.where((ProjectObject e) => e.pinned).toList(),
       );
 
-      ProjectCacheResult? _cache = await getProjectCache(_supportDir);
+      ProjectCacheResult? cache = await getProjectCache(supportDir);
 
       // Check to see if we need to refetch again because of time interval or cache
       // expired.
-      if (_cache != null) {
+      if (cache != null) {
         // Cache expired. Will return the expired cache for performance, then will
         // refetch the cache in the background and update the listener with the
         // new cache if there is a difference to avoid unnecessary rebuilds.
 
-        bool _isExpiredCache = true;
+        bool isExpiredCache = true;
 
         // Seconds Difference
-        int _difference = DateTime.now()
-            .difference(_cache.lastProjectReload ?? DateTime.now())
+        int difference = DateTime.now()
+            .difference(cache.lastProjectReload ?? DateTime.now())
             .inSeconds;
 
         // Check to see if the cache is expired. Interval in minutes. Must be
         // in seconds.
-        if (((_cache.refreshIntervals ?? 0) * 60) > _difference) {
-          _isExpiredCache = false;
+        if (((cache.refreshIntervals ?? 0) * 60) > difference) {
+          isExpiredCache = false;
         }
 
-        if (_isExpiredCache || _force) {
-          if (_force) {
+        if (isExpiredCache || force) {
+          if (force) {
             await logger.file(LogTypeTag.info,
                 'Fetching projects from cache. Cache expired. Force refetch.',
-                logDir: Directory(_supportDir));
+                logDir: Directory(supportDir));
           }
 
           await logger.file(
               LogTypeTag.info, 'Fetching projects from scratch. Cache expired.',
-              logDir: Directory(_supportDir));
+              logDir: Directory(supportDir));
 
           // Don't kill isolate. Will refetch with cache.
-          _port.send(<dynamic>[_result, false, true]);
+          port.send(<dynamic>[result, false, true]);
 
-          List<ProjectObject> _projectsRefetch =
+          List<ProjectObject> projectsRefetch =
               await ProjectSearchUtils.getProjectsFromPath(
-            cache: _cache,
-            supportDir: _supportDir,
+            cache: cache,
+            supportDir: supportDir,
           );
 
           // Update cache.
           await updateProjectCache(
-            supportDir: _supportDir,
+            supportDir: supportDir,
             cache: ProjectCacheResult(
               projectsPath: null,
               refreshIntervals: null,
@@ -192,54 +192,54 @@ class ProjectServicesModel {
             ),
           );
 
-          ProjectIsolateFetchResult _refetchResult = ProjectIsolateFetchResult(
+          ProjectIsolateFetchResult refetchResult = ProjectIsolateFetchResult(
             projects:
-                _projectsRefetch.where((ProjectObject e) => !e.pinned).toList(),
+                projectsRefetch.where((ProjectObject e) => !e.pinned).toList(),
             pinnedProjects:
-                _projectsRefetch.where((ProjectObject e) => e.pinned).toList(),
+                projectsRefetch.where((ProjectObject e) => e.pinned).toList(),
           );
 
           // Kill isolate. Cache is now updated.
-          _port.send(<dynamic>[_refetchResult, true, false]);
+          port.send(<dynamic>[refetchResult, true, false]);
           return;
         } else {
           await logger.file(LogTypeTag.info,
               'Fetching projects from cache. Cache still valid.',
-              logDir: Directory(_supportDir));
+              logDir: Directory(supportDir));
           // Kill isolate. Cache is still valid.
-          _port.send(<dynamic>[_result, true, false]);
+          port.send(<dynamic>[result, true, false]);
           return;
         }
       } else {
         // Kill isolate.
-        _port.send(<dynamic>[_result, true, false]);
+        port.send(<dynamic>[result, true, false]);
         return;
       }
     } else {
       await logger.file(
           LogTypeTag.info, 'Fetching projects initially. No cache found.',
-          logDir: Directory(_supportDir));
+          logDir: Directory(supportDir));
 
-      List<ProjectObject> _projectsPaths =
+      List<ProjectObject> projectsPaths =
           await ProjectSearchUtils.getProjectsFromPath(
-        cache: await getProjectCache(_supportDir) ??
+        cache: await getProjectCache(supportDir) ??
             const ProjectCacheResult(
               lastProjectReload: null,
               projectsPath: null,
               refreshIntervals: null,
               lastWorkflowsReload: null,
             ),
-        supportDir: _supportDir,
+        supportDir: supportDir,
       );
 
-      ProjectIsolateFetchResult _result = ProjectIsolateFetchResult(
-        projects: _projectsPaths.where((ProjectObject e) => !e.pinned).toList(),
+      ProjectIsolateFetchResult result = ProjectIsolateFetchResult(
+        projects: projectsPaths.where((ProjectObject e) => !e.pinned).toList(),
         pinnedProjects:
-            _projectsPaths.where((ProjectObject e) => e.pinned).toList(),
+            projectsPaths.where((ProjectObject e) => e.pinned).toList(),
       );
 
       // Kill isolate
-      _port.send(<dynamic>[_result, true, false]);
+      port.send(<dynamic>[result, true, false]);
       return;
     }
   }

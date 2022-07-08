@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -43,14 +43,14 @@ class PreviewWorkflowDialog extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: template.workflowActions.length,
                     itemBuilder: (_, int i) {
-                      bool _isLast = i == template.workflowActions.length - 1;
+                      bool isLast = i == template.workflowActions.length - 1;
 
-                      WorkflowActionModel _actionModel =
+                      WorkflowActionModel actionModel =
                           workflowActionModels.firstWhere(
                               (_) => _.id == template.workflowActions[i]);
 
                       int? _getTimeout() {
-                        switch (_actionModel.id) {
+                        switch (actionModel.id) {
                           case WorkflowActionsIds.buildProjectForAndroid:
                             return template.androidBuildTimeout;
                           case WorkflowActionsIds.buildProjectForIOS:
@@ -69,10 +69,10 @@ class PreviewWorkflowDialog extends StatelessWidget {
                       }
 
                       return Padding(
-                        padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
+                        padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                         child: Builder(
                           builder: (_) {
-                            if (_actionModel.id ==
+                            if (actionModel.id ==
                                 WorkflowActionsIds.runCustomCommands) {
                               return RoundContainer(
                                 child: Column(
@@ -80,14 +80,14 @@ class PreviewWorkflowDialog extends StatelessWidget {
                                   children: <Widget>[
                                     _stepItem(
                                       i,
-                                      title: _actionModel.name,
-                                      description: _actionModel.description,
+                                      title: actionModel.name,
+                                      description: actionModel.description,
                                       timeout: _getTimeout(),
                                     ),
                                     VSeparators.normal(),
                                     ...template.customCommands.map((_) {
                                       return Text(
-                                        '   - ' + _,
+                                        '   - $_',
                                         style:
                                             const TextStyle(color: Colors.grey),
                                       );
@@ -99,8 +99,8 @@ class PreviewWorkflowDialog extends StatelessWidget {
 
                             return _stepItem(
                               i,
-                              title: _actionModel.name,
-                              description: _actionModel.description,
+                              title: actionModel.name,
+                              description: actionModel.description,
                               timeout: _getTimeout(),
                             );
                           },
@@ -149,11 +149,9 @@ Also, if any fail with a none-zero exit code, the workflow will be stopped autom
                             await showDialog(
                               context: context,
                               builder: (_) => StartUpWorkflow(
-                                pubspecPath: (workflowPath.split('\\')
-                                          ..removeLast()
-                                          ..removeLast())
-                                        .join('\\') +
-                                    '\\pubspec.yaml',
+                                pubspecPath: '${(workflowPath.split('\\')
+                                  ..removeLast()
+                                  ..removeLast()).join('\\')}\\pubspec.yaml',
                                 editWorkflowTemplate: template,
                               ),
                             );

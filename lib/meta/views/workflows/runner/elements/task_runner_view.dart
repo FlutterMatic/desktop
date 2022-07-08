@@ -6,13 +6,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/action_scripts.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
@@ -95,24 +95,24 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
   Future<void> _prepareCommands() async {
     _commands.clear();
 
-    bool _isFlutter = false;
+    bool isFlutter = false;
 
-    List<String> _pubspecLines =
-        await File(_projectPath + '\\pubspec.yaml').readAsLines();
+    List<String> pubspecLines =
+        await File('$_projectPath\\pubspec.yaml').readAsLines();
 
-    _isFlutter = extractPubspec(
-            lines: _pubspecLines, path: _projectPath + '\\pubspec.yaml')
-        .isFlutterProject;
+    isFlutter =
+        extractPubspec(lines: pubspecLines, path: '$_projectPath\\pubspec.yaml')
+            .isFlutterProject;
 
     // Analyze project
     if (widget.action.id == WorkflowActionsIds.analyzeDartProject) {
-      _commands.addAll(WorkflowActionScripts.analyzeDartProject(_isFlutter));
+      _commands.addAll(WorkflowActionScripts.analyzeDartProject(isFlutter));
       return;
     }
 
     // Test project
     if (widget.action.id == WorkflowActionsIds.runProjectTests) {
-      _commands.addAll(WorkflowActionScripts.runProjectTests(_isFlutter));
+      _commands.addAll(WorkflowActionScripts.runProjectTests(isFlutter));
       return;
     }
 

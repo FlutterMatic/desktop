@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 
@@ -38,7 +38,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
 
   @override
   Widget build(BuildContext context) {
-    Size _size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -97,16 +97,16 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
           if (widget.isVertical)
             GridView.count(
               physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: _size.width > 1800
+              crossAxisCount: size.width > 1800
                   ? 5
-                  : _size.width > 1100
+                  : size.width > 1100
                       ? 4
                       : 3,
               mainAxisSpacing: 15,
               crossAxisSpacing: 15,
               childAspectRatio: 1,
-              children: widget.content,
               shrinkWrap: true,
+              children: widget.content,
             )
           else
             SingleChildScrollView(
@@ -115,10 +115,10 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
               child: Row(
                   children: widget.content.map(
                 (Widget e) {
-                  bool _isFinal =
+                  bool isFinal =
                       (widget.content.indexOf(e) + 1) == widget.content.length;
                   return Padding(
-                    padding: EdgeInsets.only(right: _isFinal ? 0 : 15),
+                    padding: EdgeInsets.only(right: isFinal ? 0 : 15),
                     child: e,
                   );
                 },
@@ -143,8 +143,8 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                     const Icon(Icons.disabled_by_default_rounded),
                     HSeparators.small(),
                     Expanded(
-                      child: Text(widget.content.length.toString() +
-                          ' item${widget.content.length > 1 ? 's' : ''} hidden'),
+                      child: Text(
+                          '${widget.content.length} item${widget.content.length > 1 ? 's' : ''} hidden'),
                     ),
                     HSeparators.normal(),
                     AnimatedOpacity(

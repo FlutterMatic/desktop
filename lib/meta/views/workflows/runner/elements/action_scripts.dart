@@ -1,5 +1,4 @@
-// 🌎 Project imports:
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/enum.dart';
 
 class WorkflowActionScripts {
   /// Analyze the project code and returns a none zero exit code if there are

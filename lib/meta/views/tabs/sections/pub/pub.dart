@@ -3,18 +3,20 @@ import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/elements/pub_tile.dart';
@@ -72,7 +74,7 @@ class _HomePubSectionState extends State<HomePubSection> {
 
     // We want to get the pub cache first to show in the meantime as we are
     // making a request to the pub API to fetch the latest data.
-    Isolate _i = await Isolate.spawn(
+    Isolate i = await Isolate.spawn(
       PkgViewData.getPackagesIsolate,
       <dynamic>[
         _loadPubPackagesPort.sendPort,
@@ -82,11 +84,13 @@ class _HomePubSectionState extends State<HomePubSection> {
       await logger.file(LogTypeTag.error, 'Failed to get packages: $_',
           stackTraces: s);
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(context, 'Couldn\'t get the pub packages.',
-            type: SnackBarType.error),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(context, 'Couldn\'t get the pub packages.',
+              type: SnackBarType.error),
+        );
+      }
 
       return Isolate.current;
     });
@@ -132,7 +136,7 @@ class _HomePubSectionState extends State<HomePubSection> {
 
             // No more expected responses, we will kill the isolate.
             if (message[1] == true) {
-              _i.kill();
+              i.kill();
             }
           }
         }
@@ -174,8 +178,8 @@ class _HomePubSectionState extends State<HomePubSection> {
                         ),
                         VSeparators.large(),
                         RectangleButton(
-                          child: const Text('Retry'),
                           onPressed: _getInitialPackages,
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -221,13 +225,18 @@ class _HomePubSectionState extends State<HomePubSection> {
                           width: double.infinity,
                           child: Row(
                             children: <Widget>[
-                              SvgPicture.asset(
-                                Assets.package,
-                                height: 25,
-                                color: Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
+                              Consumer(builder: (_, ref, __) {
+                                ThemeState themeState =
+                                    ref.watch(themeStateController);
+
+                                return SvgPicture.asset(
+                                  Assets.package,
+                                  height: 25,
+                                  color: themeState.isDarkTheme
+                                      ? Colors.white
+                                      : Colors.black,
+                                );
+                              }),
                               HSeparators.small(),
                               const Expanded(
                                 child: Text(

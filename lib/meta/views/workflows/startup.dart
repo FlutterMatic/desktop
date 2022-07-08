@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -20,8 +22,6 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
@@ -169,7 +169,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
-      List<bool> _stopConditions = <bool>[
+      List<bool> stopConditions = <bool>[
         (_workflowTemplate().toJson()) == _lastSavedContent,
         _pubspecFile == null,
         _nameController.text.isEmpty,
@@ -178,7 +178,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       ];
 
       // If the user has not made any changes, no need to save anything.
-      if (_stopConditions.contains(true)) {
+      if (stopConditions.contains(true)) {
         // Without this line, app crashes.
         await Future<void>.delayed(_syncIntervals);
         continue;
@@ -186,7 +186,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       setState(() => _isSavingLocally = true);
 
-      Isolate _i = await Isolate.spawn(_saveInBgSync, <dynamic>[
+      Isolate i = await Isolate.spawn(_saveInBgSync, <dynamic>[
         _saveLocallyPort.sendPort,
         _projectPath,
         _workflowTemplate().toJson(),
@@ -203,7 +203,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       if (!_syncStreamListening) {
         setState(() => _syncStreamListening = true);
         _saveLocallyPort.listen((dynamic message) {
-          _i.kill();
+          i.kill();
           if (message is Map<String, dynamic>) {
             setState(() {
               _lastSavedContent = message;
@@ -226,14 +226,14 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _initPubspec() async {
     try {
-      String _path = _projectPath.endsWith('\\pubspec.yaml')
+      String path = _projectPath.endsWith('\\pubspec.yaml')
           ? _projectPath
-          : (_projectPath + '\\pubspec.yaml');
+          : ('$_projectPath\\pubspec.yaml');
 
-      List<String> _pubspec = await File(_path).readAsLines();
+      List<String> pubspec = await File(path).readAsLines();
 
       setState(() {
-        _pubspecFile = extractPubspec(lines: _pubspec, path: _path);
+        _pubspecFile = extractPubspec(lines: pubspec, path: path);
         _forcePubspec = true;
       });
     } catch (_, s) {
@@ -381,7 +381,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             template: _workflowTemplate(),
           );
 
-          Navigator.pop(context);
+          if (mounted) {
+            Navigator.pop(context);
+          }
         },
         width: 800,
         child: Column(
@@ -421,7 +423,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                   template: _workflowTemplate(),
                 );
 
-                Navigator.pop(context);
+                if (mounted) {
+                  Navigator.pop(context);
+                }
               },
             ),
             if (_interfaceView == _InterfaceView.workflowInfo)
@@ -576,7 +580,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                 workflowName: _nameController.text,
                 workflowDescription: _descriptionController.text,
                 onSave: () async {
-                  bool _hasSaved = await _saveWorkflow(
+                  bool hasSaved = await _saveWorkflow(
                     context,
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
@@ -586,7 +590,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     template: _workflowTemplate(true),
                   );
 
-                  if (_hasSaved) {
+                  if (hasSaved) {
                     // Update the cache with the new changes
                     await WorkflowSearchUtils.getWorkflowsFromPath(
                         cache: await ProjectServicesModel.getProjectCache(
@@ -601,11 +605,13 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                         supportDir:
                             (await getApplicationSupportDirectory()).path);
 
-                    Navigator.pop(context);
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
                   }
                 },
                 onSaveAndRun: () async {
-                  bool _hasSaved = await _saveWorkflow(
+                  bool hasSaved = await _saveWorkflow(
                     context,
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
@@ -615,7 +621,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     template: _workflowTemplate(true),
                   );
 
-                  if (_hasSaved) {
+                  if (hasSaved) {
                     // Update the cache with the new changes
                     await WorkflowSearchUtils.getWorkflowsFromPath(
                         cache: await ProjectServicesModel.getProjectCache(
@@ -630,32 +636,32 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                         supportDir:
                             (await getApplicationSupportDirectory()).path);
 
-                    Navigator.pop(context);
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
 
-                    String? _path =
+                    String? path =
                         (_projectPath.split('\\')..removeLast()).join('\\');
 
-                    if (_path.isEmpty) {
+                    if (path.isEmpty) {
                       await logger.file(LogTypeTag.error,
                           'Could not get path to show workflow runner at save and run.');
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-                          context,
-                          'Failed to open Workflow Runner. Try opening the runner from the projects tab.',
-                          type: SnackBarType.error));
 
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+                            context,
+                            'Failed to open Workflow Runner. Try opening the runner from the projects tab.',
+                            type: SnackBarType.error));
+                      }
                       return;
                     }
 
                     await showDialog(
                       context: context,
                       builder: (_) => WorkflowRunnerDialog(
-                        workflowPath: _path +
-                            '\\' +
-                            fmWorkflowDir +
-                            '\\' +
-                            (_nameController.text) +
-                            '.json',
+                        workflowPath:
+                            '$path\\$fmWorkflowDir\\${_nameController.text}.json',
                       ),
                     );
                   }
@@ -730,32 +736,32 @@ enum _InterfaceView {
 
 Future<void> _saveInBgSync(List<dynamic> data) async {
   // The opened port we can communicate with.
-  SendPort _port = data[0];
-  Map<String, dynamic> _data = data[2];
-  String _projName = data[3];
+  SendPort port = data[0];
+  Map<String, dynamic> content = data[2];
+  String projName = content[3];
 
   try {
-    String? _dirPath = data[1];
+    String? dirPath = content[1];
 
-    if (_dirPath == null || _dirPath.isEmpty || _data.isEmpty) {
-      _port.send(_data);
+    if (dirPath == null || dirPath.isEmpty || content.isEmpty) {
+      port.send(content);
       return;
     }
 
-    _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
+    dirPath = (dirPath.toString().split('\\')..removeLast()).join('\\');
 
-    Directory(_dirPath + '\\$fmWorkflowDir').createSync(recursive: true);
+    Directory('$dirPath\\$fmWorkflowDir').createSync(recursive: true);
 
-    await File.fromUri(Uri.file(_dirPath + '\\$fmWorkflowDir\\$_projName.json'))
-        .writeAsString(jsonEncode(_data))
+    await File.fromUri(Uri.file('$dirPath\\$fmWorkflowDir\\$projName.json'))
+        .writeAsString(jsonEncode(content))
         .timeout(const Duration(seconds: 3));
 
-    _port.send(_data);
+    port.send(content);
     return;
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Couldn\'t sync workflow settings.',
         stackTraces: s);
-    _port.send(<dynamic>[]);
+    port.send(<dynamic>[]);
     return;
   }
 }
@@ -775,6 +781,8 @@ Future<bool> _saveWorkflow(
   required WorkflowTemplate template,
   required PubspecInfo? pubspecInfo,
 }) async {
+  NavigatorState navigator = Navigator.of(context);
+
   try {
     if (template.name.isEmpty) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -793,14 +801,14 @@ Future<bool> _saveWorkflow(
       ),
     );
 
-    String? _dirPath = pubspecInfo?.pathToPubspec ?? pubspecPath;
+    String? dirPath = pubspecInfo?.pathToPubspec ?? pubspecPath;
 
-    _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
+    dirPath = (dirPath.toString().split('\\')..removeLast()).join('\\');
 
-    await Directory(_dirPath + '\\$fmWorkflowDir').create(recursive: true);
+    await Directory('$dirPath\\$fmWorkflowDir').create(recursive: true);
 
     await File.fromUri(
-            Uri.file(_dirPath + '\\$fmWorkflowDir\\${template.name}.json'))
+            Uri.file('$dirPath\\$fmWorkflowDir\\${template.name}.json'))
         .writeAsString(jsonEncode(template.toJson()))
         .timeout(const Duration(seconds: 3));
 
@@ -808,40 +816,40 @@ Future<bool> _saveWorkflow(
     // setting up the workflow), then we will see if we have to add anything
     // to .gitignore.
     if (template.isSaved && (addToGitignore || addAllToGitignore)) {
-      String _addComment =
+      String addComment =
           '# Specific FlutterMatic workflow hidden: ${template.name}';
-      String _addAllComment = '# All FlutterMatic workflows are hidden.';
+      String addAllComment = '# All FlutterMatic workflows are hidden.';
 
       try {
-        File _git = File(_dirPath + '\\.gitignore');
+        File git = File('$dirPath\\.gitignore');
 
         // Create the .gitignore file if it doesn't exist.
-        if (!await _git.exists()) {
-          await _git.writeAsString('').timeout(const Duration(seconds: 3));
+        if (!await git.exists()) {
+          await git.writeAsString('').timeout(const Duration(seconds: 3));
         }
 
-        List<String> _gitignoreFile = await _git.readAsLines();
+        List<String> gitignoreFile = await git.readAsLines();
 
         // We will add the comment if it doesn't already exist.
-        if ((addToGitignore && !_gitignoreFile.contains(_addComment)) ||
-            (addAllToGitignore && !_gitignoreFile.contains(_addAllComment))) {
-          await _git
+        if ((addToGitignore && !gitignoreFile.contains(addComment)) ||
+            (addAllToGitignore && !gitignoreFile.contains(addAllComment))) {
+          await git
               .writeAsString(
-                  '\n' + (addToGitignore ? _addComment : _addAllComment) + '\n',
+                  '\n${addToGitignore ? addComment : addAllComment}\n',
                   mode: FileMode.append)
               .timeout(const Duration(seconds: 3));
         }
 
         // Make sure it doesn't already exist.
         if (addToGitignore &&
-            !_gitignoreFile.contains('$fmWorkflowDir/${template.name}.json')) {
-          await _git
+            !gitignoreFile.contains('$fmWorkflowDir/${template.name}.json')) {
+          await git
               .writeAsString('$fmWorkflowDir/${template.name}.json\n',
                   mode: FileMode.append)
               .timeout(const Duration(seconds: 3));
         } else if (addAllToGitignore &&
-            !_gitignoreFile.contains('$fmWorkflowDir/')) {
-          await _git
+            !gitignoreFile.contains('$fmWorkflowDir/')) {
+          await git
               .writeAsString('$fmWorkflowDir/\n', mode: FileMode.append)
               .timeout(const Duration(seconds: 3));
         }
@@ -853,11 +861,13 @@ Future<bool> _saveWorkflow(
     }
 
     await logger.file(LogTypeTag.info,
-        'New workflow created at the following path: ${_dirPath + '\\$fmWorkflowDir\\${template.name}.json'}');
+        'New workflow created at the following path: ${'$dirPath\\$fmWorkflowDir\\${template.name}.json'}');
 
-    Navigator.of(context).pop();
+    if (navigator.mounted) {
+      navigator.pop();
+    }
 
-    if (showAlerts) {
+    if (showAlerts && navigator.mounted) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
@@ -875,9 +885,11 @@ Future<bool> _saveWorkflow(
     await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow: $_',
         stackTraces: s);
 
-    Navigator.pop(context);
+    if (navigator.mounted) {
+      navigator.pop();
+    }
 
-    if (showAlerts) {
+    if (showAlerts && navigator.mounted) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(

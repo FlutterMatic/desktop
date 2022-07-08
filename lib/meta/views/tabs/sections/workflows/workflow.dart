@@ -3,28 +3,28 @@ import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 
 // 📦 Package imports:
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
-import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/elements/tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/models/workflows.services.dart';
+import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
+import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class HomeWorkflowSections extends StatefulWidget {
   const HomeWorkflowSections({Key? key}) : super(key: key);
@@ -61,7 +61,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
           supportDir: (await getApplicationSupportDirectory()).path,
         );
 
-        Isolate _i = await Isolate.spawn(
+        Isolate i = await Isolate.spawn(
           WorkflowServicesModel.getWorkflowsIsolate,
           <dynamic>[
             _loadWorkflowsPort.sendPort,
@@ -72,11 +72,13 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
           await logger.file(LogTypeTag.error, 'Failed to get workflows: $_',
               stackTraces: s);
 
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(context, 'Couldn\'t get the workflows.',
-                type: SnackBarType.error),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(context, 'Couldn\'t get the workflows.',
+                  type: SnackBarType.error),
+            );
+          }
 
           return Isolate.current;
         });
@@ -96,7 +98,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
 
               // No more expected responses, so will kill the isolate
               if (message[1] == true) {
-                _i.kill();
+                i.kill();
               }
             }
           });
@@ -252,23 +254,23 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
             child: ListView.builder(
               itemCount: _workflows.length,
               itemBuilder: (_, int i) {
-                bool _isLast = i == _workflows.length - 1;
+                bool isLast = i == _workflows.length - 1;
 
-                String _name = _workflows[i].path.split('\\').last;
+                String name = _workflows[i].path.split('\\').last;
 
                 // Will replace underscores with spaces and then capitalize the
                 // first letter of each word.
-                _name = _name.replaceAll('_', ' ');
-                _name = _name.split(' ').map((String s) {
+                name = name.replaceAll('_', ' ');
+                name = name.split(' ').map((String s) {
                   return s.substring(0, 1).toUpperCase() +
                       s.substring(1, s.length);
                 }).join(' ');
 
                 return Padding(
-                  padding: EdgeInsets.only(bottom: _isLast ? 0 : 15),
+                  padding: EdgeInsets.only(bottom: isLast ? 0 : 15),
                   child: HorizontalAxisView(
                     isVertical: true,
-                    title: _name + ' (${_workflows[i].workflows.length})',
+                    title: '$name (${_workflows[i].workflows.length})',
                     canCollapse: true,
                     action: Row(
                       children: <Widget>[
@@ -303,10 +305,7 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                       return WorkflowInfoTile(
                         workflow: e,
                         onReload: () => _loadWorkflows(true),
-                        path: _workflows[i].path +
-                            '\\$fmWorkflowDir\\' +
-                            e.name +
-                            '.json',
+                        path: '${_workflows[i].path}\\$fmWorkflowDir\\${e.name}.json',
                         onDelete: () {
                           setState(() => _workflows[i].workflows.remove(e));
                           if (_workflows[i].workflows.isEmpty) {

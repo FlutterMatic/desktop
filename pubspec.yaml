@@ -11,8 +11,9 @@ dependencies:
     sdk: flutter
 
   # Dependencies
-  bitsdojo_window: ^0.1.1+1
   connectivity_plus: ^2.2.1
+  bitsdojo_window: ^0.1.2
+  flutter_riverpod: ^1.0.4
   pubspec_parse: ^1.2.0
   file_selector: ^0.8.3
   file_selector_linux: ^0.0.2+1
@@ -25,7 +26,6 @@ dependencies:
   intl: ^0.17.0
   path_provider: ^2.0.9
   process_run: ^0.12.3+2
-  provider: ^6.0.2
   retry: ^3.1.0
   shared_preferences: ^2.0.13
   url_launcher: ^6.0.20
@@ -60,7 +60,7 @@ dev_dependencies:
   msix: ^3.2.0
 
   # Lint
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.0
   import_sorter: ^4.6.0
 
 # Emoji Sorter Service

@@ -1,9 +1,12 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 class DialogTemplate extends StatelessWidget {
   final Widget child;
@@ -43,8 +46,7 @@ class DialogTemplate extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: width ?? 500),
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Scrollbar(
-                isAlwaysShown: false,
-                showTrackOnHover: false,
+                thumbVisibility: false,
                 notificationPredicate: (ScrollNotification notification) =>
                     false,
                 child: SingleChildScrollView(
@@ -55,13 +57,20 @@ class DialogTemplate extends StatelessWidget {
                     onTap: () {},
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: RoundContainer(
-                        height: height,
-                        color: Theme.of(context).isDarkTheme
-                            ? AppTheme.darkCardColor
-                            : Colors.white,
-                        padding: childPadding ?? const EdgeInsets.all(10),
-                        child: Center(child: child),
+                      child: Consumer(
+                        builder: (_, ref, __) {
+                          ThemeState themeState =
+                              ref.watch(themeStateController);
+
+                          return RoundContainer(
+                            height: height,
+                            color: themeState.isDarkTheme
+                                ? AppTheme.darkCardColor
+                                : Colors.white,
+                            padding: childPadding ?? const EdgeInsets.all(10),
+                            child: Center(child: child),
+                          );
+                        },
                       ),
                     ),
                   ),

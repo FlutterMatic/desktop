@@ -1,17 +1,18 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/core/services/checks/studio.check.dart';
-import 'package:fluttermatic/core/services/checks/vsc.check.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
+import 'package:fluttermatic/core/notifiers/models/state/checks/vsc.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/meta/views/setup/components/button.dart';
 import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
@@ -46,35 +47,41 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<VSCodeNotifier, AndroidStudioNotifier>(
-      builder: (BuildContext context, VSCodeNotifier vsCodeNotifier,
-          AndroidStudioNotifier androidStudioNotifier, _) {
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        VSCState vscState = ref.watch(vscNotifierController);
+
+        AndroidStudioState androidStudioState =
+            ref.watch(androidStudioNotifierController);
+
         Progress _getProgress() {
           if (_editorTypes.contains(EditorType.none)) {
             return Progress.done;
           } else if (_editorTypes.contains(EditorType.vscode)) {
             if (_editorTypes.contains(EditorType.androidStudio)) {
-              if (vsCodeNotifier.progress != Progress.done) {
-                return vsCodeNotifier.progress;
-              } else if (androidStudioNotifier.progress != Progress.done) {
-                return androidStudioNotifier.progress;
+              if (vscState.progress != Progress.done) {
+                return vscState.progress;
+              } else if (androidStudioState.progress != Progress.done) {
+                return androidStudioState.progress;
               } else {
                 return Progress.done;
               }
             } else {
-              return vsCodeNotifier.progress;
+              return vscState.progress;
             }
           } else if (_editorTypes.contains(EditorType.androidStudio)) {
             if (_editorTypes.contains(EditorType.vscode)) {
-              if (androidStudioNotifier.progress != Progress.done) {
-                return androidStudioNotifier.progress;
-              } else if (vsCodeNotifier.progress != Progress.done) {
-                return vsCodeNotifier.progress;
+              if (androidStudioState.progress != Progress.done) {
+                return androidStudioState.progress;
+              } else if (vscState.progress != Progress.done) {
+                return vscState.progress;
               } else {
                 return Progress.done;
               }
             } else {
-              return androidStudioNotifier.progress;
+              return androidStudioState.progress;
             }
           } else {
             return Progress.done;
@@ -100,16 +107,16 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
             if (widget.isInstalling || widget.doneInstalling)
               Builder(
                 builder: (_) {
-                  if (vsCodeNotifier.progress == Progress.started ||
-                      vsCodeNotifier.progress == Progress.checking ||
-                      androidStudioNotifier.progress == Progress.checking ||
-                      androidStudioNotifier.progress == Progress.started) {
+                  if (vscState.progress == Progress.started ||
+                      vscState.progress == Progress.checking ||
+                      androidStudioState.progress == Progress.checking ||
+                      androidStudioState.progress == Progress.started) {
                     return hLoadingIndicator(context: context);
-                  } else if (vsCodeNotifier.progress == Progress.extracting ||
-                      androidStudioNotifier.progress == Progress.extracting) {
+                  } else if (vscState.progress == Progress.extracting ||
+                      androidStudioState.progress == Progress.extracting) {
                     return hLoadingIndicator(context: context);
-                  } else if (vsCodeNotifier.progress == Progress.done &&
-                      androidStudioNotifier.progress == Progress.done) {
+                  } else if (vscState.progress == Progress.done &&
+                      androidStudioState.progress == Progress.done) {
                     return setUpToolInstalled(
                       context,
                       title:
@@ -128,6 +135,7 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                   _selectEditor(
                     context,
                     icon: SvgPicture.asset(Assets.vscode),
+                    isDarkTheme: themeState.isDarkTheme,
                     name: 'VS Code',
                     type: EditorType.vscode,
                     onEditorTypeChanged: (EditorType val) {
@@ -139,14 +147,15 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                       }
                       widget.onEditorTypeChanged(_editorTypes);
                     },
-                    installation: vsCodeNotifier.progress != Progress.none ||
-                        androidStudioNotifier.progress != Progress.none,
+                    installation: vscState.progress != Progress.none ||
+                        androidStudioState.progress != Progress.none,
                     isSelected: _editorTypes.contains(EditorType.vscode),
                   ),
                   HSeparators.normal(),
                   _selectEditor(
                     context,
                     icon: SvgPicture.asset(Assets.studio),
+                    isDarkTheme: themeState.isDarkTheme,
                     name: 'Android Studio',
                     type: EditorType.androidStudio,
                     onEditorTypeChanged: (EditorType val) {
@@ -162,8 +171,8 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
 
                       widget.onEditorTypeChanged(_editorTypes);
                     },
-                    installation: vsCodeNotifier.progress != Progress.none ||
-                        androidStudioNotifier.progress != Progress.none,
+                    installation: vscState.progress != Progress.none ||
+                        androidStudioState.progress != Progress.none,
                     isSelected: _editorTypes.contains(EditorType.androidStudio),
                   ),
                   HSeparators.normal(),
@@ -171,10 +180,10 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                     context,
                     icon: Icon(
                       Icons.close_rounded,
-                      color: Theme.of(context).isDarkTheme
-                          ? Colors.white
-                          : Colors.black,
+                      color:
+                          themeState.isDarkTheme ? Colors.white : Colors.black,
                     ),
+                    isDarkTheme: themeState.isDarkTheme,
                     name: 'None',
                     type: EditorType.none,
                     onEditorTypeChanged: (EditorType val) {
@@ -182,8 +191,8 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                           () => _editorTypes = <EditorType>[EditorType.none]);
                       widget.onEditorTypeChanged(_editorTypes);
                     },
-                    installation: vsCodeNotifier.progress != Progress.none ||
-                        androidStudioNotifier.progress != Progress.none,
+                    installation: vscState.progress != Progress.none ||
+                        androidStudioState.progress != Progress.none,
                     isSelected: _editorTypes.contains(EditorType.none),
                   ),
                 ],
@@ -210,15 +219,14 @@ Widget _selectEditor(
   required Function(EditorType)? onEditorTypeChanged,
   required bool isSelected,
   required bool installation,
+  required bool isDarkTheme,
 }) {
   return Expanded(
     child: SizedBox(
       height: 120,
       width: 120,
       child: MaterialButton(
-        color: Theme.of(context).isDarkTheme
-            ? const Color(0xff1B2529)
-            : const Color(0xffF4F8FA),
+        color: isDarkTheme ? const Color(0xff1B2529) : const Color(0xffF4F8FA),
         onPressed: installation ? null : () => onEditorTypeChanged!(type),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -238,9 +246,7 @@ Widget _selectEditor(
                 Text(
                   name,
                   style: TextStyle(
-                    color: Theme.of(context).isDarkTheme
-                        ? Colors.white
-                        : const Color(0xff161E21),
+                    color: isDarkTheme ? Colors.white : const Color(0xff161E21),
                   ),
                 ),
               ],

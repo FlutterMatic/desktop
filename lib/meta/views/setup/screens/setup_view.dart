@@ -1,26 +1,25 @@
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-// 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/about/about_us.dart';
-import 'package:fluttermatic/components/dialog_templates/flutter/flutter_requirements.dart';
+import 'package:fluttermatic/components/dialog_templates/flutter/requirements.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
-import 'package:fluttermatic/core/services/checks/flutter.check.dart';
-import 'package:fluttermatic/core/services/checks/git.check.dart';
-import 'package:fluttermatic/core/services/checks/java.check.dart';
-import 'package:fluttermatic/core/services/checks/studio.check.dart';
-import 'package:fluttermatic/core/services/checks/vsc.check.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/checks/flutter.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/checks/git.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/checks/java.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/checks/studio.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/checks/vsc.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/setup/components/header.dart';
 import 'package:fluttermatic/meta/views/setup/sections/get_started.dart';
@@ -61,145 +60,152 @@ class _SetupScreenState extends State<SetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              children: <Widget>[
-                createSetUpHeader(_tab, context),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: SizedBox(
-                      width: 415,
-                      child: Center(
-                        child: ScrollConfiguration(
-                          behavior: ScrollConfiguration.of(context)
-                              .copyWith(scrollbars: false),
-                          child: SingleChildScrollView(
-                            child: _getCurrentPage(context),
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+        ThemeNotifier themeNotifier = ref.watch(themeStateController.notifier);
+
+        return Scaffold(
+          body: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  children: <Widget>[
+                    createSetUpHeader(_tab, context),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: SizedBox(
+                          width: 415,
+                          child: Center(
+                            child: ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(scrollbars: false),
+                              child: SingleChildScrollView(
+                                child: _getCurrentPage(context),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 15, top: 5),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextButton(
-                        style: ButtonStyle(
-                          splashFactory: NoSplash.splashFactory,
-                          overlayColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                        ),
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (_) => const FlutterRequirementsDialog(),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'System Requirements',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15, top: 5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          TextButton(
+                            style: ButtonStyle(
+                              splashFactory: NoSplash.splashFactory,
+                              overlayColor: MaterialStateProperty.all<Color>(
+                                  Colors.transparent),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.transparent),
+                            ),
+                            onPressed: () => showDialog(
+                              context: context,
+                              builder: (_) => const FlutterRequirementsDialog(),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                'System Requirements',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: themeState.isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      TextButton(
-                        style: ButtonStyle(
-                          splashFactory: NoSplash.splashFactory,
-                          overlayColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => const DocumentationDialog(),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'Docs & Tutorials',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).isDarkTheme
-                                    ? Colors.white
-                                    : Colors.black),
+                          TextButton(
+                            style: ButtonStyle(
+                              splashFactory: NoSplash.splashFactory,
+                              overlayColor: MaterialStateProperty.all<Color>(
+                                  Colors.transparent),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.transparent),
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const DocumentationDialog(),
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                'Docs & Tutorials',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: themeState.isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  splashRadius: 1,
-                  icon: Icon(
-                    Theme.of(context).isDarkTheme
-                        ? Icons.light_mode_outlined
-                        : Icons.dark_mode_outlined,
-                  ),
-                  onPressed: () {
-                    context
-                        .read<ThemeChangeNotifier>()
-                        .updateTheme(!Theme.of(context).isDarkTheme);
-                    setState(() {});
-                  },
-                ),
-                HSeparators.xSmall(),
-                IconButton(
-                  splashRadius: 1,
-                  icon: const Icon(Icons.info_outline_rounded),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const AboutUsDialog(),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          if (allowDevControls)
-            Positioned(
-              top: 20,
-              right: 20,
-              child: IconButton(
-                splashRadius: 1,
-                icon: const Icon(Icons.skip_next),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder<Widget>(
-                      pageBuilder: (_, __, ___) => const HomeScreen(),
-                      transitionDuration: Duration.zero,
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
-            ),
-        ],
-      ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      splashRadius: 1,
+                      icon: Icon(
+                        themeState.isDarkTheme
+                            ? Icons.light_mode_outlined
+                            : Icons.dark_mode_outlined,
+                      ),
+                      onPressed: () {
+                        themeNotifier.updateTheme(!themeState.isDarkTheme);
+                        setState(() {});
+                      },
+                    ),
+                    HSeparators.xSmall(),
+                    IconButton(
+                      splashRadius: 1,
+                      icon: const Icon(Icons.info_outline_rounded),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const AboutUsDialog(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              if (allowDevControls)
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: IconButton(
+                    splashRadius: 1,
+                    icon: const Icon(Icons.skip_next),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder<Widget>(
+                          pageBuilder: (_, __, ___) => const HomeScreen(),
+                          transitionDuration: Duration.zero,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -216,133 +222,157 @@ class _SetupScreenState extends State<SetupScreen> {
           },
         );
       case SetUpTab.installFlutter:
-        return installFlutter(
-          context,
-          onInstall: () async {
-            setState(() => _installing = true);
+        return Consumer(
+          builder: (_, ref, __) {
+            FlutterNotifier flutterNotifier =
+                ref.watch(flutterNotifierController.notifier);
 
-            // Install Flutter on the system.
-            await context
-                .read<FlutterNotifier>()
-                .checkFlutter(context, sdkData);
+            return installFlutter(
+              context,
+              onInstall: () async {
+                setState(() => _installing = true);
 
-            setState(() {
-              _installing = false;
-              _completedInstall = true;
-            });
+                // Install Flutter on the system.
+                await flutterNotifier.checkFlutter();
+
+                setState(() {
+                  _installing = false;
+                  _completedInstall = true;
+                });
+              },
+              onContinue: () => setState(() {
+                _completedInstall = false;
+                _tab = SetUpTab.installEditor;
+              }),
+            );
           },
-          onContinue: () => setState(() {
-            _completedInstall = false;
-            _tab = SetUpTab.installEditor;
-          }),
         );
       case SetUpTab.installEditor:
-        return SetUpInstallEditor(
-          onInstall: () async {
-            setState(() => _installing = true);
+        return Consumer(
+          builder: (_, ref, __) {
+            AndroidStudioNotifier androidStudioNotifier =
+                ref.watch(androidStudioNotifierController.notifier);
 
-            // None will be skipped and next page will be shown.
-            if (_editor.contains(EditorType.none)) {
-              setState(() {
-                _editor.clear();
+            VSCodeNotifier vscNotifier =
+                ref.watch(vscNotifierController.notifier);
+
+            return SetUpInstallEditor(
+              onInstall: () async {
+                setState(() => _installing = true);
+
+                // None will be skipped and next page will be shown.
+                if (_editor.contains(EditorType.none)) {
+                  setState(() {
+                    _editor.clear();
+                    _tab = SetUpTab.installGit;
+                  });
+                }
+
+                // Installs Android Studio.
+                if (_editor.contains(EditorType.androidStudio)) {
+                  await androidStudioNotifier.checkAStudio();
+
+                  setState(() => _editor.remove(EditorType.androidStudio));
+                }
+
+                // Installs VSCode.
+                if (_editor.contains(EditorType.vscode)) {
+                  await vscNotifier.checkVSCode();
+
+                  // After completing, we will remove the item from the list.
+                  setState(() => _editor.remove(EditorType.vscode));
+                }
+
+                setState(() {
+                  _installing = false;
+                  _completedInstall = true;
+                });
+              },
+              onEditorTypeChanged: (List<EditorType> val) =>
+                  setState(() => _editor.addAll(val)),
+              isInstalling: _installing,
+              doneInstalling: _completedInstall,
+              onContinue: () => setState(() {
+                _completedInstall = false;
                 _tab = SetUpTab.installGit;
-              });
-            }
-
-            // Installs Android Studio.
-            if (_editor.contains(EditorType.androidStudio)) {
-              await context
-                  .read<AndroidStudioNotifier>()
-                  .checkAStudio(context, apiData);
-
-              setState(() => _editor.remove(EditorType.androidStudio));
-            }
-
-            // Installs VSCode.
-            if (_editor.contains(EditorType.vscode)) {
-              await context
-                  .read<VSCodeNotifier>()
-                  .checkVSCode(context, apiData);
-
-              // After completing, we will remove the item from the list.
-              setState(() => _editor.remove(EditorType.vscode));
-            }
-
-            setState(() {
-              _installing = false;
-              _completedInstall = true;
-            });
+              }),
+            );
           },
-          onEditorTypeChanged: (List<EditorType> val) =>
-              setState(() => _editor.addAll(val)),
-          isInstalling: _installing,
-          doneInstalling: _completedInstall,
-          onContinue: () => setState(() {
-            _completedInstall = false;
-            _tab = SetUpTab.installGit;
-          }),
         );
       case SetUpTab.installGit:
-        return installGit(
-          context,
-          onInstall: () async {
-            setState(() => _installing = true);
+        return Consumer(
+          builder: (_, ref, __) {
+            GitNotifier gitNotifier = ref.watch(gitNotifierController.notifier);
 
-            // Install Git on the system.
-            await context.read<GitNotifier>().checkGit(context, apiData);
+            return installGit(
+              context,
+              onInstall: () async {
+                setState(() => _installing = true);
 
-            setState(() {
-              _installing = false;
-              _completedInstall = true;
-            });
+                // Install Git on the system.
+                await gitNotifier.checkGit();
+
+                setState(() {
+                  _installing = false;
+                  _completedInstall = true;
+                });
+              },
+              isInstalling: _installing,
+              doneInstalling: _completedInstall,
+              onContinue: () => setState(() {
+                _completedInstall = false;
+                _tab = SetUpTab.installJava;
+              }),
+            );
           },
-          isInstalling: _installing,
-          doneInstalling: _completedInstall,
-          onContinue: () => setState(() {
-            _completedInstall = false;
-            _tab = SetUpTab.installJava;
-          }),
         );
       case SetUpTab.installJava:
-        return installJava(
-          context,
-          onInstall: () async {
-            setState(() => _installing = true);
+        return Consumer(
+          builder: (_, ref, __) {
+            JavaNotifier javaNotifier =
+                ref.watch(javaNotifierController.notifier);
 
-            // Install Java on the system.
-            await context.read<JavaNotifier>().checkJava(context, apiData);
+            return installJava(
+              context,
+              onInstall: () async {
+                setState(() => _installing = true);
 
-            setState(() {
-              _installing = false;
-              _completedInstall = true;
-            });
+                // Install Java on the system.
+                await javaNotifier.checkJava();
+
+                setState(() {
+                  _installing = false;
+                  _completedInstall = true;
+                });
+              },
+              onSkip: () => setState(() {
+                _installing = false;
+                _completedInstall = false;
+                _tab = SetUpTab.restart;
+              }),
+              onContinue: () async {
+                await SharedPref().pref.setString(SPConst.setupTab, 'RESTART');
+                setState(() => _tab = SetUpTab.restart);
+              },
+              isInstalling: _installing,
+              doneInstalling: _completedInstall,
+            );
           },
-          onSkip: () => setState(() {
-            _installing = false;
-            _completedInstall = false;
-            _tab = SetUpTab.restart;
-          }),
-          onContinue: () async {
-            await SharedPref().pref.setString(SPConst.setupTab, 'RESTART');
-            setState(() => _tab = SetUpTab.restart);
-          },
-          isInstalling: _installing,
-          doneInstalling: _completedInstall,
         );
       case SetUpTab.restart:
         return setUpRestart(
           context,
           onRestart: () async {
-            int _restartSeconds = 5;
+            int restartSeconds = 5;
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
-                'Your device will restart in $_restartSeconds seconds.',
+            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+                context, 'Your device will restart in $restartSeconds seconds.',
                 type: SnackBarType.warning));
 
             await SharedPref().pref.setBool(SPConst.completedSetup, true);
             await SharedPref().pref.remove(SPConst.setupTab);
 
-            await Future<void>.delayed(Duration(seconds: _restartSeconds));
+            await Future<void>.delayed(Duration(seconds: restartSeconds));
 
             // Restart the system only if it's compiled for release. Prevent
             // restart otherwise for testing purposes.
@@ -358,7 +388,7 @@ class _SetupScreenState extends State<SetupScreen> {
                   context,
                   'Restarting has been ignored because you are not running a release version of this app. Restart manually instead.',
                   type: SnackBarType.error,
-                  duration: Duration(seconds: _restartSeconds),
+                  duration: Duration(seconds: restartSeconds),
                 ),
               );
             }

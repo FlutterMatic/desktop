@@ -39,7 +39,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
   Future<void> _loadData() async {
     try {
       for (String name in _docsNames) {
-        String _fileContent =
+        String fileContent =
             await rootBundle.loadString('assets/documentation/$name.md');
 
         setState(() {
@@ -54,14 +54,14 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
                   .first
                   .replaceAll('_', ' ')
                   .split(' ')
-                  .map((String _word) =>
-                      _word.substring(0, 1).toUpperCase() + _word.substring(1))
+                  .map((String word) =>
+                      word.substring(0, 1).toUpperCase() + word.substring(1))
                   .join(' '),
               SingleChildScrollView(
                 child: MarkdownBody(
                   onTapLink: (String txt, String? href, String title) {
                     try {
-                      launch(txt);
+                      launchUrl(Uri.parse(txt));
                     } catch (_, s) {
                       logger.file(LogTypeTag.error,
                           'Couldn\'t open documentation referenced link: $txt - $href - $title - Error: $_',
@@ -77,7 +77,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
                     }
                   },
                   selectable: true,
-                  data: _fileContent,
+                  data: fileContent,
                   extensionSet: md.ExtensionSet(
                     md.ExtensionSet.gitHubFlavored.blockSyntaxes,
                     <md.InlineSyntax>[
@@ -97,15 +97,18 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to load documentation $_',
           stackTraces: s);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Failed to load documentation. Please try again later or report this issue if it persists.',
-          type: SnackBarType.error,
-        ),
-      );
-      Navigator.pop(context);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Failed to load documentation. Please try again later or report this issue if it persists.',
+            type: SnackBarType.error,
+          ),
+        );
+        Navigator.pop(context);
+      }
     }
   }
 

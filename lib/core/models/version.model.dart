@@ -1,4 +1,4 @@
-Versions versions = Versions();
+final Versions versions = Versions();
 
 class Versions {
   String? flutter;

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -48,13 +48,13 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
       _workflows.clear();
       _workflowPaths.clear();
 
-      String _path = !widget.pubspecPath.endsWith('\\pubspec.yaml')
+      String path = !widget.pubspecPath.endsWith('\\pubspec.yaml')
           ? widget.pubspecPath
           : ((widget.pubspecPath.split('\\')..removeLast()).join('\\'));
 
-      Directory _dir = Directory(_path + '\\$fmWorkflowDir');
+      Directory dir = Directory('$path\\$fmWorkflowDir');
 
-      if (!await _dir.exists()) {
+      if (!await dir.exists()) {
         setState(() => _loadingWorkflows = false);
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,48 +72,48 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
         return;
       }
 
-      List<FileSystemEntity> _files = _dir.listSync(recursive: true);
+      List<FileSystemEntity> files = dir.listSync(recursive: true);
 
-      _files.where((FileSystemEntity e) => e.path.endsWith('.json'));
+      files.where((FileSystemEntity e) => e.path.endsWith('.json'));
 
-      List<String> _paths = <String>[];
-      List<WorkflowTemplate> _templates = <WorkflowTemplate>[];
+      List<String> paths = <String>[];
+      List<WorkflowTemplate> templates = <WorkflowTemplate>[];
 
-      for (FileSystemEntity e in _files) {
+      for (FileSystemEntity e in files) {
         // Delete the workflow if the name is empty or the file is empty.
         if (e.path.endsWith('.json') && e.existsSync()) {
-          String _fileName = e.path.split('\\').last.split('.').first;
-          if (_fileName.isEmpty) {
+          String fileName = e.path.split('\\').last.split('.').first;
+          if (fileName.isEmpty) {
             await logger.file(LogTypeTag.warning,
                 'Found a workflow with an empty file name. Deleting this workflow.');
             e.deleteSync();
             continue;
           }
 
-          String _json = File(e.path).readAsStringSync();
-          if (_json.isEmpty) {
+          String json = File(e.path).readAsStringSync();
+          if (json.isEmpty) {
             await logger.file(
                 LogTypeTag.warning, 'Deleted a workflow file that is empty.');
             e.deleteSync();
             continue;
           }
 
-          Map<String, dynamic> _map = jsonDecode(_json);
-          if (_map['name'] == null || (_map['name'] as String).isEmpty) {
+          Map<String, dynamic> map = jsonDecode(json);
+          if (map['name'] == null || (map['name'] as String).isEmpty) {
             await logger.file(
                 LogTypeTag.warning, 'Deleted a workflow with an empty name.');
             e.deleteSync();
             continue;
           }
 
-          _paths.add(e.path);
-          _templates.add(WorkflowTemplate.fromJson(_map));
+          paths.add(e.path);
+          templates.add(WorkflowTemplate.fromJson(map));
         }
       }
 
       setState(() {
-        _workflows.addAll(_templates);
-        _workflowPaths.addAll(_paths);
+        _workflows.addAll(templates);
+        _workflowPaths.addAll(paths);
         _loadingWorkflows = false;
       });
     } catch (_, s) {
@@ -167,9 +167,9 @@ class _ShowExistingWorkflowsState extends State<ShowExistingWorkflows> {
                 itemCount: _workflows.length,
                 shrinkWrap: true,
                 itemBuilder: (_, int i) {
-                  bool _isLast = i == _workflows.length - 1;
+                  bool isLast = i == _workflows.length - 1;
                   return Padding(
-                    padding: EdgeInsets.only(bottom: _isLast ? 0 : 5),
+                    padding: EdgeInsets.only(bottom: isLast ? 0 : 5),
                     child: _WorkflowTile(
                       template: _workflows[i],
                       path: _workflowPaths[i],

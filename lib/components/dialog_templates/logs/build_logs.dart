@@ -10,7 +10,7 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -26,10 +26,10 @@ import 'package:fluttermatic/core/services/logs.dart';
 /// Returns:
 /// True if the file was successfully sent, false otherwise.
 Future<void> _generateReportOnIsolate(List<dynamic> data) async {
-  SendPort _port = data[0];
-  String _basePath = data[1];
-  String _filePath = data[2];
-  String _fileName = data[3];
+  SendPort port = data[0];
+  String basePath = data[1];
+  String filePath = data[2];
+  String fileName = data[3];
 
   try {
     // Will go to the support directory then to the "logs" directory. Will then
@@ -40,22 +40,22 @@ Future<void> _generateReportOnIsolate(List<dynamic> data) async {
     // The first line will contain information such as the date and time of the
     // report generation.
 
-    String _dir = _basePath + '\\logs';
+    String dir = '$basePath\\logs';
 
-    List<FileSystemEntity> _logsDir = Directory(_dir)
+    List<FileSystemEntity> logsDir = Directory(dir)
         .listSync(recursive: true)
         .where((FileSystemEntity e) => e is File && e.path.endsWith('.log'))
         .toList();
 
-    File _reportFile = File(_filePath + '\\' + _fileName);
+    File reportFile = File('$filePath\\$fileName');
 
-    await _reportFile
+    await reportFile
         .writeAsString('Report generated on ${DateTime.now().toString()}\n\n');
 
-    for (FileSystemEntity logFile in _logsDir) {
-      List<String> _logs = <String>[];
+    for (FileSystemEntity logFile in logsDir) {
+      List<String> logs = <String>[];
 
-      _logs.add(
+      logs.add(
         '''
 
 ---- LOG ----
@@ -65,24 +65,24 @@ ${logFile.path.split('\\').last.split('.').first}
 ''',
       );
 
-      _logs.addAll(await File(logFile.path).readAsLines());
+      logs.addAll(await File(logFile.path).readAsLines());
 
-      await _reportFile.writeAsString(
-        _logs.join('\n'),
+      await reportFile.writeAsString(
+        logs.join('\n'),
         mode: FileMode.writeOnlyAppend,
       );
     }
 
     await logger.file(
         LogTypeTag.info, 'Report generated on ${DateTime.now().toString()}',
-        logDir: Directory(_basePath));
+        logDir: Directory(basePath));
 
-    _port.send(true);
+    port.send(true);
     return;
   } catch (_, s) {
     await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
-        stackTraces: s, logDir: Directory(_basePath));
-    _port.send(false);
+        stackTraces: s, logDir: Directory(basePath));
+    port.send(false);
     return;
   }
 }
@@ -109,14 +109,14 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
   Future<void> _generateReport() async {
     try {
-      late String _p;
+      late String p;
 
-      _p = _savePath!;
+      p = _savePath!;
 
-      Isolate _i = await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
+      Isolate i = await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
         _generatePort.sendPort,
         (await getApplicationSupportDirectory()).path,
-        _p,
+        p,
         _fileName,
       ]);
 
@@ -136,7 +136,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
                   type: SnackBarType.error,
                 ),
               );
-              _i.kill();
+              i.kill();
               return;
             }
 
@@ -144,14 +144,14 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
               Navigator.pop(context);
               // Opens file viewer app to show the output.
               if (Platform.isWindows) {
-                await shell.run('explorer $_p');
+                await shell.run('explorer $p');
               } else if (Platform.isMacOS) {
-                await shell.run('open $_p');
+                await shell.run('open $p');
               } else if (Platform.isLinux) {
-                await shell.run('xdg-open $_p');
+                await shell.run('xdg-open $p');
               }
 
-              _i.kill();
+              i.kill();
 
               await Future<void>.delayed(const Duration(seconds: 5));
 
@@ -173,7 +173,7 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
               setState(() => _savePath = null);
 
-              _i.kill();
+              i.kill();
               _generatePort.close();
               return;
             }
@@ -188,10 +188,12 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
       await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
           stackTraces: s);
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context, 'Failed to generate issue report. Please try again.',
-          type: SnackBarType.error));
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+            context, 'Failed to generate issue report. Please try again.',
+            type: SnackBarType.error));
+      }
 
       setState(() => _savePath = null);
     }
@@ -232,13 +234,13 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
                       disable: _savePath != null,
                       child: const Text('Select Path'),
                       onPressed: () async {
-                        String? _path = await file_selector.getDirectoryPath(
+                        String? path = await file_selector.getDirectoryPath(
                             confirmButtonText: 'Report');
 
-                        if (_path != null) {
-                          setState(() => _savePath = _path);
+                        if (path != null) {
+                          setState(() => _savePath = path);
                           await _generateReport();
-                        } else {
+                        } else if (mounted) {
                           ScaffoldMessenger.of(context).clearSnackBars();
                           ScaffoldMessenger.of(context).showSnackBar(
                             snackBarTile(

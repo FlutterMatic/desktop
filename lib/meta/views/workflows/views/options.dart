@@ -6,12 +6,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
@@ -43,7 +43,10 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
     if (!await File(widget.workflowPath).exists()) {
       widget.onDelete();
       await Future<void>.delayed(const Duration(milliseconds: 300));
-      Navigator.pop(context);
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } else {
       setState(() => _loading = false);
     }
@@ -82,14 +85,14 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                     onPressed: () async {
                       Navigator.pop(context);
 
-                      Map<String, dynamic> _workflow = jsonDecode(
+                      Map<String, dynamic> workflow = jsonDecode(
                           await File(widget.workflowPath).readAsString());
 
                       await showDialog(
                         context: context,
                         builder: (_) => PreviewWorkflowDialog(
                             onReload: widget.onReload,
-                            template: WorkflowTemplate.fromJson(_workflow),
+                            template: WorkflowTemplate.fromJson(workflow),
                             workflowPath: widget.workflowPath),
                       );
                     },
@@ -112,19 +115,17 @@ class _ShowWorkflowTileOptionsState extends State<ShowWorkflowTileOptions> {
                     onPressed: () async {
                       Navigator.pop(context);
 
-                      Map<String, dynamic> _workflow = jsonDecode(
+                      Map<String, dynamic> workflow = jsonDecode(
                           await File(widget.workflowPath).readAsString());
 
                       await showDialog(
                         context: context,
                         builder: (_) => StartUpWorkflow(
-                          pubspecPath: (widget.workflowPath.split('\\')
-                                    ..removeLast()
-                                    ..removeLast())
-                                  .join('\\') +
-                              '\\pubspec.yaml',
+                          pubspecPath: '${(widget.workflowPath.split('\\')
+                            ..removeLast()
+                            ..removeLast()).join('\\')}\\pubspec.yaml',
                           editWorkflowTemplate:
-                              WorkflowTemplate.fromJson(_workflow),
+                              WorkflowTemplate.fromJson(workflow),
                         ),
                       );
 

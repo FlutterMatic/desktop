@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -54,9 +54,15 @@ class GitHubSettingsSection extends StatelessWidget {
                                 child: RectangleButton(
                                   child: const Text('Skip'),
                                   onPressed: () async {
-                                    await launch(
-                                        'https://github.com/FlutterMatic/desktop/issues/new');
-                                    Navigator.pop(context);
+                                    NavigatorState navigator =
+                                        Navigator.of(context);
+
+                                    await launchUrl(Uri.parse(
+                                        'https://github.com/FlutterMatic/desktop/issues/new'));
+
+                                    if (navigator.mounted) {
+                                      navigator.pop();
+                                    }
                                   },
                                 ),
                               ),
@@ -65,13 +71,19 @@ class GitHubSettingsSection extends StatelessWidget {
                                 child: RectangleButton(
                                   child: const Text('Generate'),
                                   onPressed: () async {
+                                    NavigatorState navigator =
+                                        Navigator.of(context);
+
                                     await showDialog(
                                       context: context,
                                       builder: (_) => const BuildLogsDialog(),
                                     );
-                                    await launch(
-                                        'https://github.com/FlutterMatic/desktop/issues/new');
-                                    Navigator.pop(context);
+                                    await launchUrl(Uri.parse(
+                                        'https://github.com/FlutterMatic/desktop/issues/new'));
+
+                                    if (navigator.mounted) {
+                                      navigator.pop();
+                                    }
                                   },
                                 ),
                               ),
@@ -90,7 +102,8 @@ class GitHubSettingsSection extends StatelessWidget {
                 height: 100,
                 onPressed: () {
                   Navigator.pop(context);
-                  launch('https://github.com/FlutterMatic/desktop/pulls');
+                  launchUrl(Uri.parse(
+                      'https://github.com/FlutterMatic/desktop/pulls'));
                 },
                 child: Column(
                   children: <Widget>[

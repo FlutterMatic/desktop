@@ -1,13 +1,12 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-
-// 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;
@@ -62,17 +61,18 @@ Widget _buttonListTile(
   required int length,
   required Widget? trailing,
 }) {
-  Radius _curveValue = const Radius.circular(5);
-  Radius _curveEmpty = Radius.zero;
-  Radius _endExpression = (length == 1 ? _curveValue : _curveEmpty);
+  Radius curveValue = const Radius.circular(5);
+  Radius curveEmpty = Radius.zero;
+  Radius endExpression = (length == 1 ? curveValue : curveEmpty);
+
   return RectangleButton(
     width: double.infinity,
     onPressed: onPressed,
     radius: BorderRadius.only(
-      topLeft: index == 0 ? _curveValue : _endExpression,
-      topRight: index == 0 ? _curveValue : _endExpression,
-      bottomLeft: index + 1 == length ? _curveValue : _endExpression,
-      bottomRight: index + 1 == length ? _curveValue : _endExpression,
+      topLeft: index == 0 ? curveValue : endExpression,
+      topRight: index == 0 ? curveValue : endExpression,
+      bottomLeft: index + 1 == length ? curveValue : endExpression,
+      bottomRight: index + 1 == length ? curveValue : endExpression,
     ),
     padding: const EdgeInsets.symmetric(horizontal: 15),
     child: Row(
@@ -90,11 +90,17 @@ Widget _buttonListTile(
           ),
         ),
         if (trailing != null) trailing,
-        Icon(Icons.arrow_forward_ios_rounded,
-            color: context.read<ThemeChangeNotifier>().isDarkTheme
-                ? Colors.white
-                : Colors.black,
-            size: 15),
+        Consumer(
+          builder: (_, ref, __) {
+            ThemeState themeState = ref.watch(themeStateController);
+
+            return Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              size: 15,
+            );
+          },
+        ),
       ],
     ),
   );

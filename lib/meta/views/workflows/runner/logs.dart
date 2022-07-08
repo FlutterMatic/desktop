@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -26,9 +26,9 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
   final List<String> _logs = <String>[];
 
   Future<void> _loadLogs() async {
-    File _logFile = File(widget.path);
+    File logFile = File(widget.path);
 
-    if (!await _logFile.exists()) {
+    if (!await logFile.exists()) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(context, 'This log file no longer exists.',
@@ -38,7 +38,7 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
       return;
     }
 
-    List<String> logs = await _logFile.readAsLines();
+    List<String> logs = await logFile.readAsLines();
 
     while (logs.isNotEmpty && logs.first.isEmpty) {
       logs.removeAt(0);

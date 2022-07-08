@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -71,7 +71,6 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                           padding: const EdgeInsets.only(left: 5),
                           child: RectangleButton(
                             padding: EdgeInsets.zero,
-                            child: const Icon(Icons.more_vert, size: 14),
                             color: Colors.transparent,
                             onPressed: () async {
                               await showDialog(
@@ -86,6 +85,7 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                             radius: BorderRadius.circular(2),
                             width: 22,
                             height: 22,
+                            child: const Icon(Icons.more_vert, size: 14),
                           ),
                         ),
                     ],
@@ -197,8 +197,7 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                             color: kGreenColor, size: 14),
                         HSeparators.xSmall(),
                         Text(
-                          widget.workflow.workflowActions.length.toString() +
-                              ' action${widget.workflow.workflowActions.length == 1 ? '' : 's'}',
+                          '${widget.workflow.workflowActions.length} action${widget.workflow.workflowActions.length == 1 ? '' : 's'}',
                           style: const TextStyle(color: Colors.grey),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
@@ -214,7 +213,8 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                 if (!widget.workflow.isSaved)
                   Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message: '''
+                    message:
+                        '''
 This workflow has not completed setup yet - or, you will need to go through 
 setup again because we added some new features that need to be migrated.''',
                     child: SvgPicture.asset(Assets.warn, height: 20),
@@ -228,19 +228,17 @@ setup again because we added some new features that need to be migrated.''',
                     height: 40,
                     child: const Icon(Icons.edit_rounded, size: 20),
                     onPressed: () async {
-                      Map<String, dynamic> _workflow =
+                      Map<String, dynamic> workflow =
                           jsonDecode(await File(widget.path).readAsString());
 
                       await showDialog(
                         context: context,
                         builder: (_) => StartUpWorkflow(
-                          pubspecPath: (widget.path.split('\\')
-                                    ..removeLast()
-                                    ..removeLast())
-                                  .join('\\') +
-                              '\\pubspec.yaml',
+                          pubspecPath: '${(widget.path.split('\\')
+                            ..removeLast()
+                            ..removeLast()).join('\\')}\\pubspec.yaml',
                           editWorkflowTemplate:
-                              WorkflowTemplate.fromJson(_workflow),
+                              WorkflowTemplate.fromJson(workflow),
                         ),
                       );
 
@@ -277,7 +275,7 @@ setup again because we added some new features that need to be migrated.''',
                       child: const Icon(Icons.delete_forever_rounded,
                           color: AppTheme.errorColor, size: 20),
                       onPressed: () async {
-                        WorkflowTemplate _template = WorkflowTemplate.fromJson(
+                        WorkflowTemplate template = WorkflowTemplate.fromJson(
                             jsonDecode(await File(widget.path).readAsString()));
                         await showDialog(
                           context: context,
@@ -288,7 +286,7 @@ setup again because we added some new features that need to be migrated.''',
                               }
                             },
                             path: widget.path,
-                            template: _template,
+                            template: template,
                           ),
                         );
                       },

@@ -1,10 +1,11 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-
-// 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
   Widget _title(String title, SetUpTab tileTab) {
@@ -14,14 +15,20 @@ Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
           children: <Widget>[
             Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
             VSeparators.large(),
-            Container(
-              height: 3,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Theme.of(context).isDarkTheme
-                    ? AppTheme.lightBackgroundColor
-                    : AppTheme.darkBackgroundColor,
-              ),
+            Consumer(
+              builder: (_, ref, __) {
+                ThemeState themeState = ref.watch(themeStateController);
+
+                return Container(
+                  height: 3,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: themeState.isDarkTheme
+                        ? AppTheme.lightBackgroundColor
+                        : AppTheme.darkBackgroundColor,
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -39,14 +46,20 @@ Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
         child: Stack(
           alignment: Alignment.bottomLeft,
           children: <Widget>[
-            Container(
-              height: 3,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Theme.of(context).isDarkTheme
-                    ? const Color(0xff1B2529)
-                    : const Color(0xFFF4F8FA),
-              ),
+            Consumer(
+              builder: (_, ref, __) {
+                ThemeState themeState = ref.watch(themeStateController);
+
+                return Container(
+                  height: 3,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: themeState.isDarkTheme
+                        ? const Color(0xff1B2529)
+                        : const Color(0xFFF4F8FA),
+                  ),
+                );
+              },
             ),
             Row(
               children: <Widget>[

@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 
 enum LogTypeTag { info, warning, error }
 
-Logger logger = Logger();
+final Logger logger = Logger();
 
 class Logger {
   static Future<String> _localPath(Directory? dir) async {

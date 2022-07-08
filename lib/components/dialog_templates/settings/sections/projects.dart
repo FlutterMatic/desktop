@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file_selector;
+import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
@@ -106,23 +106,24 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                       color: Colors.blueGrey,
                     ),
                     onPressed: () async {
-                      String? _projectsDirectory;
-                      String? _directoryPath =
+                      String? projectsDirectory;
+                      String? directoryPath =
                           await file_selector.getDirectoryPath(
-                        initialDirectory: _projectsDirectory,
+                        initialDirectory: projectsDirectory,
                         confirmButtonText: 'Confirm',
                       );
-                      if (_directoryPath != null) {
+
+                      if (directoryPath != null) {
                         setState(() {
                           _dirPathError = false;
-                          _dirPath = _directoryPath;
+                          _dirPath = directoryPath;
                         });
                         await SharedPref()
                             .pref
-                            .setString(SPConst.projectsPath, _directoryPath);
+                            .setString(SPConst.projectsPath, directoryPath);
 
                         await logger.file(LogTypeTag.info,
-                            'Projects path was set to: $_directoryPath');
+                            'Projects path was set to: $directoryPath');
                       } else {
                         await logger.file(
                             LogTypeTag.warning, 'Projects path was not chosen');
@@ -146,13 +147,6 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
             ),
             HSeparators.normal(),
             PopupMenuButton<int>(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: _refreshIntervals == 60
-                    ? const Text('Every 1 hour')
-                    : Text(
-                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}'),
-              ),
               tooltip: '',
               itemBuilder: (_) {
                 return <PopupMenuEntry<int>>[
@@ -182,17 +176,27 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   await logger.file(LogTypeTag.error,
                       'Couldn\'t set projects refresh interval: $_',
                       stackTraces: s);
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      'Couldn\'t update your project refresh intervals.',
-                      type: SnackBarType.error,
-                    ),
-                  );
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'Couldn\'t update your project refresh intervals.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
                 }
               },
               initialValue: SharedPref().pref.getInt(SPConst.projectRefresh),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _refreshIntervals == 60
+                    ? const Text('Every 1 hour')
+                    : Text(
+                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}'),
+              ),
             )
           ],
         ),

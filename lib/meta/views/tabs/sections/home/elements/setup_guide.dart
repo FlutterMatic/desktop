@@ -1,12 +1,10 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-
-// 📦 Package imports:
-import 'package:file_selector/file_selector.dart' as file;
+import 'package:file_selector/file_selector.dart' as file_selector;
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/flutter/new_flutter.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create_select.dart';
 import 'package:fluttermatic/components/dialog_templates/project/outdated_dependencies.dart';
@@ -14,8 +12,8 @@ import 'package:fluttermatic/components/dialog_templates/settings/settings.dart'
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/circle_chart.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
@@ -69,16 +67,16 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
       }
     }
 
-    String _value =
+    String value =
         _percent.toString().substring(_percent.toString().indexOf('.') + 1);
 
-    if (_value.length == 1 && _value != '0') {
-      return _value + '0';
+    if (value.length == 1 && value != '0') {
+      return '${value}0';
     } else {
-      if (_value.length > 2) {
-        return _value.substring(0, 2);
+      if (value.length > 2) {
+        return value.substring(0, 2);
       } else {
-        return _value;
+        return value;
       }
     }
   }
@@ -154,10 +152,10 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                               _doneHashes.add(e.text.hashCode);
                             }
 
-                            double _totalAdd = 1 / _guides.length;
+                            double totalAdd = 1 / _guides.length;
 
-                            if (_percent + _totalAdd <= 1) {
-                              setState(() => _percent += _totalAdd);
+                            if (_percent + totalAdd <= 1) {
+                              setState(() => _percent += totalAdd);
                             }
 
                             e.onPressed(context);
@@ -210,14 +208,17 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                               _doneHashes.clear();
                               _percent = 0;
                             });
-                            ScaffoldMessenger.of(context).clearSnackBars();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarTile(
-                                context,
-                                'Guide has been reset. Let\'s start over!',
-                                type: SnackBarType.done,
-                              ),
-                            );
+
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(
+                                  context,
+                                  'Guide has been reset. Let\'s start over!',
+                                  type: SnackBarType.done,
+                                ),
+                              );
+                            }
                           },
                         ),
                       ),
@@ -232,23 +233,26 @@ class _HomeSetupGuideTileState extends State<HomeSetupGuideTile> {
                           await SharedPref()
                               .pref
                               .setBool(SPConst.homeShowGuide, false);
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Dismissed guide successfully. You can bring it back in settings.',
-                              type: SnackBarType.done,
-                              action: snackBarAction(
-                                text: 'Undo',
-                                onPressed: () async {
-                                  setState(() => _showGuide = true);
-                                  await SharedPref()
-                                      .pref
-                                      .setBool(SPConst.homeShowGuide, true);
-                                },
+
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Dismissed guide successfully. You can bring it back in settings.',
+                                type: SnackBarType.done,
+                                action: snackBarAction(
+                                  text: 'Undo',
+                                  onPressed: () async {
+                                    setState(() => _showGuide = true);
+                                    await SharedPref()
+                                        .pref
+                                        .setBool(SPConst.homeShowGuide, true);
+                                  },
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          }
                         },
                       ),
                     ],
@@ -369,20 +373,22 @@ final List<_GuideModel> _guides = <_GuideModel>[
   ),
   _GuideModel(
     text: 'Scan your project\'s dependencies to see if there are any updates.',
-    onPressed: (_) async {
-      file.XFile? _file = await file.openFile();
+    onPressed: (context) async {
+      NavigatorState navigator = Navigator.of(context);
 
-      if (_file != null) {
-        if (_file.path.split('\\').last == 'pubspec.yaml') {
+      file_selector.XFile? file = await file_selector.openFile();
+
+      if (file != null) {
+        if (file.path.split('\\').last == 'pubspec.yaml') {
           return showDialog(
-            context: (_),
+            context: (context),
             builder: (_) =>
-                ScanProjectOutdatedDependenciesDialog(pubspecPath: _file.path),
+                ScanProjectOutdatedDependenciesDialog(pubspecPath: file.path),
           );
-        } else {
-          ScaffoldMessenger.of(_).clearSnackBars();
-          ScaffoldMessenger.of(_).showSnackBar(snackBarTile(
-            _,
+        } else if (navigator.mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+            context,
             'Please select your project pubspec.yaml file.',
             type: SnackBarType.error,
           ));

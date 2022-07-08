@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
@@ -18,8 +18,8 @@ import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
 
 class DeleteProjectDialog extends StatefulWidget {
@@ -31,10 +31,10 @@ class DeleteProjectDialog extends StatefulWidget {
 }
 
 class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
-  late final bool _gitExists = Directory(widget.path + '\\.git').existsSync();
+  late final bool _gitExists = Directory('${widget.path}\\.git').existsSync();
 
   late final PubspecInfo _pubspecInfo = extractPubspec(
-      lines: File(widget.path + '\\pubspec.yaml').readAsLinesSync(),
+      lines: File('${widget.path}\\pubspec.yaml').readAsLinesSync(),
       path: widget.path);
 
   // Inputs
@@ -103,10 +103,7 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
                               }
 
                               return Text(
-                                (_pubspecInfo.name?.toUpperCase() ??
-                                        'No name found') +
-                                    ' - ' +
-                                    _version,
+                                '${_pubspecInfo.name?.toUpperCase() ?? 'No name found'} - $_version',
                                 maxLines: 1,
                               );
                             },
@@ -175,38 +172,41 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
                             await Directory(widget.path)
                                 .delete(recursive: true);
 
-                            ScaffoldMessenger.of(context).clearSnackBars();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarTile(
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(
+                                  context,
+                                  'Project has been deleted successfully.',
+                                  type: SnackBarType.done,
+                                ),
+                              );
+
+                              await Navigator.pushReplacement(
                                 context,
-                                'Project has been deleted successfully.',
-                                type: SnackBarType.done,
-                              ),
-                            );
-
-                            await Navigator.pushReplacement(
-                              context,
-                              PageRouteBuilder<Widget>(
-                                transitionDuration: Duration.zero,
-                                pageBuilder: (_, __, ___) =>
-                                    const HomeScreen(tab: HomeTab.projects),
-                              ),
-                            );
-
+                                PageRouteBuilder<Widget>(
+                                  transitionDuration: Duration.zero,
+                                  pageBuilder: (_, __, ___) =>
+                                      const HomeScreen(tab: HomeTab.projects),
+                                ),
+                              );
+                            }
                             return;
                           } catch (_, s) {
                             await logger.file(LogTypeTag.error,
                                 'Failed to delete project: ${widget.path}: $_',
                                 stackTraces: s);
 
-                            ScaffoldMessenger.of(context).clearSnackBars();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              snackBarTile(
-                                context,
-                                'Failed to delete project. Please try again.',
-                                type: SnackBarType.error,
-                              ),
-                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(
+                                  context,
+                                  'Failed to delete project. Please try again.',
+                                  type: SnackBarType.error,
+                                ),
+                              );
+                            }
                           }
 
                           setState(() => _deleting = false);

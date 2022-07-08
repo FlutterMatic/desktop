@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
@@ -89,14 +89,14 @@ class SetProjectWorkflowConfirmation extends StatelessWidget {
             children: <Widget>[
               RectangleButton(
                 width: 150,
-                child: const Text('Save'),
                 onPressed: onSave,
+                child: const Text('Save'),
               ),
               HSeparators.normal(),
               RectangleButton(
                 width: 150,
-                child: const Text('Save and Run'),
                 onPressed: onSaveAndRun,
+                child: const Text('Save and Run'),
               ),
             ],
           ),

@@ -1,5 +1,5 @@
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class WorkflowTemplate {

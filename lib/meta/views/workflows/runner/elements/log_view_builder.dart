@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 class LogViewBuilder extends StatelessWidget {
   final List<String> logs;
@@ -25,33 +25,33 @@ class LogViewBuilder extends StatelessWidget {
               return VSeparators.small();
             }
 
-            String _txt = logs[i];
-            String _type = 'UNKNOWN';
+            String txt = logs[i];
+            String type = 'UNKNOWN';
 
-            String _startTag = '<date_log>';
-            String _endTag = '</date_log>';
+            String startTag = '<date_log>';
+            String endTag = '</date_log>';
 
-            if (_txt.startsWith('INFO$_startTag')) {
-              _type = 'INFO';
-            } else if (_txt.startsWith('WARNING$_startTag')) {
-              _type = 'WARNING';
-            } else if (_txt.startsWith('ERROR$_startTag')) {
-              _type = 'ERROR';
+            if (txt.startsWith('INFO$startTag')) {
+              type = 'INFO';
+            } else if (txt.startsWith('WARNING$startTag')) {
+              type = 'WARNING';
+            } else if (txt.startsWith('ERROR$startTag')) {
+              type = 'ERROR';
             }
 
-            String _dateTxt = _txt.substring(
-                _txt.indexOf(_startTag) + _startTag.length,
-                _txt.contains(_endTag) ? _txt.indexOf(_endTag) : null);
+            String dateTxt = txt.substring(
+                txt.indexOf(startTag) + startTag.length,
+                txt.contains(endTag) ? txt.indexOf(endTag) : null);
 
-            DateTime? _date = DateTime.tryParse(_dateTxt);
+            DateTime? date = DateTime.tryParse(dateTxt);
 
-            String _log;
+            String log;
 
-            if (_date == null) {
-              _log = _txt;
+            if (date == null) {
+              log = txt;
             } else {
-              _log = _txt
-                  .substring(_txt.indexOf(_endTag) + _endTag.length)
+              log = txt
+                  .substring(txt.indexOf(endTag) + endTag.length)
                   .trimLeft();
             }
 
@@ -60,26 +60,26 @@ class LogViewBuilder extends StatelessWidget {
               child: SelectableText.rich(
                 TextSpan(
                   children: <TextSpan>[
-                    if (_type != 'UNKNOWN')
+                    if (type != 'UNKNOWN')
                       TextSpan(
-                        text: '$_type ',
+                        text: '$type ',
                         style: TextStyle(
-                          color: _type == 'INFO'
+                          color: type == 'INFO'
                               ? kGreenColor
-                              : _type == 'WARNING'
+                              : type == 'WARNING'
                                   ? kYellowColor
                                   : AppTheme.errorColor,
                         ),
                       ),
-                    if (_date == null)
+                    if (date == null)
                       TextSpan(
-                        text: _log,
+                        text: log,
                         style: const TextStyle(color: AppTheme.errorColor),
                       )
                     else
                       TextSpan(
                         text:
-                            '${_date.hour < 10 ? '0${_date.hour}' : _date.hour}:${_date.minute < 10 ? '0${_date.minute}' : _date.minute}:${_date.second < 10 ? '0${_date.second}' : _date.second}\n$_log',
+                            '${date.hour < 10 ? '0${date.hour}' : date.hour}:${date.minute < 10 ? '0${date.minute}' : date.minute}:${date.second < 10 ? '0${date.second}' : date.second}\n$log',
                       ),
                   ],
                 ),
