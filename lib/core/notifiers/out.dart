@@ -1,14 +1,17 @@
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/core/notifiers/models/state/actions/dart.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/flutter.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/adb.dart';
-import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/flutter.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/git.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/java.dart';
+import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/vsc.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/connection.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/download.dart';

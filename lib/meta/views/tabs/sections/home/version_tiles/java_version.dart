@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/app/enum.dart';
-import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -16,6 +15,7 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/tool_error.dart';
 

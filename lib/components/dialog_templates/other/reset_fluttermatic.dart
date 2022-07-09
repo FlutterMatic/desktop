@@ -5,12 +5,9 @@ import 'dart:math';
 // 🐦 Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
-import 'package:fluttermatic/meta/utils/general/app_theme.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
@@ -22,9 +19,12 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 import 'package:fluttermatic/main.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
+import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
 class ResetFlutterMaticDialog extends ConsumerStatefulWidget {
   const ResetFlutterMaticDialog({Key? key}) : super(key: key);

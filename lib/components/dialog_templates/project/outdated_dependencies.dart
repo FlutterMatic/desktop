@@ -3,7 +3,6 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 
 // 📦 Package imports:
 import 'package:pub_api_client/pub_api_client.dart';
@@ -19,6 +18,7 @@ import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 
 class ScanProjectOutdatedDependenciesDialog extends StatefulWidget {
   final String pubspecPath;

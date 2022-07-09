@@ -1,13 +1,13 @@
 // 🎯 Dart imports:
 import 'dart:io';
 
-// 🐦 Flutter imports:
-import 'package:fluttermatic/app/enum.dart';
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/download.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/download.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class DownloadNotifier extends StateNotifier<DownloadState> {

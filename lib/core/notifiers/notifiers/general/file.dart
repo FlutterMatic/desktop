@@ -1,12 +1,16 @@
+// 🎯 Dart imports:
 import 'dart:io';
 
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:process_run/shell.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
-import 'package:fluttermatic/core/services/logs.dart';
-import 'package:process_run/shell.dart';
-import 'package:http/http.dart' as http;
 import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 
 class FileNotifier extends StateNotifier<void> {
   final Reader read;

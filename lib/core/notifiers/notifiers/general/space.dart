@@ -1,15 +1,13 @@
 // 🎯 Dart imports:
 import 'dart:io';
 
-// 🐦 Flutter imports:
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
-
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:universal_disk_space/universal_disk_space.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class SpaceNotifier extends StateNotifier<SpaceState> {

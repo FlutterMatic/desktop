@@ -1,15 +1,13 @@
 // 🎯 Dart imports:
 import 'dart:convert';
 
-// 🐦 Flutter imports:
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
-
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/models/vscode.dart';
+import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
 
 class VSCodeAPINotifier extends StateNotifier<VSCodeAPIState> {
   final Reader read;

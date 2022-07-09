@@ -1,13 +1,13 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/app/enum.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/vsc.dart';

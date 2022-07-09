@@ -1,9 +1,9 @@
-// 🐦 Flutter imports:
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/payloads/general/notifications.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/core/notifiers/models/payloads/general/notifications.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class NotificationsNotifier extends StateNotifier<NotificationsState> {

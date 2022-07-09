@@ -4,12 +4,12 @@ import 'dart:io';
 import 'dart:isolate';
 
 // 📦 Package imports:
-import 'package:fluttermatic/meta/utils/search/projects_search.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/search/projects_search.dart';
 
 class ProjectServicesModel {
   /// Gets the cache about the projects information and about the projects path

@@ -1,10 +1,12 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/app/enum.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/git.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';

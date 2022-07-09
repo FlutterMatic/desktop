@@ -1,9 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/app/enum.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';

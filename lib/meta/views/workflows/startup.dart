@@ -8,13 +8,11 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/app/enum.dart';
-import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -22,6 +20,8 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';

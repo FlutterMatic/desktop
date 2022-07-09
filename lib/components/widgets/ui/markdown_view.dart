@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/code_highlighter.dart';
 
 class MarkdownBlock extends StatelessWidget {

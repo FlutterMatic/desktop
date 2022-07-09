@@ -1,3 +1,4 @@
+// 🌎 Project imports:
 import 'package:fluttermatic/core/notifiers/models/payloads/general/notifications.dart';
 
 class NotificationsState {

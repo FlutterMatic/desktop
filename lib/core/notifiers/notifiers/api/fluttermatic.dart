@@ -1,14 +1,14 @@
 // 🎯 Dart imports:
 import 'dart:convert';
 
-// 🐦 Flutter imports:
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+
+// 🌎 Project imports:
 import 'package:fluttermatic/core/models/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-
-// 📦 Package imports:
-import 'package:http/http.dart' as http;
 
 class FlutterMaticAPINotifier extends StateNotifier<FlutterMaticAPIState> {
   final Reader read;

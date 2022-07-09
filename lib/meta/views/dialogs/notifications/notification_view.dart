@@ -1,8 +1,8 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
@@ -13,8 +13,8 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/notifications.dart';
-import 'package:fluttermatic/meta/views/dialogs/notifications/notification_tile.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/views/dialogs/notifications/notification_tile.dart';
 
 class NotificationViewDialog extends StatefulWidget {
   const NotificationViewDialog({Key? key}) : super(key: key);

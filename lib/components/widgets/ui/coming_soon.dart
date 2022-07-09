@@ -1,8 +1,8 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/app/constants.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 
 class ComingSoonTile extends StatefulWidget {

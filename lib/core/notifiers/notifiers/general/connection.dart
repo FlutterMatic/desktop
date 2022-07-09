@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 // 📦 Package imports:
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/connection.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/core/notifiers/models/state/general/connection.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class ConnectionNotifier extends StateNotifier<NetworkState> {

@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 // 📦 Package imports:
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:markdown/markdown.dart' as md;
 
 // 🌎 Project imports:
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 
 class ChangelogAboutSection extends StatefulWidget {
   const ChangelogAboutSection({Key? key}) : super(key: key);

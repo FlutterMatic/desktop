@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/app/enum.dart';
-import 'package:fluttermatic/app/shared_pref.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
-import 'package:fluttermatic/meta/utils/general/time_ago.dart';
 import 'package:pub_semver/src/version.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/time_ago.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/tool_error.dart';
 

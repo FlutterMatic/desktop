@@ -1,16 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
-import 'package:fluttermatic/meta/utils/search/projects_search.dart';
-import 'package:fluttermatic/meta/utils/search/search.dart';
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
@@ -23,9 +16,16 @@ import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dar
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/projects.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/search/projects_search.dart';
+import 'package:fluttermatic/meta/utils/search/search.dart';
+import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/dialogs/notifications/notification_view.dart';
 import 'package:fluttermatic/meta/views/tabs/search/elements/package.dart';
 import 'package:fluttermatic/meta/views/tabs/search/elements/projects.dart';

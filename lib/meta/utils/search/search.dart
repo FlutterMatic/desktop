@@ -2,12 +2,12 @@
 import 'dart:io';
 
 // 📦 Package imports:
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 

@@ -1,11 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
@@ -16,6 +14,8 @@ import 'package:fluttermatic/components/widgets/buttons/action_options.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 
 class DiscoverSettingsSection extends StatelessWidget {

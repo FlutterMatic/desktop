@@ -1,9 +1,9 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/app/shared_pref.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';

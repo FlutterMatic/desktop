@@ -9,11 +9,11 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/app/constants.dart';
 
 bool _failedRequest = false;
 

@@ -1,11 +1,13 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/app/shared_pref.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 

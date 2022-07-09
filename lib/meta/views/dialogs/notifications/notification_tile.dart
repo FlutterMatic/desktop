@@ -6,7 +6,6 @@ import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/core/notifiers/models/payloads/general/notifications.dart';
-
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/utils/general/time_ago.dart';

@@ -8,21 +8,21 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/app/shared_pref.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/notifiers/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
-import 'package:fluttermatic/meta/utils/general/app_theme.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/other/unofficial_release.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/setup/components/windows_controls.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'meta/views/setup/screens/setup_view.dart';

@@ -3,12 +3,10 @@ import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
@@ -16,6 +14,8 @@ import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';

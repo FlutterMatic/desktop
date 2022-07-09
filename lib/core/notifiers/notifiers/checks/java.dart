@@ -1,8 +1,13 @@
 // 🎯 Dart imports:
 import 'dart:io';
 
-// 🐦 Flutter imports:
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:process_run/shell.dart';
+import 'package:pub_semver/pub_semver.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/app/shared_pref.dart';
@@ -10,15 +15,8 @@ import 'package:fluttermatic/bin/java.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/java.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
-
-// 📦 Package imports:
-import 'package:path_provider/path_provider.dart';
-import 'package:process_run/shell.dart';
-
-// 🌎 Project imports:
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:pub_semver/pub_semver.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class JavaNotifier extends StateNotifier<JavaState> {
   final Reader read;

@@ -1,22 +1,22 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/app/enum.dart';
-import 'package:fluttermatic/app/shared_pref.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
-import 'package:fluttermatic/meta/utils/general/app_theme.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
 import 'package:fluttermatic/meta/views/setup/components/button.dart';
 import 'package:fluttermatic/meta/views/setup/components/header_title.dart';

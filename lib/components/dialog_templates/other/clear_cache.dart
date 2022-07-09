@@ -3,7 +3,6 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 // 📦 Package imports:
 import 'package:path_provider/path_provider.dart';
@@ -19,6 +18,7 @@ import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 class ClearCacheDialog extends StatefulWidget {
   const ClearCacheDialog({Key? key}) : super(key: key);

@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:file_selector/file_selector.dart' as file_selector;
-import 'package:fluttermatic/app/shared_pref.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {

@@ -1,5 +1,7 @@
-// 🌎 Project imports:
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/core/notifiers/models/payloads/actions/dart.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/dart.dart';

@@ -4,8 +4,15 @@ import 'dart:io';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:retry/retry.dart';
+
+// 🌎 Project imports:
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/core/models/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
@@ -15,13 +22,6 @@ import 'package:fluttermatic/core/notifiers/notifiers/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/api/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/api/vscode.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
-
-// 📦 Package imports:
-import 'package:retry/retry.dart';
-
-// 🌎 Project imports:
-import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/drive_error.dart';
 import 'package:fluttermatic/meta/views/dialogs/low_drive_storage.dart';

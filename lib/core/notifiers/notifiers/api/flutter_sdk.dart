@@ -1,16 +1,16 @@
 // 🎯 Dart imports:
 import 'dart:convert';
 
-// 🐦 Flutter imports:
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+
+// 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/core/models/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
-
-// 📦 Package imports:
-import 'package:http/http.dart' as http;
 
 class FlutterSDKNotifier extends StateNotifier<FlutterSDKState> {
   final Reader read;

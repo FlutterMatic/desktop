@@ -2,24 +2,22 @@
 import 'dart:convert';
 import 'dart:io';
 
-// 🐦 Flutter imports:
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/app/enum.dart';
-import 'package:fluttermatic/app/shared_pref.dart';
-import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
-import 'package:fluttermatic/core/notifiers/models/state/checks/git.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
-import 'package:fluttermatic/bin/git.dart';
-import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
-
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/bin/git.dart';
 import 'package:fluttermatic/core/models/git.dart';
+import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
+import 'package:fluttermatic/core/notifiers/models/state/checks/git.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class GitNotifier extends StateNotifier<GitState> {
   final Reader read;

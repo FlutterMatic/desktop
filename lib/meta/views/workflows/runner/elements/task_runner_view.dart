@@ -8,11 +8,11 @@ import 'package:flutter/material.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/action_scripts.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';

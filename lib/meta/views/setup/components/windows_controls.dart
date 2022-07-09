@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// 🌎 Project imports:
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
