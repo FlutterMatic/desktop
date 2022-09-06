@@ -15,12 +15,12 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/elements/tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/workflows/models/workflows.services.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
@@ -51,15 +51,15 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
           setState(() => _reloadingFromCache = true);
         }
 
-        await ProjectServicesModel.updateProjectCache(
-          cache: ProjectCacheResult(
-            projectsPath: SharedPref().pref.getString(SPConst.projectsPath),
-            refreshIntervals: null,
-            lastProjectReload: null,
-            lastWorkflowsReload: null,
-          ),
-          supportDir: (await getApplicationSupportDirectory()).path,
-        );
+        // await ProjectsNotifier.updateProjectCache(
+        //   cache: ProjectCacheSettings(
+        //     projectsPath: SharedPref().pref.getString(SPConst.projectsPath),
+        //     refreshIntervals: null,
+        //     lastProjectReload: null,
+        //     lastWorkflowsReload: null,
+        //   ),
+        //   supportDir: (await getApplicationSupportDirectory()).path,
+        // );
 
         Isolate i = await Isolate.spawn(
           WorkflowServicesModel.getWorkflowsIsolate,
@@ -305,7 +305,8 @@ class _HomeWorkflowSectionsState extends State<HomeWorkflowSections> {
                       return WorkflowInfoTile(
                         workflow: e,
                         onReload: () => _loadWorkflows(true),
-                        path: '${_workflows[i].path}\\$fmWorkflowDir\\${e.name}.json',
+                        path:
+                            '${_workflows[i].path}\\$fmWorkflowDir\\${e.name}.json',
                         onDelete: () {
                           setState(() => _workflows[i].workflows.remove(e));
                           if (_workflows[i].workflows.isEmpty) {

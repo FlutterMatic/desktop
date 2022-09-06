@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 import 'package:pub_semver/src/version.dart';
@@ -15,7 +16,6 @@ import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/bin/studio.dart';
-import 'package:fluttermatic/core/models/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';

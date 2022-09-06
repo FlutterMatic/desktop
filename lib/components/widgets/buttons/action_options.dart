@@ -14,13 +14,13 @@ class ActionOptions extends StatelessWidget {
   final List<ActionOptionsObject> actions;
   // Provides the option to have your own builder for the action buttons
   // or use the default one and must return a Widget
-  final Widget Function(BuildContext context, ActionOptionsObject action)?
-      actionButtonBuilder;
+  final Widget? Function(BuildContext context, ActionOptionsObject action)?
+      trailingBuilder;
 
   const ActionOptions({
     Key? key,
     required this.actions,
-    this.actionButtonBuilder,
+    this.trailingBuilder,
   }) : super(key: key);
 
   @override
@@ -36,9 +36,8 @@ class ActionOptions extends StatelessWidget {
           title: e.title,
           length: actions.length,
           index: actions.indexOf(e),
-          trailing: actionButtonBuilder != null
-              ? actionButtonBuilder!(context, e)
-              : null,
+          trailing:
+              trailingBuilder != null ? trailingBuilder!(context, e) : null,
         );
       }).toList(),
     );

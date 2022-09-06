@@ -1,19 +1,19 @@
 // 🌎 Project imports:
-import 'package:fluttermatic/core/models/flutter_sdk.dart';
+import 'package:fluttermatic/core/models/api/flutter_sdk.dart';
 
 class FlutterSDKState {
-  final FlutterSDK sdkMap;
+  final FlutterSdkAPI sdkMap;
   final String sdk;
 
   const FlutterSDKState({
-    this.sdkMap = const FlutterSDK(<String, dynamic>{}),
+    this.sdkMap = const FlutterSdkAPI(<String, dynamic>{}),
     this.sdk = '',
   });
 
   factory FlutterSDKState.initial() => const FlutterSDKState();
 
   FlutterSDKState copyWith({
-    FlutterSDK? sdkMap,
+    FlutterSdkAPI? sdkMap,
     String? sdk,
   }) {
     return FlutterSDKState(

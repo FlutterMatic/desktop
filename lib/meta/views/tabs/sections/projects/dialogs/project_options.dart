@@ -86,41 +86,51 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
           ),
           VSeparators.normal(),
           ActionOptions(
-            actionButtonBuilder: (_, ActionOptionsObject action) {
+            trailingBuilder: (_, ActionOptionsObject action) {
               if ('Create Release'.contains(action.title)) {
                 return const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: ComingSoonTile(),
                 );
-              } else {
-                return const SizedBox.shrink();
               }
             },
             actions: <ActionOptionsObject>[
-              ActionOptionsObject('Add Workflow', () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (_) => StartUpWorkflow(pubspecPath: widget.path),
-                );
-              }),
-              ActionOptionsObject('View Existing Workflow', () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (_) => ShowExistingWorkflows(
-                      pubspecPath: '${widget.path}\\pubspec.yaml'),
-                );
-              }),
-              ActionOptionsObject('Scan pubspec.yaml for new updates', () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (_) => ScanProjectOutdatedDependenciesDialog(
-                    pubspecPath: '${widget.path}\\pubspec.yaml',
-                  ),
-                );
-              }),
+              ActionOptionsObject(
+                'Add Workflow',
+                () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (_) => StartUpWorkflow(
+                      pubspecPath: '${widget.path}\\pubspec.yaml',
+                    ),
+                  );
+                },
+              ),
+              ActionOptionsObject(
+                'View Existing Workflow',
+                () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (_) => ShowExistingWorkflows(
+                      pubspecPath: '${widget.path}\\pubspec.yaml',
+                    ),
+                  );
+                },
+              ),
+              ActionOptionsObject(
+                'Scan pubspec.yaml for new updates',
+                () {
+                  Navigator.pop(context);
+                  showDialog(
+                    context: context,
+                    builder: (_) => ScanProjectOutdatedDependenciesDialog(
+                      pubspecPath: '${widget.path}\\pubspec.yaml',
+                    ),
+                  );
+                },
+              ),
               // TODO: Support the following option:
               ActionOptionsObject('Create Release', () {}),
             ],

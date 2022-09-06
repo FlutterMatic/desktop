@@ -3,58 +3,64 @@
 import 'dart:io';
 
 Future<void> main(List<String> args) async {
-  String _mostLines = '';
-  int _mostLinesTotal = 0;
+  String mostLines = '';
+  int mostLinesTotal = 0;
 
-  // Counts how many lines in total of all files in the current directory.
-  List<FileSystemEntity> _files =
-      Directory(Directory.current.path + '\\lib').listSync(recursive: true);
+  const List<String> scanDirs = [
+    'lib',
+    'test',
+  ];
 
-  int _totalLines = 0;
-  int _totalLinesSkipped = 0;
+  int totalLines = 0;
+  int totalLinesSkipped = 0;
+  Map<String, int> extensionCounts = <String, int>{};
 
-  Map<String, int> _extensionCounts = <String, int>{};
+  for (String dir in scanDirs) {
+    // Counts how many lines in total of all files in the current directory.
+    List<FileSystemEntity> files =
+        Directory('${Directory.current.path}\\$dir').listSync(recursive: true);
 
-  for (FileSystemEntity _file in _files) {
-    if (_file is File) {
-      try {
-        String _codeFile = await _file.readAsString();
+    for (FileSystemEntity file in files) {
+      if (file is File) {
+        try {
+          String codeFile = await file.readAsString();
 
-        int _length = _codeFile.split('\n').length;
+          int length = codeFile.split('\n').length;
 
-        _totalLines += _length;
+          totalLines += length;
 
-        if (_length > _mostLinesTotal) {
-          _mostLines = _file.path;
-          _mostLinesTotal = _length;
+          if (length > mostLinesTotal) {
+            mostLines = file.path;
+            mostLinesTotal = length;
+          }
+
+          if (extensionCounts[file.path.split('.').last] == null) {
+            extensionCounts[file.path.split('.').last] = 1;
+          } else {
+            extensionCounts[file.path.split('.').last] =
+                extensionCounts[file.path.split('.').last]! + 1;
+          }
+        } catch (_) {
+          totalLinesSkipped++;
         }
-
-        if (_extensionCounts[_file.path.split('.').last] == null) {
-          _extensionCounts[_file.path.split('.').last] = 1;
-        } else {
-          _extensionCounts[_file.path.split('.').last] =
-              _extensionCounts[_file.path.split('.').last]! + 1;
-        }
-      } catch (_) {
-        _totalLinesSkipped++;
       }
     }
   }
 
-  print('Total lines: $_totalLines');
-  print('Total files skipped: $_totalLinesSkipped');
+  print('Total lines: $totalLines');
+  print('Total files skipped: $totalLinesSkipped');
 
-  print('Most lines file: $_mostLines');
-  print('Most lines file total lines: $_mostLinesTotal');
+  print('Most lines file: $mostLines');
+  print('Most lines file total lines: $mostLinesTotal');
 
   print('Extension counts:');
 
   // Prints the top 10 extensions and their counts.
-  _extensionCounts.keys.toList()
+  extensionCounts.keys.toList()
     ..sort((String a, String b) =>
-        _extensionCounts[b]!.compareTo(_extensionCounts[a]!))
-    ..take(10).forEach((String _extension) {
+        extensionCounts[b]!.compareTo(extensionCounts[a]!))
+    ..take(10).forEach((String extension) {
       print(
-          ' - ${_extension.toUpperCase()}: ${_extensionCounts[_extension]} file(s)');
+          ' - ${extension.toUpperCase()}: ${extensionCounts[extension]} file(s)');
     });
 }

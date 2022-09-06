@@ -5,9 +5,8 @@ import 'dart:io';
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/core/models/projects.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/search/projects_search.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 
 class WorkflowSearchUtils {
@@ -65,92 +64,94 @@ class WorkflowSearchUtils {
   /// user will delete this app because of performance issues. Use clever
   /// caching algorithms that self merge when new changes are found.
   static Future<List<ProjectWorkflowsGrouped>> getWorkflowsFromPath({
-    required ProjectCacheResult cache,
+    required ProjectCacheSettings cache,
     required String supportDir,
   }) async {
-    try {
-      // The projects path must not be null. We will fetch the workflows from
-      // the projects path that is set. So this depends on the projects path
-      // being set, meaning that if it is not set, then the projects feature
-      // should not work as well as the workflows feature. Workflows feature
-      // should only work if the projects feature is working.
-      if (cache.projectsPath != null) {
-        List<ProjectObject> projectsRefetch =
-            await ProjectSearchUtils.getProjectsFromPath(
-                cache: cache, supportDir: supportDir);
+    return [];
+    //  TODO: Implement
+    // try {
+    //   // The projects path must not be null. We will fetch the workflows from
+    //   // the projects path that is set. So this depends on the projects path
+    //   // being set, meaning that if it is not set, then the projects feature
+    //   // should not work as well as the workflows feature. Workflows feature
+    //   // should only work if the projects feature is working.
+    //   if (cache.projectsPath != null) {
+    //     List<ProjectObject> projectsRefetch =
+    //         await ProjectSearchUtils.getProjectsFromPath(
+    //             cache: cache, supportDir: supportDir);
 
-        // Each project will have its own list of workflows. They are
-        // automatically sorted for the user.
-        List<String> paths = <String>[];
-        List<List<WorkflowTemplate>> workflows = <List<WorkflowTemplate>>[];
+    //     // Each project will have its own list of workflows. They are
+    //     // automatically sorted for the user.
+    //     List<String> paths = <String>[];
+    //     List<List<WorkflowTemplate>> workflows = <List<WorkflowTemplate>>[];
 
-        // Will loop through all the projects and get the workflows to parse
-        // and sort.
-        for (ProjectObject project in projectsRefetch) {
-          List<WorkflowTemplate> projectWorkflows =
-              await getWorkflowFromProject(project.path);
+    //     // Will loop through all the projects and get the workflows to parse
+    //     // and sort.
+    //     for (ProjectObject project in projectsRefetch) {
+    //       List<WorkflowTemplate> projectWorkflows =
+    //           await getWorkflowFromProject(project.path);
 
-          if (projectWorkflows.isNotEmpty) {
-            paths.add(project.path);
-            workflows.add(projectWorkflows);
-          }
-        }
+    //       if (projectWorkflows.isNotEmpty) {
+    //         paths.add(project.path);
+    //         workflows.add(projectWorkflows);
+    //       }
+    //     }
 
-        List<Map<String, List<Map<String, dynamic>>>> workflowsSave =
-            <Map<String, List<Map<String, dynamic>>>>[];
+    //     List<Map<String, List<Map<String, dynamic>>>> workflowsSave =
+    //         <Map<String, List<Map<String, dynamic>>>>[];
 
-        for (int i = 0; i < workflows.length; i++) {
-          List<WorkflowTemplate> workflow = workflows[i];
-          if (workflow.isNotEmpty) {
-            List<Map<String, dynamic>> parseWorkflows =
-                <Map<String, dynamic>>[];
+    //     for (int i = 0; i < workflows.length; i++) {
+    //       List<WorkflowTemplate> workflow = workflows[i];
+    //       if (workflow.isNotEmpty) {
+    //         List<Map<String, dynamic>> parseWorkflows =
+    //             <Map<String, dynamic>>[];
 
-            for (WorkflowTemplate temptParse in workflow) {
-              parseWorkflows.add(temptParse.toJson());
-            }
+    //         for (WorkflowTemplate temptParse in workflow) {
+    //           parseWorkflows.add(temptParse.toJson());
+    //         }
 
-            workflowsSave.add(
-                <String, List<Map<String, dynamic>>>{paths[i]: parseWorkflows});
-          }
-        }
+    //         workflowsSave.add(
+    //             <String, List<Map<String, dynamic>>>{paths[i]: parseWorkflows});
+    //       }
+    //     }
 
-        // _workflowsSave.forEach(print);
+    //     // _workflowsSave.forEach(print);
 
-        // Sets the cache for the workflows.
-        await File(getWorkflowCachePath(supportDir))
-            .writeAsString(jsonEncode(workflowsSave));
+    //     // Sets the cache for the workflows.
+    //     await File(getWorkflowCachePath(supportDir))
+    //         .writeAsString(jsonEncode(workflowsSave));
 
-        await ProjectServicesModel.updateProjectCache(
-          cache: ProjectCacheResult(
-            projectsPath: null,
-            refreshIntervals: null,
-            lastProjectReload: null,
-            lastWorkflowsReload: DateTime.now(),
-          ),
-          supportDir: supportDir,
-        );
+    //     await ProjectsNotifier.updateProjectCache(
+    //       cache: ProjectCacheSettings(
+    //         projectsPath: null,
+    //         refreshIntervals: null,
+    //         lastProjectReload: null,
+    //         lastWorkflowsReload: DateTime.now(),
+    //       ),
+    //       supportDir: supportDir,
+    //     );
 
-        return workflowsSave
-            .map((Map<String, List<Map<String, dynamic>>> workflow) {
-          return ProjectWorkflowsGrouped(
-            path: workflow.keys.first,
-            workflows:
-                workflow.values.first.map((Map<String, dynamic> workflow) {
-              return WorkflowTemplate.fromJson(workflow);
-            }).toList(),
-          );
-        }).toList();
-      } else {
-        await logger.file(LogTypeTag.info,
-            'Tried to get workflows when the projects directory is not set.',
-            logDir: Directory(supportDir));
-        return <ProjectWorkflowsGrouped>[];
-      }
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Couldn\'t fetch workflows from path',
-          stackTraces: s, logDir: Directory(supportDir));
-      return <ProjectWorkflowsGrouped>[];
-    }
+    //     return workflowsSave
+    //         .map((Map<String, List<Map<String, dynamic>>> workflow) {
+    //       return ProjectWorkflowsGrouped(
+    //         path: workflow.keys.first,
+    //         workflows:
+    //             workflow.values.first.map((Map<String, dynamic> workflow) {
+    //           return WorkflowTemplate.fromJson(workflow);
+    //         }).toList(),
+    //       );
+    //     }).toList();
+    //   } else {
+    //     await logger.file(LogTypeTag.info,
+    //         'Tried to get workflows when the projects directory is not set.',
+    //         logDir: Directory(supportDir));
+    //     return <ProjectWorkflowsGrouped>[];
+    //   }
+    // } catch (_, s) {
+    //   await logger.file(LogTypeTag.error, 'Couldn\'t fetch workflows from path',
+    //       stackTraces: s, logDir: Directory(supportDir));
+    //   return <ProjectWorkflowsGrouped>[];
+    // }
   }
 
   static Future<List<ProjectWorkflowsGrouped>> getWorkflowsFromCache(

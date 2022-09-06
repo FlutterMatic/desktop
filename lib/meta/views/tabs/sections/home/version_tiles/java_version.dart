@@ -1,13 +1,19 @@
+// 🎯 Dart imports:
+import 'dart:io';
+import 'dart:isolate';
+
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pub_semver/src/version.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/bin/check_services.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -15,9 +21,23 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
+import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/tool_error.dart';
+
+Future<void> _check(List<dynamic> data) async {
+  SendPort port = data[0];
+  String logPath = data[1];
+
+  ServiceCheckResponse result =
+      await CheckServices.checkJava(Directory(logPath));
+
+  port.send(<dynamic>[
+    result.version?.toString(),
+  ]);
+  return;
+}
 
 class HomeJavaVersionTile extends StatefulWidget {
   const HomeJavaVersionTile({Key? key}) : super(key: key);
@@ -27,12 +47,73 @@ class HomeJavaVersionTile extends StatefulWidget {
 }
 
 class _HomeFlutterVersionStateTile extends State<HomeJavaVersionTile> {
+  final ReceivePort _port = ReceivePort('JAVA_HOME_ISOLATE_PORT');
+
   Version? _version;
 
   // Utils
   bool _error = false;
   bool _doneLoading = false;
   bool _listening = false;
+
+  Future<void> _load() async {
+    while (mounted) {
+      // Avoid an isolate if this is on macOS because of some complications.
+      if (Platform.isMacOS) {
+        ServiceCheckResponse info = await CheckServices.checkJava();
+
+        setState(() {
+          _version = info.version;
+          _doneLoading = true;
+        });
+
+        // Close the unnecessary ports
+        _port.close();
+      } else {
+        Directory logPath = await getApplicationSupportDirectory();
+        Isolate i = await Isolate.spawn(
+                _check, <dynamic>[_port.sendPort, logPath.path])
+            .timeout(const Duration(minutes: 1), onTimeout: () async {
+          await logger.file(LogTypeTag.error, 'Java version check timeout');
+          setState(() => _error = true);
+
+          return Isolate.current;
+        });
+
+        if (mounted && !_listening) {
+          _port.listen((dynamic data) {
+            i.kill();
+            setState(() => _listening = true);
+            if (mounted) {
+              setState(() {
+                _error = false;
+                _doneLoading = true;
+                if (data[0] == null) {
+                  _version = null;
+                } else {
+                  _version = Version?.parse(data[0] as String);
+                }
+              });
+            }
+          });
+        }
+      }
+
+      await Future<void>.delayed(const Duration(minutes: 30));
+    }
+  }
+
+  @override
+  void initState() {
+    _load();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _port.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +199,8 @@ class _HomeFlutterVersionStateTile extends State<HomeJavaVersionTile> {
                           showDialog(
                             context: context,
                             builder: (_) => const InstallToolDialog(
-                                tool: SetUpTab.installJava),
+                              tool: SetUpTab.installJava,
+                            ),
                           );
                         },
                       ),

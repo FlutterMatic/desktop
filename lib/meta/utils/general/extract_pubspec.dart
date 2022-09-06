@@ -6,8 +6,10 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 // TODO: Use a universal package for this, extracting pubspec.yaml files.
-PubspecInfo extractPubspec(
-    {required List<String> lines, required String path}) {
+PubspecInfo extractPubspec({
+  required List<String> lines,
+  required String path,
+}) {
   try {
     Pubspec info = Pubspec.parse(lines.join('\n'));
 

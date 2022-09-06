@@ -3,11 +3,11 @@ import 'dart:convert';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/models/api/flutter_sdk.dart';
 import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/core/models/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
@@ -25,12 +25,13 @@ class FlutterSDKNotifier extends StateNotifier<FlutterSDKState> {
     FlutterMaticAPIState api = read(fmAPIStateNotifier);
 
     http.Response response = await http.get(Uri.parse(
-        api.apiMap.data!['flutter']['base_url'] + api.apiMap.data!['flutter'][platform]));
+        api.apiMap.data!['flutter']['base_url'] +
+            api.apiMap.data!['flutter'][platform]));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       state = state.copyWith(
-        sdkMap: FlutterSDK.fromJson(jsonDecode(response.body)),
+        sdkMap: FlutterSdkAPI.fromJson(jsonDecode(response.body)),
       );
 
       for (Map<String, dynamic> item in state.sdkMap.data!['releases']) {

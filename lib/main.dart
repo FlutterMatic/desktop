@@ -18,6 +18,7 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/checks/flutter.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
@@ -312,8 +313,8 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
                         ],
                       );
                     },
-                    home: Builder(
-                      builder: (_) {
+                    home: Consumer(
+                      builder: (_, ref, __) {
                         // Make sure this is an official build of the app.
                         if (appBuild.isEmpty || appVersion.isEmpty) {
                           return const UnofficialReleaseDialog();

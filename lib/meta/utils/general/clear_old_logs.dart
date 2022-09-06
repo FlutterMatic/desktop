@@ -22,20 +22,20 @@ Future<void> clearOldLogs(List<dynamic> data) async {
     // Remove the files that are older than 30 days
     fileNames.removeWhere((String element) {
       try {
-        String date = element.split('.').first;
+        String date = (element.split('.')..removeLast()).join('.');
 
         List<String> split = date.split('-');
 
         DateTime dateTime = DateTime(
-          int.parse(split[split.length - 3]),
-          int.parse(split[split.length - 2]),
-          int.parse(split[split.length - 1]),
+          int.tryParse(split[split.length - 3]) ?? DateTime.now().year,
+          int.tryParse(split[split.length - 2]) ?? DateTime.now().month,
+          int.tryParse(split[split.length - 1]) ?? DateTime.now().day,
         );
 
         return DateTime.now().difference(dateTime).inDays < _oldLogDays;
       } catch (_, s) {
         logger.file(LogTypeTag.error,
-            'Failed to parse date time to delete old logs: $_',
+            'Failed to parse date time to delete old logs and the file name was: $element Error: $_',
             stackTraces: s, logDir: Directory(path));
         return false;
       }

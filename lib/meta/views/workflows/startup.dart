@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
@@ -21,8 +20,6 @@ import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -128,7 +125,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // The project path. This can be fetched from more than one place (either)
   // passed in or the user selects in manually. This provides whichever the
   // case is.
-  String get _projectPath =>
+  String get _pubspecPath =>
       _pubspecFile?.pathToPubspec ?? widget.pubspecPath ?? '';
 
   // Whether we are syncing in the background or not. This is to show a small
@@ -179,7 +176,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       // If the user has not made any changes, no need to save anything.
       if (stopConditions.contains(true)) {
-        // Without this line, app crashes.
         await Future<void>.delayed(_syncIntervals);
         continue;
       }
@@ -188,7 +184,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       Isolate i = await Isolate.spawn(_saveInBgSync, <dynamic>[
         _saveLocallyPort.sendPort,
-        _projectPath,
+        _pubspecPath,
         _workflowTemplate().toJson(),
         _nameController.text,
       ]).timeout(const Duration(seconds: 5), onTimeout: () {
@@ -196,14 +192,17 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           _saveLocalError = true;
           _isSavingLocally = false;
         });
+
         Isolate.current.kill();
         return Isolate.current;
       });
 
       if (!_syncStreamListening) {
         setState(() => _syncStreamListening = true);
+
         _saveLocallyPort.listen((dynamic message) {
           i.kill();
+
           if (message is Map<String, dynamic>) {
             setState(() {
               _lastSavedContent = message;
@@ -211,6 +210,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               _saveLocalError = false;
             });
           }
+
           if (message is List) {
             setState(() {
               _isSavingLocally = false;
@@ -226,19 +226,16 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _initPubspec() async {
     try {
-      String path = _projectPath.endsWith('\\pubspec.yaml')
-          ? _projectPath
-          : ('$_projectPath\\pubspec.yaml');
-
-      List<String> pubspec = await File(path).readAsLines();
+      List<String> pubspec = await File(_pubspecPath).readAsLines();
 
       setState(() {
-        _pubspecFile = extractPubspec(lines: pubspec, path: path);
+        _pubspecFile = extractPubspec(lines: pubspec, path: _pubspecPath);
         _forcePubspec = true;
       });
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t read pubspec.yaml file',
           stackTraces: s);
+
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -248,6 +245,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             type: SnackBarType.error,
           ),
         );
+
         Navigator.pop(context);
       }
     }
@@ -334,6 +332,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
     if (widget.editWorkflowTemplate != null) {
       _prepareEditSession();
     }
+
     _beginSaveMonitor();
     super.initState();
   }
@@ -348,7 +347,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_pubspecFile == null || _projectPath.isEmpty) {
+        if (_pubspecFile == null || _pubspecPath.isEmpty) {
           return true;
         }
 
@@ -356,7 +355,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
           context,
           showAlerts: true,
           pubspecInfo: _pubspecFile,
-          pubspecPath: _projectPath,
+          pubspecPath: _pubspecPath,
           addToGitignore: _addToGitIgnore,
           addAllToGitignore: _addAllToGitIgnore,
           template: _workflowTemplate(),
@@ -366,7 +365,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       },
       child: DialogTemplate(
         onExit: () async {
-          if (_pubspecFile == null || _projectPath.isEmpty) {
+          if (_pubspecFile == null || _pubspecPath.isEmpty) {
             Navigator.pop(context);
             return;
           }
@@ -375,7 +374,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             context,
             showAlerts: false,
             pubspecInfo: _pubspecFile,
-            pubspecPath: _projectPath,
+            pubspecPath: _pubspecPath,
             addToGitignore: _addToGitIgnore,
             addAllToGitignore: _addAllToGitIgnore,
             template: _workflowTemplate(),
@@ -408,7 +407,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     )
                   : const StageTile(stageType: StageType.beta),
               onClose: () async {
-                if (_pubspecFile == null || _projectPath.isEmpty) {
+                if (_pubspecFile == null || _pubspecPath.isEmpty) {
                   Navigator.pop(context);
                   return;
                 }
@@ -417,7 +416,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                   context,
                   showAlerts: false,
                   pubspecInfo: _pubspecFile,
-                  pubspecPath: _projectPath,
+                  pubspecPath: _pubspecPath,
                   addToGitignore: _addToGitIgnore,
                   addAllToGitignore: _addAllToGitIgnore,
                   template: _workflowTemplate(),
@@ -584,7 +583,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     context,
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
-                    pubspecPath: _projectPath,
+                    pubspecPath: _pubspecPath,
                     addToGitignore: _addToGitIgnore,
                     addAllToGitignore: _addAllToGitIgnore,
                     template: _workflowTemplate(true),
@@ -592,18 +591,17 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
                   if (hasSaved) {
                     // Update the cache with the new changes
-                    await WorkflowSearchUtils.getWorkflowsFromPath(
-                        cache: await ProjectServicesModel.getProjectCache(
-                                (await getApplicationSupportDirectory())
-                                    .path) ??
-                            const ProjectCacheResult(
-                              projectsPath: null,
-                              refreshIntervals: null,
-                              lastProjectReload: null,
-                              lastWorkflowsReload: null,
-                            ),
-                        supportDir:
-                            (await getApplicationSupportDirectory()).path);
+                    // await WorkflowSearchUtils.getWorkflowsFromPath(
+                    //   cache: await ProjectsNotifier.getCacheSettings(
+                    //           (await getApplicationSupportDirectory()).path) ??
+                    //       const ProjectCacheSettings(
+                    //         projectsPath: null,
+                    //         refreshIntervals: null,
+                    //         lastProjectReload: null,
+                    //         lastWorkflowsReload: null,
+                    //       ),
+                    //   supportDir: (await getApplicationSupportDirectory()).path,
+                    // );
 
                     if (mounted) {
                       Navigator.pop(context);
@@ -615,7 +613,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     context,
                     showAlerts: true,
                     pubspecInfo: _pubspecFile,
-                    pubspecPath: _projectPath,
+                    pubspecPath: _pubspecPath,
                     addToGitignore: _addToGitIgnore,
                     addAllToGitignore: _addAllToGitIgnore,
                     template: _workflowTemplate(true),
@@ -623,25 +621,24 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
                   if (hasSaved) {
                     // Update the cache with the new changes
-                    await WorkflowSearchUtils.getWorkflowsFromPath(
-                        cache: await ProjectServicesModel.getProjectCache(
-                                (await getApplicationSupportDirectory())
-                                    .path) ??
-                            const ProjectCacheResult(
-                              projectsPath: null,
-                              refreshIntervals: null,
-                              lastProjectReload: null,
-                              lastWorkflowsReload: null,
-                            ),
-                        supportDir:
-                            (await getApplicationSupportDirectory()).path);
+                    // await WorkflowSearchUtils.getWorkflowsFromPath(
+                    //   cache: await ProjectsNotifier.getCacheSettings(
+                    //           (await getApplicationSupportDirectory()).path) ??
+                    //       const ProjectCacheSettings(
+                    //         projectsPath: null,
+                    //         refreshIntervals: null,
+                    //         lastProjectReload: null,
+                    //         lastWorkflowsReload: null,
+                    //       ),
+                    //   supportDir: (await getApplicationSupportDirectory()).path,
+                    // );
 
                     if (mounted) {
                       Navigator.pop(context);
                     }
 
                     String? path =
-                        (_projectPath.split('\\')..removeLast()).join('\\');
+                        (_pubspecPath.split('\\')..removeLast()).join('\\');
 
                     if (path.isEmpty) {
                       await logger.file(LogTypeTag.error,

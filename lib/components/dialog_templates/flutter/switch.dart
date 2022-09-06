@@ -30,15 +30,14 @@ class SwitchFlutterChannelDialog extends ConsumerStatefulWidget {
 
 class _ChangeFlutterChannelDialogState
     extends ConsumerState<SwitchFlutterChannelDialog> {
-  // Inputs
-  late String _selectedChannel =
-      ref.watch(flutterNotifierController).channel.toLowerCase();
-
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (_, ref, __) {
         FlutterState flutterState = ref.watch(flutterNotifierController);
+
+        String selectedChannel = flutterState.channel.toLowerCase();
+
         FlutterActionsState flutterActionsState =
             ref.watch(flutterActionsStateNotifier);
 
@@ -63,8 +62,8 @@ class _ChangeFlutterChannelDialogState
                   ),
                   VSeparators.normal(),
                   SelectTile(
-                    onPressed: (val) => setState(() => _selectedChannel = val),
-                    defaultValue: _selectedChannel,
+                    onPressed: (val) => setState(() => selectedChannel = val),
+                    defaultValue: selectedChannel,
                     options: const <String>['Master', 'Stable', 'Beta', 'Dev'],
                   ),
                   VSeparators.small(),
@@ -101,7 +100,7 @@ class _ChangeFlutterChannelDialogState
                             child: const Text('Continue'),
                             onPressed: () async {
                               if (flutterState.channel.toLowerCase() ==
-                                  _selectedChannel.toLowerCase()) {
+                                  selectedChannel.toLowerCase()) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     snackBarTile(context,
@@ -109,7 +108,7 @@ class _ChangeFlutterChannelDialogState
                                 return;
                               } else {
                                 await flutterActionsNotifier
-                                    .switchDifferentChannel(_selectedChannel);
+                                    .switchDifferentChannel(selectedChannel);
                               }
                             },
                           ),

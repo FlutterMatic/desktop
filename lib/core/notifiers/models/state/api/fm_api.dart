@@ -1,5 +1,5 @@
 // 🌎 Project imports:
-import 'package:fluttermatic/core/models/fluttermatic.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 
 class FlutterMaticAPIState {
   final FlutterMaticAPI apiMap;

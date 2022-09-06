@@ -23,7 +23,6 @@ import 'package:fluttermatic/core/notifiers/models/state/general/notifications.d
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/search/projects_search.dart';
 import 'package:fluttermatic/meta/utils/search/search.dart';
 import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/dialogs/notifications/notification_view.dart';
@@ -33,14 +32,14 @@ import 'package:fluttermatic/meta/views/tabs/search/elements/workflows.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
-class HomeSearchComponent extends StatefulWidget {
+class HomeSearchComponent extends ConsumerStatefulWidget {
   const HomeSearchComponent({Key? key}) : super(key: key);
 
   @override
   _HomeSearchComponentState createState() => _HomeSearchComponentState();
 }
 
-class _HomeSearchComponentState extends State<HomeSearchComponent> {
+class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
   // Inputs
   final TextEditingController _searchController = TextEditingController();
 
@@ -101,7 +100,12 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
         _workflows.clear();
 
         // Get the latest cache information.
-        _projects.addAll(await ProjectSearchUtils.getProjectsFromCache(_path!));
+        _projects.addAll([
+          ...ref.watch(projectsActionStateNotifier.notifier).pinned,
+          ...ref.watch(projectsActionStateNotifier.notifier).flutter,
+          ...ref.watch(projectsActionStateNotifier.notifier).dart,
+        ]);
+
         _workflows
             .addAll(await WorkflowSearchUtils.getWorkflowsFromCache(_path!));
 
@@ -109,8 +113,8 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
         _lastCacheUpdate = DateTime.now();
       }
 
-      // Wait 250 ms before starting the search. Make sure that the search query
-      // before and after didn't change to avoid unnecessary searches.
+      // Wait a duration before starting the search. Make sure that the search
+      // query before and after didn't change to avoid unnecessary searches.
       String before = _searchController.text;
 
       await Future<void>.delayed(const Duration(milliseconds: 100));

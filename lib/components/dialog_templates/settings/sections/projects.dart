@@ -13,9 +13,9 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
   const ProjectsSettingsSection({Key? key}) : super(key: key);
@@ -160,9 +160,9 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
               onSelected: (int val) async {
                 try {
                   await SharedPref().pref.setInt(SPConst.projectRefresh, val);
-                  await ProjectServicesModel.updateProjectCache(
-                    supportDir: (await getApplicationSupportDirectory()).path,
-                    cache: ProjectCacheResult(
+                  await ProjectsNotifier.updateProjectSettings(
+                    (await getApplicationSupportDirectory()).path,
+                    ProjectCacheSettings(
                       projectsPath: null,
                       refreshIntervals: val,
                       lastProjectReload: null,
@@ -197,7 +197,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                     : Text(
                         'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}'),
               ),
-            )
+            ),
           ],
         ),
         VSeparators.normal(),

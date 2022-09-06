@@ -1,4 +1,5 @@
 // 🎯 Dart imports:
+import 'dart:collection';
 import 'dart:io';
 
 // 📦 Package imports:
@@ -15,8 +16,15 @@ class SpaceNotifier extends StateNotifier<SpaceState> {
 
   SpaceNotifier(this.read) : super(SpaceState.initial());
 
+  final List<String> _drives = [];
+  UnmodifiableListView<String> get drives => UnmodifiableListView(_drives);
+
+  final List<String> _conflictingDrives = [];
+  UnmodifiableListView<String> get conflictingDrives =>
+      UnmodifiableListView(_conflictingDrives);
+
   /// List of all drives
-  late final int _driveCount = state.drives.length;
+  late final int _driveCount = _drives.length;
   int get driveCount => _driveCount;
 
   Future<void> checkSpace() async {
@@ -39,7 +47,7 @@ class SpaceNotifier extends StateNotifier<SpaceState> {
         // The drive letter.
         String driveLetter = disk.devicePath.split(':').first;
 
-        state.drives.add(driveLetter);
+        _drives.add(driveLetter);
 
         String message =
             '${disk.devicePath.split('/')[0].replaceAll(':', '').toUpperCase()}: ${(disk.availableSpace / divisibleValue).toStringAsFixed(2)} GB out of ${((disk.availableSpace + disk.usedSpace) / divisibleValue).toStringAsFixed(2)} GB left';
@@ -89,19 +97,23 @@ class SpaceNotifier extends StateNotifier<SpaceState> {
 
       // If we were not able to find the directory suggested by the path provider
       // as the support directory.
-      if (!state.drives.contains(supportDirectory.path.split(':').first)) {
+      if (!_drives.contains(supportDirectory.path.split(':').first)) {
         state.copyWith(
           hasConflictingError: true,
-          conflictingDrives: state.drives,
         );
 
+        _conflictingDrives.clear();
+        _conflictingDrives.addAll(_drives);
+
         await logger.file(LogTypeTag.error,
-            'Drive conflicting error found. Drives: ${state.drives.join(', ')}');
+            'Drive conflicting error found. Drives: ${_drives.join(', ')}');
       } else {
         state.copyWith(
           hasConflictingError: false,
-          conflictingDrives: const <String>[],
         );
+
+        _conflictingDrives.clear();
+
         await logger.file(LogTypeTag.info, 'No drive conflicts found');
       }
 
@@ -125,8 +137,10 @@ class SpaceNotifier extends StateNotifier<SpaceState> {
         if (!await testFile.exists()) {
           state = state.copyWith(
             hasConflictingError: true,
-            conflictingDrives: state.drives,
           );
+
+          _conflictingDrives.clear();
+          _conflictingDrives.addAll(_drives);
 
           await logger.file(LogTypeTag.error,
               'Unable to create file in ${supportDirectory.path}. This directory is not writable.');
@@ -146,10 +160,13 @@ class SpaceNotifier extends StateNotifier<SpaceState> {
     } catch (_, s) {
       await logger.file(LogTypeTag.error, 'Failed to check disk space: $_',
           stackTraces: s);
+
       state = state.copyWith(
         hasConflictingError: true,
-        conflictingDrives: state.drives,
       );
+
+      _conflictingDrives.clear();
+      _conflictingDrives.addAll(_drives);
     }
   }
 }

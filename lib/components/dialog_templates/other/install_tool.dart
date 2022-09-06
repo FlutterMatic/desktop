@@ -58,106 +58,110 @@ class _InstallToolDialogState extends State<InstallToolDialog> {
         return WillPopScope(
           onWillPop: () => Future.value(!_loading),
           child: DialogTemplate(
-            width: 500,
+            width: 800,
+            height: 500,
             canScroll: false,
             outerTapExit: false,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (widget.tool == SetUpTab.installFlutter)
-                  installFlutter(
-                    context,
-                    onInstall: () async {
-                      setState(() => _loading = true);
+            child: SizedBox(
+              width: 550,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  if (widget.tool == SetUpTab.installFlutter)
+                    installFlutter(
+                      context,
+                      onInstall: () async {
+                        setState(() => _loading = true);
 
-                      await flutterNotifier.checkFlutter();
+                        await flutterNotifier.checkFlutter();
 
-                      setState(() {
-                        _isDone = true;
-                        _loading = false;
-                      });
-                    },
-                    onContinue: () => Navigator.pop(context),
-                  )
-                else if (widget.tool == SetUpTab.installEditor)
-                  SetUpInstallEditor(
-                    onInstall: () async {
-                      if (_editors.contains(EditorType.none)) {
-                        Navigator.pop(context);
-                        return;
-                      }
+                        setState(() {
+                          _isDone = true;
+                          _loading = false;
+                        });
+                      },
+                      onContinue: () => Navigator.pop(context),
+                    )
+                  else if (widget.tool == SetUpTab.installEditor)
+                    SetUpInstallEditor(
+                      onInstall: () async {
+                        if (_editors.contains(EditorType.none)) {
+                          Navigator.pop(context);
+                          return;
+                        }
 
-                      setState(() => _loading = true);
+                        setState(() => _loading = true);
 
-                      if (_editors.contains(EditorType.vscode)) {
-                        await vscNotifier.checkVSCode();
-                      }
+                        if (_editors.contains(EditorType.vscode)) {
+                          await vscNotifier.checkVSCode();
+                        }
 
-                      if (_editors.contains(EditorType.androidStudio)) {
-                        await asNotifier.checkAStudio();
-                      }
+                        if (_editors.contains(EditorType.androidStudio)) {
+                          await asNotifier.checkAStudio();
+                        }
 
-                      setState(() {
-                        _isDone = true;
-                        _loading = false;
-                      });
-                    },
-                    onContinue: () => Navigator.pop(context),
-                    doneInstalling: _isDone,
-                    isInstalling: _loading,
-                    onEditorTypeChanged: (List<EditorType> editors) {
-                      setState(() {
-                        _editors.clear();
-                        _editors.addAll(editors);
-                      });
-                    },
-                  )
-                else if (widget.tool == SetUpTab.installGit)
-                  installGit(
-                    context,
-                    onInstall: () async {
-                      setState(() => _loading = true);
+                        setState(() {
+                          _isDone = true;
+                          _loading = false;
+                        });
+                      },
+                      onContinue: () => Navigator.pop(context),
+                      doneInstalling: _isDone,
+                      isInstalling: _loading,
+                      onEditorTypeChanged: (List<EditorType> editors) {
+                        setState(() {
+                          _editors.clear();
+                          _editors.addAll(editors);
+                        });
+                      },
+                    )
+                  else if (widget.tool == SetUpTab.installGit)
+                    installGit(
+                      context,
+                      onInstall: () async {
+                        setState(() => _loading = true);
 
-                      await gitNotifier.checkGit();
+                        await gitNotifier.checkGit();
 
-                      setState(() {
-                        _isDone = true;
-                        _loading = false;
-                      });
-                    },
-                    onContinue: () => Navigator.pop(context),
-                    doneInstalling: _isDone,
-                    isInstalling: _loading,
-                  )
-                else if (widget.tool == SetUpTab.installJava)
-                  installJava(
-                    context,
-                    onInstall: () async {
-                      setState(() => _loading = true);
+                        setState(() {
+                          _isDone = true;
+                          _loading = false;
+                        });
+                      },
+                      onContinue: () => Navigator.pop(context),
+                      doneInstalling: _isDone,
+                      isInstalling: _loading,
+                    )
+                  else if (widget.tool == SetUpTab.installJava)
+                    installJava(
+                      context,
+                      onInstall: () async {
+                        setState(() => _loading = true);
 
-                      await javaNotifier.checkJava();
+                        await javaNotifier.checkJava();
 
-                      setState(() {
-                        _isDone = true;
-                        _loading = false;
-                      });
-                    },
-                    onContinue: () => Navigator.pop(context),
-                    onSkip: () => Navigator.pop(context),
-                    doneInstalling: _isDone,
-                    isInstalling: _loading,
-                  ),
-                if (!_loading &&
-                    !_isDone &&
-                    widget.tool != SetUpTab.installJava)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                        setState(() {
+                          _isDone = true;
+                          _loading = false;
+                        });
+                      },
+                      onContinue: () => Navigator.pop(context),
+                      onSkip: () => Navigator.pop(context),
+                      doneInstalling: _isDone,
+                      isInstalling: _loading,
                     ),
-                  ),
-              ],
+                  if (!_loading &&
+                      !_isDone &&
+                      widget.tool != SetUpTab.installJava)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         );

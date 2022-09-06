@@ -3,10 +3,10 @@ import 'dart:convert';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:http/http.dart' as http;
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/models/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 

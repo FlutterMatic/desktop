@@ -52,7 +52,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_APP_ICON            ICON                    "resources\\flutter_fluttermatic.ico"
+IDI_APP_ICON            ICON                    "resources\\app_icon.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,13 +63,13 @@ IDI_APP_ICON            ICON                    "resources\\flutter_fluttermatic
 #ifdef FLUTTER_BUILD_NUMBER
 #define VERSION_AS_NUMBER FLUTTER_BUILD_NUMBER
 #else
-#define VERSION_AS_NUMBER 1,0,2
+#define VERSION_AS_NUMBER 1,0,0
 #endif
 
 #ifdef FLUTTER_BUILD_NAME
 #define VERSION_AS_STRING #FLUTTER_BUILD_NAME
 #else
-#define VERSION_AS_STRING "1.0.2"
+#define VERSION_AS_STRING "1.0.0"
 #endif
 
 VS_VERSION_INFO VERSIONINFO
@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "FlutterMatic" "\0"
-            VALUE "FileDescription", "FlutterMatic" "\0"
+            VALUE "CompanyName", "com.fluttermatic" "\0"
+            VALUE "FileDescription", "fluttermatic" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "fluttermatic" "\0"
-            VALUE "LegalCopyright", "Copyright © 2022 FlutterMatic. All rights reserved. Flutter is a trademark of Google Inc. All other trademarks are the property of their respective owners." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 com.fluttermatic. All rights reserved." "\0"
             VALUE "OriginalFilename", "fluttermatic.exe" "\0"
             VALUE "ProductName", "fluttermatic" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

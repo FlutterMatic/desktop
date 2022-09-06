@@ -8,10 +8,6 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:process_run/shell.dart';
 
-// 🌎 Project imports:
-import 'package:fluttermatic/core/models/flutter_sdk.dart';
-import 'package:fluttermatic/core/models/fluttermatic.dart';
-
 // Shell global reference
 final Shell shell = Shell(
   commandVerbose: false,
@@ -23,7 +19,7 @@ final Shell shell = Shell(
 bool completedSetup = false;
 
 /// Whether or not to show the dev controls.
-bool _showDevControls = false;
+bool _showDevControls = true;
 
 bool allowDevControls = (kDebugMode && _showDevControls);
 

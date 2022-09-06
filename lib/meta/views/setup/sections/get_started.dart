@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:retry/retry.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/core/models/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
@@ -96,7 +96,7 @@ class _SetUpGettingStartedState extends ConsumerState<SetUpGettingStarted> {
           if (flutterSdkState.sdk.isEmpty && mounted) {
             await flutterSdkNotifier.fetchSDKData();
             await logger.file(LogTypeTag.info,
-                'Fetched Flutter SDK data: ${flutterSdkState.sdkMap.data.toString().substring(0, 50)}...');
+                'Fetched Flutter SDK data: ${flutterSdkState.sdkMap.data.toString()}');
           }
         },
         onRetry: (_) async {

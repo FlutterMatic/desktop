@@ -3,9 +3,9 @@ import 'dart:io';
 import 'dart:isolate';
 
 // 🌎 Project imports:
+import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
 
 class WorkflowServicesModel {
   /// If we have cache, we will use it to improve performance. After we send to
@@ -20,106 +20,107 @@ class WorkflowServicesModel {
   /// **RESPONSE FORMAT**:
   /// [<List> projects, <boolean> killIsolate, <boolean> isExpectedAnotherResponse]
   static Future<void> getWorkflowsIsolate(List<dynamic> data) async {
-    SendPort port = data[0];
-    String supportDir = data[1];
-    bool force = data[2]; // Whether to force to refetch from scratch even if
-    // we have cache that is not expired.
+    //  TODO: Implement.
+    // SendPort port = data[0];
+    // String supportDir = data[1];
+    // bool force = data[2]; // Whether to force to refetch from scratch even if
+    // // we have cache that is not expired.
 
-    if (await WorkflowSearchUtils.hasCache(supportDir)) {
-      await logger.file(
-          LogTypeTag.info, 'Fetching workflows from cache. Cache found.',
-          logDir: Directory(supportDir));
+    // if (await WorkflowSearchUtils.hasCache(supportDir)) {
+    //   await logger.file(
+    //       LogTypeTag.info, 'Fetching workflows from cache. Cache found.',
+    //       logDir: Directory(supportDir));
 
-      List<ProjectWorkflowsGrouped> workflowsCache =
-          await WorkflowSearchUtils.getWorkflowsFromCache(supportDir);
+    //   List<ProjectWorkflowsGrouped> workflowsCache =
+    //       await WorkflowSearchUtils.getWorkflowsFromCache(supportDir);
 
-      ProjectCacheResult? cache =
-          await ProjectServicesModel.getProjectCache(supportDir);
+    //   ProjectCacheSettings? cache =
+    //       await ProjectsNotifier.getCacheSettings(supportDir);
 
-      // Check to see if we need to refetch again because of time interval or cache
-      // expired.
-      if (cache != null) {
-        // Cache expired. Will return the expired cache for performance, then will
-        // refetch the cache in the background and update the listener with the
-        // new cache if there is a difference to avoid unnecessary rebuilds.
+    //   // Check to see if we need to refetch again because of time interval or cache
+    //   // expired.
+    //   if (cache != null) {
+    //     // Cache expired. Will return the expired cache for performance, then will
+    //     // refetch the cache in the background and update the listener with the
+    //     // new cache if there is a difference to avoid unnecessary rebuilds.
 
-        bool isExpiredCache = true;
+    //     bool isExpiredCache = true;
 
-        // Seconds Difference
-        int difference = DateTime.now()
-            .difference(cache.lastWorkflowsReload ?? DateTime.now())
-            .inSeconds;
+    //     // Seconds Difference
+    //     int difference = DateTime.now()
+    //         .difference(cache.lastWorkflowsReload ?? DateTime.now())
+    //         .inSeconds;
 
-        // Check to see if the cache is expired. Interval in minutes. Must be
-        // in seconds.
-        if (((cache.refreshIntervals ?? 0) * 60) > difference) {
-          isExpiredCache = false;
-        }
+    //     // Check to see if the cache is expired. Interval in minutes. Must be
+    //     // in seconds.
+    //     if (((cache.refreshIntervals ?? 0) * 60) > difference) {
+    //       isExpiredCache = false;
+    //     }
 
-        if (isExpiredCache || force) {
-          if (force) {
-            await logger.file(LogTypeTag.info,
-                'Fetching workflows from cache. Cache expired. Force refetch.',
-                logDir: Directory(supportDir));
-          }
+    //     if (isExpiredCache || force) {
+    //       if (force) {
+    //         await logger.file(LogTypeTag.info,
+    //             'Fetching workflows from cache. Cache expired. Force refetch.',
+    //             logDir: Directory(supportDir));
+    //       }
 
-          await logger.file(LogTypeTag.info,
-              'Fetching workflows from scratch. Cache expired.',
-              logDir: Directory(supportDir));
+    //       await logger.file(LogTypeTag.info,
+    //           'Fetching workflows from scratch. Cache expired.',
+    //           logDir: Directory(supportDir));
 
-          // Don't kill isolate. Will refetch with cache.
-          port.send(<dynamic>[workflowsCache, false, true]);
+    //       // Don't kill isolate. Will refetch with cache.
+    //       port.send(<dynamic>[workflowsCache, false, true]);
 
-          List<ProjectWorkflowsGrouped> workflowsRefetch =
-              await WorkflowSearchUtils.getWorkflowsFromPath(
-                  cache: cache, supportDir: supportDir);
+    //       List<ProjectWorkflowsGrouped> workflowsRefetch =
+    //           await WorkflowSearchUtils.getWorkflowsFromPath(
+    //               cache: cache, supportDir: supportDir);
 
-          // Update cache.
-          await ProjectServicesModel.updateProjectCache(
-            supportDir: supportDir,
-            cache: ProjectCacheResult(
-              projectsPath: null,
-              refreshIntervals: null,
-              lastProjectReload: null,
-              lastWorkflowsReload: DateTime.now(),
-            ),
-          );
+    //       // Update cache.
+    //       await ProjectsNotifier.updateProjectCache(
+    //         supportDir: supportDir,
+    //         cache: ProjectCacheSettings(
+    //           projectsPath: null,
+    //           refreshIntervals: null,
+    //           lastProjectReload: null,
+    //           lastWorkflowsReload: DateTime.now(),
+    //         ),
+    //       );
 
-          // Kill isolate. Cache is now updated.
-          port.send(<dynamic>[workflowsRefetch, true, false]);
-          return;
-        } else {
-          await logger.file(LogTypeTag.info,
-              'Fetching workflows from cache. Cache still valid.',
-              logDir: Directory(supportDir));
-          // Kill isolate. Cache is still valid.
-          port.send(<dynamic>[workflowsCache, true, false]);
-          return;
-        }
-      } else {
-        // Kill isolate.
-        port.send(<dynamic>[workflowsCache, true, false]);
-        return;
-      }
-    } else {
-      await logger.file(
-          LogTypeTag.info, 'Fetching workflows initially. No cache found.',
-          logDir: Directory(supportDir));
-      List<ProjectWorkflowsGrouped> projectsPaths =
-          await WorkflowSearchUtils.getWorkflowsFromPath(
-        cache: await ProjectServicesModel.getProjectCache(supportDir) ??
-            const ProjectCacheResult(
-              lastProjectReload: null,
-              projectsPath: null,
-              refreshIntervals: null,
-              lastWorkflowsReload: null,
-            ),
-        supportDir: supportDir,
-      );
+    //       // Kill isolate. Cache is now updated.
+    //       port.send(<dynamic>[workflowsRefetch, true, false]);
+    //       return;
+    //     } else {
+    //       await logger.file(LogTypeTag.info,
+    //           'Fetching workflows from cache. Cache still valid.',
+    //           logDir: Directory(supportDir));
+    //       // Kill isolate. Cache is still valid.
+    //       port.send(<dynamic>[workflowsCache, true, false]);
+    //       return;
+    //     }
+    //   } else {
+    //     // Kill isolate.
+    //     port.send(<dynamic>[workflowsCache, true, false]);
+    //     return;
+    //   }
+    // } else {
+    //   await logger.file(
+    //       LogTypeTag.info, 'Fetching workflows initially. No cache found.',
+    //       logDir: Directory(supportDir));
+    //   List<ProjectWorkflowsGrouped> projectsPaths =
+    //       await WorkflowSearchUtils.getWorkflowsFromPath(
+    //     cache: await ProjectsNotifier.getCacheSettings(supportDir) ??
+    //         const ProjectCacheSettings(
+    //           lastProjectReload: null,
+    //           projectsPath: null,
+    //           refreshIntervals: null,
+    //           lastWorkflowsReload: null,
+    //         ),
+    //     supportDir: supportDir,
+    //   );
 
-      // Kill isolate
-      port.send(<dynamic>[projectsPaths, true, false]);
-      return;
-    }
+    //   // Kill isolate
+    //   port.send(<dynamic>[projectsPaths, true, false]);
+    //   return;
+    // }
   }
 }

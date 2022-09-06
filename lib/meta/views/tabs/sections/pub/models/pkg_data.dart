@@ -141,12 +141,14 @@ class PkgViewData {
         PackageMetrics? data = await _pub.packageMetrics(e);
         PackagePublisher author = await _pub.packagePublisher(e);
 
-        pubPackages.add(PkgViewData(
-          name: e,
-          info: info,
-          metrics: data,
-          publisher: author,
-        ));
+        pubPackages.add(
+          PkgViewData(
+            name: e,
+            info: info,
+            metrics: data,
+            publisher: author,
+          ),
+        );
       }
 
       // Set the cache after we have loaded the packages.
@@ -183,8 +185,15 @@ class PkgViewData {
       port.send(<dynamic>[response, true, false]);
       return;
     } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to fetch pub packages.',
-          stackTraces: s, logDir: Directory(path));
+      print(_);
+      print(s);
+
+      await logger.file(
+        LogTypeTag.error,
+        'Failed to fetch pub packages. Error: $_',
+        stackTraces: s,
+        logDir: Directory(path),
+      );
 
       GetPkgResponseModel response = GetPkgResponseModel(
           response: GetPkgResponse.error, packages: pubPackages);

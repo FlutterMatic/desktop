@@ -12,25 +12,11 @@ String? _flutterExecutablePath;
 String? get flutterExecutablePath =>
     _flutterExecutablePath ??= whichSync('flutter');
 
-bool get isFlutterSupported => isFlutterSupportedSync;
-
-/// true if flutter is supported
-bool get isFlutterSupportedSync => flutterExecutablePath != null;
-
-// to deprecate
-Future<Version?> getFlutterVersion() => getFlutterBinVersion();
-
 /// Get flutter version.
 ///
 /// Returns null if flutter cannot be found in the path
-Future<Version?> getFlutterBinVersion() async =>
+Future<Version?> getFlutterVersion() async =>
     (await getFlutterBinInfo())?.version;
-
-/// Get flutter channel. (dev, beta, master, stable)
-///
-/// Returns null if flutter cannot be found in the path
-Future<String?> getFlutterChannel() async =>
-    (await getFlutterBinInfo())?.channel;
 
 FlutterBinInfo? _flutterBinInfo;
 
@@ -53,6 +39,7 @@ abstract class FlutterBinInfo {
         .map((String word) => word.trim())
         .where((String word) => word.isNotEmpty)
         .toList();
+        
     // Take the first version string after flutter
     bool foundFlutter = false;
     bool foundChannel = false;
@@ -76,9 +63,11 @@ abstract class FlutterBinInfo {
         }
       }
     }
+
     if (version != null && channel != null) {
       return FlutterBinInfoImpl(version: version, channel: channel);
     }
+
     return null;
   }
 }
@@ -109,10 +98,13 @@ Future<FlutterBinInfo?> _getFlutterBinInfo() async {
         await run('flutter --version', verbose: false);
     // Take from stderr first
     String resultOutput = results.first.stderr.toString().trim();
+
     if (resultOutput.isEmpty) {
       resultOutput = results.first.stdout.toString().trim();
     }
+
     return FlutterBinInfo.parseVersionOutput(resultOutput);
-  } catch (_) {}
-  return null;
+  } catch (_) {
+    return null;
+  }
 }

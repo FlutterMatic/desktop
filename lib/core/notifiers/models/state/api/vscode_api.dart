@@ -1,5 +1,5 @@
 // 🌎 Project imports:
-import 'package:fluttermatic/core/models/vscode.dart';
+import 'package:fluttermatic/core/models/tools/vscode.dart';
 
 class VSCodeAPIState {
   final VSCodeAPI vscMap;

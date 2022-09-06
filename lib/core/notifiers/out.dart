@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // 🌎 Project imports:
 import 'package:fluttermatic/core/notifiers/models/state/actions/dart.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/flutter.dart';
+import 'package:fluttermatic/core/notifiers/models/state/actions/projects.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
@@ -20,6 +21,7 @@ import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/dart.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/flutter.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/api/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/api/vscode.dart';
@@ -100,3 +102,7 @@ final StateNotifierProvider<FlutterActionsNotifier, FlutterActionsState>
 final StateNotifierProvider<DartActionsNotifier, DartActionsState>
     dartActionsStateNotifier =
     StateNotifierProvider((_) => DartActionsNotifier(_.read));
+
+final StateNotifierProvider<ProjectsNotifier, ProjectsState>
+    projectsActionStateNotifier =
+    StateNotifierProvider((_) => ProjectsNotifier(_.read));

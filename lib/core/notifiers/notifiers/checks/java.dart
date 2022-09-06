@@ -228,13 +228,15 @@ class JavaNotifier extends StateNotifier<JavaState> {
         javaPath = SharedPref().pref.getString(SPConst.javaPath);
         await logger.file(LogTypeTag.info, 'Java found at: $javaPath');
 
-        state = state.copyWith(
-          javaVersion:
-              Version.parse(SharedPref().pref.getString(SPConst.javaVersion)!),
-        );
+        if (SharedPref().pref.getString(SPConst.javaVersion) != null) {
+          state = state.copyWith(
+            javaVersion: Version.parse(
+                SharedPref().pref.getString(SPConst.javaVersion)!),
+          );
+        }
 
         await logger.file(
-            LogTypeTag.info, 'Java version: ${state.javaVersion.toString()}');
+            LogTypeTag.info, 'Java version: ${state.javaVersion}');
 
         state = state.copyWith(
           progress: Progress.done,

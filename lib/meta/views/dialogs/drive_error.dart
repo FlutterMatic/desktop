@@ -11,7 +11,7 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/space.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/main.dart';
 
@@ -37,10 +37,11 @@ class SystemDriveErrorDialog extends StatelessWidget {
                 children: <Widget>[
                   Consumer(
                     builder: (_, ref, __) {
-                      SpaceState spaceState = ref.watch(spaceStateController);
+                      SpaceNotifier spaceNotifier =
+                          ref.watch(spaceStateController.notifier);
 
                       return Text(
-                        'System Drives: ${spaceState.conflictingDrives.join(', ')}',
+                        'System Drives: ${spaceNotifier.conflictingDrives.join(', ')}',
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       );
