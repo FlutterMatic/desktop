@@ -1,7 +1,3 @@
-// 🎯 Dart imports:
-import 'dart:convert';
-import 'dart:io';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -21,17 +17,11 @@ import 'package:fluttermatic/meta/views/workflows/views/delete.dart';
 import 'package:fluttermatic/meta/views/workflows/views/options.dart';
 
 class WorkflowInfoTile extends StatefulWidget {
-  final String path;
-  final Function() onDelete;
   final WorkflowTemplate workflow;
-  final Function() onReload;
 
   const WorkflowInfoTile({
     Key? key,
     required this.workflow,
-    required this.path,
-    required this.onDelete,
-    required this.onReload,
   }) : super(key: key);
 
   @override
@@ -76,10 +66,7 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                               await showDialog(
                                 context: context,
                                 builder: (_) => ShowWorkflowTileOptions(
-                                  onDelete: widget.onDelete,
-                                  workflowPath: widget.path,
-                                  onReload: widget.onReload,
-                                ),
+                                    workflow: widget.workflow),
                               );
                             },
                             radius: BorderRadius.circular(2),
@@ -213,8 +200,7 @@ class _WorkflowInfoTileState extends State<WorkflowInfoTile> {
                 if (!widget.workflow.isSaved)
                   Tooltip(
                     padding: const EdgeInsets.all(5),
-                    message:
-                        '''
+                    message: '''
 This workflow has not completed setup yet - or, you will need to go through 
 setup again because we added some new features that need to be migrated.''',
                     child: SvgPicture.asset(Assets.warn, height: 20),
@@ -228,21 +214,16 @@ setup again because we added some new features that need to be migrated.''',
                     height: 40,
                     child: const Icon(Icons.edit_rounded, size: 20),
                     onPressed: () async {
-                      Map<String, dynamic> workflow =
-                          jsonDecode(await File(widget.path).readAsString());
-
                       await showDialog(
                         context: context,
                         builder: (_) => StartUpWorkflow(
-                          pubspecPath: '${(widget.path.split('\\')
-                            ..removeLast()
-                            ..removeLast()).join('\\')}\\pubspec.yaml',
-                          editWorkflowTemplate:
-                              WorkflowTemplate.fromJson(workflow),
+                          workflow: widget.workflow,
+                          pubspecPath:
+                              '${(widget.workflow.workflowPath.split('\\')
+                                ..removeLast()
+                                ..removeLast()).join('\\')}\\pubspec.yaml',
                         ),
                       );
-
-                      widget.onReload();
                     },
                   ),
                 ),
@@ -260,7 +241,7 @@ setup again because we added some new features that need to be migrated.''',
                         showDialog(
                           context: context,
                           builder: (_) =>
-                              WorkflowRunnerDialog(workflowPath: widget.path),
+                              WorkflowRunnerDialog(workflow: widget.workflow),
                         );
                       },
                     ),
@@ -275,18 +256,10 @@ setup again because we added some new features that need to be migrated.''',
                       child: const Icon(Icons.delete_forever_rounded,
                           color: AppTheme.errorColor, size: 20),
                       onPressed: () async {
-                        WorkflowTemplate template = WorkflowTemplate.fromJson(
-                            jsonDecode(await File(widget.path).readAsString()));
                         await showDialog(
                           context: context,
                           builder: (_) => ConfirmWorkflowDelete(
-                            onClose: (bool deleted) {
-                              if (deleted) {
-                                widget.onDelete();
-                              }
-                            },
-                            path: widget.path,
-                            template: template,
+                            workflow: widget.workflow,
                           ),
                         );
                       },

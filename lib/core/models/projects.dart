@@ -34,4 +34,20 @@ class ProjectObject {
       pinned: json['pinned'] as bool,
     );
   }
+
+  ProjectObject copyWith({
+    String? name,
+    DateTime? modDate,
+    String? description,
+    String? path,
+    bool? pinned,
+  }) {
+    return ProjectObject(
+      name: name ?? this.name,
+      modDate: modDate ?? this.modDate,
+      description: description ?? this.description,
+      path: path ?? this.path,
+      pinned: pinned ?? this.pinned,
+    );
+  }
 }

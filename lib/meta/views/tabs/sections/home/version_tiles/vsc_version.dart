@@ -1,14 +1,9 @@
-// 🎯 Dart imports:
-import 'dart:io';
-import 'dart:isolate';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pub_semver/src/version.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
@@ -21,111 +16,30 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
-import 'package:fluttermatic/core/services/logs.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/utils/general/time_ago.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/tool_error.dart';
 
-Future<void> _check(List<dynamic> data) async {
-  SendPort port = data[0];
-  String logPath = data[1];
-
-  ServiceCheckResponse result =
-      await CheckServices.checkVSCode(Directory(logPath));
-
-  port.send(<dynamic>[
-    result.version?.toString(),
-  ]);
-  return;
-}
-
-class HomeVSCVersionTile extends StatefulWidget {
+class HomeVSCVersionTile extends ConsumerWidget {
   const HomeVSCVersionTile({Key? key}) : super(key: key);
 
   @override
-  _HomeVSCVersionStateTile createState() => _HomeVSCVersionStateTile();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    CheckServicesState state = ref.watch(checkServicesStateNotifier);
+    CheckServicesNotifier notifier =
+        ref.watch(checkServicesStateNotifier.notifier);
 
-class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
-  final ReceivePort _port = ReceivePort('VSC_HOME_ISOLATE_PORT');
-
-  Version? _version;
-
-  // Utils
-  bool _error = false;
-  bool _doneLoading = false;
-  bool _listening = false;
-
-  Future<void> _load() async {
-    while (mounted) {
-      // Avoid an isolate if this is on macOS because of some complications.
-      if (Platform.isMacOS) {
-        ServiceCheckResponse info = await CheckServices.checkVSCode();
-
-        setState(() {
-          _version = info.version;
-          _doneLoading = true;
-        });
-
-        // Close the unnecessary ports
-        _port.close();
-      } else {
-        Directory logPath = await getApplicationSupportDirectory();
-        Isolate i =
-            await Isolate.spawn(_check, <dynamic>[_port.sendPort, logPath.path])
-                .timeout(const Duration(minutes: 1), onTimeout: () async {
-          await logger.file(LogTypeTag.error, 'VS Code version check timeout');
-          setState(() => _error = true);
-
-          return Isolate.current;
-        });
-
-        if (mounted && !_listening) {
-          _port.listen((dynamic data) {
-            i.kill();
-            setState(() => _listening = true);
-            if (mounted) {
-              setState(() {
-                _error = false;
-                _doneLoading = true;
-                if (data[0] == null) {
-                  _version = null;
-                } else {
-                  _version = Version?.parse(data[0] as String);
-                }
-              });
-            }
-          });
-        }
-      }
-
-      await Future<void>.delayed(const Duration(minutes: 30));
-    }
-  }
-
-  @override
-  void initState() {
-    _load();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _port.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_error) {
+    if (state.codeError.isNotEmpty) {
       return const HomeToolErrorTile(toolName: 'VS Code');
     }
+
     return RoundContainer(
       child: Shimmer.fromColors(
-        enabled: !_doneLoading,
+        enabled: state.loading,
         child: IgnorePointer(
-          ignoring: !_doneLoading,
+          ignoring: state.loading,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -135,15 +49,15 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                   HSeparators.small(),
                   Expanded(
                     child: Text(
-                      'VS Code - ${_version ?? '...'}',
+                      'VS Code - ${notifier.vsCode?.version ?? '...'}',
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
                   const StageTile(stageType: StageType.beta),
                   HSeparators.normal(),
-                  if (!_doneLoading)
+                  if (state.loading)
                     const Text('- ')
-                  else if (_version == null)
+                  else if (notifier.vsCode?.version == null)
                     SvgPicture.asset(Assets.error, height: 20)
                   else
                     SvgPicture.asset(Assets.done, height: 20),
@@ -151,10 +65,10 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
               ),
               VSeparators.normal(),
               IgnorePointer(
-                ignoring: _version == null && _doneLoading,
+                ignoring: notifier.vsCode?.version == null && state.loading,
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
-                  opacity: _version == null && _doneLoading ? 0.2 : 1,
+                  opacity: notifier.vsCode?.version == null && state.loading ? 0.2 : 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -185,7 +99,7 @@ class _HomeVSCVersionStateTile extends State<HomeVSCVersionTile> {
                 ),
               ),
               VSeparators.normal(),
-              if (_version != null || !_doneLoading)
+              if (notifier.vsCode?.version != null || !state.loading)
                 RectangleButton(
                   width: double.infinity,
                   onPressed: () {

@@ -4,7 +4,6 @@ import 'dart:io';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
@@ -68,7 +67,7 @@ class WorkflowSearchUtils {
     required String supportDir,
   }) async {
     return [];
-    //  TODO: Implement
+    //  TODO: Implement workflow search.
     // try {
     //   // The projects path must not be null. We will fetch the workflows from
     //   // the projects path that is set. So this depends on the projects path
@@ -170,7 +169,7 @@ class WorkflowSearchUtils {
               workflow as Map<String, dynamic>;
 
           workflowsFromCache.add(ProjectWorkflowsGrouped(
-              path: projectWorkflows.keys.first,
+              projectPath: projectWorkflows.keys.first,
               workflows: (projectWorkflows.values.first as List<dynamic>)
                   .map((_) =>
                       WorkflowTemplate.fromJson(_ as Map<String, dynamic>))
@@ -193,11 +192,11 @@ class WorkflowSearchUtils {
 }
 
 class ProjectWorkflowsGrouped {
-  final String path;
+  final String projectPath;
   final List<WorkflowTemplate> workflows;
 
   ProjectWorkflowsGrouped({
-    required this.path,
+    required this.projectPath,
     required this.workflows,
   });
 }

@@ -30,7 +30,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   String? _dirPath;
   bool _dirPathError = false;
 
-  int _refreshIntervals = 1;
+  int _refreshIntervals = 60;
 
   void _getProjectPath() {
     if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
@@ -44,9 +44,9 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   Future<void> _getProjectRefreshIntervals() async {
     if (SharedPref().pref.containsKey(SPConst.projectRefresh)) {
       setState(() => _refreshIntervals =
-          SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1);
+          SharedPref().pref.getInt(SPConst.projectRefresh) ?? 60);
     } else {
-      await SharedPref().pref.setInt(SPConst.projectRefresh, 1);
+      await SharedPref().pref.setInt(SPConst.projectRefresh, 60);
     }
   }
 
@@ -155,6 +155,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   const PopupMenuItem<int>(
                       value: 10, child: Text('10 minutes')),
                   const PopupMenuItem<int>(value: 60, child: Text('1 hour')),
+                  const PopupMenuItem<int>(value: -1, child: Text('Never')),
                 ];
               },
               onSelected: (int val) async {
@@ -192,10 +193,12 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
               initialValue: SharedPref().pref.getInt(SPConst.projectRefresh),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: _refreshIntervals == 60
-                    ? const Text('Every 1 hour')
-                    : Text(
-                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}'),
+                child: _refreshIntervals == -1
+                    ? const Text('Never')
+                    : (_refreshIntervals == 60
+                        ? const Text('Every 1 hour')
+                        : Text(
+                            'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}')),
               ),
             ),
           ],

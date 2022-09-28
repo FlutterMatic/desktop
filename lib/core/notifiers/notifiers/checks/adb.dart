@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:process_run/shell.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/bin/adb.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/adb.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';

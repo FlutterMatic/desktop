@@ -5,6 +5,7 @@ import 'package:fluttermatic/core/services/logs.dart';
 class WorkflowTemplate {
   final String name;
   final String description;
+  final String workflowPath;
 
   // Build Modes & Types
   final WebRenderers webRenderer;
@@ -38,6 +39,7 @@ class WorkflowTemplate {
   const WorkflowTemplate({
     required this.name,
     required this.description,
+    required this.workflowPath,
     required this.webUrl,
     required this.firebaseProjectName,
     required this.firebaseProjectId,
@@ -66,6 +68,7 @@ class WorkflowTemplate {
     return <String, dynamic>{
       'name': name,
       'description': description,
+      'workflowPath': workflowPath,
       'firebaseProjectId': firebaseProjectId,
       'firebaseProjectName': firebaseProjectName,
       'isFirebaseDeployVerified': isFirebaseDeployVerified,
@@ -98,6 +101,8 @@ class WorkflowTemplate {
         name: (json['name'] as String?) ?? 'No name',
         // ...
         description: (json['description'] as String?) ?? 'No description',
+        // ...
+        workflowPath: (json['workflowPath'] as String?) ?? '\\/',
         // ...
         webUrl: (json['webUrl'] as String?) ?? 'No web url',
         // ...

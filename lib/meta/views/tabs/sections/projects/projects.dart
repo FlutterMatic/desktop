@@ -35,18 +35,20 @@ class _HomeProjectsSectionState extends ConsumerState<HomeProjectsSection> {
     ProjectsNotifier projectsNotifier =
         ref.watch(projectsActionStateNotifier.notifier);
 
-    // Don't load if already loaded from a previous page visit or call.
+    // Don't load if already loaded from a previous page visit or call unless
+    // this is forced.
     if ([
-      ...projectsNotifier.pinned,
-      ...projectsNotifier.flutter,
-      ...projectsNotifier.dart
-    ].isNotEmpty) {
+          ...projectsNotifier.pinned,
+          ...projectsNotifier.flutter,
+          ...projectsNotifier.dart
+        ].isNotEmpty &&
+        !force) {
       return;
     }
 
     await projectsNotifier.getProjectsWithIsolate(force);
 
-    if (projectsState.isError && mounted) {
+    if (projectsState.error && mounted) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(
@@ -69,7 +71,17 @@ class _HomeProjectsSectionState extends ConsumerState<HomeProjectsSection> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _loadProjects(false));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadProjects(false);
+
+      while (
+          mounted && SharedPref().pref.getInt(SPConst.projectRefresh) != -1) {
+        await Future.delayed(Duration(
+            minutes: SharedPref().pref.getInt(SPConst.projectRefresh) ?? 60));
+
+        await _loadProjects(true);
+      }
+    });
     super.initState();
   }
 
@@ -127,13 +139,26 @@ class _HomeProjectsSectionState extends ConsumerState<HomeProjectsSection> {
                   ),
                 ),
               )
-            else if (projectsState.isLoading &&
+            else if (projectsState.loading &&
                 [
                   ...projectsNotifier.pinned,
                   ...projectsNotifier.flutter,
                   ...projectsNotifier.dart,
                 ].isEmpty)
-              const Center(child: Spinner(thickness: 2))
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 100,
+                      child: LinearProgressIndicator(),
+                    ),
+                    VSeparators.normal(),
+                    const Text(
+                        'Indexing your projects... Might take a while...'),
+                  ],
+                ),
+              )
             else if ([
               ...projectsNotifier.pinned,
               ...projectsNotifier.flutter,
@@ -268,7 +293,7 @@ class _HomeProjectsSectionState extends ConsumerState<HomeProjectsSection> {
                   ),
                 ),
               ),
-            if (projectsState.isLoading &&
+            if (projectsState.loading &&
                 [
                   ...projectsNotifier.pinned,
                   ...projectsNotifier.flutter,

@@ -1,6 +1,5 @@
 // 🎯 Dart imports:
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 // 🐦 Flutter imports:
@@ -28,11 +27,11 @@ import 'package:fluttermatic/meta/views/workflows/runner/status/success.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class WorkflowRunnerDialog extends StatefulWidget {
-  final String workflowPath;
+  final WorkflowTemplate workflow;
 
   const WorkflowRunnerDialog({
     Key? key,
-    required this.workflowPath,
+    required this.workflow,
   }) : super(key: key);
 
   @override
@@ -41,7 +40,7 @@ class WorkflowRunnerDialog extends StatefulWidget {
 
 class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
   // Workflow Info
-  late WorkflowTemplate _template;
+  late String workflowPath;
   final List<String> _workflowActions = <String>[];
   final List<String> _completedActions = <String>[];
 
@@ -58,14 +57,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
 
   Future<void> _loadWorkflow() async {
     try {
-      File workflow = File(widget.workflowPath);
-
-      WorkflowTemplate workflowTemplate =
-          WorkflowTemplate.fromJson(jsonDecode(await workflow.readAsString()));
-
-      setState(() => _template = workflowTemplate);
-
-      if (!_template.isSaved) {
+      if (!widget.workflow.isSaved) {
         if (mounted) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).clearSnackBars();
@@ -79,24 +71,24 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
         showDialog(
           context: context,
           builder: (_) => StartUpWorkflow(
-            pubspecPath: '${(widget.workflowPath.split('\\')
+            pubspecPath: '${(widget.workflow.workflowPath.split('\\')
               ..removeLast()
               ..removeLast()).join('\\')}\\pubspec.yaml',
-            editWorkflowTemplate: workflowTemplate,
+            workflow: widget.workflow,
           ),
         );
         return;
       }
 
       await logger.file(LogTypeTag.info,
-          'Begin loading workflow actions to run workflow. Workflow path: ${workflow.path}');
+          'Begin loading workflow actions to run workflow. Workflow path: ${widget.workflow.workflowPath}');
 
       // Ensure that the workflow logs directory exists, and create it if it doesn't.
       // Will also create the log file for this workflow session.
-      String footPath = '$fmWorkflowDir\\${_template.name}.json';
+      String footPath = '$fmWorkflowDir\\${widget.workflow.name}.json';
 
       _workflowSessionLogs = File(
-        '${widget.workflowPath.substring(0, widget.workflowPath.indexOf(footPath) + fmWorkflowDir.length)}\\logs\\${_template.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
+        '${widget.workflow.workflowPath.substring(0, widget.workflow.workflowPath.indexOf(footPath) + fmWorkflowDir.length)}\\logs\\${widget.workflow.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
       );
 
       await _workflowSessionLogs.create(recursive: true);
@@ -105,13 +97,13 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
           _workflowSessionLogs, LogTypeTag.info, 'Workflow session started.');
 
       setState(() {
-        _workflowActions.addAll(workflowTemplate.workflowActions);
+        _workflowActions.addAll(widget.workflow.workflowActions);
         _currentActionRunning = _workflowActions.first;
         _loading = false;
       });
     } catch (_, s) {
-      await logger.file(LogTypeTag.error,
-          'Failed to load workflow: ${widget.workflowPath}: $_',
+      await logger.file(
+          LogTypeTag.error, 'Failed to load workflow: ${widget.workflow}: $_',
           stackTraces: s);
       try {
         await writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.error,
@@ -184,7 +176,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
               const Padding(padding: EdgeInsets.all(50), child: Spinner())
             else if (!_isRunning && !_isCompleted)
               WorkflowStartUp(
-                template: _template,
+                template: widget.workflow,
                 onRun: () {
                   setState(() => _isRunning = true);
                   _stopwatch.start();
@@ -197,17 +189,17 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
               if (_resultType == WorkflowActionStatus.failed)
                 WorkflowError(
                   logFile: _workflowSessionLogs,
-                  path: widget.workflowPath,
+                  workflow: widget.workflow,
                 )
               else if (_resultType == WorkflowActionStatus.stopped)
                 WorkflowStopped(
                   logFile: _workflowSessionLogs,
-                  path: widget.workflowPath,
+                  workflow: widget.workflow,
                 )
               else if (_resultType == WorkflowActionStatus.done)
                 WorkflowSuccess(
                   elapsedTime: _composeTimeElapsed(),
-                  template: _template,
+                  workflow: widget.workflow,
                   logFile: _workflowSessionLogs,
                 )
             ] else if (_isRunning && !_isCompleted) ...<Widget>[
@@ -220,7 +212,7 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                   return Padding(
                     padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                     child: TaskRunnerView(
-                      template: _template,
+                      workflow: widget.workflow,
                       status: _resultType,
                       logFile: _workflowSessionLogs,
                       completedActions: _completedActions,
@@ -237,8 +229,8 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
                         });
                         _stopwatch.stop();
                       },
-                      dirPath: widget.workflowPath
-                          .substring(0, widget.workflowPath.lastIndexOf('\\')),
+                      dirPath: widget.workflow.workflowPath.substring(
+                          0, widget.workflow.workflowPath.lastIndexOf('\\')),
                       onDone: () async {
                         if (_isCompleted) {
                           return;

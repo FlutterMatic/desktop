@@ -49,8 +49,11 @@ class AppGlobalSearch {
 
       // Remove from workflow results if not found in the query.
       workflowResults.addAll(workflows.where((_) {
-        bool isGroupRelated =
-            _.path.split('\\').last.toLowerCase().contains(query.toLowerCase());
+        bool isGroupRelated = _.projectPath
+            .split('\\')
+            .last
+            .toLowerCase()
+            .contains(query.toLowerCase());
 
         if (isGroupRelated) {
           return true;

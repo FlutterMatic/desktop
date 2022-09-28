@@ -26,6 +26,7 @@ import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 
 class DeleteProjectDialog extends StatefulWidget {
   final String path;
+
   const DeleteProjectDialog({Key? key, required this.path}) : super(key: key);
 
   @override
@@ -52,17 +53,17 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
             ref.watch(projectsActionStateNotifier.notifier);
 
         return WillPopScope(
-          onWillPop: () => Future.value(!projectsState.isLoading),
+          onWillPop: () => Future.value(!projectsState.loading),
           child: DialogTemplate(
-            outerTapExit: !projectsState.isLoading,
+            outerTapExit: !projectsState.loading,
             child: IgnorePointer(
-              ignoring: projectsState.isLoading,
+              ignoring: projectsState.loading,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   DialogHeader(
                       title: 'Delete Project',
-                      canClose: !projectsState.isLoading),
+                      canClose: !projectsState.loading),
                   if (_gitExists)
                     informationWidget(
                         'You are about to delete this project from your device. We also found that this project is on a git repository, so you should be able to recover it if you ever want to.',
@@ -144,7 +145,7 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
                         setState(() => _confirmText = val),
                   ),
                   VSeparators.normal(),
-                  if (projectsState.isLoading)
+                  if (projectsState.loading)
                     const LoadActivityMessageElement(
                       message: 'Deleting Project...',
                     )
@@ -178,7 +179,7 @@ class _DeleteProjectDialogState extends State<DeleteProjectDialog> {
                               await projectsNotifier.deleteProject(widget.path);
 
                               // Deleted successfully.
-                              if (!projectsState.isError && mounted) {
+                              if (!projectsState.error && mounted) {
                                 Navigator.pop(context);
                               }
                             },

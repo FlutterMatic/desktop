@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:retry/retry.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';

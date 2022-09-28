@@ -13,8 +13,9 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
 
 class ViewWorkflowSessionLogs extends StatefulWidget {
-  final String path;
-  const ViewWorkflowSessionLogs({Key? key, required this.path})
+  final String logPath;
+
+  const ViewWorkflowSessionLogs({Key? key, required this.logPath})
       : super(key: key);
 
   @override
@@ -25,8 +26,8 @@ class ViewWorkflowSessionLogs extends StatefulWidget {
 class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
   final List<String> _logs = <String>[];
 
-  Future<void> _loadLogs() async {
-    File logFile = File(widget.path);
+  Future<void> _init() async {
+    File logFile = File(widget.logPath);
 
     if (!await logFile.exists()) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -34,6 +35,7 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
         snackBarTile(context, 'This log file no longer exists.',
             type: SnackBarType.error),
       );
+
       Navigator.pop(context);
       return;
     }
@@ -53,7 +55,7 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
 
   @override
   void initState() {
-    _loadLogs();
+    _init();
     super.initState();
   }
 

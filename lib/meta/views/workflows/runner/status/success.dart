@@ -17,14 +17,14 @@ import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 
 class WorkflowSuccess extends StatelessWidget {
-  final WorkflowTemplate template;
+  final WorkflowTemplate workflow;
   final String elapsedTime;
   final File logFile;
 
   const WorkflowSuccess({
     Key? key,
     required this.elapsedTime,
-    required this.template,
+    required this.workflow,
     required this.logFile,
   }) : super(key: key);
 
@@ -51,9 +51,9 @@ class WorkflowSuccess extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(template.name),
+                    Text(workflow.name),
                     VSeparators.xSmall(),
-                    Text(template.description,
+                    Text(workflow.description,
                         style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -66,7 +66,8 @@ class WorkflowSuccess extends StatelessWidget {
                   Navigator.pop(context);
                   showDialog(
                     context: context,
-                    builder: (_) => ViewWorkflowSessionLogs(path: logFile.path),
+                    builder: (_) =>
+                        ViewWorkflowSessionLogs(logPath: logFile.path),
                   );
                 },
               ),

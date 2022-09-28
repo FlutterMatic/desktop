@@ -93,6 +93,8 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
                   child: ComingSoonTile(),
                 );
               }
+
+              return null;
             },
             actions: <ActionOptionsObject>[
               ActionOptionsObject(

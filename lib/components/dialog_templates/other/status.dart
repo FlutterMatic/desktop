@@ -1,9 +1,13 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/bin/check_services.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
@@ -11,57 +15,19 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/installation_status.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 
-class StatusDialog extends StatefulWidget {
+class StatusDialog extends ConsumerWidget {
   const StatusDialog({Key? key}) : super(key: key);
 
   @override
-  State<StatusDialog> createState() => _StatusDialogState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    CheckServicesState state = ref.watch(checkServicesStateNotifier);
+    CheckServicesNotifier notifier =
+        ref.watch(checkServicesStateNotifier.notifier);
 
-class _StatusDialogState extends State<StatusDialog> {
-  bool _loading = true;
-
-  bool _flutterInstalled = false;
-  bool _dartInstalled = false;
-  bool _javaInstalled = false;
-  bool _gitInstalled = false;
-  bool _vscodeInstalled = false;
-  bool _studioInstalled = false;
-
-  Future<void> _loadStatus() async {
-    // TODO: Load status from state
-
-    // ServiceCheckResponse _flutter = await CheckServices.checkFlutter();
-    // ServiceCheckResponse _dart = await CheckServices.checkDart();
-    // ServiceCheckResponse _git = await CheckServices.checkGit();
-    // ServiceCheckResponse _java = await CheckServices.checkJava();
-    // ServiceCheckResponse _vscode = await CheckServices.checkVSCode();
-    // ServiceCheckResponse _adb = await CheckServices.checkADBridge();
-
-    // if (mounted) {
-    //   setState(() {
-    //     _flutterInstalled = _flutter.version != null;
-    //     _dartInstalled = _dart.version != null;
-    //     _javaInstalled = _java.version != null;
-    //     _vscodeInstalled = _vscode.version != null;
-    //     _studioInstalled = _adb.version != null;
-    //     _gitInstalled = _git.version != null;
-    //     _loading = false;
-    //   });
-    // }
-  }
-
-  @override
-  void initState() {
-    _loadStatus();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return DialogTemplate(
-      child: _loading
+      child: state.loading
           ? Shimmer.fromColors(
               child: Column(
                 children: <Widget>[
@@ -103,11 +69,12 @@ class _StatusDialogState extends State<StatusDialog> {
                 ),
                 // Dart
                 InstallationStatusTile(
-                  status: _dartInstalled
+                  status: notifier.dart?.version != null
                       ? InstallationStatus.done
                       : InstallationStatus.error,
-                  title:
-                      _dartInstalled ? 'Dart Installed' : 'Dart Not Installed',
+                  title: notifier.dart?.version != null
+                      ? 'Dart Installed'
+                      : 'Dart Not Installed',
                   description:
                       'You will need to have Dart installed on your device. This is the language that Flutter uses to build the app.',
                   onDownload: () => showDialog(
@@ -120,10 +87,10 @@ class _StatusDialogState extends State<StatusDialog> {
                 VSeparators.normal(),
                 // Flutter
                 InstallationStatusTile(
-                  status: _flutterInstalled
+                  status: notifier.flutter?.version != null
                       ? InstallationStatus.done
                       : InstallationStatus.error,
-                  title: _flutterInstalled
+                  title: notifier.flutter?.version != null
                       ? 'Flutter Installed'
                       : 'Flutter Not Installed',
                   description:
@@ -138,10 +105,10 @@ class _StatusDialogState extends State<StatusDialog> {
                 VSeparators.normal(),
                 // Android Studio
                 InstallationStatusTile(
-                  status: _studioInstalled
+                  status: notifier.studio?.version != null
                       ? InstallationStatus.done
                       : InstallationStatus.warning,
-                  title: _studioInstalled
+                  title: notifier.studio?.version != null
                       ? 'Android Studio Installed'
                       : 'Android Studio Not Installed',
                   description:
@@ -156,10 +123,10 @@ class _StatusDialogState extends State<StatusDialog> {
                 VSeparators.normal(),
                 // VS Code
                 InstallationStatusTile(
-                  status: _vscodeInstalled
+                  status: notifier.vsCode?.version != null
                       ? InstallationStatus.done
                       : InstallationStatus.warning,
-                  title: _vscodeInstalled
+                  title: notifier.vsCode?.version != null
                       ? 'VS Code Installed'
                       : 'VS Code Not Installed',
                   description:
@@ -174,10 +141,12 @@ class _StatusDialogState extends State<StatusDialog> {
                 VSeparators.normal(),
                 // Git
                 InstallationStatusTile(
-                  status: _gitInstalled
+                  status: notifier.git?.version != null
                       ? InstallationStatus.done
                       : InstallationStatus.error,
-                  title: _gitInstalled ? 'Git Installed' : 'Git Not Installed',
+                  title: notifier.git?.version != null
+                      ? 'Git Installed'
+                      : 'Git Not Installed',
                   description:
                       'You will need to have Git installed on your device. This is used to manage pub packages and also keep Flutter up-to-date.',
                   onDownload: () => showDialog(
@@ -190,11 +159,12 @@ class _StatusDialogState extends State<StatusDialog> {
                 VSeparators.normal(),
                 // Java
                 InstallationStatusTile(
-                  status: _javaInstalled
+                  status: notifier.java?.version != null
                       ? InstallationStatus.done
                       : InstallationStatus.warning,
-                  title:
-                      _javaInstalled ? 'Java Installed' : 'Java Not Installed',
+                  title: notifier.java?.version != null
+                      ? 'Java Installed'
+                      : 'Java Not Installed',
                   description:
                       'Java helps avoid common Android errors and is preferred for Android development.',
                   onDownload: () => showDialog(

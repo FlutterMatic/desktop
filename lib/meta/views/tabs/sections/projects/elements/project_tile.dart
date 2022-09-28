@@ -165,7 +165,9 @@ class _ProjectInfoTileState extends State<ProjectInfoTile> {
                           showDialog(
                             context: context,
                             builder: (_) => ShowExistingWorkflows(
-                                pubspecPath: widget.project.path),
+                              pubspecPath:
+                                  '${widget.project.path}\\pubspec.yaml',
+                            ),
                           );
                         },
                       ),

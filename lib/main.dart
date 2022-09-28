@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
@@ -25,7 +26,6 @@ import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/setup/components/windows_controls.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
-import 'package:window_manager/window_manager.dart';
 import 'meta/views/setup/screens/setup_view.dart';
 
 Future<void> main() async {

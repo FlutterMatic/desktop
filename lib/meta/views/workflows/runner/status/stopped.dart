@@ -12,17 +12,18 @@ import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/documentation.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 
 class WorkflowStopped extends StatelessWidget {
-  final String path;
   final File logFile;
+  final WorkflowTemplate workflow;
 
   const WorkflowStopped({
     Key? key,
-    required this.path,
+    required this.workflow,
     required this.logFile,
   }) : super(key: key);
 
@@ -67,7 +68,7 @@ class WorkflowStopped extends StatelessWidget {
                   Navigator.pop(context);
                   showDialog(
                     context: context,
-                    builder: (_) => WorkflowRunnerDialog(workflowPath: path),
+                    builder: (_) => WorkflowRunnerDialog(workflow: workflow),
                   );
                 },
               ),
