@@ -10,12 +10,13 @@ import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
+import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/projects.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/components/bg_loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/components/horizontal_axis.dart';
@@ -151,11 +152,15 @@ class _HomeProjectsSectionState extends ConsumerState<HomeProjectsSection> {
                   children: [
                     const SizedBox(
                       width: 100,
-                      child: LinearProgressIndicator(),
+                      child: CustomLinearProgressIndicator(includeBox: false),
                     ),
                     VSeparators.normal(),
                     const Text(
-                        'Indexing your projects... Might take a while...'),
+                      'Indexing your projects...\nMight take a while...',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          height: 1.4, color: AppTheme.darkLightColor),
+                    ),
                   ],
                 ),
               )

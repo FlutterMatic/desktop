@@ -294,7 +294,7 @@ packages:
       name: file_selector_macos
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.0+1"
+    version: "0.9.0+2"
   file_selector_platform_interface:
     dependency: transitive
     description:
@@ -315,7 +315,7 @@ packages:
       name: file_selector_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.1+2"
+    version: "0.9.1+3"
   fixnum:
     dependency: transitive
     description:
@@ -684,9 +684,11 @@ packages:
   pub_api_client:
     dependency: "direct main"
     description:
-      name: pub_api_client
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "72476fd8e27a38cabd765a19e875ee0dd79c0e29"
+      url: "https://github.com/fluttertools/pub_api_client.git"
+    source: git
     version: "2.2.1"
   pub_semver:
     dependency: transitive
@@ -923,7 +925,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.5"
+    version: "6.1.6"
   url_launcher_android:
     dependency: transitive
     description:

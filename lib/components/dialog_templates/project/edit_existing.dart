@@ -15,6 +15,7 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/projects.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
@@ -44,7 +45,7 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
   final List<String> _devDependencies = <String>[];
 
   // Utils
-  late PubspecInfo _pubspecInfo;
+  PubspecInfo? _pubspecInfo;
 
   Future<void> _loadData() async {
     File pubspec = File('${widget.projectPath}\\pubspec.yaml');
@@ -53,13 +54,16 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
 
     setState(() {
       _pubspecInfo = extractPubspec(lines: lines, path: pubspec.path);
-      _projectNameController.text = _pubspecInfo.name ?? 'No project name set';
+      _projectNameController.text = _pubspecInfo?.name ?? 'No project name set';
       _projectDescriptionController.text =
-          _pubspecInfo.description ?? 'No project description set';
-      _dependencies
-          .addAll(_pubspecInfo.dependencies.map((e) => e.name).toList());
-      _devDependencies
-          .addAll(_pubspecInfo.devDependencies.map((e) => e.name).toList());
+          _pubspecInfo?.description ?? 'No project description set';
+
+      if (_pubspecInfo != null) {
+        _dependencies
+            .addAll(_pubspecInfo!.dependencies.map((e) => e.name).toList());
+        _devDependencies
+            .addAll(_pubspecInfo!.devDependencies.map((e) => e.name).toList());
+      }
     });
   }
 
@@ -108,7 +112,8 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                                 message: projectsState.currentActivity),
                           ],
                         );
-                      } else if (!_pubspecInfo.isValid) {
+                      } else if (_pubspecInfo != null &&
+                          !_pubspecInfo!.isValid) {
                         return Column(
                           children: <Widget>[
                             informationWidget(
@@ -135,14 +140,15 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                                     VSeparators.xSmall(),
                                     CustomTextField(
                                       readOnly:
-                                          _pubspecInfo.description == null,
+                                          _pubspecInfo?.description == null,
                                       hintText: 'Project Description',
                                       controller: _projectDescriptionController,
-                                      numLines: _pubspecInfo.description != null
-                                          ? 3
-                                          : 1,
+                                      numLines:
+                                          _pubspecInfo?.description != null
+                                              ? 3
+                                              : 1,
                                       maxLength:
-                                          _pubspecInfo.description != null
+                                          _pubspecInfo?.description != null
                                               ? 150
                                               : null,
                                     ),
@@ -151,12 +157,16 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                               ),
                               VSeparators.small(),
                               ProjectDependenciesSection(
-                                dependencies: _pubspecInfo.dependencies
-                                    .map((_) => _.name)
-                                    .toList(),
-                                devDependencies: _pubspecInfo.devDependencies
-                                    .map((_) => _.name)
-                                    .toList(),
+                                dependencies: _pubspecInfo == null
+                                    ? []
+                                    : _pubspecInfo!.dependencies
+                                        .map((_) => _.name)
+                                        .toList(),
+                                devDependencies: _pubspecInfo == null
+                                    ? []
+                                    : _pubspecInfo!.devDependencies
+                                        .map((_) => _.name)
+                                        .toList(),
                                 onDependenciesChanged: (List<String> e) {
                                   _dependencies.clear();
                                   _dependencies.addAll(e);
@@ -173,7 +183,9 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                     },
                   ),
                 ),
-                if (!projectsState.loading && _pubspecInfo.isValid) ...<Widget>[
+                if (!projectsState.loading &&
+                    _pubspecInfo != null &&
+                    _pubspecInfo!.isValid) ...<Widget>[
                   VSeparators.normal(),
                   Row(
                     children: <Widget>[
@@ -187,8 +199,8 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                       HSeparators.normal(),
                       Expanded(
                         child: RectangleButton(
-                          onPressed: () {
-                            projectsNotifier.updateProjectInfo(
+                          onPressed: () async {
+                            await projectsNotifier.updateProjectInfo(
                               context,
                               projectPath: widget.projectPath,
                               projectName: _projectNameController.text,
@@ -196,8 +208,37 @@ class _EditExistingProjectDialogState extends State<EditExistingProjectDialog> {
                                   _projectDescriptionController.text,
                               dependencies: _dependencies,
                               devDependencies: _devDependencies,
-                              pubspecInfo: _pubspecInfo,
+                              pubspecInfo: _pubspecInfo!,
                             );
+
+                            if (!projectsState.loading &&
+                                !projectsState.error) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Your project has been updated.',
+                                    type: SnackBarType.done,
+                                  ),
+                                );
+
+                                Navigator.pop(context);
+                              }
+
+                              return;
+                            }
+
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                snackBarTile(
+                                  context,
+                                  'Something went wrong. Please try again.',
+                                  type: SnackBarType.error,
+                                ),
+                              );
+                            }
                           },
                           child: const Text('Save'),
                         ),

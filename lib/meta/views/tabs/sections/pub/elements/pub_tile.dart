@@ -31,15 +31,6 @@ class _PubPkgTileState extends State<PubPkgTile> {
   // if the user is hovering.
   bool _isHovering = false;
 
-  // If the package is migrated to null safety, then this will be true,
-  // otherwise false.
-  late final bool _nullSafe = widget.data?.metrics?.scorecard.derivedTags.any(
-        (String e) {
-          return e == 'is:null-safe';
-        },
-      ) ??
-      false;
-
   @override
   Widget build(BuildContext context) {
     if (widget.data == null) {
@@ -158,6 +149,13 @@ class _PubPkgTileState extends State<PubPkgTile> {
                         ),
                       ),
                     ),
+                    VSeparators.normal(),
+                    if (_isHovering)
+                      const ColorFiltered(
+                        colorFilter:
+                            ColorFilter.mode(kGreenColor, BlendMode.srcATop),
+                        child: Text('Tap to learn more'),
+                      ),
                     VSeparators.small(),
                     Row(
                       children: <Widget>[
@@ -253,28 +251,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                         ),
                       ],
                     ),
-                    VSeparators.small(),
-                    ColorFiltered(
-                      colorFilter: ColorFilter.mode(
-                          themeState.isDarkTheme
-                              ? (_nullSafe ? kGreenColor : kYellowColor)
-                              : (_nullSafe ? kGreenColor : Colors.redAccent),
-                          BlendMode.srcATop),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            _nullSafe
-                                ? Icons.done_all_rounded
-                                : Icons.do_not_disturb_alt_rounded,
-                            size: 13,
-                          ),
-                          HSeparators.xSmall(),
-                          Text(_nullSafe ? 'Null safe' : 'Not null safe'),
-                        ],
-                      ),
-                    ),
-                    VSeparators.small(),
+                    VSeparators.normal(),
                     Row(
                       children: <Widget>[
                         const Tooltip(

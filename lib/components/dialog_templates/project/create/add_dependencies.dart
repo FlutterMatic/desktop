@@ -12,6 +12,10 @@ Future<bool> addDependencyToProject({
   try {
     await shell.cd(path).run(
         '${isDart ? 'dart' : 'flutter'} pub ${remove ? 'remove' : 'add'} $dependency${isDev ? ' --dev' : ''}');
+
+    await logger.file(LogTypeTag.info,
+        'Successfully ${remove ? 'removed' : 'added'} ${isDev ? 'dev' : 'normal'} dependency to project.');
+
     return true;
   } catch (_, s) {
     await logger.file(LogTypeTag.warning,

@@ -109,82 +109,6 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                       Row(
                         children: <Widget>[
                           Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: <Widget>[
-                                  ...<String>[
-                                    'platform:android',
-                                    'platform:ios',
-                                    'platform:windows',
-                                    'platform:linux',
-                                    'platform:macos',
-                                    'platform:web',
-                                  ].map(
-                                    (String e) {
-                                      if (!widget.pkgInfo.metrics!.scorecard
-                                          .derivedTags
-                                          .contains(e)) {
-                                        return const SizedBox.shrink();
-                                      }
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 5),
-                                        child: RoundContainer(
-                                          child: Text(
-                                              e.substring(e.indexOf(':') + 1)),
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          HSeparators.xSmall(),
-                          RoundContainer(
-                            child: ColorFiltered(
-                              colorFilter: ColorFilter.mode(
-                                  themeState.isDarkTheme
-                                      ? (widget.pkgInfo.metrics!.scorecard
-                                              .derivedTags
-                                              .contains('is:null-safe')
-                                          ? kGreenColor
-                                          : kYellowColor)
-                                      : (widget.pkgInfo.metrics!.scorecard
-                                              .derivedTags
-                                              .contains('is:null-safe')
-                                          ? kGreenColor
-                                          : Colors.redAccent),
-                                  BlendMode.srcATop),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Icon(
-                                    widget.pkgInfo.metrics!.scorecard
-                                            .derivedTags
-                                            .contains('is:null-safe')
-                                        ? Icons.done_all_rounded
-                                        : Icons.do_not_disturb_alt_rounded,
-                                    size: 13,
-                                  ),
-                                  HSeparators.xSmall(),
-                                  const Tooltip(
-                                    message:
-                                        'Whether or not null safety is enabled',
-                                    waitDuration: Duration(seconds: 1),
-                                    child: Text('Safety'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      VSeparators.small(),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
                             child: RoundContainer(
                               child: Column(
                                 children: <Widget>[
@@ -194,9 +118,10 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                       Text(widget
                                           .pkgInfo.metrics!.score.grantedPoints
                                           .toString()),
-                                      const Text(
-                                        ' of 130',
-                                        style: TextStyle(color: Colors.grey),
+                                      Text(
+                                        ' of ${widget.pkgInfo.metrics?.score.maxPoints}',
+                                        style:
+                                            const TextStyle(color: Colors.grey),
                                       ),
                                     ],
                                   ),

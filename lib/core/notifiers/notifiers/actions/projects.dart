@@ -303,13 +303,15 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       );
 
       List<String> oldDependencies = extractPubspec(
-              lines: await File(projectPath).readAsLines(), path: projectPath)
+              lines: await File('$projectPath\\pubspec.yaml').readAsLines(),
+              path: projectPath)
           .dependencies
           .map((e) => e.name)
           .toList();
 
       List<String> oldDevDependencies = extractPubspec(
-              lines: await File(projectPath).readAsLines(), path: projectPath)
+              lines: await File('$projectPath\\pubspec.yaml').readAsLines(),
+              path: projectPath)
           .devDependencies
           .map((e) => e.name)
           .toList();
@@ -458,6 +460,50 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
           'Updated your project information.',
           type: SnackBarType.done,
         ));
+      }
+
+      // Update the state with the new project information by replacing the
+      // old project with the new one.
+      int pinnedIndex = _pinned.indexWhere((e) => e.path == projectPath);
+      int flutterIndex = _flutter.indexWhere((e) => e.path == projectPath);
+      int dartIndex = _dart.indexWhere((e) => e.path == projectPath);
+
+      if (pinnedIndex != -1) {
+        _pinned.removeAt(pinnedIndex);
+        _pinned.insert(
+          pinnedIndex,
+          ProjectObject(
+            path: projectPath,
+            name: projectName,
+            description: projectDescription,
+            modDate: DateTime.now(),
+            pinned: true,
+          ),
+        );
+      } else if (flutterIndex != -1) {
+        _flutter.removeAt(flutterIndex);
+        _flutter.insert(
+          flutterIndex,
+          ProjectObject(
+            path: projectPath,
+            name: projectName,
+            description: projectDescription,
+            modDate: DateTime.now(),
+            pinned: false,
+          ),
+        );
+      } else if (dartIndex != -1) {
+        _dart.removeAt(dartIndex);
+        _dart.insert(
+          dartIndex,
+          ProjectObject(
+            path: projectPath,
+            name: projectName,
+            description: projectDescription,
+            modDate: DateTime.now(),
+            pinned: false,
+          ),
+        );
       }
 
       state = state.copyWith(
@@ -623,8 +669,8 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
           await _sortProjects(projects);
 
           await logger.file(
-            LogTypeTag.warning,
-            'Loaded temporarily projects from cache of size: ${projects.length}',
+            LogTypeTag.info,
+            'Loaded temporary projects from cache of size: ${projects.length}',
             logDir: Directory(supportDir),
           );
         } catch (e, s) {
@@ -645,11 +691,29 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
           ),
         );
 
-        await logger.file(
-            LogTypeTag.info, 'Beginning projects fetch with isolate.');
+        List<ProjectObject> projects;
 
-        List<ProjectObject> projects =
-            await _getProjectsWithIsolateFromRaw(force);
+        ProjectCacheSettings? settings = await getProjectSettings(supportDir);
+
+        Duration expirationDuration =
+            Duration(seconds: settings?.refreshIntervals ?? 0);
+
+        DateTime lastFetch = settings?.lastProjectReload ?? DateTime.now();
+
+        bool hasExpired = settings?.refreshIntervals != -1 &&
+            DateTime.now().difference(lastFetch) > expirationDuration;
+
+        if (force || hasExpired) {
+          await logger.file(
+              LogTypeTag.info, 'Beginning projects fetch with isolate.');
+
+          projects = await _getProjectsWithIsolateFromRaw(force);
+        } else {
+          await logger.file(LogTypeTag.info,
+              'Beginning projects fetch from cache (last session).');
+
+          projects = await _getProjectsFromCacheRaw(supportDir);
+        }
 
         await _sortProjects(projects);
 
