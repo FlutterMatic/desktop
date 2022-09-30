@@ -92,7 +92,7 @@ class CustomTextField extends StatelessWidget {
             ),
             suffixIcon: suffixIcon,
             fillColor:
-                Colors.blueGrey.withOpacity(themeState.isDarkTheme ? 0.2 : 0.1),
+                Colors.blueGrey.withOpacity(themeState.darkTheme ? 0.2 : 0.1),
             filled: true,
             hintText: hintText,
             counterStyle: TextStyle(

@@ -66,7 +66,7 @@ class DialogTemplate extends StatelessWidget {
 
                           return RoundContainer(
                             height: height,
-                            color: themeState.isDarkTheme
+                            color: themeState.darkTheme
                                 ? AppTheme.darkCardColor
                                 : Colors.white,
                             padding: childPadding ?? const EdgeInsets.all(10),

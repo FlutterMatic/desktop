@@ -45,7 +45,7 @@ class RoundContainer extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             color: color ??
-                (themeState.isDarkTheme
+                (themeState.darkTheme
                     ? Colors.blueGrey.withOpacity(0.2)
                     : AppTheme.lightCardColor),
             border: Border.all(color: borderColor!, width: borderWith),

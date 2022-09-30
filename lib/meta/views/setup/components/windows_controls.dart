@@ -68,7 +68,7 @@ Widget _control(
           return Icon(
             icon,
             size: 15,
-            color: !themeState.isDarkTheme
+            color: !themeState.darkTheme
                 ? AppTheme.lightTheme.iconTheme.color
                 : AppTheme.darkTheme.iconTheme.color,
           );

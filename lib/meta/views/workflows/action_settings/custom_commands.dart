@@ -113,7 +113,7 @@ class _CustomCommandsWorkflowActionsConfigState
                             child: TextFormField(
                               initialValue: _commands[i],
                               style: TextStyle(
-                                color: (themeState.isDarkTheme
+                                color: (themeState.darkTheme
                                         ? Colors.white
                                         : Colors.black)
                                     .withOpacity(0.8),
@@ -134,7 +134,7 @@ class _CustomCommandsWorkflowActionsConfigState
                               },
                               decoration: InputDecoration(
                                 hintStyle: TextStyle(
-                                  color: (themeState.isDarkTheme
+                                  color: (themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black)
                                       .withOpacity(0.6),

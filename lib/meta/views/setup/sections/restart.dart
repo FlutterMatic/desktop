@@ -33,7 +33,7 @@ Widget setUpRestart(BuildContext context, {VoidCallback? onRestart}) {
             Assets.confetti,
             'Congrats',
             'All set! You will need to restart your device to start using Flutter.',
-            color: themeState.isDarkTheme ? null : Colors.black,
+            color: themeState.darkTheme ? null : Colors.black,
           ),
           VSeparators.xLarge(),
           RoundContainer(
@@ -50,7 +50,7 @@ Widget setUpRestart(BuildContext context, {VoidCallback? onRestart}) {
                   children: <Widget>[
                     Expanded(
                       child: RectangleButton(
-                        color: themeState.isDarkTheme
+                        color: themeState.darkTheme
                             ? null
                             : AppTheme.darkBackgroundColor,
                         child: const Text('Flutter Documentation',
@@ -62,7 +62,7 @@ Widget setUpRestart(BuildContext context, {VoidCallback? onRestart}) {
                     HSeparators.small(),
                     Expanded(
                       child: RectangleButton(
-                        color: themeState.isDarkTheme
+                        color: themeState.darkTheme
                             ? null
                             : AppTheme.darkBackgroundColor,
                         child: const Text('Our Documentation',

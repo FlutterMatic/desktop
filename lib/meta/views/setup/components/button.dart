@@ -52,10 +52,10 @@ class SetUpButton extends StatelessWidget {
               opacity: (disabled || loading) ? 0.2 : 1,
               child: RectangleButton(
                 onPressed: progress == Progress.done ? onContinue : onInstall,
-                color: themeState.isDarkTheme
+                color: themeState.darkTheme
                     ? AppTheme.lightBackgroundColor
                     : AppTheme.darkBackgroundColor,
-                hoverColor: themeState.isDarkTheme
+                hoverColor: themeState.darkTheme
                     ? AppTheme.lightCardColor
                     : AppTheme.darkCardColor,
                 child: loading
@@ -69,7 +69,7 @@ class SetUpButton extends StatelessWidget {
                                     ? 'Continue'
                                     : 'Check'),
                             style: TextStyle(
-                              color: themeState.isDarkTheme
+                              color: themeState.darkTheme
                                   ? AppTheme
                                       .lightTheme.textTheme.bodyText1!.color
                                   : AppTheme
@@ -81,7 +81,7 @@ class SetUpButton extends StatelessWidget {
                           Icon(
                             Icons.arrow_forward_rounded,
                             size: 18,
-                            color: themeState.isDarkTheme
+                            color: themeState.darkTheme
                                 ? AppTheme.lightTheme.iconTheme.color
                                 : AppTheme.darkTheme.iconTheme.color,
                           ),

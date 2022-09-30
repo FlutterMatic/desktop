@@ -34,7 +34,7 @@ class MarkdownBlock extends StatelessWidget {
           selectable: true,
           styleSheetTheme: MarkdownStyleSheetBaseTheme.platform,
           syntaxHighlighter: DartSyntaxHighlighter(
-            themeState.isDarkTheme
+            themeState.darkTheme
                 ? SyntaxHighlighterStyle.darkThemeStyle()
                 : SyntaxHighlighterStyle.lightThemeStyle(),
           ),
@@ -49,47 +49,47 @@ class MarkdownBlock extends StatelessWidget {
             codeblockPadding: const EdgeInsets.all(5),
             codeblockDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: (themeState.isDarkTheme ? Colors.white : Colors.grey)
+              color: (themeState.darkTheme ? Colors.white : Colors.grey)
                   .withOpacity(0.1),
             ),
             p: TextStyle(
               fontSize: shrinkView ? 16 : 20,
               fontWeight: FontWeight.w400,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             h1: TextStyle(
               fontSize: shrinkView ? 14 : 24,
               fontWeight: FontWeight.bold,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             h2: TextStyle(
               fontSize: shrinkView ? 13 : 20,
               fontWeight: FontWeight.bold,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             h3: TextStyle(
               fontSize: shrinkView ? 12 : 18,
               fontWeight: FontWeight.bold,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             h4: TextStyle(
               fontSize: shrinkView ? 11 : 16,
               fontWeight: FontWeight.bold,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             h5: TextStyle(
               fontSize: shrinkView ? 10 : 14,
               fontWeight: FontWeight.bold,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             h6: TextStyle(
               fontSize: shrinkView ? 9 : 12,
               fontWeight: FontWeight.bold,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
             ),
             code: TextStyle(
               fontSize: 16,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
               backgroundColor: Colors.grey.withOpacity(0.2),
             ),
             img: const TextStyle(color: Colors.transparent),

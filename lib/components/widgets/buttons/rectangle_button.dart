@@ -67,7 +67,7 @@ class RectangleButton extends StatelessWidget {
             borderRadius: radius ?? BorderRadius.circular(5),
           ),
           color: color ??
-              Colors.blueGrey.withOpacity(themeState.isDarkTheme ? 0.2 : 0.1),
+              Colors.blueGrey.withOpacity(themeState.darkTheme ? 0.2 : 0.1),
           disabledColor: disableColor,
           elevation: 0,
           disabledElevation: 0,

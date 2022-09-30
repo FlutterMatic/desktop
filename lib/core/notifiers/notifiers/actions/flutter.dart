@@ -1,4 +1,5 @@
 // 🎯 Dart imports:
+import 'dart:collection';
 import 'dart:developer';
 import 'dart:io';
 
@@ -22,19 +23,24 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
 
   FlutterActionsNotifier(this.read) : super(FlutterActionsState.initial());
 
-  void _reset() => state = FlutterActionsState.initial();
+  static final List<String> _flutterDoctor = [];
+
+  UnmodifiableListView<String> get flutterDoctor =>
+      UnmodifiableListView(_flutterDoctor);
 
   Future<void> createNewProject(NewFlutterProjectInfo project) async {
     state = state.copyWith(
-      isLoading: true,
+      loading: true,
+      error: '',
+      currentActivity: '',
     );
 
     try {
       if (project.projectPath.isEmpty) {
-        _reset();
-
         state = state.copyWith(
+          loading: false,
           error: 'Project path is empty. Please provide a valid path.',
+          currentActivity: '',
         );
 
         return;
@@ -55,10 +61,10 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
         await logger.file(LogTypeTag.warning,
             'Selected no platform(s) but tried to create a project.');
 
-        _reset();
-
         state = state.copyWith(
+          loading: false,
           error: 'At least one platform must be selected.',
+          currentActivity: '',
         );
 
         return;
@@ -72,7 +78,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
       await logger.file(LogTypeTag.info,
           'Created new Flutter project: ${project.toJson()} at path: ${project.projectPath}');
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     } catch (_, s) {
@@ -80,11 +90,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
           LogTypeTag.error, 'Failed to create new Flutter project: $_',
           stackTraces: s);
 
-      _reset();
-
       state = state.copyWith(
+        loading: false,
         error:
             'Failed to create new Flutter project. Please try again or report this issue.',
+        currentActivity: '',
       );
 
       return;
@@ -93,7 +103,9 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
 
   Future<void> switchDifferentChannel(String newChannel) async {
     state = state.copyWith(
-      isLoading: true,
+      loading: true,
+      error: '',
+      currentActivity: '',
     );
 
     String oldChannel = read(flutterNotifierController).channel;
@@ -105,10 +117,10 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
           .listen((List<ProcessResult> event) {
         if (mounted) {
           state = state.copyWith(
-              currentProcess: event.last.stdout.toString().split('\n').first);
+              currentActivity: event.last.stdout.toString().split('\n').first);
         }
       }).asFuture();
-      
+
       await read(flutterNotifierController.notifier).checkFlutter();
 
       await read(notificationStateController.notifier).newNotification(
@@ -121,7 +133,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
         ),
       );
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     } catch (_, s) {
@@ -138,7 +154,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
         ),
       );
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     }
@@ -146,20 +166,23 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
 
   Future<void> upgradeFlutterVersion() async {
     state = state.copyWith(
-      isLoading: true,
+      loading: true,
+      error: '',
+      currentActivity: '',
     );
 
     try {
       NetworkState connectionNotifier = read(connectionNotifierController);
 
       // Make sure that there is an internet connection.
-      if (!connectionNotifier.isConnected) {
-        _reset();
-
+      if (!connectionNotifier.connected) {
         state = state.copyWith(
+          loading: false,
           error:
               'Seems like you are not connected to the internet. Please double check and try again.',
+          currentActivity: '',
         );
+
         return;
       }
 
@@ -196,7 +219,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
       });
 
       if (result.isEmpty) {
-        _reset();
+        state = state.copyWith(
+          loading: false,
+          error: '',
+          currentActivity: '',
+        );
 
         return;
       }
@@ -239,7 +266,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
         );
       }
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     } catch (_) {
@@ -255,7 +286,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
         ),
       );
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     }
@@ -263,7 +298,9 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
 
   Future<void> runFlutterDoctor(bool isVerbose) async {
     state = state.copyWith(
-      isLoading: true,
+      loading: true,
+      error: '',
+      currentActivity: '',
     );
 
     try {
@@ -272,22 +309,23 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
           .asStream()
           .listen((List<ProcessResult> line) {
         if (mounted) {
-          state.addFlutterDoctor(line.last.stdout.toString().split('\n'));
+          _flutterDoctor.addAll(line.last.stdout.toString().split('\n'));
 
           // Remove all the empty lines
-          state.removeWhereFlutterDoctor(
-              (String e) => e.replaceAll(' ', '').isEmpty);
+          _flutterDoctor.removeWhere((e) => e.replaceAll(' ', '').isEmpty);
 
-          state.removeWhereFlutterDoctor((String e) {
-            return e.contains('issue found!');
-          });
+          _flutterDoctor.removeWhere((e) => e.contains('issue found!'));
         }
       }).asFuture();
 
       await logger.file(LogTypeTag.info,
-          'Flutter doctor run ${isVerbose ? 'with' : 'without'} verbose: ${state.flutterDoctor.join('\n')}');
+          'Flutter doctor run ${isVerbose ? 'with' : 'without'} verbose: ${_flutterDoctor..join('\n')}');
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     } catch (_, s) {
@@ -303,7 +341,11 @@ class FlutterActionsNotifier extends StateNotifier<FlutterActionsState> {
         ),
       );
 
-      _reset();
+      state = state.copyWith(
+        loading: false,
+        error: '',
+        currentActivity: '',
+      );
 
       return;
     }

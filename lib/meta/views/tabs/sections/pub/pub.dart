@@ -232,7 +232,7 @@ class _HomePubSectionState extends State<HomePubSection> {
                                 return SvgPicture.asset(
                                   Assets.package,
                                   height: 25,
-                                  color: themeState.isDarkTheme
+                                  color: themeState.darkTheme
                                       ? Colors.white
                                       : Colors.black,
                                 );

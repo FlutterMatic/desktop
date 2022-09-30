@@ -53,11 +53,11 @@ class _OverviewSettingsSectionState extends State<OverviewSettingsSection> {
             VSeparators.small(),
             _themeTiles(
               context,
-              selected: !themeState.isDarkTheme && !themeState.isSystemTheme,
+              selected: !themeState.darkTheme && !themeState.systemTheme,
               title: 'Light Mode',
               description: 'Get a bright and shining desktop',
               onPressed: () {
-                if (themeState.isDarkTheme) {
+                if (themeState.darkTheme) {
                   themeNotifier.updateTheme(
                       Theme.of(context).brightness == Brightness.light);
                 }
@@ -66,11 +66,11 @@ class _OverviewSettingsSectionState extends State<OverviewSettingsSection> {
             VSeparators.small(),
             _themeTiles(
               context,
-              selected: themeState.isDarkTheme && !themeState.isSystemTheme,
+              selected: themeState.darkTheme && !themeState.systemTheme,
               title: 'Dark Mode',
               description: 'For dark and nighty appearance',
               onPressed: () {
-                if (!themeState.isDarkTheme) {
+                if (!themeState.darkTheme) {
                   themeNotifier.updateTheme(
                       Theme.of(context).brightness == Brightness.light);
                 }

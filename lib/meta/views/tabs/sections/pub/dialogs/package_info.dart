@@ -181,7 +181,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                               },
                               icon: Icon(
                                 Icons.thumb_up_outlined,
-                                color: themeState.isDarkTheme
+                                color: themeState.darkTheme
                                     ? Colors.white
                                     : Colors.black,
                               ),
@@ -262,7 +262,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                             Text(
                               'Open in Pub.dev',
                               style: TextStyle(
-                                color: themeState.isDarkTheme
+                                color: themeState.darkTheme
                                     ? Colors.white
                                     : Colors.black,
                               ),
@@ -271,7 +271,7 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                             Icon(
                               Icons.open_in_new_rounded,
                               size: 15,
-                              color: themeState.isDarkTheme
+                              color: themeState.darkTheme
                                   ? Colors.white
                                   : Colors.black,
                             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/notifications.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
@@ -19,7 +20,6 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/models/projects.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
@@ -277,7 +277,7 @@ class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
                                 child: TextFormField(
                                   focusNode: _searchNode,
                                   style: TextStyle(
-                                    color: (themeState.isDarkTheme
+                                    color: (themeState.darkTheme
                                             ? Colors.white
                                             : Colors.black)
                                         .withOpacity(0.8),
@@ -285,7 +285,7 @@ class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
                                   cursorRadius: const Radius.circular(5),
                                   decoration: InputDecoration(
                                     hintStyle: TextStyle(
-                                      color: (themeState.isDarkTheme
+                                      color: (themeState.darkTheme
                                               ? Colors.white
                                               : Colors.black)
                                           .withOpacity(0.6),
@@ -318,7 +318,7 @@ class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
                                     child: Icon(
                                       Icons.close_rounded,
                                       size: 13,
-                                      color: themeState.isDarkTheme
+                                      color: themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black,
                                     ),
@@ -374,7 +374,7 @@ class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
                         maxHeight: 500,
                       ),
                       decoration: BoxDecoration(
-                        color: themeState.isDarkTheme
+                        color: themeState.darkTheme
                             ? const Color(0xff262F34)
                             : Colors.white,
                         borderRadius: BorderRadius.circular(5),
@@ -495,7 +495,7 @@ class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
                                         child: Row(
                                           children: <Widget>[
                                             SvgPicture.asset(Assets.package,
-                                                color: themeState.isDarkTheme
+                                                color: themeState.darkTheme
                                                     ? Colors.white
                                                     : Colors.blueGrey,
                                                 height: 20),
@@ -565,13 +565,13 @@ class _NotificationsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (_, ref, __) {
-        NotificationsState notificationsState =
-            ref.watch(notificationStateController);
+        NotificationsNotifier notificationsNotifier =
+            ref.watch(notificationStateController.notifier);
 
         return Tooltip(
-          message: notificationsState.notifications.isEmpty
+          message: notificationsNotifier.notifications.isEmpty
               ? 'No Notifications'
-              : 'Notifications (${notificationsState.notifications.length})',
+              : 'Notifications (${notificationsNotifier.notifications.length})',
           waitDuration: const Duration(seconds: 1),
           child: Stack(
             children: <Widget>[
@@ -591,7 +591,8 @@ class _NotificationsButton extends StatelessWidget {
                 right: 10,
                 top: 10,
                 child: AnimatedOpacity(
-                  opacity: notificationsState.notifications.isNotEmpty ? 1 : 0,
+                  opacity:
+                      notificationsNotifier.notifications.isNotEmpty ? 1 : 0,
                   duration: const Duration(milliseconds: 150),
                   child: const RoundContainer(
                     color: kRedColor,

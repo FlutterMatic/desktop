@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           stageType: e.stageType,
                                           icon: SvgPicture.asset(
                                             e.icon,
-                                            color: themeState.isDarkTheme
+                                            color: themeState.darkTheme
                                                 ? Colors.white
                                                 : Colors.black,
                                           ),
@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         stageType: null,
                                         icon: SvgPicture.asset(
                                           Assets.settings,
-                                          color: themeState.isDarkTheme
+                                          color: themeState.darkTheme
                                               ? Colors.white
                                               : Colors.black,
                                         ),
@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         stageType: null,
                                         icon: SvgPicture.asset(
                                           Assets.settings,
-                                          color: themeState.isDarkTheme
+                                          color: themeState.darkTheme
                                               ? Colors.white
                                               : Colors.black,
                                         ),

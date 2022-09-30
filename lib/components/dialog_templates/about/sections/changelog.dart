@@ -127,30 +127,27 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
                       p: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.w400,
-                        color: themeState.isDarkTheme
+                        color: themeState.darkTheme
                             ? Colors.grey[100]
                             : Colors.grey[900],
                       ),
                       h1: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
-                        color: themeState.isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color:
+                            themeState.darkTheme ? Colors.white : Colors.black,
                       ),
                       h2: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
-                        color: themeState.isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color:
+                            themeState.darkTheme ? Colors.white : Colors.black,
                       ),
                       h3: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
-                        color: themeState.isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color:
+                            themeState.darkTheme ? Colors.white : Colors.black,
                       ),
                     ),
                   ),

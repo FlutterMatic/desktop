@@ -87,7 +87,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                             overflow: TextOverflow.fade,
                             softWrap: false,
                             style: TextStyle(
-                              color: themeState.isDarkTheme
+                              color: themeState.darkTheme
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 17,
@@ -111,7 +111,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                 child: Icon(
                                   Icons.content_copy,
                                   size: 14,
-                                  color: (themeState.isDarkTheme
+                                  color: (themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black)
                                       .withOpacity(0.5),
@@ -142,7 +142,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                             'No package description provided.',
                         maxLines: _isHovering ? null : 3,
                         style: TextStyle(
-                          color: themeState.isDarkTheme
+                          color: themeState.darkTheme
                               ? Colors.white
                               : Colors.black,
                           fontSize: 13.5,
@@ -169,7 +169,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                 Icon(
                                   Icons.thumb_up_alt_rounded,
                                   size: 13,
-                                  color: (themeState.isDarkTheme
+                                  color: (themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black)
                                       .withOpacity(0.5),
@@ -180,7 +180,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                       widget.data?.metrics?.score.likeCount ??
                                           0),
                                   style: TextStyle(
-                                    color: (themeState.isDarkTheme
+                                    color: (themeState.darkTheme
                                             ? Colors.white
                                             : Colors.black)
                                         .withOpacity(0.5),
@@ -200,7 +200,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                 Icon(
                                   Icons.insights_rounded,
                                   size: 13,
-                                  color: (themeState.isDarkTheme
+                                  color: (themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black)
                                       .withOpacity(0.5),
@@ -210,7 +210,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                   (widget.data?.metrics?.score.maxPoints ?? 0)
                                       .toString(),
                                   style: TextStyle(
-                                    color: (themeState.isDarkTheme
+                                    color: (themeState.darkTheme
                                             ? Colors.white
                                             : Colors.black)
                                         .withOpacity(0.5),
@@ -230,7 +230,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                 Icon(
                                   Icons.public_rounded,
                                   size: 13,
-                                  color: (themeState.isDarkTheme
+                                  color: (themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black)
                                       .withOpacity(0.5),
@@ -239,7 +239,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                                 Text(
                                   '${NumberFormat.compact().format((widget.data?.metrics?.score.popularityScore ?? 0) * 100)}%',
                                   style: TextStyle(
-                                    color: (themeState.isDarkTheme
+                                    color: (themeState.darkTheme
                                             ? Colors.white
                                             : Colors.black)
                                         .withOpacity(0.5),
@@ -267,7 +267,7 @@ class _PubPkgTileState extends State<PubPkgTile> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 13.5,
-                              color: (themeState.isDarkTheme
+                              color: (themeState.darkTheme
                                       ? Colors.white
                                       : Colors.black)
                                   .withOpacity(0.5),

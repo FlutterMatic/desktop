@@ -80,7 +80,7 @@ class _PubPackageSearchResultTileState
                 child: Text(
                   widget.package.name,
                   style: TextStyle(
-                    color: themeState.isDarkTheme ? Colors.white : Colors.black,
+                    color: themeState.darkTheme ? Colors.white : Colors.black,
                   ),
                 ),
               ),
@@ -102,10 +102,9 @@ class _PubPackageSearchResultTileState
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 13.5,
-                        color: (themeState.isDarkTheme
-                                ? Colors.white
-                                : Colors.black)
-                            .withOpacity(0.5),
+                        color:
+                            (themeState.darkTheme ? Colors.white : Colors.black)
+                                .withOpacity(0.5),
                       ),
                     ),
                   HSeparators.xSmall(),
@@ -121,7 +120,7 @@ class _PubPackageSearchResultTileState
                       Icons.content_copy,
                       size: 13,
                       color:
-                          (themeState.isDarkTheme ? Colors.white : Colors.black)
+                          (themeState.darkTheme ? Colors.white : Colors.black)
                               .withOpacity(0.5),
                     ),
                     onPressed: () {

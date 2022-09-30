@@ -45,12 +45,12 @@ class UpgradeFlutterDialog extends StatelessWidget {
               infoWidget(context,
                   'You can still use Flutter in your IDE while we update. You will be asked to restart any opened editors once the update is complete. You can\'t use FlutterMatic while we update.'),
               VSeparators.small(),
-              if (flutterActionState.isLoading)
+              if (flutterActionState.loading)
                 LoadActivityMessageElement(
-                    message: flutterActionState.currentProcess)
+                    message: flutterActionState.currentActivity)
               else
                 RectangleButton(
-                  loading: flutterActionState.isLoading,
+                  loading: flutterActionState.loading,
                   width: double.infinity,
                   onPressed: () =>
                       flutterActionNotifier.upgradeFlutterVersion(),

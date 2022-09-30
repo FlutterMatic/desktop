@@ -119,7 +119,7 @@ Widget installJava(
                                 child: Text(
                                   'Skip',
                                   style: TextStyle(
-                                      color: themeState.isDarkTheme
+                                      color: themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black),
                                 ),
@@ -131,7 +131,7 @@ Widget installJava(
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                      color: themeState.isDarkTheme
+                                      color: themeState.darkTheme
                                           ? Colors.white
                                           : Colors.black),
                                 ),

@@ -642,8 +642,11 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
   Future<void> getProjectsWithIsolate(bool force) async {
     try {
       // If already loading then ignore this request because it could've been
-      // called multiple causing multiple isolates to be created and multiple
+      // called multiple causing multiple isolates to be released and multiple
       // copies of the same projects shown.
+      // 
+      // Merging projects and automatically removing duplicates isn't supported 
+      // yet.
       if (state.loading) {
         await logger.file(LogTypeTag.warning,
             'Tried to fetch projects when already loading state in the notifier.');

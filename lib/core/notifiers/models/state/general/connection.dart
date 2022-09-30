@@ -1,15 +1,15 @@
 class NetworkState {
-  final bool isConnected;
+  final bool connected;
 
   const NetworkState({
-    this.isConnected = false,
+    this.connected = false,
   });
 
   factory NetworkState.initial() => const NetworkState();
 
-  NetworkState copyWith({bool? isConnected}) {
+  NetworkState copyWith({bool? connected}) {
     return NetworkState(
-      isConnected: isConnected ?? this.isConnected,
+      connected: connected ?? this.connected,
     );
   }
 }

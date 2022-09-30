@@ -1,15 +1,21 @@
 // 📦 Package imports:
+import 'dart:collection';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/notifiers/models/payloads/general/notifications.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
-class NotificationsNotifier extends StateNotifier<NotificationsState> {
+class NotificationsNotifier extends StateNotifier<void> {
   final Reader read;
 
-  NotificationsNotifier(this.read) : super(NotificationsState.initial());
+  NotificationsNotifier(this.read) : super(null);
+
+  static final List<NotificationObject> _notifications = [];
+
+  UnmodifiableListView get notifications =>
+      UnmodifiableListView(_notifications);
 
   /// Adds a new notification and notifies the state about it. This will also
   /// log an error if the notification id already exists. Make sure you get
@@ -22,7 +28,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
     // Make sure that this id doesn't already exist.
     bool idExists = false;
 
-    for (NotificationObject notification in state.notifications) {
+    for (NotificationObject notification in _notifications) {
       if (notification.id == notificationObject.id) {
         idExists = true;
         break;
@@ -36,7 +42,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
       return;
     }
 
-    state.addNotification(
+    _notifications.add(
       NotificationObject(
         notificationObject.id,
         title: notificationObject.title,
@@ -56,16 +62,18 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
   /// If no such notification exists, then this future will complete normally,
   /// with nothing being thrown.
   Future<void> removeNotification(String notificationId) async {
-    state.removeNotification(notificationId);
+    _notifications.removeWhere((e) => e.id == notificationId);
 
     await logger.file(LogTypeTag.info, 'Removed notification: $notificationId');
   }
 
   /// Clears all notifications from the notification list.
   Future<void> clearNotifications() async {
-    state.clearNotifications();
+    int total = _notifications.length;
 
-    await logger.file(LogTypeTag.info,
-        'Notifications cleared: ${state.notifications.length} notifications');
+    _notifications.clear();
+
+    await logger.file(
+        LogTypeTag.info, 'Notifications cleared: $total notifications');
   }
 }

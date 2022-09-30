@@ -211,7 +211,7 @@ class _ProjectDependenciesSectionState
                           child: TextFormField(
                             focusNode: _searchNode,
                             style: TextStyle(
-                              color: (themeState.isDarkTheme
+                              color: (themeState.darkTheme
                                       ? Colors.white
                                       : Colors.black)
                                   .withOpacity(0.8),
@@ -219,7 +219,7 @@ class _ProjectDependenciesSectionState
                             cursorRadius: const Radius.circular(5),
                             decoration: InputDecoration(
                               hintStyle: TextStyle(
-                                color: (themeState.isDarkTheme
+                                color: (themeState.darkTheme
                                         ? Colors.white
                                         : Colors.black)
                                     .withOpacity(0.6),
@@ -248,7 +248,7 @@ class _ProjectDependenciesSectionState
                               child: Icon(
                                 Icons.close_rounded,
                                 size: 13,
-                                color: themeState.isDarkTheme
+                                color: themeState.darkTheme
                                     ? Colors.white
                                     : Colors.black,
                               ),
@@ -280,7 +280,7 @@ class _ProjectDependenciesSectionState
                               return _dependencyTile(
                                 context,
                                 name: e,
-                                isDarkTheme: themeState.isDarkTheme,
+                                isDarkTheme: themeState.darkTheme,
                                 onRemove: () {
                                   List<String> newDependencies =
                                       widget.dependencies;
@@ -316,7 +316,7 @@ class _ProjectDependenciesSectionState
                               return _dependencyTile(
                                 context,
                                 name: e,
-                                isDarkTheme: themeState.isDarkTheme,
+                                isDarkTheme: themeState.darkTheme,
                                 onRemove: () {
                                   List<String> newDependencies =
                                       widget.devDependencies;
@@ -351,10 +351,10 @@ class _ProjectDependenciesSectionState
                       padding: const EdgeInsets.all(15),
                       child: RoundContainer(
                         padding: const EdgeInsets.symmetric(horizontal: 5),
-                        color: themeState.isDarkTheme
+                        color: themeState.darkTheme
                             ? Colors.blueGrey[900]
                             : Colors.blueGrey[50],
-                        borderColor: themeState.isDarkTheme
+                        borderColor: themeState.darkTheme
                             ? Colors.blueGrey[600]
                             : Colors.blueGrey[200],
                         child: ListView.builder(

@@ -27,7 +27,7 @@ Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
                   height: 3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: themeState.isDarkTheme
+                    color: themeState.darkTheme
                         ? AppTheme.lightBackgroundColor
                         : AppTheme.darkBackgroundColor,
                   ),
@@ -58,7 +58,7 @@ Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
                   height: 3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: themeState.isDarkTheme
+                    color: themeState.darkTheme
                         ? const Color(0xff1B2529)
                         : const Color(0xFFF4F8FA),
                   ),

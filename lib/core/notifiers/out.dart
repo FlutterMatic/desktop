@@ -18,7 +18,6 @@ import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/vsc.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/connection.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/download.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/dart.dart';
@@ -84,7 +83,7 @@ final StateNotifierProvider<DownloadNotifier, DownloadState>
     downloadStateController =
     StateNotifierProvider((_) => DownloadNotifier(_.read));
 
-final StateNotifierProvider<NotificationsNotifier, NotificationsState>
+final StateNotifierProvider<NotificationsNotifier, void>
     notificationStateController =
     StateNotifierProvider((_) => NotificationsNotifier(_.read));
 

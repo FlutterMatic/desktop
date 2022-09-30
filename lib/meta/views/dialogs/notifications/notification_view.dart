@@ -11,7 +11,6 @@ import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/notifications.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/notifications.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/meta/views/dialogs/notifications/notification_tile.dart';
@@ -28,9 +27,6 @@ class _NotificationViewDialogState extends State<NotificationViewDialog> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (_, ref, __) {
-        NotificationsState notificationsState =
-            ref.watch(notificationStateController);
-
         NotificationsNotifier notificationsNotifier =
             ref.watch(notificationStateController.notifier);
 
@@ -39,7 +35,7 @@ class _NotificationViewDialogState extends State<NotificationViewDialog> {
             children: <Widget>[
               DialogHeader(
                 title: 'Notifications',
-                leading: notificationsState.notifications.isEmpty
+                leading: notificationsNotifier.notifications.isEmpty
                     ? null
                     : SquareButton(
                         color: Colors.transparent,
@@ -67,7 +63,7 @@ class _NotificationViewDialogState extends State<NotificationViewDialog> {
               ),
               // If there are no notifications, show a different layout with a
               // message.
-              if (notificationsState.notifications.isEmpty)
+              if (notificationsNotifier.notifications.isEmpty)
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(15),
@@ -90,18 +86,18 @@ class _NotificationViewDialogState extends State<NotificationViewDialog> {
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxHeight: 300),
                   child: ListView.builder(
-                    itemCount: notificationsState.notifications.length,
+                    itemCount: notificationsNotifier.notifications.length,
                     shrinkWrap: true,
                     itemBuilder: (_, int i) {
                       bool isLast =
-                          i == notificationsState.notifications.length - 1;
+                          i == notificationsNotifier.notifications.length - 1;
                       return Padding(
                         padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                         child: NotificationTile(
-                          notification: notificationsState.notifications[i],
+                          notification: notificationsNotifier.notifications[i],
                           onDelete: () {
                             notificationsNotifier.removeNotification(
-                                notificationsState.notifications[i].id);
+                                notificationsNotifier.notifications[i].id);
                             setState(() {});
                           },
                         ),

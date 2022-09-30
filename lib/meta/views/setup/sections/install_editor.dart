@@ -135,7 +135,7 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                   _selectEditor(
                     context,
                     icon: SvgPicture.asset(Assets.vscode),
-                    isDarkTheme: themeState.isDarkTheme,
+                    isDarkTheme: themeState.darkTheme,
                     name: 'VS Code',
                     type: EditorType.vscode,
                     onEditorTypeChanged: (EditorType val) {
@@ -155,7 +155,7 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                   _selectEditor(
                     context,
                     icon: SvgPicture.asset(Assets.studio),
-                    isDarkTheme: themeState.isDarkTheme,
+                    isDarkTheme: themeState.darkTheme,
                     name: 'Android Studio',
                     type: EditorType.androidStudio,
                     onEditorTypeChanged: (EditorType val) {
@@ -180,10 +180,9 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
                     context,
                     icon: Icon(
                       Icons.close_rounded,
-                      color:
-                          themeState.isDarkTheme ? Colors.white : Colors.black,
+                      color: themeState.darkTheme ? Colors.white : Colors.black,
                     ),
-                    isDarkTheme: themeState.isDarkTheme,
+                    isDarkTheme: themeState.darkTheme,
                     name: 'None',
                     type: EditorType.none,
                     onEditorTypeChanged: (EditorType val) {

@@ -116,7 +116,7 @@ class _SetupScreenState extends State<SetupScreen> {
                                 'System Requirements',
                                 style: TextStyle(
                                     fontSize: 12,
-                                    color: themeState.isDarkTheme
+                                    color: themeState.darkTheme
                                         ? Colors.white
                                         : Colors.black),
                               ),
@@ -143,7 +143,7 @@ class _SetupScreenState extends State<SetupScreen> {
                                 'Docs & Tutorials',
                                 style: TextStyle(
                                     fontSize: 12,
-                                    color: themeState.isDarkTheme
+                                    color: themeState.darkTheme
                                         ? Colors.white
                                         : Colors.black),
                               ),
@@ -163,12 +163,12 @@ class _SetupScreenState extends State<SetupScreen> {
                     IconButton(
                       splashRadius: 1,
                       icon: Icon(
-                        themeState.isDarkTheme
+                        themeState.darkTheme
                             ? Icons.light_mode_outlined
                             : Icons.dark_mode_outlined,
                       ),
                       onPressed: () {
-                        themeNotifier.updateTheme(!themeState.isDarkTheme);
+                        themeNotifier.updateTheme(!themeState.darkTheme);
                         setState(() {});
                       },
                     ),

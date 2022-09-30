@@ -46,8 +46,8 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                 title: 'Flutter Doctor',
                 leading: StageTile(),
               ),
-              if (!flutterActionState.isLoading &&
-                  flutterActionState.flutterDoctor.isNotEmpty) ...<Widget>[
+              if (!flutterActionState.loading &&
+                  flutterActionNotifier.flutterDoctor.isNotEmpty) ...<Widget>[
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxHeight: 500),
                   child: SingleChildScrollView(
@@ -55,7 +55,7 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children:
-                            flutterActionState.flutterDoctor.map((String e) {
+                            flutterActionNotifier.flutterDoctor.map((String e) {
                           if (e.startsWith('Doctor summary')) {
                             return const SizedBox.shrink();
                           }
@@ -66,7 +66,7 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                           e = e.replaceAll('X', '❌');
 
                           bool isLast =
-                              flutterActionState.flutterDoctor.last == e;
+                              flutterActionNotifier.flutterDoctor.last == e;
 
                           return Padding(
                             padding: EdgeInsets.all(isLast ? 0 : 4),
@@ -82,18 +82,18 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                     'We will now run a diagnostic test for Flutter on your device to make sure everything is working as expected.'),
                 VSeparators.normal(),
                 CheckBoxElement(
-                  disable: flutterActionState.isLoading,
+                  disable: flutterActionState.loading,
                   onChanged: (bool? val) =>
                       setState(() => _verbose = val ?? false),
                   value: _verbose,
                   text: 'Verbose output (details about issues found)',
                 ),
                 VSeparators.normal(),
-                if (flutterActionState.isLoading)
+                if (flutterActionState.loading)
                   LoadActivityMessageElement(
-                    message: flutterActionState.flutterDoctor.isEmpty
+                    message: flutterActionNotifier.flutterDoctor.isEmpty
                         ? ''
-                        : flutterActionState.flutterDoctor.last,
+                        : flutterActionNotifier.flutterDoctor.last,
                   )
                 else
                   RectangleButton(

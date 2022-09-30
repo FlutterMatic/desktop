@@ -31,11 +31,11 @@ class ConnectionNotifier extends StateNotifier<NetworkState> {
 
       if (status == ConnectivityResult.none) {
         state = state.copyWith(
-          isConnected: false,
+          connected: false,
         );
       } else {
         state = state.copyWith(
-          isConnected: true,
+          connected: true,
         );
       }
 
@@ -59,7 +59,7 @@ class ConnectionNotifier extends StateNotifier<NetworkState> {
         .listen((ConnectivityResult result) async {
       if (result == ConnectivityResult.none) {
         state = state.copyWith(
-          isConnected: false,
+          connected: false,
         );
 
         await logger.file(
@@ -69,7 +69,7 @@ class ConnectionNotifier extends StateNotifier<NetworkState> {
 
       await _getConnectionStatus().then((bool isConnected) async {
         state = state.copyWith(
-          isConnected: isConnected,
+          connected: isConnected,
         );
 
         if (isConnected) {

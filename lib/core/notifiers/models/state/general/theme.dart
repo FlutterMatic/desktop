@@ -1,21 +1,21 @@
 class ThemeState {
-  final bool isDarkTheme;
-  final bool isSystemTheme;
+  final bool darkTheme;
+  final bool systemTheme;
 
   const ThemeState({
-    this.isDarkTheme = true,
-    this.isSystemTheme = false,
+    this.darkTheme = true,
+    this.systemTheme = false,
   });
 
   factory ThemeState.initial() => const ThemeState();
 
   ThemeState copyWith({
-    bool? isDarkTheme,
-    bool? isSystemTheme,
+    bool? darkTheme,
+    bool? systemTheme,
   }) {
     return ThemeState(
-      isDarkTheme: isDarkTheme ?? this.isDarkTheme,
-      isSystemTheme: isSystemTheme ?? this.isSystemTheme,
+      darkTheme: darkTheme ?? this.darkTheme,
+      systemTheme: systemTheme ?? this.systemTheme,
     );
   }
 }

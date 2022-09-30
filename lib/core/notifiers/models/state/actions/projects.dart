@@ -1,24 +1,24 @@
 class ProjectsState {
-  final bool error;
   final bool loading;
+  final bool error;
   final String currentActivity;
 
   const ProjectsState({
-    this.error = false,
     this.loading = false,
+    this.error = false,
     this.currentActivity = '',
   });
 
   factory ProjectsState.initial() => const ProjectsState();
 
   ProjectsState copyWith({
-    bool? error,
     bool? loading,
+    bool? error,
     String? currentActivity,
   }) {
     return ProjectsState(
-      error: error ?? this.error,
       loading: loading ?? this.loading,
+      error: error ?? this.error,
       currentActivity: currentActivity ?? this.currentActivity,
     );
   }

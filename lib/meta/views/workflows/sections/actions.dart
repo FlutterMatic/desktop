@@ -151,8 +151,8 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                       ].map(
                         (WorkflowActionModel? e) {
                           return RoundContainer(
-                            color: Colors.blueGrey.withOpacity(
-                                themeState.isDarkTheme ? 0.2 : 0.1),
+                            color: Colors.blueGrey
+                                .withOpacity(themeState.darkTheme ? 0.2 : 0.1),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
@@ -241,7 +241,7 @@ class _SetProjectWorkflowActionsState extends State<SetProjectWorkflowActions> {
                           borderColor: _addedWorkflows.contains(e)
                               ? kGreenColor
                               : Colors.blueGrey.withOpacity(
-                                  themeState.isDarkTheme ? 0.2 : 0.1),
+                                  themeState.darkTheme ? 0.2 : 0.1),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[

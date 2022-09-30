@@ -44,7 +44,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   /// DarkTheme setter
   set darkTheme(bool value) {
     state = state.copyWith(
-      isDarkTheme: value,
+      darkTheme: value,
     );
 
     logger.file(LogTypeTag.info, 'Dark theme setter set to $value.');
@@ -52,7 +52,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
   Future<void> updateTheme(bool isDarkTheme) async {
     state = state.copyWith(
-      isDarkTheme: isDarkTheme,
+      darkTheme: isDarkTheme,
     );
 
     await SharedPref().pref.setBool(SPConst.isDarkTheme, _isDarkTheme);
@@ -61,7 +61,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
   Future<void> updateSystemTheme(bool isSystemTheme) async {
     state = state.copyWith(
-      isSystemTheme: isSystemTheme,
+      systemTheme: isSystemTheme,
     );
 
     await SharedPref().pref.setBool(SPConst.isSystemTheme, _isSystemTheme);

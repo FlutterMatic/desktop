@@ -72,7 +72,7 @@ class DiscoverSettingsSection extends StatelessWidget {
                   },
                   icon: SvgPicture.asset(
                     Assets.doc,
-                    color: themeState.isDarkTheme ? null : Colors.black,
+                    color: themeState.darkTheme ? null : Colors.black,
                     height: 14,
                   ),
                 ),

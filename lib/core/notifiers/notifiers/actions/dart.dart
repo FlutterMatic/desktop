@@ -12,17 +12,20 @@ class DartActionsNotifier extends StateNotifier<DartActionsState> {
 
   DartActionsNotifier(this.read) : super(DartActionsState.initial());
 
-  Future<String> createNewProject(NewDartProjectInfo project) async {
+  Future<void> createNewProject(NewDartProjectInfo project) async {
     state = state.copyWith(
-      isLoading: true,
+      loading: true,
+      error: '',
     );
 
     try {
       if (project.projectPath.isEmpty) {
         state = state.copyWith(
-          isLoading: false,
+          loading: false,
+          error: 'Project path is empty. Please provide a valid path.',
         );
-        return 'Project path is empty. Please provide a valid path.';
+
+        return;
       }
 
       // Create the project.
@@ -34,18 +37,23 @@ class DartActionsNotifier extends StateNotifier<DartActionsState> {
           'Created new Dart project: ${project.toJson()} at path: ${project.projectPath}');
 
       state = state.copyWith(
-        isLoading: false,
+        loading: false,
+        error: '',
       );
-      return 'success';
+
+      return;
     } catch (_, s) {
       await logger.file(
           LogTypeTag.error, 'Failed to create new Dart project: $_',
           stackTraces: s);
 
       state = state.copyWith(
-        isLoading: false,
+        loading: false,
+        error:
+            'Failed to create new Dart project. Please try again or report this issue.',
       );
-      return 'Failed to create new Dart project. Please try again or report this issue.';
+
+      return;
     }
   }
 }

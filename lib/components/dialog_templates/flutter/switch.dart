@@ -46,9 +46,9 @@ class _ChangeFlutterChannelDialogState
 
         return DialogTemplate(
           child: Shimmer.fromColors(
-            enabled: flutterActionsState.isLoading,
+            enabled: flutterActionsState.loading,
             child: IgnorePointer(
-              ignoring: flutterActionsState.isLoading,
+              ignoring: flutterActionsState.loading,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -68,7 +68,7 @@ class _ChangeFlutterChannelDialogState
                   ),
                   VSeparators.small(),
                   AnimatedOpacity(
-                    opacity: flutterActionsState.isLoading ? 0.1 : 1,
+                    opacity: flutterActionsState.loading ? 0.1 : 1,
                     duration: const Duration(milliseconds: 300),
                     child: informationWidget(
                       'We recommend staying on the stable channel for best development experience unless it\'s necessary.',
@@ -76,9 +76,9 @@ class _ChangeFlutterChannelDialogState
                     ),
                   ),
                   VSeparators.small(),
-                  if (flutterActionsState.isLoading) ...[
+                  if (flutterActionsState.loading) ...[
                     LoadActivityMessageElement(
-                      message: flutterActionsState.currentProcess,
+                      message: flutterActionsState.currentActivity,
                     ),
                     VSeparators.normal(),
                     informationWidget(

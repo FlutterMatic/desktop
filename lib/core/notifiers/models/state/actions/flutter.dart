@@ -1,47 +1,25 @@
 class FlutterActionsState {
-  final bool isLoading;
-  final String currentProcess;
+  final bool loading;
+  final String currentActivity;
   final String error;
-  final List<String> flutterDoctor;
 
   const FlutterActionsState({
-    this.isLoading = false,
+    this.loading = false,
     this.error = '',
-    this.currentProcess = '...',
-    this.flutterDoctor = const [],
+    this.currentActivity = '...',
   });
 
   factory FlutterActionsState.initial() => FlutterActionsState.initial();
 
   FlutterActionsState copyWith({
-    bool? isLoading,
+    bool? loading,
     String? error,
-    String? currentProcess,
+    String? currentActivity,
   }) {
     return FlutterActionsState(
       error: error ?? this.error,
-      isLoading: isLoading ?? this.isLoading,
-      currentProcess: currentProcess ?? this.currentProcess,
+      loading: loading ?? this.loading,
+      currentActivity: currentActivity ?? this.currentActivity,
     );
-  }
-
-  // Add to Flutter doctor.
-  void addFlutterDoctor(List<String> item) {
-    flutterDoctor.addAll(item);
-  }
-
-  // Remove from Flutter doctor.
-  void removeFlutterDoctor(String item) {
-    flutterDoctor.remove(item);
-  }
-
-  // Remove where from Flutter doctor.
-  void removeWhereFlutterDoctor(bool Function(String) predicate) {
-    flutterDoctor.removeWhere(predicate);
-  }
-
-  // Clear Flutter doctor.
-  void clearFlutterDoctor() {
-    flutterDoctor.clear();
   }
 }

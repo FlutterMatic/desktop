@@ -97,7 +97,7 @@ Widget _buttonListTile(
 
             return Icon(
               Icons.arrow_forward_ios_rounded,
-              color: themeState.isDarkTheme ? Colors.white : Colors.black,
+              color: themeState.darkTheme ? Colors.white : Colors.black,
               size: 15,
             );
           },

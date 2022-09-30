@@ -39,9 +39,8 @@ class ProjectSearchResultTile extends StatelessWidget {
                       project.name,
                       maxLines: 1,
                       style: TextStyle(
-                        color: themeState.isDarkTheme
-                            ? Colors.white
-                            : Colors.black,
+                        color:
+                            themeState.darkTheme ? Colors.white : Colors.black,
                       ),
                     ),
                     VSeparators.small(),
@@ -59,7 +58,7 @@ class ProjectSearchResultTile extends StatelessWidget {
                 child: Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 13,
-                  color: (themeState.isDarkTheme ? Colors.white : Colors.black)
+                  color: (themeState.darkTheme ? Colors.white : Colors.black)
                       .withOpacity(0.5),
                 ),
               ),

@@ -38,7 +38,7 @@ Future<void> main() async {
   // Initialize shared preference.
   await SharedPref.init();
 
-  // The bitsdojo window plugin fails to compile when trying to hide the 
+  // The bitsdojo window plugin fails to compile when trying to hide the
   // window controls on Windows natively.
   await windowManager
       .waitUntilReadyToShow()
@@ -215,7 +215,7 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
         return Directionality(
           textDirection: TextDirection.ltr,
           child: ColoredBox(
-            color: themeState.isDarkTheme
+            color: themeState.darkTheme
                 ? AppTheme.darkBackgroundColor
                 : AppTheme.lightBackgroundColor,
             child: Column(
@@ -233,9 +233,8 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
                   child: MaterialApp(
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
-                    themeMode: themeState.isDarkTheme
-                        ? ThemeMode.dark
-                        : ThemeMode.light,
+                    themeMode:
+                        themeState.darkTheme ? ThemeMode.dark : ThemeMode.light,
                     debugShowCheckedModeBanner: false,
                     builder: (_, Widget? child) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
@@ -299,20 +298,19 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
                                 color: Colors.transparent,
                                 hoverColor: Colors.transparent,
                                 icon: Icon(
-                                  themeState.isDarkTheme
+                                  themeState.darkTheme
                                       ? Icons.dark_mode
                                       : Icons.light_mode,
-                                  color: themeState.isDarkTheme
+                                  color: themeState.darkTheme
                                       ? Colors.white
                                       : Colors.black,
                                 ),
                                 onPressed: () {
-                                  themeNotifier.updateTheme(
-                                      themeState.isDarkTheme
-                                          ? Theme.of(context).brightness !=
-                                              Brightness.light
-                                          : Theme.of(context).brightness ==
-                                              Brightness.light);
+                                  themeNotifier.updateTheme(themeState.darkTheme
+                                      ? Theme.of(context).brightness !=
+                                          Brightness.light
+                                      : Theme.of(context).brightness ==
+                                          Brightness.light);
                                 },
                               ),
                             ),

@@ -1,17 +1,21 @@
 class DartActionsState {
-  final bool isLoading;
+  final bool loading;
+  final String error;
 
   const DartActionsState({
-    this.isLoading = false,
+    this.loading = false,
+    this.error = '',
   });
 
   factory DartActionsState.initial() => DartActionsState.initial();
 
   DartActionsState copyWith({
-    bool? isLoading,
+    bool? loading,
+    String? error,
   }) {
     return DartActionsState(
-      isLoading: isLoading ?? this.isLoading,
+      loading: loading ?? this.loading,
+      error: error ?? this.error,
     );
   }
 }
