@@ -4,9 +4,12 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/add_dependencies.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/common/dependencies.dart';
@@ -21,13 +24,14 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/services/actions/flutter.dart';
+import 'package:fluttermatic/core/notifiers/models/payloads/actions/flutter.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/bin/project_pre_configs/firebase.dart';
-import 'package:fluttermatic/meta/utils/bin/project_pre_configs/response.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/project_pre_configs/firebase.dart';
+import 'package:fluttermatic/meta/utils/project_pre_configs/response.dart';
 
-class NewFlutterProjectDialog extends StatefulWidget {
+class NewFlutterProjectDialog extends ConsumerStatefulWidget {
   const NewFlutterProjectDialog({Key? key}) : super(key: key);
 
   @override
@@ -35,7 +39,8 @@ class NewFlutterProjectDialog extends StatefulWidget {
       _NewFlutterProjectDialogState();
 }
 
-class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
+class _NewFlutterProjectDialogState
+    extends ConsumerState<NewFlutterProjectDialog> {
   // Input Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -87,13 +92,13 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
       return false;
     }
 
-    List<FileSystemEntity> _dirs = Directory(_path!).listSync();
+    List<FileSystemEntity> dirs = Directory(_path!).listSync();
 
     // Make sure that there is no directory with the same name
-    for (FileSystemEntity dir in _dirs) {
-      String _existName = dir.path.split('\\').last.toLowerCase();
+    for (FileSystemEntity dir in dirs) {
+      String existName = dir.path.split('\\').last.toLowerCase();
 
-      if (_existName == _nameController.text.toLowerCase()) {
+      if (existName == _nameController.text.toLowerCase()) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           snackBarTile(
@@ -112,7 +117,7 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
 
   Future<void> _createNewProject() async {
     if (_createProjectFormKey.currentState!.validate()) {
-      // Name
+      // Name of the Flutter project.
       if (_index == _NewProjectSections.projectName &&
           _projectNameCondition()) {
         if (!_projectPathCondition()) {
@@ -130,9 +135,9 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
 
         // Make sure that this project name doesn't already exist in the
         // selected path.
-        bool _valid = _confirmDirectory();
+        bool valid = _confirmDirectory();
 
-        if (_valid) {
+        if (valid) {
           setState(() {
             _nameController.text = _nameController.text.toLowerCase();
             _index = _NewProjectSections.projectDescription;
@@ -150,7 +155,7 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
       }
       // Platforms
       else if (_index == _NewProjectSections.projectPlatforms) {
-        bool _isValid = validatePlatformSelection(
+        bool isValid = validatePlatformSelection(
           ios: _ios,
           android: _android,
           web: _web,
@@ -159,7 +164,7 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
           linux: _linux,
         );
 
-        if (_isValid) {
+        if (isValid) {
           setState(() => _index = _NewProjectSections.preConfigProject);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -176,12 +181,12 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
         try {
           // Make sure that this project name doesn't already exist in the
           // selected path.
-          bool _valid = _confirmDirectory();
+          bool valid = _confirmDirectory();
 
-          if (_valid) {
+          if (valid) {
             setState(() => _index = _NewProjectSections.creatingProject);
 
-            NewFlutterProjectInfo _projectInfo = NewFlutterProjectInfo(
+            NewFlutterProjectInfo projectInfo = NewFlutterProjectInfo(
               projectPath: _path!,
               projectName: _nameController.text,
               description: _descriptionController.text,
@@ -195,17 +200,17 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
               linux: _linux,
             );
 
-            Future<void> _deleteProject() async {
+            Future<void> deleteProject() async {
               try {
-                Directory _dir = Directory(
-                    _projectInfo.projectPath + '\\' + _projectInfo.projectName);
-                await _dir.delete(recursive: true);
+                Directory dir = Directory(
+                    '${projectInfo.projectPath}\\${projectInfo.projectName}');
+                await dir.delete(recursive: true);
                 await logger.file(LogTypeTag.warning,
                     'Project has been deleted because of pre-config error during setup.');
               } catch (_, s) {
                 await logger.file(LogTypeTag.error,
-                    'Error deleting project for pre-config error: $_',
-                    stackTraces: s);
+                    'Error deleting project for pre-config error.',
+                    error: _, stackTrace: s);
               }
 
               setState(() {
@@ -215,30 +220,39 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
               });
             }
 
-            String _result =
-                await FlutterActionServices.createNewProject(_projectInfo);
+            await ref
+                .watch(flutterActionsStateNotifier.notifier)
+                .createNewProject(context, projectInfo);
 
-            if (_result == 'success') {
+            bool done = ref.watch(flutterActionsStateNotifier).error.isEmpty &&
+                !ref.watch(flutterActionsStateNotifier).loading;
+
+            if (done) {
               // Add the pre-config for Firebase Android.
               if (_firebaseJson.isNotEmpty) {
                 setState(() =>
                     _currentActivity = 'Adding Firebase Android pre-config...');
-                PreConfigResponse _result = await FirebasePreConfig.addAndroid(
+
+                PreConfigResponse result = await FirebasePreConfig.addAndroid(
                   projectPath: _path!,
                   googleServicesJSON: _firebaseJson,
-                  project: _projectInfo,
+                  project: projectInfo,
                 );
 
-                if (!_result.success) {
-                  await _deleteProject();
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      _result.error ?? 'Failed to add Firebase Android config.',
-                      type: SnackBarType.error,
-                    ),
-                  );
+                if (!result.success) {
+                  await deleteProject();
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        result.error ??
+                            'Failed to add Firebase Android config.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
                   return;
                 }
               }
@@ -247,22 +261,25 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
               if (_firebasePlist.isNotEmpty) {
                 setState(() =>
                     _currentActivity = 'Adding Firebase iOS pre-config...');
-                PreConfigResponse _result = await FirebasePreConfig.addIOS(
+                PreConfigResponse result = await FirebasePreConfig.addIOS(
                   projectPath: _path!,
                   googleServicesPlist: _firebasePlist,
-                  project: _projectInfo,
+                  project: projectInfo,
                 );
 
-                if (!_result.success) {
-                  await _deleteProject();
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      _result.error ?? 'Failed to add Firebase iOS config.',
-                      type: SnackBarType.error,
-                    ),
-                  );
+                if (!result.success) {
+                  await deleteProject();
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        result.error ?? 'Failed to add Firebase iOS config.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
                   return;
                 }
               }
@@ -271,27 +288,30 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
               if (_firebaseWebConfig.isNotEmpty) {
                 setState(() =>
                     _currentActivity = 'Adding Firebase web pre-config...');
-                PreConfigResponse _result = await FirebasePreConfig.addWeb(
+                PreConfigResponse result = await FirebasePreConfig.addWeb(
                   projectPath: _path!,
                   firebaseConfig: _firebaseWebConfig,
-                  project: _projectInfo,
+                  project: projectInfo,
                 );
 
-                if (!_result.success) {
-                  await _deleteProject();
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      _result.error ?? 'Failed to add Firebase Web config.',
-                      type: SnackBarType.error,
-                    ),
-                  );
+                if (!result.success) {
+                  await deleteProject();
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        result.error ?? 'Failed to add Firebase Web config.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
                   return;
                 }
               }
 
-              List<String> _failedDependencies = <String>[];
+              List<String> failedDependencies = <String>[];
 
               // Add the normal dependencies to the project.
               if (_dependencies.isNotEmpty) {
@@ -299,15 +319,15 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                   setState(() => _currentActivity =
                       'Adding $dependency to dependencies...');
 
-                  bool _result = await addDependencyToProject(
-                    path: _path! + '\\' + _nameController.text,
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
                     dependency: dependency,
                     isDev: false,
                     isDart: false,
                   );
 
-                  if (!_result) {
-                    _failedDependencies.add(dependency);
+                  if (!result) {
+                    failedDependencies.add(dependency);
                   }
                 }
               }
@@ -318,31 +338,33 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                   setState(() =>
                       _currentActivity = 'Adding $dev to dev dependencies...');
 
-                  bool _result = await addDependencyToProject(
-                    path: _path! + '\\' + _nameController.text,
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
                     dependency: dev,
                     isDev: true,
                     isDart: false,
                   );
 
-                  if (!_result) {
-                    _failedDependencies.add(dev);
+                  if (!result) {
+                    failedDependencies.add(dev);
                   }
                 }
               }
 
-              if (_failedDependencies.isNotEmpty) {
+              if (failedDependencies.isNotEmpty) {
                 await logger.file(LogTypeTag.warning,
-                    'Created new Flutter project but failed to add the following dependencies: ${_failedDependencies.join(', ')}');
+                    'Created new Flutter project but failed to add the following dependencies: ${failedDependencies.join(', ')}');
               }
 
-              Navigator.pop(context);
+              if (mounted) {
+                Navigator.pop(context);
+              }
 
               await showDialog(
                 context: context,
                 builder: (_) => ProjectCreatedDialog(
                   projectName: _nameController.text,
-                  projectPath: _path! + '\\' + _nameController.text,
+                  projectPath: '${_path!}\\${_nameController.text}',
                 ),
               );
             } else {
@@ -352,29 +374,35 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                 _currentActivity = '';
               });
 
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(
-                  context,
-                  _result,
-                  type: SnackBarType.error,
-                ),
-              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  snackBarTile(
+                    context,
+                    ref.watch(flutterActionsStateNotifier).error,
+                    type: SnackBarType.error,
+                  ),
+                );
+              }
             }
 
             return;
           }
         } catch (_, s) {
           await logger.file(
-              LogTypeTag.error, 'Failed to create new Flutter project: $_',
-              stackTraces: s);
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(
-              context,
-              'Failed to create project. Please file an issue.',
-              type: SnackBarType.error,
-            ),
-          );
+              LogTypeTag.error, 'Failed to create new Flutter project.',
+              error: _, stackTrace: s);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(
+                context,
+                'Failed to create project. Please file an issue.',
+                type: SnackBarType.error,
+              ),
+            );
+          }
+
           setState(() {
             _index = _NewProjectSections
                 .values[_NewProjectSections.values.length - 2];

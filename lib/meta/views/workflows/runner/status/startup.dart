@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
@@ -100,8 +100,8 @@ class WorkflowStartUp extends StatelessWidget {
               HSeparators.normal(),
               RectangleButton(
                 width: 100,
-                child: const Text('Start'),
                 onPressed: onRun,
+                child: const Text('Start'),
               ),
             ],
           ),

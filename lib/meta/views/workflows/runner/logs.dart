@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -13,8 +13,9 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/log_view_builder.dart';
 
 class ViewWorkflowSessionLogs extends StatefulWidget {
-  final String path;
-  const ViewWorkflowSessionLogs({Key? key, required this.path})
+  final String logPath;
+
+  const ViewWorkflowSessionLogs({Key? key, required this.logPath})
       : super(key: key);
 
   @override
@@ -25,20 +26,21 @@ class ViewWorkflowSessionLogs extends StatefulWidget {
 class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
   final List<String> _logs = <String>[];
 
-  Future<void> _loadLogs() async {
-    File _logFile = File(widget.path);
+  Future<void> _init() async {
+    File logFile = File(widget.logPath);
 
-    if (!await _logFile.exists()) {
+    if (!await logFile.exists()) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         snackBarTile(context, 'This log file no longer exists.',
             type: SnackBarType.error),
       );
+
       Navigator.pop(context);
       return;
     }
 
-    List<String> logs = await _logFile.readAsLines();
+    List<String> logs = await logFile.readAsLines();
 
     while (logs.isNotEmpty && logs.first.isEmpty) {
       logs.removeAt(0);
@@ -53,7 +55,7 @@ class _ViewWorkflowSessionLogsState extends State<ViewWorkflowSessionLogs> {
 
   @override
   void initState() {
-    _loadLogs();
+    _init();
     super.initState();
   }
 

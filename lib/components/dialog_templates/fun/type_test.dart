@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/fun/type_result.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/tabs/components/circle_chart.dart';
 
 class TypeTestChallengeDialog extends StatefulWidget {
@@ -63,9 +63,9 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
   @override
   void initState() {
     // Set the words randomly to the variable [_words].
-    List<String> _list = _speedTestWords.toList();
-    _list.shuffle(Random());
-    setState(() => _words = _list);
+    List<String> list = _speedTestWords.toList();
+    list.shuffle(Random());
+    setState(() => _words = list);
     super.initState();
   }
 
@@ -206,7 +206,7 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
                 children: <Widget>[
                   for (int i = 0; i < _words.length - _currentWord; i++)
                     Text(
-                      _words.elementAt(i + _currentWord) + ' ',
+                      '${_words.elementAt(i + _currentWord)} ',
                       style: TextStyle(
                         fontSize: 20,
                         color: _currentWord == (i + _currentWord)
@@ -221,6 +221,7 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
           VSeparators.normal(),
           RoundContainer(
             padding: EdgeInsets.zero,
+            width: double.infinity,
             child: TextFormField(
               inputFormatters: <TextInputFormatter>[
                 TextInputFormatter.withFunction(
@@ -271,24 +272,24 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
                     }
 
                     // --- Validate the word so far.
-                    List<String> _correctLetters =
+                    List<String> correctLetters =
                         _words.elementAt(_currentWord).split('').toList();
 
-                    List<String> _inputLetters =
+                    List<String> inputLetters =
                         newValue.text.trim().split('').toList();
 
-                    bool _soFarCorrect = true;
+                    bool soFarCorrect = true;
 
                     // Check if the input is correct so far
-                    for (int i = 0; i < _inputLetters.length; i++) {
-                      if (_correctLetters.elementAt(i) !=
-                          _inputLetters.elementAt(i)) {
-                        _soFarCorrect = false;
+                    for (int i = 0; i < inputLetters.length; i++) {
+                      if (correctLetters.elementAt(i) !=
+                          inputLetters.elementAt(i)) {
+                        soFarCorrect = false;
                         break;
                       }
                     }
 
-                    setState(() => _errorWord = !_soFarCorrect);
+                    setState(() => _errorWord = !soFarCorrect);
 
                     return newValue;
                   },
@@ -315,7 +316,6 @@ class _TypeTestChallengeDialogState extends State<TypeTestChallengeDialog> {
                 suffixIconColor: Colors.transparent,
               ),
             ),
-            width: double.infinity,
           ),
         ],
       ),

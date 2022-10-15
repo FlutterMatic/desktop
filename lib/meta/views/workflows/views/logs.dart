@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
@@ -16,14 +16,16 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
+import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/logs.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 
 class ShowWorkflowLogHistory extends StatefulWidget {
-  final String workflowPath;
+  final WorkflowTemplate workflow;
+
   const ShowWorkflowLogHistory({
     Key? key,
-    required this.workflowPath,
+    required this.workflow,
   }) : super(key: key);
 
   @override
@@ -32,7 +34,6 @@ class ShowWorkflowLogHistory extends StatefulWidget {
 
 class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
   final List<String> _logs = <String>[];
-  final List<String> _workflowPaths = <String>[];
 
   // More than this number of days is considered to be an old log.
   static const int _oldestLogs = 30;
@@ -62,22 +63,22 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
         return;
       }
 
-      List<DateTime> _logsDates = <DateTime>[];
+      List<DateTime> logsDates = <DateTime>[];
 
       for (String log in _logs) {
-        List<int> _times = log.split('-').map(int.parse).toList();
-        DateTime _date = DateTime(
-            _times[0], _times[1], _times[2], _times[3], _times[4], _times[5]);
+        List<int> times = log.split('-').map(int.parse).toList();
+        DateTime date = DateTime(
+            times[0], times[1], times[2], times[3], times[4], times[5]);
 
-        _logsDates.add(_date);
+        logsDates.add(date);
       }
 
       // Removes the logs older than 1 month
-      _logsDates.removeWhere((DateTime date) =>
+      logsDates.removeWhere((DateTime date) =>
           DateTime.now().difference(date).inDays < _oldestLogs);
 
       // Checks to see if any log is older than 1 month
-      if (_logsDates.isEmpty) {
+      if (logsDates.isEmpty) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           snackBarTile(
@@ -91,33 +92,32 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
         return;
       }
 
-      for (DateTime date in _logsDates) {
-        String _date =
-            '${date.year}-${date.month}-${date.day}-${date.hour}-${date.minute}-${date.second}.log';
-        String _path = '${widget.workflowPath}\\$_date';
+      for (DateTime logDate in logsDates) {
+        String date =
+            '${logDate.year}-${logDate.month}-${logDate.day}-${logDate.hour}-${logDate.minute}-${logDate.second}.log';
+        String path = '${widget.workflow}\\$date';
 
-        if (await File(_path).exists()) {
-          await File(_path).delete();
+        if (await File(path).exists()) {
+          await File(path).delete();
         }
       }
 
       await logger.file(LogTypeTag.info,
-          'Cleaned old logs for ${widget.workflowPath} with a total of ${_logsDates.length} logs.');
-
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Cleaned old logs for ${widget.workflowPath} with a total of ${_logsDates.length} log${_logsDates.length > 1 ? 's' : ''}.',
-          type: SnackBarType.done,
-        ),
-      );
+          'Cleaned old logs for ${widget.workflow} with a total of ${logsDates.length} logs.');
 
       if (mounted) {
-        setState(() {
-          _logs.clear();
-          _workflowPaths.clear();
-        });
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Cleaned old logs for ${widget.workflow} with a total of ${logsDates.length} log${logsDates.length > 1 ? 's' : ''}.',
+            type: SnackBarType.done,
+          ),
+        );
+      }
+
+      if (mounted) {
+        setState(_logs.clear);
       }
 
       await _loadLogs();
@@ -125,48 +125,45 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
       if (mounted) {
         Navigator.pop(context);
       }
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to clean old logs: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to clean old logs.',
+          error: e, stackTrace: s);
 
       if (mounted) {
         Navigator.pop(context);
       }
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Failed to clean old logs. Please try again.',
-          type: SnackBarType.error,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Failed to clean old logs. Please try again.',
+            type: SnackBarType.error,
+          ),
+        );
+      }
     }
   }
 
   Future<void> _loadLogs() async {
-    String _dir = (widget.workflowPath.split('\\')..removeLast()).join('\\') +
-        '\\logs' +
-        '\\${widget.workflowPath.split('\\').last.replaceAll('.json', '')}';
+    String dir =
+        '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.workflowPath.split('\\').last.split('.').first}';
 
-    if (!await Directory(_dir).exists()) {
-      setState(() {
-        _logs.clear();
-        _workflowPaths.clear();
-      });
+    if (!await Directory(dir).exists()) {
+      setState(_logs.clear);
+
       return;
     }
 
-    List<FileSystemEntity> _workflowLogs = Directory(_dir).listSync();
+    List<FileSystemEntity> workflowLogs = Directory(dir).listSync();
 
-    for (FileSystemEntity log in _workflowLogs) {
+    for (FileSystemEntity log in workflowLogs) {
       if (log is File) {
-        _logs.add(log.path.split('\\').last.replaceAll('.log', ''));
-        _workflowPaths.add(log.path);
+        setState(
+            () => _logs.add(log.path.split('\\').last.replaceAll('.log', '')));
       }
     }
-
-    setState(() {});
   }
 
   @override
@@ -214,8 +211,8 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
 
                       showDialog(
                         context: context,
-                        builder: (_) => WorkflowRunnerDialog(
-                            workflowPath: widget.workflowPath),
+                        builder: (_) =>
+                            WorkflowRunnerDialog(workflow: widget.workflow),
                       );
                     },
                   ),
@@ -228,23 +225,23 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
               child: ListView.builder(
                 itemCount: _logs.length,
                 itemBuilder: (_, int i) {
-                  bool _isLast = i == _logs.length - 1;
+                  bool isLast = i == _logs.length - 1;
+
                   return Padding(
-                    padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
+                    padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                     child: _LogTile(
                       log: _logs[i],
-                      workflowPath: _workflowPaths[i],
+                      workflow: widget.workflow,
                       onDelete: () async {
-                        await File(_workflowPaths[i]).delete(recursive: true);
+                        await File(
+                                '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.name}\\${_logs[i]}.log')
+                            .delete(recursive: true);
 
                         await logger.file(LogTypeTag.info,
-                            'Deleted log ${_logs[i]} for ${widget.workflowPath}');
+                            'Deleted log ${_logs[i]} for ${widget.workflow}');
 
                         if (mounted) {
-                          setState(() {
-                            _logs.removeAt(i);
-                            _workflowPaths.removeAt(i);
-                          });
+                          setState(() => _logs.removeAt(i));
                         }
                       },
                     ),
@@ -267,13 +264,13 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
 
 class _LogTile extends StatefulWidget {
   final String log;
-  final String workflowPath;
+  final WorkflowTemplate workflow;
   final Function() onDelete;
 
   const _LogTile({
     Key? key,
     required this.log,
-    required this.workflowPath,
+    required this.workflow,
     required this.onDelete,
   }) : super(key: key);
 
@@ -337,8 +334,9 @@ class __LogTileState extends State<_LogTile> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (_) =>
-                        ViewWorkflowSessionLogs(path: widget.workflowPath),
+                    builder: (_) => ViewWorkflowSessionLogs(
+                        logPath:
+                            '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.name}\\${widget.log}.log'),
                   );
                 },
               ),

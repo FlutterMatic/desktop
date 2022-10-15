@@ -1,146 +1,62 @@
 // 🎯 Dart imports:
 import 'dart:io';
-import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pub_semver/src/version.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/bin/check_services.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/core/models/check_response.model.dart';
-import 'package:fluttermatic/core/services/checks/check.services.dart';
-import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
-import 'package:fluttermatic/meta/utils/time_ago.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/time_ago.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/hover_info_tile.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/elements/tool_error.dart';
 
-Future<void> _check(List<dynamic> data) async {
-  SendPort _port = data[0];
-  String _logPath = data[1];
-
-  ServiceCheckResponse _result =
-      await CheckServices.checkGit(Directory(_logPath));
-
-  _port.send(<dynamic>[
-    _result.version?.toString(),
-  ]);
-  return;
-}
-
-class HomeGitVersionTile extends StatefulWidget {
+class HomeGitVersionTile extends ConsumerWidget {
   const HomeGitVersionTile({Key? key}) : super(key: key);
 
   @override
-  _HomeGitVersionStateTile createState() => _HomeGitVersionStateTile();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    String updateUrl() {
+      String base = 'https://git-scm.com/download/';
+      String platform = '';
 
-class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
-  final ReceivePort _port = ReceivePort('GIT_HOME_ISOLATE_PORT');
-
-  Version? _version;
-
-  // Utils
-  bool _error = false;
-  bool _doneLoading = false;
-  bool _listening = false;
-
-  Future<void> _load() async {
-    while (mounted) {
-      // Avoid an isolate if this is on macOS because of some complications.
-      if (Platform.isMacOS) {
-        ServiceCheckResponse _info = await CheckServices.checkGit();
-
-        setState(() {
-          _version = _info.version;
-          _doneLoading = true;
-        });
-
-        // Close the unnecessary ports
-        _port.close();
-      } else {
-        Directory _logPath = await getApplicationSupportDirectory();
-        Isolate _i = await Isolate.spawn(
-                _check, <dynamic>[_port.sendPort, _logPath.path])
-            .timeout(const Duration(minutes: 1), onTimeout: () async {
-          await logger.file(LogTypeTag.error, 'Git version check timeout');
-          setState(() => _error = true);
-
-          return Isolate.current;
-        });
-
-        if (mounted && !_listening) {
-          _port.listen((dynamic data) {
-            _i.kill();
-            setState(() => _listening = true);
-            if (mounted) {
-              setState(() {
-                _error = false;
-                _doneLoading = true;
-                if (data[0] == null) {
-                  _version = null;
-                } else {
-                  _version = Version?.parse(data[0] as String);
-                }
-              });
-            }
-          });
-        }
+      if (Platform.isWindows) {
+        platform = 'win';
+      } else if (Platform.isMacOS) {
+        platform = 'mac';
+      } else if (Platform.isLinux) {
+        platform = 'linux';
       }
 
-      await Future<void>.delayed(const Duration(minutes: 30));
-    }
-  }
-
-  String get _updateUrl {
-    String _base = 'https://git-scm.com/download/';
-    String _platform = '';
-
-    if (Platform.isWindows) {
-      _platform = 'win';
-    } else if (Platform.isMacOS) {
-      _platform = 'mac';
-    } else if (Platform.isLinux) {
-      _platform = 'linux';
+      return '$base$platform';
     }
 
-    return '$_base$_platform';
-  }
+    CheckServicesState state = ref.watch(checkServicesStateNotifier);
+    CheckServicesNotifier notifier =
+        ref.watch(checkServicesStateNotifier.notifier);
 
-  @override
-  void initState() {
-    _load();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _port.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_error) {
+    if (state.gitError.isNotEmpty) {
       return const HomeToolErrorTile(toolName: 'Git');
     }
+
     return RoundContainer(
       child: Shimmer.fromColors(
-        enabled: !_doneLoading,
+        enabled: state.loading,
         child: IgnorePointer(
-          ignoring: !_doneLoading,
+          ignoring: state.loading,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -150,14 +66,14 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                   HSeparators.small(),
                   Expanded(
                     child: Text(
-                      'Git - ${_version ?? '...'}',
+                      'Git - ${notifier.git?.version ?? '...'}',
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
                   HSeparators.normal(),
-                  if (!_doneLoading)
+                  if (state.loading)
                     const Text('- ')
-                  else if (_version == null)
+                  else if (notifier.git?.version == null)
                     SvgPicture.asset(Assets.error, height: 20)
                   else
                     SvgPicture.asset(Assets.done, height: 20),
@@ -165,10 +81,11 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
               ),
               VSeparators.normal(),
               IgnorePointer(
-                ignoring: _version == null && _doneLoading,
+                ignoring: notifier.git?.version == null && state.loading,
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
-                  opacity: _version == null && _doneLoading ? 0.2 : 1,
+                  opacity:
+                      notifier.git?.version == null && state.loading ? 0.2 : 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -184,7 +101,7 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                           SharedPref().pref.setString(
                               SPConst.lastGitUpdateCheck,
                               DateTime.now().toIso8601String());
-                          launch(_updateUrl);
+                          launchUrl(Uri.parse(updateUrl()));
                         },
                       ),
                       VSeparators.normal(),
@@ -198,15 +115,15 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                 ),
               ),
               VSeparators.normal(),
-              if (_version != null || !_doneLoading)
+              if (notifier.git?.version != null || !state.loading)
                 RectangleButton(
-                  child: const Text('Check Updates'),
                   width: double.infinity,
                   onPressed: () {
                     SharedPref().pref.setString(SPConst.lastGitUpdateCheck,
                         DateTime.now().toIso8601String());
-                    launch(_updateUrl);
+                    launchUrl(Uri.parse(updateUrl()));
                   },
+                  child: const Text('Check Updates'),
                 )
               else
                 RectangleButton(
@@ -215,8 +132,9 @@ class _HomeGitVersionStateTile extends State<HomeGitVersionTile> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (_) =>
-                          const InstallToolDialog(tool: SetUpTab.installGit),
+                      builder: (_) => const InstallToolDialog(
+                        tool: SetUpTab.installGit,
+                      ),
                     );
                   },
                 ),

@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 
@@ -59,8 +59,8 @@ class UnofficialReleaseDialog extends StatelessWidget {
                       width: 100,
                       child: const Text('GitHub'),
                       onPressed: () async {
-                        await launch(
-                            'https://github.com/FlutterMatic/desktop/releases');
+                        await launchUrl(Uri.parse(
+                            'https://github.com/FlutterMatic/desktop/releases'));
                         exit(0);
                       },
                     ),

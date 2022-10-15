@@ -6,17 +6,22 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retry/retry.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/core/api/flutter_sdk.api.dart';
-import 'package:fluttermatic/core/api/fluttermatic.api.dart';
-import 'package:fluttermatic/core/api/vscode.api.dart';
-import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/models/api/fluttermatic.dart';
+import 'package:fluttermatic/core/notifiers/models/state/api/flutter_sdk.dart';
+import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
+import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/api/flutter_sdk.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/api/fluttermatic.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/api/vscode.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/drive_error.dart';
 import 'package:fluttermatic/meta/views/dialogs/low_drive_storage.dart';
@@ -24,7 +29,7 @@ import 'package:fluttermatic/meta/views/setup/components/button.dart';
 import 'package:fluttermatic/meta/views/setup/components/header_title.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
-class SetUpGettingStarted extends StatefulWidget {
+class SetUpGettingStarted extends ConsumerStatefulWidget {
   final Function() onContinue;
   const SetUpGettingStarted({
     Key? key,
@@ -35,24 +40,44 @@ class SetUpGettingStarted extends StatefulWidget {
   _SetUpGettingStartedState createState() => _SetUpGettingStartedState();
 }
 
-class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
+class _SetUpGettingStartedState extends ConsumerState<SetUpGettingStarted> {
   final RetryOptions _options = const RetryOptions(maxAttempts: 5);
 
   int _totalAttempts = 0;
 
   bool _isLoading = false;
 
+  // Notifiers
+  late final FlutterMaticAPINotifier fmAPINotifier =
+      ref.watch(fmAPIStateNotifier.notifier);
+
+  late final VSCodeAPINotifier vscNotifier =
+      ref.watch(vsCodeAPIStateNotifier.notifier);
+
+  late final FlutterSDKNotifier flutterSdkNotifier =
+      ref.watch(flutterSdkAPIStateNotifier.notifier);
+
+  // States
+  late final FlutterMaticAPIState fmAPIState = ref.watch(fmAPIStateNotifier);
+
+  late final VSCodeAPIState vscState = ref.watch(vsCodeAPIStateNotifier);
+
+  late final FlutterSDKState flutterSdkState =
+      ref.watch(flutterSdkAPIStateNotifier);
+
+  late final SpaceState spaceState = ref.watch(spaceStateController);
+
   Future<String> _initCalls() async {
     try {
       // ignore: unused_local_variable
-      String _result = 'success';
+      String result = 'success';
+
       await _options.retry(
         () async {
-          if (apiData == null && mounted) {
-            await context.read<FlutterMaticAPINotifier>().fetchAPIData();
-            apiData = context.read<FlutterMaticAPINotifier>().apiMap;
+          if (fmAPIState.apiMap == const FlutterMaticAPI(null) && mounted) {
+            await fmAPINotifier.fetchAPIData();
             await logger.file(LogTypeTag.info,
-                'Fetched FlutterMatic API data: ${apiData?.data ?? 'ERROR. NO DATA'}');
+                'Fetched FlutterMatic API data: ${fmAPIState.apiMap.data}');
           }
         },
         onRetry: (_) async {
@@ -60,7 +85,7 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
           if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup because of connection issues.');
-            _result = 'error';
+            result = 'error';
             return;
           }
         },
@@ -68,11 +93,10 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
       );
       await _options.retry(
         () async {
-          if (sdkData == null && mounted) {
-            await context.read<FlutterSDKNotifier>().fetchSDKData(apiData);
-            sdkData = context.read<FlutterSDKNotifier>().sdkMap;
+          if (flutterSdkState.sdk.isEmpty && mounted) {
+            await flutterSdkNotifier.fetchSDKData();
             await logger.file(LogTypeTag.info,
-                'Fetched Flutter SDK data: ${sdkData?.data.toString().substring(0, 50) ?? 'ERROR. NO DATA'}...');
+                'Fetched Flutter SDK data: ${flutterSdkState.sdkMap.data.toString()}');
           }
         },
         onRetry: (_) async {
@@ -80,7 +104,8 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
           if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
-            _result = 'error';
+
+            result = 'error';
             return;
           }
         },
@@ -88,14 +113,12 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
       );
       await _options.retry(
         () async {
-          if (tagName == null || sha == null && mounted) {
-            await context.read<VSCodeAPINotifier>().fetchVscAPIData();
-            tagName = context.read<VSCodeAPINotifier>().tagName;
-            sha = context.read<VSCodeAPINotifier>().sha;
+          if ((vscState.tagName.isEmpty || vscState.sha.isEmpty) && mounted) {
+            await vscNotifier.fetchVscAPIData();
             await logger.file(LogTypeTag.info,
-                'Fetched VSC tag name data: ${tagName.toString()}');
-            await logger.file(
-                LogTypeTag.info, 'Fetched VSC sha data: ${sha.toString()}');
+                'Fetched VSC tag name data: ${vscState.tagName}');
+            await logger.file(LogTypeTag.info,
+                'Fetched VSC sha data: ${vscState.sha.toString()}');
           }
         },
         onRetry: (_) async {
@@ -103,7 +126,8 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
           if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
-            _result = 'error';
+
+            result = 'error';
             return;
           }
         },
@@ -111,7 +135,7 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
       );
 
       // If we have a drive error, we show a dialog error until resolved.
-      if (context.read<SpaceCheck>().hasConflictingError) {
+      if (spaceState.hasConflictingError) {
         await showDialog(
           context: context,
           builder: (_) => const SystemDriveErrorDialog(),
@@ -120,7 +144,7 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
 
       // If we are low in space, show a dialog that won't allow interaction
       // until we have enough space.
-      if (context.read<SpaceCheck>().lowDriveSpace && mounted) {
+      if (spaceState.lowDriveSpace && mounted) {
         await showDialog(
           context: context,
           builder: (_) => const LowDriveSpaceDialog(),
@@ -128,11 +152,12 @@ class _SetUpGettingStartedState extends State<SetUpGettingStarted> {
         );
       }
 
-      return _result;
-    } catch (_, s) {
+      return result;
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
-          'Couldn\'t request to make FlutterMatic API calls initially for setup. $_',
-          stackTraces: s);
+          'Couldn\'t request to make FlutterMatic API calls initially for setup.',
+          error: e, stackTrace: s);
+
       return 'error';
     }
   }

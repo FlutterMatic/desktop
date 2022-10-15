@@ -5,19 +5,20 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/settings/settings.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/clear_old_logs.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/clear_old_logs.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/tabs/search/search.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/home/home.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/projects/projects.dart';
@@ -55,22 +56,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _cleanLogs() async {
     try {
-      // After a minute when everything has settled, we will clear logs that are
+      // After a second when everything has settled, we will clear logs that are
       // old to avoid clogging up the FlutterMatic app data space.
       await Future<void>.delayed(const Duration(seconds: 5));
 
-      Isolate _i = await Isolate.spawn(clearOldLogs, <dynamic>[
+      Isolate i = await Isolate.spawn(clearOldLogs, <dynamic>[
         _clearLogsPort.sendPort,
         (await getApplicationSupportDirectory()).path
       ]);
 
       _clearLogsPort.asBroadcastStream().listen((_) {
-        _i.kill();
+        i.kill();
         _clearLogsPort.close();
       });
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Couldn\'t clear logs: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Couldn\'t clear logs.',
+          error: e, stackTrace: s);
     }
   }
 
@@ -99,8 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedTab = _tabs.first;
       }
     });
+
     Future<void>.delayed(const Duration(milliseconds: 100),
         () => setState(() => _animateFinish = true));
+
     _cleanLogs();
     super.initState();
   }
@@ -113,141 +116,141 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size _size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
+    bool showShortView = size.width < 900 || _collapse;
 
-    bool _showShortView = _size.width < 900 || _collapse;
-    return SafeArea(
-      child: Scaffold(
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              GestureDetector(
-                onDoubleTap: () {
-                  setState(() => _collapse = !_collapse);
-                  SharedPref()
-                      .pref
-                      .setBool(SPConst.homePageTabsShow, _collapse);
-                },
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: SizedBox(
-                      width: _showShortView ? 50 : 230,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(10)),
-                        child: ColoredBox(
-                          color: Colors.blueGrey.withOpacity(0.08),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: _showShortView ? 5 : 15,
-                              vertical: _showShortView ? 5 : 20,
-                            ),
-                            child: Column(
-                              children: <Widget>[
-                                ..._tabs.map(
-                                  (HomeTabObject e) {
-                                    return _tabTile(
-                                      context,
-                                      _collapse,
-                                      stageType: e.stageType,
-                                      icon: SvgPicture.asset(
-                                        e.icon,
-                                        color: context
-                                                .read<ThemeChangeNotifier>()
-                                                .isDarkTheme
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                      name: e.name,
-                                      onPressed: () =>
-                                          setState(() => _selectedTab = e),
-                                      selected: _selectedTab == e,
-                                    );
-                                  },
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        return SafeArea(
+          child: Scaffold(
+            body: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  GestureDetector(
+                    onDoubleTap: () {
+                      setState(() => _collapse = !_collapse);
+                      SharedPref()
+                          .pref
+                          .setBool(SPConst.homePageTabsShow, _collapse);
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: SizedBox(
+                          width: showShortView ? 50 : 230,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(10)),
+                            child: ColoredBox(
+                              color: Colors.blueGrey.withOpacity(0.08),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: showShortView ? 5 : 15,
+                                  vertical: showShortView ? 5 : 20,
                                 ),
-                                const Spacer(),
-                                // Short view
-                                if (_showShortView)
-                                  _tabTile(
-                                    context,
-                                    _collapse,
-                                    stageType: null,
-                                    icon: SvgPicture.asset(
-                                      Assets.settings,
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    name: 'Settings',
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) => const SettingDialog(),
+                                child: Column(
+                                  children: <Widget>[
+                                    ..._tabs.map((e) {
+                                      return _tabTile(
+                                        context,
+                                        _collapse,
+                                        stageType: e.stageType,
+                                        icon: SvgPicture.asset(
+                                          e.icon,
+                                          color: themeState.darkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        name: e.name,
+                                        onPressed: () =>
+                                            setState(() => _selectedTab = e),
+                                        selected: _selectedTab == e,
                                       );
-                                    },
-                                    selected: false,
-                                  )
-                                else
-                                  _tabTile(
-                                    context,
-                                    _collapse,
-                                    stageType: null,
-                                    icon: SvgPicture.asset(
-                                      Assets.settings,
-                                      color: context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    name: 'Settings',
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) => const SettingDialog(),
-                                      );
-                                    },
-                                    selected: false,
-                                  ),
-                              ],
+                                    }),
+                                    const Spacer(),
+                                    // Short view
+                                    if (showShortView)
+                                      _tabTile(
+                                        context,
+                                        _collapse,
+                                        stageType: null,
+                                        icon: SvgPicture.asset(
+                                          Assets.settings,
+                                          color: themeState.darkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        name: 'Settings',
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) =>
+                                                const SettingDialog(),
+                                          );
+                                        },
+                                        selected: false,
+                                      )
+                                    else
+                                      _tabTile(
+                                        context,
+                                        _collapse,
+                                        stageType: null,
+                                        icon: SvgPicture.asset(
+                                          Assets.settings,
+                                          color: themeState.darkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        name: 'Settings',
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) =>
+                                                const SettingDialog(),
+                                          );
+                                        },
+                                        selected: false,
+                                      ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1200),
-                    child: Stack(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 60),
-                          child: _selectedTab.child,
+                  Expanded(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1200),
+                        child: Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 60),
+                              child: _selectedTab.child,
+                            ),
+                            AnimatedOpacity(
+                              opacity: _animateFinish ? 1 : 0.1,
+                              duration: const Duration(milliseconds: 200),
+                              child: const HomeSearchComponent(),
+                            ),
+                          ],
                         ),
-                        AnimatedOpacity(
-                          opacity: _animateFinish ? 1 : 0.1,
-                          duration: const Duration(milliseconds: 200),
-                          child: const HomeSearchComponent(),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -261,14 +264,14 @@ Widget _tabTile(
   required String? stageType,
   required bool selected,
 }) {
-  Size _size = MediaQuery.of(context).size;
+  Size size = MediaQuery.of(context).size;
 
-  bool _showShortView = forceShort || _size.width < 900;
+  bool showShortView = forceShort || size.width < 900;
 
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: Tooltip(
-      message: _showShortView
+      message: showShortView
           ? (name + (stageType == null ? '' : ' - $stageType'))
           : '',
       waitDuration: const Duration(seconds: 1),
@@ -280,14 +283,14 @@ Widget _tabTile(
         color: selected
             ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
             : Colors.transparent,
-        padding: EdgeInsets.all(_showShortView ? 5 : 10),
+        padding: EdgeInsets.all(showShortView ? 5 : 10),
         onPressed: onPressed,
         child: Align(
           alignment: Alignment.centerLeft,
-          child: !_showShortView
+          child: !showShortView
               ? Row(
                   children: <Widget>[
-                    Flexible(child: icon),
+                    icon,
                     HSeparators.small(),
                     Expanded(
                       child: Text(

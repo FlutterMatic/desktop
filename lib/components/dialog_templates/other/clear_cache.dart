@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -18,7 +18,8 @@ import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class ClearCacheDialog extends StatefulWidget {
   const ClearCacheDialog({Key? key}) : super(key: key);
@@ -34,18 +35,26 @@ class _ClearCacheDialogState extends State<ClearCacheDialog> {
     try {
       setState(() => _isClearing = true);
 
-      Directory _dir = await getApplicationSupportDirectory();
+      Directory dir = await getApplicationSupportDirectory();
 
-      await _dir.delete(recursive: true);
+      await dir.delete(recursive: true);
 
-      RestartWidget.restartApp(context);
-    } catch (_, s) {
-      await logger.file(
-          LogTypeTag.error, 'Failed to clear FlutterMatic cache: $_',
-          stackTraces: s);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context, 'Failed to clear FlutterMatic cache. Please try again.'));
+      await SharedPref().pref.clear();
+
+      if (mounted) {
+        RestartWidget.restartApp(context);
+      }
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to clear FlutterMatic cache.',
+          error: e, stackTrace: s);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
+            'Failed to clear FlutterMatic cache. Please try again or delete cache manually.',
+            type: SnackBarType.error));
+      }
+
       setState(() => _isClearing = false);
     }
   }
@@ -83,8 +92,8 @@ class _ClearCacheDialogState extends State<ClearCacheDialog> {
                     Expanded(
                       child: RectangleButton(
                         hoverColor: AppTheme.errorColor,
-                        child: const Text('Clear Cache'),
                         onPressed: _clearCache,
+                        child: const Text('Clear Cache'),
                       ),
                     ),
                   ],

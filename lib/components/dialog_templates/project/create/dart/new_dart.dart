@@ -4,9 +4,12 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/add_dependencies.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create/common/dependencies.dart';
@@ -18,22 +21,24 @@ import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/services/actions/dart.dart';
+import 'package:fluttermatic/core/notifiers/models/payloads/actions/dart.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
-class NewDartProjectDialog extends StatefulWidget {
+class NewDartProjectDialog extends ConsumerStatefulWidget {
   const NewDartProjectDialog({Key? key}) : super(key: key);
 
   @override
   _NewDartProjectDialogState createState() => _NewDartProjectDialogState();
 }
 
-class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
+class _NewDartProjectDialogState extends ConsumerState<NewDartProjectDialog> {
+  // Dart Template
+  String _template = 'console-simple';
+
   // Input Controllers
   final TextEditingController _nameController = TextEditingController();
-
-  String _template = 'console-simple';
 
   _NewProjectSections _index = _NewProjectSections.projectName;
 
@@ -56,13 +61,13 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
   String? _path = SharedPref().pref.getString(SPConst.projectsPath);
 
   bool _confirmDirectory() {
-    List<FileSystemEntity> _dirs = Directory(_path!).listSync();
+    List<FileSystemEntity> dirs = Directory(_path!).listSync();
 
     // Make sure that there is no directory with the same name
-    for (FileSystemEntity dir in _dirs) {
-      String _existName = dir.path.split('\\').last.toLowerCase();
+    for (FileSystemEntity dir in dirs) {
+      String existName = dir.path.split('\\').last.toLowerCase();
 
-      if (_existName == _nameController.text.toLowerCase()) {
+      if (existName == _nameController.text.toLowerCase()) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           snackBarTile(
@@ -81,7 +86,7 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
 
   Future<void> _createNewProject() async {
     if (_createProjectFormKey.currentState!.validate()) {
-      // Name
+      // Name of the project is valid name in which we can save a project to.
       if (_index == _NewProjectSections.projectName &&
           _projectNameCondition()) {
         if (!_projectPathCondition()) {
@@ -99,9 +104,9 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
 
         // Make sure that this project name doesn't already exist in the
         // selected path.
-        bool _confirm = _confirmDirectory();
+        bool confirm = _confirmDirectory();
 
-        if (_confirm) {
+        if (confirm) {
           setState(() {
             _nameController.text = _nameController.text.toLowerCase();
             _index = _NewProjectSections.projectTemplate;
@@ -113,21 +118,24 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
         try {
           // Make sure that this project name doesn't already exist in the
           // selected path.
-          bool _confirm = _confirmDirectory();
+          bool confirm = _confirmDirectory();
 
-          if (_confirm) {
+          if (confirm) {
             setState(() => _index = _NewProjectSections.creatingProject);
 
-            String _result = await DartActionServices.createNewProject(
-              NewDartProjectInfo(
-                projectName: _nameController.text,
-                projectPath: _path!,
-                template: _template,
-              ),
-            );
+            await ref.watch(dartActionsStateNotifier.notifier).createNewProject(
+                  NewDartProjectInfo(
+                    projectName: _nameController.text,
+                    projectPath: _path!,
+                    template: _template,
+                  ),
+                );
 
-            if (_result == 'success') {
-              List<String> _failedDependencies = <String>[];
+            bool done = !ref.watch(dartActionsStateNotifier).loading &&
+                ref.watch(dartActionsStateNotifier).error.isEmpty;
+
+            if (done) {
+              List<String> failedDependencies = <String>[];
 
               // Add the normal dependencies to the project.
               if (_dependencies.isNotEmpty) {
@@ -135,15 +143,15 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                   setState(() => _currentActivity =
                       'Adding $dependency to dependencies...');
 
-                  bool _result = await addDependencyToProject(
-                    path: _path! + '\\' + _nameController.text,
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
                     dependency: dependency,
                     isDev: false,
                     isDart: true,
                   );
 
-                  if (!_result) {
-                    _failedDependencies.add(dependency);
+                  if (!result) {
+                    failedDependencies.add(dependency);
                   }
                 }
               }
@@ -154,31 +162,33 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                   setState(() =>
                       _currentActivity = 'Adding $dev to dev dependencies...');
 
-                  bool _result = await addDependencyToProject(
-                    path: _path! + '\\' + _nameController.text,
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
                     dependency: dev,
                     isDev: true,
                     isDart: true,
                   );
 
-                  if (!_result) {
-                    _failedDependencies.add(dev);
+                  if (!result) {
+                    failedDependencies.add(dev);
                   }
                 }
               }
 
-              if (_failedDependencies.isNotEmpty) {
+              if (failedDependencies.isNotEmpty) {
                 await logger.file(LogTypeTag.warning,
-                    'Created new Dart project but failed to add the following dependencies: ${_failedDependencies.join(', ')}');
+                    'Created new Dart project but failed to add the following dependencies: ${failedDependencies.join(', ')}');
               }
 
-              Navigator.pop(context);
+              if (mounted) {
+                Navigator.pop(context);
+              }
 
               await showDialog(
                 context: context,
                 builder: (_) => ProjectCreatedDialog(
                   projectName: _nameController.text,
-                  projectPath: _path! + '\\' + _nameController.text,
+                  projectPath: '${_path!}\\${_nameController.text}',
                 ),
               );
 
@@ -188,26 +198,32 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
             setState(() => _index = _NewProjectSections
                 .values[_NewProjectSections.values.length - 2]);
 
-            ScaffoldMessenger.of(context).clearSnackBars();
+            if (mounted) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
+                  ref.watch(dartActionsStateNotifier).error,
+                  type: SnackBarType.error,
+                ),
+              );
+            }
+          }
+        } catch (e, s) {
+          await logger.file(
+              LogTypeTag.error, 'Failed to create new Flutter project.',
+              error: e, stackTrace: s);
+
+          if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               snackBarTile(
                 context,
-                _result,
+                'Failed to create project. Please file an issue.',
                 type: SnackBarType.error,
               ),
             );
           }
-        } catch (_, s) {
-          await logger.file(
-              LogTypeTag.error, 'Failed to create new Flutter project: $_',
-              stackTraces: s);
-          ScaffoldMessenger.of(context).showSnackBar(
-            snackBarTile(
-              context,
-              'Failed to create project. Please file an issue.',
-              type: SnackBarType.error,
-            ),
-          );
+
           setState(() => _index = _NewProjectSections
               .values[_NewProjectSections.values.length - 2]);
         }
@@ -226,7 +242,8 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
             DialogHeader(
               title: 'Dart Project',
               leading: _index != _NewProjectSections.projectName &&
-                      _index != _NewProjectSections.creatingProject
+                      _index != _NewProjectSections.creatingProject &&
+                      !ref.watch(dartActionsStateNotifier).loading
                   ? SquareButton(
                       icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
                       color: Colors.transparent,

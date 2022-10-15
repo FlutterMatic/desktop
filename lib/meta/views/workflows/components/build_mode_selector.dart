@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
@@ -80,6 +80,8 @@ Widget selectBuildTypeTile(
     disableColor: Colors.blueGrey.withOpacity(0.2),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     width: double.infinity,
+    onPressed: () => onSelected(text),
+    disable: isSelected,
     child: Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -104,7 +106,5 @@ Widget selectBuildTypeTile(
         ],
       ),
     ),
-    onPressed: () => onSelected(text),
-    disable: isSelected,
   );
 }

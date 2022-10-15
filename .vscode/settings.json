@@ -51,4 +51,7 @@
     "editor.defaultFormatter": "ms-python.python"
   },
   "python.formatting.provider": "yapf",
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
 }

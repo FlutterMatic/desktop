@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/flutter/flutter_doctor.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/debug_logs_view.dart';
@@ -145,7 +145,7 @@ class _TroubleShootSettingsSectionState
                 Row(
                   children: <Widget>[
                     const RoundContainer(
-                        child: SizedBox.shrink(), width: 2, height: 60),
+                        width: 2, height: 60, child: SizedBox.shrink()),
                     HSeparators.xSmall(),
                     Expanded(
                       child: Wrap(
@@ -153,8 +153,8 @@ class _TroubleShootSettingsSectionState
                         runSpacing: 5,
                         children: <Widget>[
                           TextButton(
-                            child: const Text('Troubleshoot'),
                             onPressed: _startTroubleshoot,
+                            child: const Text('Troubleshoot'),
                           ),
                           TextButton(
                             child: const Text('Flutter Doctor'),

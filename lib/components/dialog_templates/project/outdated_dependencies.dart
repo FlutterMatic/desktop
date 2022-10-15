@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
@@ -18,7 +18,7 @@ import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 
 class ScanProjectOutdatedDependenciesDialog extends StatefulWidget {
   final String pubspecPath;
@@ -58,59 +58,63 @@ class _ScanProjectOutdatedDependenciesDialogState
   /// dependency then add it to the respective list of outdated dependencies.
   Future<void> _loadOutdated() async {
     try {
-      File _pubspec = File(widget.pubspecPath);
+      File pubspec = File(widget.pubspecPath);
 
       // Make sure that the pubspec.yaml file exists. If it doesn't, then we will
       // log a warning, inform the user and exit this package back to the
       // previous page.
-      if (!await _pubspec.exists()) {
+      if (!await pubspec.exists()) {
         await logger.file(LogTypeTag.warning,
             'Pubspec file not found to check outdated dependencies.');
 
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
-            'Couldn\'t find the pubspec.yaml file for this project. Please refresh your projects list.'));
-        Navigator.pop(context);
+        if (mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
+              'Couldn\'t find the pubspec.yaml file for this project. Please refresh your projects list.'));
+          Navigator.pop(context);
+        }
         return;
       }
 
-      List<String> _pubspecLines = await _pubspec.readAsLines();
+      List<String> pubspecLines = await pubspec.readAsLines();
 
       // Extracts the pubspec.yaml file so we can access its attributes.
-      PubspecInfo _pubspecInfo =
-          extractPubspec(lines: _pubspecLines, path: widget.pubspecPath);
+      PubspecInfo pubspecInfo =
+          extractPubspec(lines: pubspecLines, path: widget.pubspecPath);
 
       setState(() {
-        _totalAvailable = (_pubspecInfo.dependencies.length +
-            _pubspecInfo.devDependencies.length);
+        _totalAvailable = (pubspecInfo.dependencies.length +
+            pubspecInfo.devDependencies.length);
       });
 
       // Get the outdated dependencies.
       _oldDependencies.addAll(await _getDepInfo(
-          pubspecLines: _pubspecLines, packages: _pubspecInfo.dependencies));
+          pubspecLines: pubspecLines, packages: pubspecInfo.dependencies));
 
       // Get the outdated dev dependencies.
       _oldDevDependencies.addAll(await _getDepInfo(
-          pubspecLines: _pubspecLines, packages: _pubspecInfo.devDependencies));
+          pubspecLines: pubspecLines, packages: pubspecInfo.devDependencies));
 
       _pubClient.close();
 
       if (mounted) {
         setState(() => _isLoading = false);
       }
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
-          'Failed to fetch the outdated dependencies for a pubspec.yaml file: $_',
-          stackTraces: s);
+          'Failed to fetch the outdated dependencies for a pubspec.yaml file.',
+          error: e, stackTrace: s);
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-        context,
-        'Failed to get the outdated dependencies. Please try again later.',
-        type: SnackBarType.error,
-      ));
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+          context,
+          'Failed to get the outdated dependencies. Please try again later.',
+          type: SnackBarType.error,
+        ));
 
-      Navigator.pop(context);
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -120,12 +124,12 @@ class _ScanProjectOutdatedDependenciesDialogState
     required List<String> pubspecLines,
     required List<DependenciesInfo> packages,
   }) async {
-    List<_OutdatedPackageModel> _outdatedDependencies =
+    List<_OutdatedPackageModel> outdatedDependencies =
         <_OutdatedPackageModel>[];
 
     // Gets the index of which line the provided package is declared in the
     // pubspec.yaml file.
-    int _getPackageDeclarationLineIndex(String pkgName) {
+    int getPackageDeclarationLineIndex(String pkgName) {
       for (int i = 0; i < pubspecLines.length; i++) {
         if (pubspecLines[i].trim().startsWith('$pkgName: ')) {
           return i;
@@ -144,67 +148,69 @@ class _ScanProjectOutdatedDependenciesDialogState
       try {
         // Gets the version of the package declared in the pubspec.yaml file for
         // the project.
-        String _currentVersion = packages[i].version.replaceAll('^', '');
+        String currentVersion = packages[i].version.replaceAll('^', '');
 
         // Get the package information from the Pub api. This will always have the
         // latest package information.
-        PubPackage _info = await _pubClient.packageInfo(packages[i].name);
+        PubPackage info = await _pubClient.packageInfo(packages[i].name);
 
         // If the package pubspec declared version is not equal to the latest
         // version from the Pub api, that means that the package is outdated.
-        if (_currentVersion != _info.latest.version) {
-          String _name = packages[i].name;
+        if (currentVersion != info.latest.version) {
+          String name = packages[i].name;
 
-          _outdatedDependencies.add(
+          outdatedDependencies.add(
             _OutdatedPackageModel(
-              pkgName: _name,
-              latestVersion: '^' + _info.latest.version,
-              index: _getPackageDeclarationLineIndex(_name),
+              pkgName: name,
+              latestVersion: '^${info.latest.version}',
+              index: getPackageDeclarationLineIndex(name),
             ),
           );
         }
-      } catch (_) {
+      } catch (e, s) {
         // If the package is not found, then we will log a warning and continue
         // with the next package.
         await logger.file(LogTypeTag.warning,
-            'Could not find the package ${packages[i].name} in the pubspec.yaml file.');
+            'Could not find the package ${packages[i].name} in the pubspec.yaml file.',
+            error: e, stackTrace: s);
+
         continue;
       }
 
       setState(() => _totalChecked++);
     }
 
-    return _outdatedDependencies;
+    return outdatedDependencies;
   }
 
   /// Will update the pubspec.yaml file with the new dependency.
   Future<void> _updatePubspecDependency(
       List<_OutdatedPackageModel> dependencies) async {
     try {
-      File _pubspec = File(widget.pubspecPath);
+      File pubspec = File(widget.pubspecPath);
 
       // We don't need to check if it exists because we already checked it
       // before.
-      List<String> _pubspecLines = await _pubspec.readAsLines();
+      List<String> pubspecLines = await pubspec.readAsLines();
 
       // Iterate over the list of outdated packages and replace the list of the
       // lines of pubspec.yaml file. We will then write those new set of lines
       // as the new pubspec.yaml file.
       for (int i = 0; i < dependencies.length; i++) {
         // Replace the index of that file with the new package info.
-        _pubspecLines.removeAt(dependencies[i].index);
-        _pubspecLines.insert(
-            dependencies[i].index,
-            (' ' * 2) +
-                '${dependencies[i].pkgName}: ${dependencies[i].latestVersion}');
+        pubspecLines.removeAt(dependencies[i].index);
+        pubspecLines.insert(dependencies[i].index,
+            '${' ' * 2}${dependencies[i].pkgName}: ${dependencies[i].latestVersion}');
       }
 
       // Write the new pubspec.yaml file.
-      await _pubspec.writeAsString(_pubspecLines.join('\n'));
+      await pubspec.writeAsString(pubspecLines.join('\n'));
       return;
-    } catch (_) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.warning,
-          'Failed to update dependency $dependencies in the pubspec.yaml file.');
+          'Failed to update dependency $dependencies in the pubspec.yaml file.',
+          error: e, stackTrace: s);
+
       return;
     }
   }
@@ -229,8 +235,7 @@ class _ScanProjectOutdatedDependenciesDialogState
           const DialogHeader(title: 'Scan pubspec.yaml'),
           if (_isLoading) ...<Widget>[
             LoadActivityMessageElement(
-                message:
-                    '$_totalChecked - $_totalAvailable ' + _activityMessage)
+                message: '$_totalChecked - $_totalAvailable $_activityMessage')
           ] else ...<Widget>[
             if (_oldDependencies.isEmpty && _oldDevDependencies.isEmpty)
               informationWidget(
@@ -258,8 +263,7 @@ class _ScanProjectOutdatedDependenciesDialogState
                         VSeparators.xSmall(),
                         if (_oldDependencies.isNotEmpty) ...<Widget>[
                           Text(
-                              _oldDependencies.length.toString() +
-                                  ' ${_oldDependencies.length == 1 ? 'dependency' : 'dependencies'}',
+                              '${_oldDependencies.length} ${_oldDependencies.length == 1 ? 'dependency' : 'dependencies'}',
                               style: const TextStyle(color: Colors.grey)),
                           VSeparators.small(),
                           Row(
@@ -278,7 +282,8 @@ class _ScanProjectOutdatedDependenciesDialogState
                               SquareButton(
                                 tooltip: 'Upgrade All',
                                 color: Colors.transparent,
-                                icon: const Icon(Icons.download_rounded, size: 15),
+                                icon: const Icon(Icons.download_rounded,
+                                    size: 15),
                                 onPressed: () async {
                                   await _updatePubspecDependency(
                                       _oldDependencies);
@@ -302,8 +307,7 @@ class _ScanProjectOutdatedDependenciesDialogState
                         VSeparators.xSmall(),
                         if (_oldDevDependencies.isNotEmpty) ...<Widget>[
                           Text(
-                              _oldDevDependencies.length.toString() +
-                                  ' ${_oldDevDependencies.length == 1 ? 'dependency' : 'dependencies'}',
+                              '${_oldDevDependencies.length} ${_oldDevDependencies.length == 1 ? 'dependency' : 'dependencies'}',
                               style: const TextStyle(color: Colors.grey)),
                           VSeparators.small(),
                           Row(
@@ -322,7 +326,8 @@ class _ScanProjectOutdatedDependenciesDialogState
                               SquareButton(
                                 tooltip: 'Upgrade All',
                                 color: Colors.transparent,
-                                icon: const Icon(Icons.download_rounded, size: 15),
+                                icon: const Icon(Icons.download_rounded,
+                                    size: 15),
                                 onPressed: () async {
                                   await _updatePubspecDependency(
                                       _oldDevDependencies);

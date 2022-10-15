@@ -6,13 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/workflows/components/input_hover.dart';
 
 class DeployWebWorkflowActionConfig extends StatefulWidget {
@@ -106,24 +106,25 @@ class _DeployWebWorkflowActionStateConfig
                     return oldValue;
                   }
                   if (newValue.text.contains('.')) {
-                    int _totalDots = 0;
+                    int totalDots = 0;
+
                     for (String char in newValue.text.split('')) {
                       if (char == '.') {
-                        _totalDots++;
-                        if (_totalDots > 1) {
+                        totalDots++;
+                        if (totalDots > 1) {
                           break;
                         }
                       }
                     }
-                    if (_totalDots == 1) {
-                      List<String> _split = newValue.text.split('.');
-                      if (_split.first != 'www') {
-                        String _newText = 'www.' + newValue.text;
+                    if (totalDots == 1) {
+                      List<String> split = newValue.text.split('.');
+                      if (split.first != 'www') {
+                        String newText = 'www.${newValue.text}';
                         return newValue.copyWith(
-                          text: _newText,
+                          text: newText,
                           selection: TextSelection(
-                            baseOffset: _newText.length,
-                            extentOffset: _newText.length,
+                            baseOffset: newText.length,
+                            extentOffset: newText.length,
                           ),
                         );
                       } else {
@@ -153,25 +154,25 @@ class _DeployWebWorkflowActionStateConfig
               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 _]')),
               TextInputFormatter.withFunction(
                 (TextEditingValue oldValue, TextEditingValue newValue) {
-                  String _newText =
+                  String newText =
                       newValue.text.toLowerCase().replaceAll(' ', '_');
 
-                  if (_newText.startsWith('_')) {
+                  if (newText.startsWith('_')) {
                     return oldValue;
                   }
 
-                  if (_newText.length > 1) {
-                    if (_newText[_newText.length - 1] == '_' &&
-                        _newText[_newText.length - 2] == '_') {
+                  if (newText.length > 1) {
+                    if (newText[newText.length - 1] == '_' &&
+                        newText[newText.length - 2] == '_') {
                       return oldValue;
                     }
                   }
 
                   return newValue.copyWith(
-                    text: _newText,
+                    text: newText,
                     selection: TextSelection(
-                      baseOffset: _newText.length,
-                      extentOffset: _newText.length,
+                      baseOffset: newText.length,
+                      extentOffset: newText.length,
                     ),
                   );
                 },
@@ -188,25 +189,25 @@ class _DeployWebWorkflowActionStateConfig
               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z -]')),
               TextInputFormatter.withFunction(
                   (TextEditingValue oldValue, TextEditingValue newValue) {
-                String _newText =
+                String newText =
                     newValue.text.toLowerCase().replaceAll(' ', '-');
 
-                if (_newText.startsWith('-')) {
+                if (newText.startsWith('-')) {
                   return oldValue;
                 }
 
-                if (_newText.length > 1) {
-                  if (_newText[_newText.length - 1] == '-' &&
-                      _newText[_newText.length - 2] == '-') {
+                if (newText.length > 1) {
+                  if (newText[newText.length - 1] == '-' &&
+                      newText[newText.length - 2] == '-') {
                     return oldValue;
                   }
                 }
 
                 return newValue.copyWith(
-                  text: _newText,
+                  text: newText,
                   selection: TextSelection(
-                    baseOffset: _newText.length,
-                    extentOffset: _newText.length,
+                    baseOffset: newText.length,
+                    extentOffset: newText.length,
                   ),
                 );
               }),

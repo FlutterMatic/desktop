@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/logs/build_logs.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
@@ -30,13 +30,19 @@ class ReportAboutSection extends StatelessWidget {
             width: 100,
             child: const Text('Report'),
             onPressed: () async {
+              NavigatorState navigator = Navigator.of(context);
+
               await showDialog(
                 context: context,
                 builder: (_) => const BuildLogsDialog(),
               );
 
-              await launch('https://github.com/FlutterMatic/desktop/issues/new/choose');
-              Navigator.pop(context);
+              await launchUrl(Uri.parse(
+                  'https://github.com/FlutterMatic/desktop/issues/new/choose'));
+
+              if (navigator.mounted) {
+                navigator.pop();
+              }
             },
           ),
         )

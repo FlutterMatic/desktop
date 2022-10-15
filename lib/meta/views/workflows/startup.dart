@@ -1,28 +1,27 @@
 // 🎯 Dart imports:
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
+import 'package:fluttermatic/core/notifiers/models/state/actions/workflows.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/actions/workflows.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
@@ -33,13 +32,16 @@ import 'package:fluttermatic/meta/views/workflows/sections/info.dart';
 import 'package:fluttermatic/meta/views/workflows/sections/reorder_actions.dart';
 
 class StartUpWorkflow extends StatefulWidget {
+  // The pubspec path to create a new project in.
   final String? pubspecPath;
-  final WorkflowTemplate? editWorkflowTemplate;
+
+  // The workflow to continue working or editing on.
+  final WorkflowTemplate? workflow;
 
   const StartUpWorkflow({
     Key? key,
     this.pubspecPath,
-    this.editWorkflowTemplate,
+    this.workflow,
   }) : super(key: key);
 
   @override
@@ -49,8 +51,6 @@ class StartUpWorkflow extends StatefulWidget {
 class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // Utils
   final Duration _syncIntervals = const Duration(seconds: 20);
-  final ReceivePort _saveLocallyPort =
-      ReceivePort('WORKFLOW_AUTO_SYNC_ISOLATE_PORT');
 
   // Input Controllers
   final TextEditingController _nameController = TextEditingController();
@@ -112,7 +112,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // Utils
   bool _showInfoLast = false;
   bool _saveLocalError = false;
-  bool _isSavingLocally = false;
 
   // .gitignore Preferences for this workflow
   bool _addToGitIgnore = false;
@@ -123,31 +122,32 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   // content (user didn't interact since the last time it was saved).
   Map<String, dynamic> _lastSavedContent = <String, dynamic>{};
 
-  bool _syncStreamListening = false;
-
   // The project path. This can be fetched from more than one place (either)
   // passed in or the user selects in manually. This provides whichever the
   // case is.
-  String get _projectPath =>
+  String get _pubspecPath =>
       _pubspecFile?.pathToPubspec ?? widget.pubspecPath ?? '';
 
-  // Whether we are syncing in the background or not. This is to show a small
-  // indicator to the user.
-  bool get _syncing =>
-      (_saveLocalError && !_isSavingLocally || _isSavingLocally);
+  // The original workflow name. If the user decided to change the workflow
+  // name, we need to know the original name so that we can change the file
+  // name too.
+  String get _originalWorkflowName =>
+      widget.workflow?.name ?? _nameController.text;
 
   // Store the workflow template so we can use it anywhere to access the state
   // of the workflow so far.
   WorkflowTemplate _workflowTemplate([bool? isSaved]) {
     return WorkflowTemplate(
+      name: _nameController.text,
+      description: _descriptionController.text,
+      workflowPath:
+          '${(_pubspecPath.split('\\')..removeLast()).join('\\')}\\$fmWorkflowDir\\${_nameController.text}.json',
       androidBuildTimeout: int.tryParse(_buildAndroidTimeController.text) ?? 0,
       iOSBuildTimeout: int.tryParse(_buildIOSTimeController.text) ?? 0,
       linuxBuildTimeout: int.tryParse(_buildLinuxTimeController.text) ?? 0,
       macosBuildTimeout: int.tryParse(_buildMacOSTimeController.text) ?? 0,
       webBuildTimeout: int.tryParse(_buildWebTimeController.text) ?? 0,
       windowsBuildTimeout: int.tryParse(_buildWindowsTimeController.text) ?? 0,
-      name: _nameController.text,
-      description: _descriptionController.text,
       webUrl: _webUrlController.text,
       firebaseProjectName: _firebaseProjectName.text,
       firebaseProjectId: _firebaseProjectIDController.text,
@@ -169,7 +169,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _beginSaveMonitor() async {
     while (mounted) {
-      List<bool> _stopConditions = <bool>[
+      List<bool> stopConditions = <bool>[
         (_workflowTemplate().toJson()) == _lastSavedContent,
         _pubspecFile == null,
         _nameController.text.isEmpty,
@@ -178,47 +178,45 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
       ];
 
       // If the user has not made any changes, no need to save anything.
-      if (_stopConditions.contains(true)) {
-        // Without this line, app crashes.
+      if (stopConditions.contains(true)) {
         await Future<void>.delayed(_syncIntervals);
         continue;
       }
 
-      setState(() => _isSavingLocally = true);
+      String pubspecPath = '';
 
-      Isolate _i = await Isolate.spawn(_saveInBgSync, <dynamic>[
-        _saveLocallyPort.sendPort,
-        _projectPath,
-        _workflowTemplate().toJson(),
-        _nameController.text,
-      ]).timeout(const Duration(seconds: 5), onTimeout: () {
-        setState(() {
-          _saveLocalError = true;
-          _isSavingLocally = false;
-        });
-        Isolate.current.kill();
-        return Isolate.current;
+      await Future.sync(() async {
+        try {
+          pubspecPath = (_pubspecPath.split('\\')..removeLast()).join('\\');
+
+          Directory workflowsDir = Directory('$pubspecPath\\$fmWorkflowDir');
+
+          await workflowsDir.create(recursive: true);
+
+          await File('${workflowsDir.path}\\${_workflowTemplate().name}.json')
+              .writeAsString(jsonEncode(_workflowTemplate().toJson()))
+              .timeout(const Duration(seconds: 3));
+
+          await logger.file(LogTypeTag.info,
+              'Synced workflow settings in the background for ${_workflowTemplate().name} at ${DateTime.now()} in ${workflowsDir.path}');
+
+          setState(() {
+            _lastSavedContent = _workflowTemplate().toJson();
+            _saveLocalError = false;
+          });
+        } catch (e, s) {
+          await logger.file(
+              LogTypeTag.error, 'Couldn\'t sync workflow settings.',
+              stackTrace: s);
+
+          setState(() => _saveLocalError = true);
+        }
+      }).timeout(const Duration(seconds: 3), onTimeout: () async {
+        await logger.file(LogTypeTag.error,
+            'Couldn\'t sync workflow settings. Timeout triggered.');
+
+        setState(() => _saveLocalError = true);
       });
-
-      if (!_syncStreamListening) {
-        setState(() => _syncStreamListening = true);
-        _saveLocallyPort.listen((dynamic message) {
-          _i.kill();
-          if (message is Map<String, dynamic>) {
-            setState(() {
-              _lastSavedContent = message;
-              _isSavingLocally = false;
-              _saveLocalError = false;
-            });
-          }
-          if (message is List) {
-            setState(() {
-              _isSavingLocally = false;
-              _saveLocalError = true;
-            });
-          }
-        });
-      }
 
       await Future<void>.delayed(_syncIntervals);
     }
@@ -226,19 +224,16 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
   Future<void> _initPubspec() async {
     try {
-      String _path = _projectPath.endsWith('\\pubspec.yaml')
-          ? _projectPath
-          : (_projectPath + '\\pubspec.yaml');
-
-      List<String> _pubspec = await File(_path).readAsLines();
+      List<String> pubspec = await File(_pubspecPath).readAsLines();
 
       setState(() {
-        _pubspecFile = extractPubspec(lines: _pubspec, path: _path);
+        _pubspecFile = extractPubspec(lines: pubspec, path: _pubspecPath);
         _forcePubspec = true;
       });
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t read pubspec.yaml file',
-          stackTraces: s);
+          stackTrace: s);
+
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -248,61 +243,62 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             type: SnackBarType.error,
           ),
         );
+
         Navigator.pop(context);
       }
     }
   }
 
   void _prepareEditSession() {
-    assert(widget.editWorkflowTemplate != null && widget.pubspecPath != null,
+    assert(widget.workflow != null && widget.pubspecPath != null,
         'To provide an edit workflow template, you must provide the path to the project pubspec.yaml file which contains the workflow.');
 
     setState(() {
-      _nameController.text = widget.editWorkflowTemplate?.name ?? '';
-      _descriptionController.text =
-          widget.editWorkflowTemplate?.description ?? '';
-      _webUrlController.text = widget.editWorkflowTemplate?.webUrl ?? '';
-      _firebaseProjectName.text =
-          widget.editWorkflowTemplate?.firebaseProjectName ?? '';
+      _nameController.text = widget.workflow?.name ?? '';
+      _descriptionController.text = widget.workflow?.description ?? '';
+      _webUrlController.text = widget.workflow?.webUrl ?? '';
+      _firebaseProjectName.text = widget.workflow?.firebaseProjectName ?? '';
       _firebaseProjectIDController.text =
-          widget.editWorkflowTemplate?.firebaseProjectId ?? '';
+          widget.workflow?.firebaseProjectId ?? '';
 
       // Set the timeouts
       _buildAndroidTimeController.text =
-          widget.editWorkflowTemplate?.androidBuildTimeout.toString() ?? '0';
+          widget.workflow?.androidBuildTimeout.toString() ?? '0';
       _buildIOSTimeController.text =
-          widget.editWorkflowTemplate?.iOSBuildTimeout.toString() ?? '0';
+          widget.workflow?.iOSBuildTimeout.toString() ?? '0';
       _buildLinuxTimeController.text =
-          widget.editWorkflowTemplate?.linuxBuildTimeout.toString() ?? '0';
+          widget.workflow?.linuxBuildTimeout.toString() ?? '0';
       _buildMacOSTimeController.text =
-          widget.editWorkflowTemplate?.macosBuildTimeout.toString() ?? '0';
+          widget.workflow?.macosBuildTimeout.toString() ?? '0';
       _buildWebTimeController.text =
-          widget.editWorkflowTemplate?.webBuildTimeout.toString() ?? '0';
+          widget.workflow?.webBuildTimeout.toString() ?? '0';
       _buildWindowsTimeController.text =
-          widget.editWorkflowTemplate?.windowsBuildTimeout.toString() ?? '0';
+          widget.workflow?.windowsBuildTimeout.toString() ?? '0';
 
       // Set the build modes & types
-      _iOSBuildMode = widget.editWorkflowTemplate?.iOSBuildMode ??
-          PlatformBuildModes.release;
-      _androidBuildMode = widget.editWorkflowTemplate?.androidBuildMode ??
-          PlatformBuildModes.release;
-      _webRenderer =
-          widget.editWorkflowTemplate?.webRenderer ?? WebRenderers.canvaskit;
-      _webBuildMode = widget.editWorkflowTemplate?.webBuildMode ??
-          PlatformBuildModes.release;
+      _iOSBuildMode =
+          widget.workflow?.iOSBuildMode ?? PlatformBuildModes.release;
+      _androidBuildMode =
+          widget.workflow?.androidBuildMode ?? PlatformBuildModes.release;
+      _webRenderer = widget.workflow?.webRenderer ?? WebRenderers.canvaskit;
+      _webBuildMode =
+          widget.workflow?.webBuildMode ?? PlatformBuildModes.release;
       _isFirebaseDeployVerified =
-          widget.editWorkflowTemplate?.isFirebaseDeployVerified ?? false;
-      _linuxBuildMode = widget.editWorkflowTemplate?.linuxBuildMode ??
-          PlatformBuildModes.release;
-      _macOSBuildMode = widget.editWorkflowTemplate?.macosBuildMode ??
-          PlatformBuildModes.release;
-      _windowsBuildMode = widget.editWorkflowTemplate?.windowsBuildMode ??
-          PlatformBuildModes.release;
-      if (widget.editWorkflowTemplate?.workflowActions == null) {
+          widget.workflow?.isFirebaseDeployVerified ?? false;
+      _linuxBuildMode =
+          widget.workflow?.linuxBuildMode ?? PlatformBuildModes.release;
+      _macOSBuildMode =
+          widget.workflow?.macosBuildMode ?? PlatformBuildModes.release;
+      _windowsBuildMode =
+          widget.workflow?.windowsBuildMode ?? PlatformBuildModes.release;
+
+      // Add the custom workflow actions.
+      _customCommands = widget.workflow?.customCommands ?? <String>[];
+
+      if (widget.workflow?.workflowActions == null) {
         _workflowActions = <WorkflowActionModel>[];
       } else {
-        _workflowActions =
-            widget.editWorkflowTemplate!.workflowActions.map((String e) {
+        _workflowActions = widget.workflow!.workflowActions.map((String e) {
           return WorkflowActionModel(
             id: e,
             name: workflowActionModels
@@ -331,391 +327,366 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
     if (widget.pubspecPath != null) {
       _initPubspec();
     }
-    if (widget.editWorkflowTemplate != null) {
+    if (widget.workflow != null) {
       _prepareEditSession();
     }
+
     _beginSaveMonitor();
     super.initState();
   }
 
   @override
-  void dispose() {
-    _saveLocallyPort.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_pubspecFile == null || _projectPath.isEmpty) {
-          return true;
-        }
+    return Consumer(
+      builder: (_, ref, __) {
+        WorkflowsState workflowsState = ref.watch(workflowsActionStateNotifier);
+        WorkflowsNotifier workflowsNotifier =
+            ref.watch(workflowsActionStateNotifier.notifier);
 
-        await _saveWorkflow(
-          context,
-          showAlerts: true,
-          pubspecInfo: _pubspecFile,
-          pubspecPath: _projectPath,
-          addToGitignore: _addToGitIgnore,
-          addAllToGitignore: _addAllToGitIgnore,
-          template: _workflowTemplate(),
-        );
+        return WillPopScope(
+          onWillPop: () async {
+            if (_pubspecFile == null || _pubspecPath.isEmpty) {
+              return true;
+            }
 
-        return true;
-      },
-      child: DialogTemplate(
-        onExit: () async {
-          if (_pubspecFile == null || _projectPath.isEmpty) {
-            Navigator.pop(context);
-            return;
-          }
+            await workflowsNotifier.saveWorkflow(
+              context,
+              showAlerts: true,
+              originalName: _originalWorkflowName,
+              pubspecInfo: _pubspecFile,
+              pubspecPath: _pubspecPath,
+              addToGitignore: _addToGitIgnore,
+              addAllToGitignore: _addAllToGitIgnore,
+              template: _workflowTemplate(),
+            );
 
-          await _saveWorkflow(
-            context,
-            showAlerts: false,
-            pubspecInfo: _pubspecFile,
-            pubspecPath: _projectPath,
-            addToGitignore: _addToGitIgnore,
-            addAllToGitignore: _addAllToGitIgnore,
-            template: _workflowTemplate(),
-          );
-
-          Navigator.pop(context);
-        },
-        width: 800,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            DialogHeader(
-              title: widget.editWorkflowTemplate != null
-                  ? 'Edit Workflow'
-                  : 'New Workflow',
-              leading: _interfaceView != _InterfaceView.workflowInfo
-                  ? SquareButton(
-                      icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
-                      color: Colors.transparent,
-                      onPressed: () => setState(() {
-                        _showInfoLast = false;
-                        _interfaceView =
-                            _InterfaceView.values[_interfaceView.index - 1];
-                        if (_interfaceView == _InterfaceView.workflowInfo) {
-                          _showInfoLast = true;
-                        }
-                      }),
-                    )
-                  : const StageTile(stageType: StageType.beta),
-              onClose: () async {
-                if (_pubspecFile == null || _projectPath.isEmpty) {
-                  Navigator.pop(context);
-                  return;
-                }
-
-                await _saveWorkflow(
-                  context,
-                  showAlerts: false,
-                  pubspecInfo: _pubspecFile,
-                  pubspecPath: _projectPath,
-                  addToGitignore: _addToGitIgnore,
-                  addAllToGitignore: _addAllToGitIgnore,
-                  template: _workflowTemplate(),
-                );
-
+            return true;
+          },
+          child: DialogTemplate(
+            onExit: () async {
+              if (_pubspecFile == null || _pubspecPath.isEmpty) {
                 Navigator.pop(context);
-              },
-            ),
-            if (_interfaceView == _InterfaceView.workflowInfo)
-              SetProjectWorkflowInfo(
-                disableChangePubspec: _forcePubspec,
-                showLastPage:
-                    _showInfoLast || widget.editWorkflowTemplate != null,
-                onPubspecUpdate: (_) => setState(() => _pubspecFile = _),
-                onNext: () {
-                  if (_pubspecFile == null) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Please select your pubspec.yaml file to continue.',
-                        type: SnackBarType.error,
-                      ),
-                    );
-                    return;
-                  }
-                  setState(
-                      () => _interfaceView = _InterfaceView.workflowActions);
-                },
-                nameController: _nameController,
-                descriptionController: _descriptionController,
-                pubspecFile: _pubspecFile,
-              ),
-            if (_interfaceView == _InterfaceView.workflowActions)
-              SetProjectWorkflowActions(
-                pubspecFile: _pubspecFile!,
-                workflowName: _nameController.text,
-                workflowDescription: _descriptionController.text,
-                projectName: _pubspecFile?.name ?? 'Unknown',
-                actions: _workflowActions,
-                onActionsUpdate: (_) => setState(() => _workflowActions = _),
-                onNext: () {
-                  if (_workflowActions.isEmpty) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Please select at least one workflow action to continue.',
-                        type: SnackBarType.error,
-                      ),
-                    );
-                    return;
-                  }
-                  setState(
-                      () => _interfaceView = _InterfaceView.actionsReorder);
-                },
-              ),
-            if (_interfaceView == _InterfaceView.actionsReorder)
-              SetProjectWorkflowActionsOrder(
-                workflowName: _nameController.text,
-                workflowActions: _workflowActions,
-                onReorder: (_) => setState(() => _workflowActions = _),
-                onNext: () => setState(
-                    () => _interfaceView = _InterfaceView.configureActions),
-              ),
-            if (_interfaceView == _InterfaceView.configureActions)
-              SetProjectWorkflowActionsConfiguration(
-                buildAndroidTimeController: _buildAndroidTimeController,
-                buildIOSTimeController: _buildIOSTimeController,
-                buildLinuxTimeController: _buildLinuxTimeController,
-                buildMacOSTimeController: _buildMacOSTimeController,
-                buildWindowsTimeController: _buildWindowsTimeController,
-                buildWebTimeController: _buildWebTimeController,
-                workflowActions: _workflowActions,
-                webUrlController: _webUrlController,
-                firebaseProjectName: _firebaseProjectName,
-                firebaseProjectIDController: _firebaseProjectIDController,
-                onFirebaseValidatedChanged: (_) =>
-                    setState(() => _isFirebaseDeployVerified = _),
-                isFirebaseValidated: _isFirebaseDeployVerified,
-                defaultWebBuildMode: _webBuildMode,
-                defaultIOSBuildMode: _iOSBuildMode,
-                androidBuildType: _androidBuildType,
-                defaultAndroidBuildMode: _androidBuildMode,
-                defaultLinuxBuildMode: _linuxBuildMode,
-                defaultMacOSBuildMode: _macOSBuildMode,
-                defaultWindowsBuildMode: _windowsBuildMode,
-                defaultWebRenderer: _webRenderer,
-                customCommands: _customCommands,
-                oniOSBuildModeChanged: (_) => setState(() => _iOSBuildMode = _),
-                onAndroidBuildTypeChanged: (_) =>
-                    setState(() => _androidBuildType = _),
-                onAndroidBuildModeChanged: (_) =>
-                    setState(() => _androidBuildMode = _),
-                onBuildWebModeChanged: (_) => setState(() => _webBuildMode = _),
-                onLinuxBuildModeChanged: (_) =>
-                    setState(() => _linuxBuildMode = _),
-                onMacOSBuildModeChanged: (_) =>
-                    setState(() => _macOSBuildMode = _),
-                onWindowsBuildModeChanged: (_) =>
-                    setState(() => _windowsBuildMode = _),
-                onWebRendererChanged: (_) => setState(() => _webRenderer = _),
-                onCustomCommandsChanged: (_) =>
-                    setState(() => _customCommands = _),
-                onNext: () {
-                  // Make sure if we have custom commands that there is at
-                  // least one command set.
-                  if (_workflowActions.any((_) =>
-                          _.id == WorkflowActionsIds.runCustomCommands) &&
-                      _customCommands.isEmpty) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Please enter at least one custom command to continue.',
-                        type: SnackBarType.error,
-                      ),
-                    );
-                    return;
-                  }
+                return;
+              }
 
-                  // See if we have deploy web project to Firebase enabled but
-                  // not validated.
-                  if (_workflowActions.any(
-                          (_) => _.id == WorkflowActionsIds.deployProjectWeb) &&
-                      !_isFirebaseDeployVerified) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Please verify your Firebase project info to continue.',
-                        type: SnackBarType.error,
-                      ),
-                    );
-                    return;
-                  }
-
-                  setState(() => _interfaceView = _InterfaceView.done);
-                },
-              ),
-            if (_interfaceView == _InterfaceView.done)
-              SetProjectWorkflowConfirmation(
+              await workflowsNotifier.saveWorkflow(
+                context,
+                showAlerts: false,
+                originalName: _originalWorkflowName,
+                pubspecInfo: _pubspecFile,
+                pubspecPath: _pubspecPath,
                 addToGitignore: _addToGitIgnore,
                 addAllToGitignore: _addAllToGitIgnore,
-                onAddAllToGitignore: () => setState(() {
-                  if (_addToGitIgnore) {
-                    _addToGitIgnore = false;
-                  }
-                  _addAllToGitIgnore = !_addAllToGitIgnore;
-                }),
-                onAddToGitignore: () => setState(() {
-                  if (_addAllToGitIgnore) {
-                    _addAllToGitIgnore = false;
-                  }
-                  _addToGitIgnore = !_addToGitIgnore;
-                }),
-                projectName: _pubspecFile?.name ?? 'Unknown',
-                workflowName: _nameController.text,
-                workflowDescription: _descriptionController.text,
-                onSave: () async {
-                  bool _hasSaved = await _saveWorkflow(
-                    context,
-                    showAlerts: true,
-                    pubspecInfo: _pubspecFile,
-                    pubspecPath: _projectPath,
-                    addToGitignore: _addToGitIgnore,
-                    addAllToGitignore: _addAllToGitIgnore,
-                    template: _workflowTemplate(true),
-                  );
+                template: _workflowTemplate(),
+              );
 
-                  if (_hasSaved) {
-                    // Update the cache with the new changes
-                    await WorkflowSearchUtils.getWorkflowsFromPath(
-                        cache: await ProjectServicesModel.getProjectCache(
-                                (await getApplicationSupportDirectory())
-                                    .path) ??
-                            const ProjectCacheResult(
-                              projectsPath: null,
-                              refreshIntervals: null,
-                              lastProjectReload: null,
-                              lastWorkflowsReload: null,
-                            ),
-                        supportDir:
-                            (await getApplicationSupportDirectory()).path);
-
-                    Navigator.pop(context);
-                  }
-                },
-                onSaveAndRun: () async {
-                  bool _hasSaved = await _saveWorkflow(
-                    context,
-                    showAlerts: true,
-                    pubspecInfo: _pubspecFile,
-                    pubspecPath: _projectPath,
-                    addToGitignore: _addToGitIgnore,
-                    addAllToGitignore: _addAllToGitIgnore,
-                    template: _workflowTemplate(true),
-                  );
-
-                  if (_hasSaved) {
-                    // Update the cache with the new changes
-                    await WorkflowSearchUtils.getWorkflowsFromPath(
-                        cache: await ProjectServicesModel.getProjectCache(
-                                (await getApplicationSupportDirectory())
-                                    .path) ??
-                            const ProjectCacheResult(
-                              projectsPath: null,
-                              refreshIntervals: null,
-                              lastProjectReload: null,
-                              lastWorkflowsReload: null,
-                            ),
-                        supportDir:
-                            (await getApplicationSupportDirectory()).path);
-
-                    Navigator.pop(context);
-
-                    String? _path =
-                        (_projectPath.split('\\')..removeLast()).join('\\');
-
-                    if (_path.isEmpty) {
-                      await logger.file(LogTypeTag.error,
-                          'Could not get path to show workflow runner at save and run.');
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-                          context,
-                          'Failed to open Workflow Runner. Try opening the runner from the projects tab.',
-                          type: SnackBarType.error));
-
+              if (mounted) {
+                Navigator.pop(context);
+              }
+            },
+            width: 800,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                DialogHeader(
+                  title: widget.workflow != null
+                      ? 'Edit Workflow'
+                      : 'New Workflow',
+                  leading: _interfaceView != _InterfaceView.workflowInfo
+                      ? SquareButton(
+                          icon: const Icon(Icons.arrow_back_ios_rounded,
+                              size: 20),
+                          color: Colors.transparent,
+                          onPressed: () => setState(() {
+                            _showInfoLast = false;
+                            _interfaceView =
+                                _InterfaceView.values[_interfaceView.index - 1];
+                            if (_interfaceView == _InterfaceView.workflowInfo) {
+                              _showInfoLast = true;
+                            }
+                          }),
+                        )
+                      : const StageTile(stageType: StageType.beta),
+                  onClose: () async {
+                    if (_pubspecFile == null || _pubspecPath.isEmpty) {
+                      Navigator.pop(context);
                       return;
                     }
 
-                    await showDialog(
-                      context: context,
-                      builder: (_) => WorkflowRunnerDialog(
-                        workflowPath: _path +
-                            '\\' +
-                            fmWorkflowDir +
-                            '\\' +
-                            (_nameController.text) +
-                            '.json',
-                      ),
+                    await workflowsNotifier.saveWorkflow(
+                      context,
+                      showAlerts: false,
+                      originalName: _originalWorkflowName,
+                      pubspecInfo: _pubspecFile,
+                      pubspecPath: _pubspecPath,
+                      addToGitignore: _addToGitIgnore,
+                      addAllToGitignore: _addAllToGitIgnore,
+                      template: _workflowTemplate(),
                     );
-                  }
-                },
-              ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: AnimatedOpacity(
-                opacity: _syncing ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: Builder(builder: (_) {
-                  if (_isSavingLocally) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Tooltip(
-                        message:
-                            'Saving your workflow data locally so you don\'t lose your work.',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const Spinner(size: 10, thickness: 1),
-                            HSeparators.small(),
-                            const Text(
-                              'Syncing workflow...',
-                              style:
-                                  TextStyle(fontSize: 10, color: Colors.grey),
+
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+                if (_interfaceView == _InterfaceView.workflowInfo)
+                  SetProjectWorkflowInfo(
+                    disableChangePubspec: _forcePubspec,
+                    showLastPage: _showInfoLast || widget.workflow != null,
+                    onPubspecUpdate: (_) => setState(() => _pubspecFile = _),
+                    onNext: () {
+                      if (_pubspecFile == null) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Please select your pubspec.yaml file to continue.',
+                            type: SnackBarType.error,
+                          ),
+                        );
+                        return;
+                      }
+                      setState(() =>
+                          _interfaceView = _InterfaceView.workflowActions);
+                    },
+                    nameController: _nameController,
+                    descriptionController: _descriptionController,
+                    pubspecFile: _pubspecFile,
+                  ),
+                if (_interfaceView == _InterfaceView.workflowActions)
+                  SetProjectWorkflowActions(
+                    pubspecFile: _pubspecFile!,
+                    workflowName: _nameController.text,
+                    workflowDescription: _descriptionController.text,
+                    projectName: _pubspecFile?.name ?? 'Unknown',
+                    actions: _workflowActions,
+                    onActionsUpdate: (_) =>
+                        setState(() => _workflowActions = _),
+                    onNext: () {
+                      if (_workflowActions.isEmpty) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Please select at least one workflow action to continue.',
+                            type: SnackBarType.error,
+                          ),
+                        );
+                        return;
+                      }
+                      setState(
+                          () => _interfaceView = _InterfaceView.actionsReorder);
+                    },
+                  ),
+                if (_interfaceView == _InterfaceView.actionsReorder)
+                  SetProjectWorkflowActionsOrder(
+                    workflowName: _nameController.text,
+                    workflowActions: _workflowActions,
+                    onReorder: (_) => setState(() => _workflowActions = _),
+                    onNext: () => setState(
+                        () => _interfaceView = _InterfaceView.configureActions),
+                  ),
+                if (_interfaceView == _InterfaceView.configureActions)
+                  SetProjectWorkflowActionsConfiguration(
+                    buildAndroidTimeController: _buildAndroidTimeController,
+                    buildIOSTimeController: _buildIOSTimeController,
+                    buildLinuxTimeController: _buildLinuxTimeController,
+                    buildMacOSTimeController: _buildMacOSTimeController,
+                    buildWindowsTimeController: _buildWindowsTimeController,
+                    buildWebTimeController: _buildWebTimeController,
+                    workflowActions: _workflowActions,
+                    webUrlController: _webUrlController,
+                    firebaseProjectName: _firebaseProjectName,
+                    firebaseProjectIDController: _firebaseProjectIDController,
+                    onFirebaseValidatedChanged: (_) =>
+                        setState(() => _isFirebaseDeployVerified = _),
+                    isFirebaseValidated: _isFirebaseDeployVerified,
+                    defaultWebBuildMode: _webBuildMode,
+                    defaultIOSBuildMode: _iOSBuildMode,
+                    androidBuildType: _androidBuildType,
+                    defaultAndroidBuildMode: _androidBuildMode,
+                    defaultLinuxBuildMode: _linuxBuildMode,
+                    defaultMacOSBuildMode: _macOSBuildMode,
+                    defaultWindowsBuildMode: _windowsBuildMode,
+                    defaultWebRenderer: _webRenderer,
+                    customCommands: _customCommands,
+                    oniOSBuildModeChanged: (_) =>
+                        setState(() => _iOSBuildMode = _),
+                    onAndroidBuildTypeChanged: (_) =>
+                        setState(() => _androidBuildType = _),
+                    onAndroidBuildModeChanged: (_) =>
+                        setState(() => _androidBuildMode = _),
+                    onBuildWebModeChanged: (_) =>
+                        setState(() => _webBuildMode = _),
+                    onLinuxBuildModeChanged: (_) =>
+                        setState(() => _linuxBuildMode = _),
+                    onMacOSBuildModeChanged: (_) =>
+                        setState(() => _macOSBuildMode = _),
+                    onWindowsBuildModeChanged: (_) =>
+                        setState(() => _windowsBuildMode = _),
+                    onWebRendererChanged: (_) =>
+                        setState(() => _webRenderer = _),
+                    onCustomCommandsChanged: (_) =>
+                        setState(() => _customCommands = _),
+                    onNext: () {
+                      // Make sure if we have custom commands that there is at
+                      // least one command set.
+                      if (_workflowActions.any((_) =>
+                              _.id == WorkflowActionsIds.runCustomCommands) &&
+                          _customCommands.isEmpty) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Please enter at least one custom command to continue.',
+                            type: SnackBarType.error,
+                          ),
+                        );
+                        return;
+                      }
+
+                      // See if we have deploy web project to Firebase enabled but
+                      // not validated.
+                      if (_workflowActions.any((_) =>
+                              _.id == WorkflowActionsIds.deployProjectWeb) &&
+                          !_isFirebaseDeployVerified) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Please verify your Firebase project info to continue.',
+                            type: SnackBarType.error,
+                          ),
+                        );
+                        return;
+                      }
+
+                      setState(() => _interfaceView = _InterfaceView.done);
+                    },
+                  ),
+                if (_interfaceView == _InterfaceView.done)
+                  SetProjectWorkflowConfirmation(
+                    addToGitignore: _addToGitIgnore,
+                    addAllToGitignore: _addAllToGitIgnore,
+                    onAddAllToGitignore: () => setState(() {
+                      if (_addToGitIgnore) {
+                        _addToGitIgnore = false;
+                      }
+                      _addAllToGitIgnore = !_addAllToGitIgnore;
+                    }),
+                    onAddToGitignore: () => setState(() {
+                      if (_addAllToGitIgnore) {
+                        _addAllToGitIgnore = false;
+                      }
+                      _addToGitIgnore = !_addToGitIgnore;
+                    }),
+                    projectName: _pubspecFile?.name ?? 'Unknown',
+                    workflowName: _nameController.text,
+                    workflowDescription: _descriptionController.text,
+                    onSave: () async {
+                      await workflowsNotifier.saveWorkflow(
+                        context,
+                        showAlerts: true,
+                        originalName: _originalWorkflowName,
+                        pubspecInfo: _pubspecFile,
+                        pubspecPath: _pubspecPath,
+                        addToGitignore: _addToGitIgnore,
+                        addAllToGitignore: _addAllToGitIgnore,
+                        template: _workflowTemplate(true),
+                      );
+
+                      bool hasSaved =
+                          !workflowsState.loading && !workflowsState.error;
+
+                      if (hasSaved && mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    onSaveAndRun: () async {
+                      await workflowsNotifier.saveWorkflow(
+                        context,
+                        showAlerts: true,
+                        originalName: _originalWorkflowName,
+                        pubspecInfo: _pubspecFile,
+                        pubspecPath: _pubspecPath,
+                        addToGitignore: _addToGitIgnore,
+                        addAllToGitignore: _addAllToGitIgnore,
+                        template: _workflowTemplate(true),
+                      );
+
+                      bool hasSaved =
+                          !workflowsState.loading && !workflowsState.error;
+
+                      if (hasSaved) {
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
+
+                        String? path =
+                            (_pubspecPath.split('\\')..removeLast()).join('\\');
+
+                        if (path.isEmpty) {
+                          await logger.file(LogTypeTag.error,
+                              'Could not get path to show workflow runner at save and run.');
+
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+                                context,
+                                'Failed to open Workflow Runner. Try opening the runner from the projects tab.',
+                                type: SnackBarType.error));
+                          }
+                          return;
+                        }
+
+                        await showDialog(
+                          context: context,
+                          builder: (_) => WorkflowRunnerDialog(
+                            workflow: _workflowTemplate(),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: AnimatedOpacity(
+                    opacity: _saveLocalError ? 1 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Builder(
+                      builder: (_) {
+                        if (_saveLocalError) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Tooltip(
+                              message:
+                                  'Failed to save your workflow. Please try again. If the problem persists, file an issue.',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  SvgPicture.asset(Assets.error, height: 10),
+                                  HSeparators.small(),
+                                  const Text(
+                                    'Failed sync...',
+                                    style: TextStyle(
+                                        fontSize: 10, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else if (_saveLocalError) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Tooltip(
-                        message:
-                            'Failed to save your workflow. Please try again. If the problem persists, file an issue.',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            SvgPicture.asset(Assets.error, height: 10),
-                            HSeparators.small(),
-                            const Text(
-                              'Failed sync...',
-                              style:
-                                  TextStyle(fontSize: 10, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                }),
-              ),
+                          );
+                        }
+
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -726,168 +697,4 @@ enum _InterfaceView {
   actionsReorder,
   configureActions,
   done,
-}
-
-Future<void> _saveInBgSync(List<dynamic> data) async {
-  // The opened port we can communicate with.
-  SendPort _port = data[0];
-  Map<String, dynamic> _data = data[2];
-  String _projName = data[3];
-
-  try {
-    String? _dirPath = data[1];
-
-    if (_dirPath == null || _dirPath.isEmpty || _data.isEmpty) {
-      _port.send(_data);
-      return;
-    }
-
-    _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
-
-    Directory(_dirPath + '\\$fmWorkflowDir').createSync(recursive: true);
-
-    await File.fromUri(Uri.file(_dirPath + '\\$fmWorkflowDir\\$_projName.json'))
-        .writeAsString(jsonEncode(_data))
-        .timeout(const Duration(seconds: 3));
-
-    _port.send(_data);
-    return;
-  } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Couldn\'t sync workflow settings.',
-        stackTraces: s);
-    _port.send(<dynamic>[]);
-    return;
-  }
-}
-
-/// Will save the workflow information locally on the user device. Will return
-/// either `true` or `false`. `true` means saved successfully. `false` means
-/// failed to save.
-///
-/// This expects a context so that it can show a snackbar if the save fails or
-/// succeeds and generally informs the user about the state of the save.
-Future<bool> _saveWorkflow(
-  BuildContext context, {
-  required bool addToGitignore,
-  required bool addAllToGitignore,
-  required bool showAlerts,
-  required String pubspecPath,
-  required WorkflowTemplate template,
-  required PubspecInfo? pubspecInfo,
-}) async {
-  try {
-    if (template.name.isEmpty) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      return true;
-    }
-
-    // ignore: unawaited_futures
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (_) => const DialogTemplate(
-        width: 150,
-        height: 100,
-        outerTapExit: false,
-        child: Spinner(thickness: 2, size: 20),
-      ),
-    );
-
-    String? _dirPath = pubspecInfo?.pathToPubspec ?? pubspecPath;
-
-    _dirPath = (_dirPath.toString().split('\\')..removeLast()).join('\\');
-
-    await Directory(_dirPath + '\\$fmWorkflowDir').create(recursive: true);
-
-    await File.fromUri(
-            Uri.file(_dirPath + '\\$fmWorkflowDir\\${template.name}.json'))
-        .writeAsString(jsonEncode(template.toJson()))
-        .timeout(const Duration(seconds: 3));
-
-    // If we saved the project, meaning that this is the final step (user done
-    // setting up the workflow), then we will see if we have to add anything
-    // to .gitignore.
-    if (template.isSaved && (addToGitignore || addAllToGitignore)) {
-      String _addComment =
-          '# Specific FlutterMatic workflow hidden: ${template.name}';
-      String _addAllComment = '# All FlutterMatic workflows are hidden.';
-
-      try {
-        File _git = File(_dirPath + '\\.gitignore');
-
-        // Create the .gitignore file if it doesn't exist.
-        if (!await _git.exists()) {
-          await _git.writeAsString('').timeout(const Duration(seconds: 3));
-        }
-
-        List<String> _gitignoreFile = await _git.readAsLines();
-
-        // We will add the comment if it doesn't already exist.
-        if ((addToGitignore && !_gitignoreFile.contains(_addComment)) ||
-            (addAllToGitignore && !_gitignoreFile.contains(_addAllComment))) {
-          await _git
-              .writeAsString(
-                  '\n' + (addToGitignore ? _addComment : _addAllComment) + '\n',
-                  mode: FileMode.append)
-              .timeout(const Duration(seconds: 3));
-        }
-
-        // Make sure it doesn't already exist.
-        if (addToGitignore &&
-            !_gitignoreFile.contains('$fmWorkflowDir/${template.name}.json')) {
-          await _git
-              .writeAsString('$fmWorkflowDir/${template.name}.json\n',
-                  mode: FileMode.append)
-              .timeout(const Duration(seconds: 3));
-        } else if (addAllToGitignore &&
-            !_gitignoreFile.contains('$fmWorkflowDir/')) {
-          await _git
-              .writeAsString('$fmWorkflowDir/\n', mode: FileMode.append)
-              .timeout(const Duration(seconds: 3));
-        }
-      } catch (_, s) {
-        await logger.file(
-            LogTypeTag.error, 'Couldn\'t add to .gitignore for workflow: $_',
-            stackTraces: s);
-      }
-    }
-
-    await logger.file(LogTypeTag.info,
-        'New workflow created at the following path: ${_dirPath + '\\$fmWorkflowDir\\${template.name}.json'}');
-
-    Navigator.of(context).pop();
-
-    if (showAlerts) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          template.isSaved
-              ? 'Workflow saved successfully. You can find it in the "Workflows" tab.'
-              : 'We stored a copy of this workflow so you can continue editing it later.',
-          type: SnackBarType.done,
-        ),
-      );
-    }
-
-    return true;
-  } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow: $_',
-        stackTraces: s);
-
-    Navigator.pop(context);
-
-    if (showAlerts) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Couldn\'t save your workflow. Please try again.',
-          type: SnackBarType.error,
-        ),
-      );
-    }
-
-    return false;
-  }
 }

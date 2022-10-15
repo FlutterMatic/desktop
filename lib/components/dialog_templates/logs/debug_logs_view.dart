@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -26,11 +26,11 @@ class _ViewDebugLogsDialogState extends State<ViewDebugLogsDialog> {
   List<String> _logs = <String>[];
 
   Future<void> _init() async {
-    List<String> _lines =
+    List<String> lines =
         await (await Logger.currentFile(await getApplicationSupportDirectory()))
             .readAsLines();
 
-    setState(() => _logs = _lines);
+    setState(() => _logs = lines);
   }
 
   @override

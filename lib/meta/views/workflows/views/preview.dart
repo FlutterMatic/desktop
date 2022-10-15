@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
@@ -14,15 +14,11 @@ import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
 class PreviewWorkflowDialog extends StatelessWidget {
-  final String workflowPath;
-  final WorkflowTemplate template;
-  final Function() onReload;
+  final WorkflowTemplate workflow;
 
   const PreviewWorkflowDialog({
     Key? key,
-    required this.template,
-    required this.workflowPath,
-    required this.onReload,
+    required this.workflow,
   }) : super(key: key);
 
   @override
@@ -41,38 +37,38 @@ class PreviewWorkflowDialog extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: ListView.builder(
-                    itemCount: template.workflowActions.length,
+                    itemCount: workflow.workflowActions.length,
                     itemBuilder: (_, int i) {
-                      bool _isLast = i == template.workflowActions.length - 1;
+                      bool isLast = i == workflow.workflowActions.length - 1;
 
-                      WorkflowActionModel _actionModel =
+                      WorkflowActionModel actionModel =
                           workflowActionModels.firstWhere(
-                              (_) => _.id == template.workflowActions[i]);
+                              (_) => _.id == workflow.workflowActions[i]);
 
-                      int? _getTimeout() {
-                        switch (_actionModel.id) {
+                      int? getTimeout() {
+                        switch (actionModel.id) {
                           case WorkflowActionsIds.buildProjectForAndroid:
-                            return template.androidBuildTimeout;
+                            return workflow.androidBuildTimeout;
                           case WorkflowActionsIds.buildProjectForIOS:
-                            return template.iOSBuildTimeout;
+                            return workflow.iOSBuildTimeout;
                           case WorkflowActionsIds.buildProjectForWeb:
-                            return template.webBuildTimeout;
+                            return workflow.webBuildTimeout;
                           case WorkflowActionsIds.buildProjectForWindows:
-                            return template.windowsBuildTimeout;
+                            return workflow.windowsBuildTimeout;
                           case WorkflowActionsIds.buildProjectForMacOS:
-                            return template.macosBuildTimeout;
+                            return workflow.macosBuildTimeout;
                           case WorkflowActionsIds.buildProjectForLinux:
-                            return template.linuxBuildTimeout;
+                            return workflow.linuxBuildTimeout;
                           default:
                             return null;
                         }
                       }
 
                       return Padding(
-                        padding: EdgeInsets.only(bottom: _isLast ? 0 : 10),
+                        padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                         child: Builder(
                           builder: (_) {
-                            if (_actionModel.id ==
+                            if (actionModel.id ==
                                 WorkflowActionsIds.runCustomCommands) {
                               return RoundContainer(
                                 child: Column(
@@ -80,14 +76,14 @@ class PreviewWorkflowDialog extends StatelessWidget {
                                   children: <Widget>[
                                     _stepItem(
                                       i,
-                                      title: _actionModel.name,
-                                      description: _actionModel.description,
-                                      timeout: _getTimeout(),
+                                      title: actionModel.name,
+                                      description: actionModel.description,
+                                      timeout: getTimeout(),
                                     ),
                                     VSeparators.normal(),
-                                    ...template.customCommands.map((_) {
+                                    ...workflow.customCommands.map((_) {
                                       return Text(
-                                        '   - ' + _,
+                                        '   - $_',
                                         style:
                                             const TextStyle(color: Colors.grey),
                                       );
@@ -99,9 +95,9 @@ class PreviewWorkflowDialog extends StatelessWidget {
 
                             return _stepItem(
                               i,
-                              title: _actionModel.name,
-                              description: _actionModel.description,
-                              timeout: _getTimeout(),
+                              title: actionModel.name,
+                              description: actionModel.description,
+                              timeout: getTimeout(),
                             );
                           },
                         ),
@@ -115,12 +111,12 @@ class PreviewWorkflowDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       if (<int>[
-                        template.iOSBuildTimeout,
-                        template.androidBuildTimeout,
-                        template.webBuildTimeout,
-                        template.windowsBuildTimeout,
-                        template.macosBuildTimeout,
-                        template.linuxBuildTimeout,
+                        workflow.iOSBuildTimeout,
+                        workflow.androidBuildTimeout,
+                        workflow.webBuildTimeout,
+                        workflow.windowsBuildTimeout,
+                        workflow.macosBuildTimeout,
+                        workflow.linuxBuildTimeout,
                       ].any((_) => _ != 0)) ...<Widget>[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 15),
@@ -130,9 +126,8 @@ class PreviewWorkflowDialog extends StatelessWidget {
                         ),
                       ],
                       Expanded(
-                        child: Text(
-                            '''
-You have a total of ${template.workflowActions.length} action${template.workflowActions.length == 1 ? '' : 's'} that will be executed in order. 
+                        child: Text('''
+You have a total of ${workflow.workflowActions.length} action${workflow.workflowActions.length == 1 ? '' : 's'} that will be executed in order. 
 
 If any of them takes longer than the timeout set, the workflow will be stopped. 
 
@@ -149,16 +144,13 @@ Also, if any fail with a none-zero exit code, the workflow will be stopped autom
                             await showDialog(
                               context: context,
                               builder: (_) => StartUpWorkflow(
-                                pubspecPath: (workflowPath.split('\\')
-                                          ..removeLast()
-                                          ..removeLast())
-                                        .join('\\') +
-                                    '\\pubspec.yaml',
-                                editWorkflowTemplate: template,
+                                pubspecPath:
+                                    '${(workflow.workflowPath.split('\\')
+                                      ..removeLast()
+                                      ..removeLast()).join('\\')}\\pubspec.yaml',
+                                workflow: workflow,
                               ),
                             );
-
-                            onReload();
                           },
                         ),
                       ),

@@ -19,8 +19,8 @@ class StressReliefWidget extends StatelessWidget {
             borderRadius: BorderRadius.horizontal(left: Radius.circular(5)),
             child: RoundContainer(
               radius: 0,
-              child: SizedBox.shrink(),
               color: Colors.white,
+              child: SizedBox.shrink(),
             ),
           ),
         ),
@@ -30,8 +30,8 @@ class StressReliefWidget extends StatelessWidget {
               message: e == 0 ? 'AHH' : 'HELP',
               child: RoundContainer(
                 radius: 0,
-                child: const SizedBox.shrink(),
                 color: e == 0 ? Colors.white : Colors.black,
+                child: const SizedBox.shrink(),
               ),
             ),
           );
@@ -42,8 +42,8 @@ class StressReliefWidget extends StatelessWidget {
             borderRadius: BorderRadius.horizontal(right: Radius.circular(5)),
             child: RoundContainer(
               radius: 0,
-              child: SizedBox.shrink(),
               color: Colors.white,
+              child: SizedBox.shrink(),
             ),
           ),
         ),

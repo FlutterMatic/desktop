@@ -24,7 +24,7 @@ class _HoverMessageWithIconActionState
 
   @override
   Widget build(BuildContext context) {
-    Widget _tile() {
+    Widget hoverTile() {
       return MouseRegion(
         onEnter: (_) => setState(() => _isHovering = true),
         onExit: (_) => setState(() => _isHovering = false),
@@ -47,13 +47,13 @@ class _HoverMessageWithIconActionState
     }
 
     if (widget.onPressed == null) {
-      return _tile();
+      return hoverTile();
     } else {
       return MaterialButton(
         padding: EdgeInsets.zero,
         onPressed: widget.onPressed,
         hoverColor: Colors.transparent,
-        child: _tile(),
+        child: hoverTile(),
       );
     }
   }

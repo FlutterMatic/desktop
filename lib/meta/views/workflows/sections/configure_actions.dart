@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_android.dart';
 import 'package:fluttermatic/meta/views/workflows/action_settings/build_ios.dart';
@@ -169,7 +169,7 @@ class _SetProjectWorkflowActionsConfigurationState
 
   @override
   Widget build(BuildContext context) {
-    List<_TabObject> _tabs = <_TabObject>[
+    List<_TabObject> tabs = <_TabObject>[
       if (_isDeployWeb)
         _TabObject(
           name: 'Deploy Web',
@@ -254,8 +254,8 @@ class _SetProjectWorkflowActionsConfigurationState
       children: <Widget>[
         Builder(
           builder: (_) {
-            if (_tabs.length == 1) {
-              return _tabs.first.content;
+            if (tabs.length == 1) {
+              return tabs.first.content;
             } else if (!_isBuildActionSelected.contains(true)) {
               return Center(
                 child: Padding(
@@ -286,11 +286,11 @@ class _SetProjectWorkflowActionsConfigurationState
               return ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 450),
                 child: DefaultTabController(
-                  length: _tabs.length,
+                  length: tabs.length,
                   child: Column(
                     children: <Widget>[
                       TabBar(
-                          tabs: _tabs
+                          tabs: tabs
                               .map(
                                 (_) => Padding(
                                   padding: const EdgeInsets.only(bottom: 5),
@@ -314,7 +314,7 @@ class _SetProjectWorkflowActionsConfigurationState
                       Expanded(
                         child: TabBarView(
                           physics: const NeverScrollableScrollPhysics(),
-                          children: _tabs
+                          children: tabs
                               .map((_) =>
                                   SingleChildScrollView(child: _.content))
                               .toList(),
@@ -332,8 +332,8 @@ class _SetProjectWorkflowActionsConfigurationState
           alignment: Alignment.centerRight,
           child: RectangleButton(
             width: 100,
-            child: const Text('Next'),
             onPressed: widget.onNext,
+            child: const Text('Next'),
           ),
         ),
       ],

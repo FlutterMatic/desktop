@@ -7,23 +7,23 @@ import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
-import 'package:fluttermatic/app/providers/multi_providers.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/dialog_templates/other/unofficial_release.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/core/notifiers/connection.notifier.dart';
-import 'package:fluttermatic/core/notifiers/space.notifier.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/setup/components/windows_controls.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'meta/views/setup/screens/setup_view.dart';
@@ -31,12 +31,18 @@ import 'meta/views/setup/screens/setup_view.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kDebugMode) {
-    Directory _basePath = await getApplicationSupportDirectory();
-    print('📂 AppData path: ${_basePath.path}');
+    Directory basePath = await getApplicationSupportDirectory();
+    print('📂 AppData path: ${basePath.path}');
   }
 
   // Initialize shared preference.
   await SharedPref.init();
+
+  // The bitsdojo window plugin fails to compile when trying to hide the
+  // window controls on Windows natively.
+  await windowManager
+      .waitUntilReadyToShow()
+      .then((_) => windowManager.setFullScreen(true));
 
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
@@ -47,17 +53,17 @@ Future<void> main() async {
   });
   // Wrapped with a restart widget to allow restarting FlutterMatic from
   // anywhere in the app without restarting Flutter engine.
-  runApp(const MultiProviders(RestartWidget(child: FlutterMaticMain())));
+  runApp(const RestartWidget(child: ProviderScope(child: FlutterMaticMain())));
 }
 
-class FlutterMaticMain extends StatefulWidget {
+class FlutterMaticMain extends ConsumerStatefulWidget {
   const FlutterMaticMain({Key? key}) : super(key: key);
 
   @override
   _FlutterMaticMainState createState() => _FlutterMaticMainState();
 }
 
-class _FlutterMaticMainState extends State<FlutterMaticMain> {
+class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
   // Utils
   bool _isChecking = true;
 
@@ -76,29 +82,28 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
   Future<void> _initDataFetch() async {
     try {
       /// Application supporting Directory
-      Directory _dir = await getApplicationSupportDirectory();
+      Directory dir = await getApplicationSupportDirectory();
 
       // List of directories that needs to be ensured that they exist.
-      List<String> _dirsToCreate = <String>[
+      List<String> dirsToCreate = <String>[
         '\\logs',
         '\\cache',
         '\\tmp',
       ];
 
       // Create each directory if they are missing.
-      for (String dirName in _dirsToCreate) {
-        Directory _dirToCreate = Directory(_dir.path + dirName);
-        if (!await _dirToCreate.exists()) {
-          await _dirToCreate.create(recursive: true);
+      for (String dirName in dirsToCreate) {
+        Directory dirToCreate = Directory(dir.path + dirName);
+        if (!await dirToCreate.exists()) {
+          await dirToCreate.create(recursive: true);
         }
       }
 
-      // Calculate the space on the disk(s).
-      await SpaceCheck().checkSpace();
+      await ref.watch(spaceStateController.notifier).checkSpace();
 
       // Keeps on monitoring the network connection and updates any listener
       // when the connection changes.
-      await ConnectionNotifier().initConnectivity();
+      await ref.watch(connectionNotifierController.notifier).initConnectivity();
 
       await SharedPref()
           .pref
@@ -185,9 +190,10 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
       }
 
       setState(() => _isChecking = false);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch. $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch.',
+          error: e, stackTrace: s);
+
       await _hasCompletedSetup();
       setState(() => _isChecking = false);
     }
@@ -201,13 +207,15 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeChangeNotifier>(
-      builder: (BuildContext context, ThemeChangeNotifier themeChangeNotifier,
-          Widget? child) {
+    return Consumer(
+      builder: (_, WidgetRef ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+        ThemeNotifier themeNotifier = ref.watch(themeStateController.notifier);
+
         return Directionality(
           textDirection: TextDirection.ltr,
           child: ColoredBox(
-            color: themeChangeNotifier.isDarkTheme
+            color: themeState.darkTheme
                 ? AppTheme.darkBackgroundColor
                 : AppTheme.lightBackgroundColor,
             child: Column(
@@ -217,7 +225,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Expanded(child: MoveWindow()),
-                      if (Platform.isWindows) windowControls(context)
+                      if (Platform.isWindows) windowControls(context),
                     ],
                   ),
                 ),
@@ -225,9 +233,8 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                   child: MaterialApp(
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
-                    themeMode: themeChangeNotifier.isDarkTheme
-                        ? ThemeMode.dark
-                        : ThemeMode.light,
+                    themeMode:
+                        themeState.darkTheme ? ThemeMode.dark : ThemeMode.light,
                     debugShowCheckedModeBanner: false,
                     builder: (_, Widget? child) {
                       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
@@ -235,7 +242,7 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         logger.file(
                           LogTypeTag.error,
                           'Error while building UI: ${errorDetails.exception}',
-                          stackTraces: errorDetails.stack,
+                          stackTrace: errorDetails.stack,
                         );
                         if (!kReleaseMode) {
                           return ErrorWidget(errorDetails.exception);
@@ -291,35 +298,27 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                                 color: Colors.transparent,
                                 hoverColor: Colors.transparent,
                                 icon: Icon(
-                                  context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
+                                  themeState.darkTheme
                                       ? Icons.dark_mode
                                       : Icons.light_mode,
-                                  color: context
-                                          .read<ThemeChangeNotifier>()
-                                          .isDarkTheme
+                                  color: themeState.darkTheme
                                       ? Colors.white
                                       : Colors.black,
                                 ),
                                 onPressed: () {
-                                  context
-                                      .read<ThemeChangeNotifier>()
-                                      .updateTheme(context
-                                              .read<ThemeChangeNotifier>()
-                                              .isDarkTheme
-                                          ? Theme.of(context).brightness !=
-                                              Brightness.light
-                                          : Theme.of(context).brightness ==
-                                              Brightness.light);
+                                  themeNotifier.updateTheme(themeState.darkTheme
+                                      ? Theme.of(context).brightness !=
+                                          Brightness.light
+                                      : Theme.of(context).brightness ==
+                                          Brightness.light);
                                 },
                               ),
                             ),
                         ],
                       );
                     },
-                    home: Builder(
-                      builder: (_) {
+                    home: Consumer(
+                      builder: (_, ref, __) {
                         // Make sure this is an official build of the app.
                         if (appBuild.isEmpty || appVersion.isEmpty) {
                           return const UnofficialReleaseDialog();
@@ -328,10 +327,10 @@ class _FlutterMaticMainState extends State<FlutterMaticMain> {
                         if (_isChecking) {
                           return const Scaffold(
                               body: Center(child: Spinner(thickness: 2)));
-                        } else if (!completedSetup) {
-                          return const SetupScreen();
-                        } else {
+                        } else if (completedSetup) {
                           return const HomeScreen();
+                        } else {
+                          return const SetupScreen();
                         }
                       },
                     ),

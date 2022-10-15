@@ -39,7 +39,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
   Future<void> _loadData() async {
     try {
       for (String name in _docsNames) {
-        String _fileContent =
+        String fileContent =
             await rootBundle.loadString('assets/documentation/$name.md');
 
         setState(() {
@@ -54,18 +54,19 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
                   .first
                   .replaceAll('_', ' ')
                   .split(' ')
-                  .map((String _word) =>
-                      _word.substring(0, 1).toUpperCase() + _word.substring(1))
+                  .map((String word) =>
+                      word.substring(0, 1).toUpperCase() + word.substring(1))
                   .join(' '),
               SingleChildScrollView(
                 child: MarkdownBody(
                   onTapLink: (String txt, String? href, String title) {
                     try {
-                      launch(txt);
-                    } catch (_, s) {
+                      launchUrl(Uri.parse(txt));
+                    } catch (e, s) {
                       logger.file(LogTypeTag.error,
-                          'Couldn\'t open documentation referenced link: $txt - $href - $title - Error: $_',
-                          stackTraces: s);
+                          'Couldn\'t open documentation referenced link: $txt - $href - $title.',
+                          error: e, stackTrace: s);
+
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
@@ -77,7 +78,7 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
                     }
                   },
                   selectable: true,
-                  data: _fileContent,
+                  data: fileContent,
                   extensionSet: md.ExtensionSet(
                     md.ExtensionSet.gitHubFlavored.blockSyntaxes,
                     <md.InlineSyntax>[
@@ -94,18 +95,21 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
       }
 
       setState(() => _isLoading = false);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to load documentation $_',
-          stackTraces: s);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackBarTile(
-          context,
-          'Failed to load documentation. Please try again later or report this issue if it persists.',
-          type: SnackBarType.error,
-        ),
-      );
-      Navigator.pop(context);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to load documentation.',
+          error: e, stackTrace: s);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Failed to load documentation. Please try again later or report this issue if it persists.',
+            type: SnackBarType.error,
+          ),
+        );
+        Navigator.pop(context);
+      }
     }
   }
 

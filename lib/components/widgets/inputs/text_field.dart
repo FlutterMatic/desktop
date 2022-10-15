@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 📦 Package imports:
-import 'package:provider/src/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText;
@@ -61,51 +62,65 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      scrollPhysics: const BouncingScrollPhysics(),
-      cursorRadius: const Radius.circular(10),
-      focusNode: focusNode,
-      textInputAction: textInputAction,
-      textCapitalization: textCapitalization ?? TextCapitalization.none,
-      readOnly: readOnly,
-      onEditingComplete: onEditCompleted,
-      autofocus: autofocus ?? false,
-      keyboardType: keyboardType ?? TextInputType.text,
-      obscureText: obscureText,
-      maxLines: numLines ?? 1,
-      style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
-      inputFormatters: filterFormatters ??
-          <TextInputFormatter>[
-            filteringTextInputFormatter ?? FilteringTextInputFormatter.deny('')
-          ],
-      decoration: InputDecoration(
-        errorStyle: const TextStyle(color: kRedColor),
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        suffixIcon: suffixIcon,
-        fillColor: Colors.blueGrey.withOpacity(
-            context.read<ThemeChangeNotifier>().isDarkTheme ? 0.2 : 0.1),
-        filled: true,
-        hintText: hintText,
-        counterStyle: TextStyle(
-          color:
-              Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.75),
-        ),
-        hintStyle: TextStyle(
-            color:
-                Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.75),
-            fontSize: 15),
-      ),
-      textAlignVertical: TextAlignVertical.center,
-      maxLength: maxLength,
-      maxLengthEnforcement: MaxLengthEnforcement.enforced,
-      validator:
-          validator == null ? null : validator as String? Function(String?)?,
-      keyboardAppearance: Brightness.dark,
-      onChanged: onChanged,
-      controller: controller,
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        return TextFormField(
+          scrollPhysics: const BouncingScrollPhysics(),
+          cursorRadius: const Radius.circular(10),
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          textCapitalization: textCapitalization ?? TextCapitalization.none,
+          readOnly: readOnly,
+          onEditingComplete: onEditCompleted,
+          autofocus: autofocus ?? false,
+          keyboardType: keyboardType ?? TextInputType.text,
+          obscureText: obscureText,
+          maxLines: numLines ?? 1,
+          style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
+          inputFormatters: filterFormatters ??
+              <TextInputFormatter>[
+                filteringTextInputFormatter ??
+                    FilteringTextInputFormatter.deny('')
+              ],
+          decoration: InputDecoration(
+            errorStyle: const TextStyle(color: kRedColor),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            suffixIcon: suffixIcon,
+            fillColor:
+                Colors.blueGrey.withOpacity(themeState.darkTheme ? 0.2 : 0.1),
+            filled: true,
+            hintText: hintText,
+            counterStyle: TextStyle(
+              color: Theme.of(context)
+                  .textTheme
+                  .bodyText1!
+                  .color!
+                  .withOpacity(0.75),
+            ),
+            hintStyle: TextStyle(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .color!
+                    .withOpacity(0.75),
+                fontSize: 15),
+          ),
+          textAlignVertical: TextAlignVertical.center,
+          maxLength: maxLength,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+          validator: validator == null
+              ? null
+              : validator as String? Function(String?)?,
+          keyboardAppearance: Brightness.dark,
+          onChanged: onChanged,
+          controller: controller,
+        );
+      },
     );
   }
 }

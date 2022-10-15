@@ -10,13 +10,13 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
@@ -25,65 +25,76 @@ import 'package:fluttermatic/core/services/logs.dart';
 ///
 /// Returns:
 /// True if the file was successfully sent, false otherwise.
-Future<void> _generateReportOnIsolate(List<dynamic> data) async {
-  SendPort _port = data[0];
-  String _basePath = data[1];
-  String _filePath = data[2];
-  String _fileName = data[3];
-
+Future<bool> _generateReportOnIsolate(Map<String, dynamic> data) async {
   try {
-    // Will go to the support directory then to the "logs" directory. Will then
-    // merge all the files in it that ends with ".log" and generate a report.
-    // When merging, will split inside the file each file by adding the file
-    // name original file name.
-    //
-    // The first line will contain information such as the date and time of the
-    // report generation.
+    ReceivePort receivePort = ReceivePort();
 
-    String _dir = _basePath + '\\logs';
+    await Isolate.spawn((Map<String, dynamic> message) async {
+      String basePath = message['basePath'];
+      String filePath = message['filePath'];
+      String fileName = message['fileName'];
 
-    List<FileSystemEntity> _logsDir = Directory(_dir)
-        .listSync(recursive: true)
-        .where((FileSystemEntity e) => e is File && e.path.endsWith('.log'))
-        .toList();
+      // Will go to the support directory then to the "logs" directory. Will then
+      // merge all the files in it that ends with ".log" and generate a report.
+      // When merging, will split inside the file each file by adding the file
+      // name original file name.
+      //
+      // The first line will contain information such as the date and time of the
+      // report generation.
+      String dir = '$basePath\\logs';
 
-    File _reportFile = File(_filePath + '\\' + _fileName);
+      List<FileSystemEntity> logsDir = Directory(dir)
+          .listSync(recursive: true)
+          .where((e) => e is File && e.path.endsWith('.log'))
+          .toList();
 
-    await _reportFile
-        .writeAsString('Report generated on ${DateTime.now().toString()}\n\n');
+      if (logsDir.isEmpty) {
+        Isolate.exit(message['port'], true);
+      }
 
-    for (FileSystemEntity logFile in _logsDir) {
-      List<String> _logs = <String>[];
+      File reportFile = File('$filePath\\$fileName');
 
-      _logs.add(
-        '''
+      await reportFile.writeAsString(
+          'Report generated on ${DateTime.now().toString()}\n\n');
+
+      for (FileSystemEntity logFile in logsDir) {
+        List<String> logs = <String>[];
+
+        logs.add(
+            '''
 
 ---- LOG ----
 ${logFile.path.split('\\').last.split('.').first}
 ---- LOG ----
 
-''',
-      );
+''');
 
-      _logs.addAll(await File(logFile.path).readAsLines());
+        logs.addAll(await File(logFile.path).readAsLines());
 
-      await _reportFile.writeAsString(
-        _logs.join('\n'),
-        mode: FileMode.writeOnlyAppend,
-      );
-    }
+        await reportFile.writeAsString(
+          logs.join('\n'),
+          mode: FileMode.writeOnlyAppend,
+        );
+      }
 
-    await logger.file(
-        LogTypeTag.info, 'Report generated on ${DateTime.now().toString()}',
-        logDir: Directory(_basePath));
+      await logger.file(
+          LogTypeTag.info, 'Report generated on ${DateTime.now().toString()}',
+          logDir: Directory(basePath));
 
-    _port.send(true);
-    return;
-  } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
-        stackTraces: s, logDir: Directory(_basePath));
-    _port.send(false);
-    return;
+      Isolate.exit(message['port'], true);
+    }, {
+      'basePath': data['basePath'],
+      'filePath': data['filePath'],
+      'fileName': data['fileName'],
+      'port': receivePort.sendPort,
+    });
+
+    return (await receivePort.first as bool?) ?? false;
+  } catch (e, s) {
+    await logger.file(LogTypeTag.error, 'Failed to generate issue report.',
+        error: e, stackTrace: s);
+
+    return false;
   }
 }
 
@@ -102,184 +113,137 @@ class _BuildLogsDialogState extends State<BuildLogsDialog> {
 
   String? _savePath;
 
-  static final ReceivePort _generatePort =
-      ReceivePort('GENERATE_REPORT_ISOLATE_PORT');
-
-  bool _isListening = false;
-
   Future<void> _generateReport() async {
     try {
-      late String _p;
+      late String p;
 
-      _p = _savePath!;
+      p = _savePath!;
 
-      Isolate _i = await Isolate.spawn(_generateReportOnIsolate, <dynamic>[
-        _generatePort.sendPort,
-        (await getApplicationSupportDirectory()).path,
-        _p,
-        _fileName,
-      ]);
+      await Future.delayed(const Duration(seconds: 10));
 
-      try {
-        if (!_isListening) {
-          _generatePort.asBroadcastStream(onListen: (_) {
-            if (mounted) {
-              setState(() => _isListening = true);
-            }
-          }).listen((dynamic message) async {
-            if (message is bool == false && mounted) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(
-                  context,
-                  'Something really weird is happening, and you need to report it! Make an exception and don\'t about uploading a report. Just make sure to describe it well!',
-                  type: SnackBarType.error,
-                ),
-              );
-              _i.kill();
-              return;
-            }
+      bool result = await _generateReportOnIsolate({
+        'basePath': (await getApplicationSupportDirectory()).path,
+        'filePath': p,
+        'fileName': _fileName,
+      });
 
-            if (message && mounted) {
-              Navigator.pop(context);
-              // Opens file viewer app to show the output.
-              if (Platform.isWindows) {
-                await shell.run('explorer $_p');
-              } else if (Platform.isMacOS) {
-                await shell.run('open $_p');
-              } else if (Platform.isLinux) {
-                await shell.run('xdg-open $_p');
-              }
+      if (!result && mounted) {
+        Navigator.pop(context);
 
-              _i.kill();
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          snackBarTile(
+            context,
+            'Something really weird is happening, and you need to report it! You can find the logs at ${(await getApplicationSupportDirectory()).path}\\logs',
+            type: SnackBarType.error,
+          ),
+        );
+      } else if (result && mounted) {
+        Navigator.pop(context);
 
-              await Future<void>.delayed(const Duration(seconds: 5));
-
-              if (mounted) {
-                Navigator.pop(context);
-              }
-
-              _generatePort.close();
-              return;
-            } else if (mounted) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                snackBarTile(
-                  context,
-                  'Failed to generate issue report. Please try again.',
-                  type: SnackBarType.error,
-                ),
-              );
-
-              setState(() => _savePath = null);
-
-              _i.kill();
-              _generatePort.close();
-              return;
-            }
-          });
+        // Opens file viewer app to show the output.
+        if (Platform.isWindows) {
+          await shell.run('explorer $p');
+        } else if (Platform.isMacOS) {
+          await shell.run('open $p');
+        } else if (Platform.isLinux) {
+          await shell.run('xdg-open $p');
         }
-      } catch (_) {
-        // ..Ignore..
+
+        return;
       }
 
       setState(() => _savePath = null);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to generate issue report. $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to generate issue report.',
+          error: e, stackTrace: s);
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-          context, 'Failed to generate issue report. Please try again.',
-          type: SnackBarType.error));
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
+            context, 'Failed to generate issue report. Please try again.',
+            type: SnackBarType.error));
 
-      setState(() => _savePath = null);
+        setState(() => _savePath = null);
+      }
     }
   }
 
   @override
-  void dispose() {
-    _generatePort.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return DialogTemplate(
-      child: Column(
-        children: <Widget>[
-          const DialogHeader(
-            title: 'Generate Report',
-            leading: StageTile(stageType: StageType.prerelease),
-          ),
-          const Text(
-            'If you need to create an issue on GitHub, please include the following information:',
-          ),
-          VSeparators.normal(),
-          RoundContainer(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                          'Select where you want to save the report as "$_fileName".'),
-                    ),
-                    HSeparators.normal(),
-                    RectangleButton(
-                      width: 100,
-                      disable: _savePath != null,
-                      child: const Text('Select Path'),
-                      onPressed: () async {
-                        String? _path = await file_selector.getDirectoryPath(
-                            confirmButtonText: 'Report');
-
-                        if (_path != null) {
-                          setState(() => _savePath = _path);
-                          await _generateReport();
-                        } else {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTile(
-                              context,
-                              'Please select a directory path to save report to.',
-                              type: SnackBarType.warning,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                if (_savePath != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            _savePath!,
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                        HSeparators.normal(),
-                        const Spinner(size: 15, thickness: 2),
-                      ],
-                    ),
-                  ),
-              ],
+    return WillPopScope(
+      onWillPop: () => Future.value(_savePath == null),
+      child: DialogTemplate(
+        outerTapExit: _savePath == null,
+        child: Column(
+          children: <Widget>[
+            DialogHeader(
+              title: 'Generate Report',
+              leading: const StageTile(stageType: StageType.beta),
+              canClose: _savePath == null,
             ),
-          ),
-          VSeparators.normal(),
-          RectangleButton(
-            width: double.infinity,
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+            const Text(
+              'If you need to create an issue on GitHub, please include the following information:',
+            ),
+            VSeparators.normal(),
+            RoundContainer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                            'Select where you want to save the report as "$_fileName".'),
+                      ),
+                      HSeparators.normal(),
+                      RectangleButton(
+                        width: 100,
+                        disable: _savePath != null,
+                        child: const Text('Select Path'),
+                        onPressed: () async {
+                          String? path = await file_selector.getDirectoryPath(
+                              confirmButtonText: 'Report');
+
+                          if (path != null) {
+                            setState(() => _savePath = path);
+                            await _generateReport();
+                          } else if (mounted) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              snackBarTile(
+                                context,
+                                'Please select a directory path to save report to.',
+                                type: SnackBarType.warning,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  if (_savePath != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        _savePath!,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            VSeparators.normal(),
+            if (_savePath == null)
+              RectangleButton(
+                width: double.infinity,
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.pop(context),
+              )
+            else
+              const LoadActivityMessageElement(message: 'Generating report...'),
+          ],
+        ),
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
@@ -19,13 +19,15 @@ class FlutterProjectOrgNameSection extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FlutterProjectOrgNameSectionState createState() => _FlutterProjectOrgNameSectionState();
+  _FlutterProjectOrgNameSectionState createState() =>
+      _FlutterProjectOrgNameSectionState();
 }
 
-class _FlutterProjectOrgNameSectionState extends State<FlutterProjectOrgNameSection> {
+class _FlutterProjectOrgNameSectionState
+    extends State<FlutterProjectOrgNameSection> {
   @override
   Widget build(BuildContext context) {
-    String _proposedName = '.'.allMatches(widget.controller.text).length == 1
+    String proposedName = '.'.allMatches(widget.controller.text).length == 1
         ? '${widget.controller.text}.${widget.projName}'
         : widget.controller.text;
     return Column(
@@ -71,7 +73,7 @@ class _FlutterProjectOrgNameSectionState extends State<FlutterProjectOrgNameSect
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: informationWidget(
-              '"${_proposedName.startsWith('.') ? 'example' + _proposedName : _proposedName}" will be your organization name. You can change it later.',
+              '"${proposedName.startsWith('.') ? 'example$proposedName' : proposedName}" will be your organization name. You can change it later.',
               type: InformationType.green,
             ),
           ),
@@ -108,17 +110,17 @@ String formatOrgName({
   required String beforeName,
   required String orgName,
 }) {
-  String _result = '';
+  String result = '';
 
   // There can't be more than 2 dots. If there is, it will trim what is after the third dot.
   if ('.'.allMatches(orgName).length > 2) {
-    _result =
+    result =
         orgName.substring(0, orgName.indexOf('.', orgName.indexOf('.') + 1));
   } else {
     // The [orgName] cannot start with "." or "_". Also, there cannot be "." or "_"
     // after each other.
     if (orgName.startsWith('.') || orgName.startsWith('_')) {
-      _result = beforeName;
+      result = beforeName;
     } else {
       // Will iterate over the [orgName] and check if there is a "." or "_" after
       // each other. We know for sure that it won't start with "." or "_" because
@@ -128,7 +130,7 @@ String formatOrgName({
         if (orgName[i] == '.' || orgName[i] == '_') {
           if (i + 1 < orgName.length &&
               (orgName[i + 1] == '.' || orgName[i + 1] == '_')) {
-            _result = beforeName;
+            result = beforeName;
             break;
           }
         }
@@ -136,11 +138,11 @@ String formatOrgName({
 
       // If there is no "." or "_" after each other, then it will just return the
       // [orgName].
-      if (_result.isEmpty) {
-        _result = orgName;
+      if (result.isEmpty) {
+        result = orgName;
       }
     }
   }
 
-  return _result.replaceAll(' ', '_');
+  return result.replaceAll(' ', '_');
 }

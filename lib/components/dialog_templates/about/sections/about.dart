@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class AboutSection extends StatelessWidget {
   const AboutSection({Key? key}) : super(key: key);
@@ -43,7 +43,7 @@ class AboutSection extends StatelessWidget {
                   child: Image.asset(Assets.appLogo, height: 70),
                 ),
                 applicationName: 'FlutterMatic',
-                applicationVersion: appVersion + ' ($appBuild)',
+                applicationVersion: '$appVersion ($appBuild)',
               );
             },
           ),

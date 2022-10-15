@@ -1,67 +1,45 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/search.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/other/status.dart';
 import 'package:fluttermatic/components/dialog_templates/project/create_select.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
-import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
-import 'package:fluttermatic/components/widgets/ui/linear_progress_indicator.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
-import 'package:fluttermatic/core/models/projects.model.dart';
-import 'package:fluttermatic/core/notifiers/notifications.notifier.dart';
+import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/notifications.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/projects.search.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/search.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
 import 'package:fluttermatic/meta/views/dialogs/notifications/notification_view.dart';
 import 'package:fluttermatic/meta/views/tabs/search/elements/package.dart';
 import 'package:fluttermatic/meta/views/tabs/search/elements/projects.dart';
 import 'package:fluttermatic/meta/views/tabs/search/elements/workflows.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
 
-class HomeSearchComponent extends StatefulWidget {
+class HomeSearchComponent extends ConsumerStatefulWidget {
   const HomeSearchComponent({Key? key}) : super(key: key);
 
   @override
   _HomeSearchComponentState createState() => _HomeSearchComponentState();
 }
 
-class _HomeSearchComponentState extends State<HomeSearchComponent> {
+class _HomeSearchComponentState extends ConsumerState<HomeSearchComponent> {
   // Inputs
   final TextEditingController _searchController = TextEditingController();
 
-  // Utils
-  bool _loadingPub = false;
-  bool _loadingSearch = false;
   final FocusNode _searchNode = FocusNode();
 
-  // Search Results
-  final List<ProjectObject> _projectResults = <ProjectObject>[];
-  final List<ProjectWorkflowsGrouped> _workflowResults =
-      <ProjectWorkflowsGrouped>[];
-
-  final List<PkgViewData> _packageResults = <PkgViewData>[];
-
   String? _path;
-
-  DateTime? _lastCacheUpdate;
-
-  final List<ProjectObject> _projects = <ProjectObject>[];
-  final List<ProjectWorkflowsGrouped> _workflows = <ProjectWorkflowsGrouped>[];
 
   // Search will be able to search multiple FM services. This means that we
   // need to perform multiple searches and display the results in a list
@@ -70,131 +48,32 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
   // This needs to be done in an efficient manner.
   Future<void> _search() async {
     try {
-      setState(() => _loadingSearch = true);
-
       _path ??= (await getApplicationSupportDirectory()).path;
 
       if (_searchController.text.isEmpty) {
-        setState(() {
-          _projectResults.clear();
-          _workflowResults.clear();
-          _packageResults.clear();
-          _loadingSearch = false;
-        });
+        ref.watch(appSearchStateNotifier.notifier).resetSearch();
         return;
       }
 
-      Duration _cacheDuration = const Duration(minutes: 5);
+      // Wait a duration before starting the search. Make sure that the search
+      // query before and after didn't change to avoid unnecessary searches.
+      String before = _searchController.text;
 
-      bool _isCacheValid = false;
-
-      if (_lastCacheUpdate == null) {
-        _isCacheValid = false;
-      } else {
-        _isCacheValid =
-            _lastCacheUpdate!.add(_cacheDuration).isAfter(DateTime.now());
-      }
-
-      if (!_isCacheValid) {
-        // Clear the existing cache.
-        _projects.clear();
-        _workflows.clear();
-
-        // Get the latest cache information.
-        _projects.addAll(await ProjectSearchUtils.getProjectsFromCache(_path!));
-        _workflows
-            .addAll(await WorkflowSearchUtils.getWorkflowsFromCache(_path!));
-
-        // Update the last cache update time.
-        _lastCacheUpdate = DateTime.now();
-      }
-
-      // Wait 250 ms before starting the search. Make sure that the search query
-      // before and after didn't change to avoid unnecessary searches.
-      String _before = _searchController.text;
-
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
 
       // Ensure that we are still in the same search query.
-      if (_before != _searchController.text) {
+      if (before != _searchController.text) {
         return;
       }
 
-      Stream<List<dynamic>> _searchStream = AppGlobalSearch.search(
-        query: _searchController.text,
-        path: _path!,
-        projects: _projects,
-        workflows: _workflows,
-      ).timeout(const Duration(seconds: 5), onTimeout: (_) {
-        setState(() {
-          _projectResults.clear();
-          _workflowResults.clear();
-          _packageResults.clear();
-          _loadingSearch = false;
-        });
-      });
-
-      _searchStream.asBroadcastStream().listen((List<dynamic> data) {
-        String _type = data[0];
-        List<dynamic> _results = data[1];
-        String _forQuery = data[2];
-
-        // Make sure this is the latest search result, and not one for a
-        // previous query request. This is for the case where the user
-        // is typing a query, and the search results are being updated
-        // as the user types but couldn't catch up with the user typing
-        // the query.
-        if (_searchController.text != _forQuery && _type != 'loading') {
-          return;
-        }
-
-        switch (_type) {
-          case 'projects':
-            _projectResults.clear();
-            _projectResults
-                .addAll(_results.map((dynamic d) => d as ProjectObject));
-            break;
-          case 'workflows':
-            _workflowResults.clear();
-            _workflowResults.addAll(
-                _results.map((dynamic d) => d as ProjectWorkflowsGrouped));
-            break;
-          case 'packages':
-            _packageResults.clear();
-            _packageResults
-                .addAll(_results.map((dynamic d) => d as PkgViewData));
-            break;
-          case 'loading':
-            if (_results[0] == 'pub') {
-              _loadingPub = _forQuery != 'done';
-              if (_forQuery == 'error') {
-                logger.file(LogTypeTag.error, 'Pub search error');
-              }
-            }
-        }
-
-        setState(() {});
-      });
-
-      setState(() => _loadingSearch = false);
-    } catch (_, s) {
-      setState(() {
-        _projectResults.clear();
-        _workflowResults.clear();
-        _packageResults.clear();
-        _searchController.clear();
-        _loadingSearch = false;
-      });
-
-      await logger.file(
-          LogTypeTag.error, 'Failed to search in main component: $_',
-          stackTraces: s);
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-        context,
-        'Failed to search for some reason. Please try again.',
-        type: SnackBarType.error,
-      ));
+      await ref
+          .watch(appSearchStateNotifier.notifier)
+          .search(_searchController.text)
+          .timeout(const Duration(seconds: 5), onTimeout: () {});
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error,
+          'Failed to search in main component. Maybe a search timeout exceeded?',
+          error: e, stackTrace: s);
     }
   }
 
@@ -206,418 +85,383 @@ class _HomeSearchComponentState extends State<HomeSearchComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 15, 15, 5),
-      child: Stack(
-        fit: StackFit.loose,
-        children: <Widget>[
-          Row(
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        NotificationsNotifier notificationsNotifier =
+            ref.watch(notificationStateController.notifier);
+
+        AppSearchState appSearchState = ref.watch(appSearchStateNotifier);
+        AppSearchNotifier appSearchNotifier =
+            ref.watch(appSearchStateNotifier.notifier);
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(15, 15, 15, 5),
+          child: Stack(
+            fit: StackFit.loose,
             children: <Widget>[
-              Tooltip(
-                message: 'New Project',
-                waitDuration: const Duration(seconds: 1),
-                child: RectangleButton(
-                  width: 40,
-                  height: 40,
-                  child: const Icon(Icons.add_rounded, size: 20),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const SelectProjectTypeDialog(),
-                    );
-                  },
-                ),
-              ),
-              HSeparators.small(),
-              Tooltip(
-                message: 'Status',
-                waitDuration: const Duration(seconds: 1),
-                child: RectangleButton(
-                  width: 40,
-                  height: 40,
-                  child: const Icon(Icons.analytics_rounded, size: 20),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const StatusDialog(),
-                    );
-                  },
-                ),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: (MediaQuery.of(context).size.width > 1000) ? 500 : 400,
-                height: 40,
-                child: RoundContainer(
-                  padding: EdgeInsets.zero,
-                  borderColor: Colors.blueGrey.withOpacity(0.2),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 8,
-                          right: _searchController.text.isEmpty ||
-                                  !_searchNode.hasFocus
-                              ? 8
-                              : 5),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextFormField(
-                              focusNode: _searchNode,
-                              style: TextStyle(
-                                color: (Theme.of(context).isDarkTheme
-                                        ? Colors.white
-                                        : Colors.black)
-                                    .withOpacity(0.8),
+              Row(
+                children: <Widget>[
+                  Tooltip(
+                    message: 'New Project',
+                    waitDuration: const Duration(seconds: 1),
+                    child: RectangleButton(
+                      width: 40,
+                      height: 40,
+                      child: const Icon(Icons.add_rounded, size: 20),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const SelectProjectTypeDialog(),
+                        );
+                      },
+                    ),
+                  ),
+                  HSeparators.small(),
+                  Tooltip(
+                    message: 'Status',
+                    waitDuration: const Duration(seconds: 1),
+                    child: RectangleButton(
+                      width: 40,
+                      height: 40,
+                      child: const Icon(Icons.analytics_rounded, size: 20),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const StatusDialog(),
+                        );
+                      },
+                    ),
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    width:
+                        (MediaQuery.of(context).size.width > 1000) ? 500 : 400,
+                    height: 40,
+                    child: RoundContainer(
+                      padding: EdgeInsets.zero,
+                      borderColor: Colors.blueGrey.withOpacity(0.2),
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 8,
+                              right: _searchController.text.isEmpty ||
+                                      !_searchNode.hasFocus
+                                  ? 8
+                                  : 5),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: TextFormField(
+                                  enabled:
+                                      appSearchState.currentActivity.isEmpty,
+                                  focusNode: _searchNode,
+                                  style: TextStyle(
+                                    color: (themeState.darkTheme
+                                            ? Colors.white
+                                            : Colors.black)
+                                        .withOpacity(0.8),
+                                  ),
+                                  cursorRadius: const Radius.circular(5),
+                                  decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                      color: (themeState.darkTheme
+                                              ? Colors.white
+                                              : Colors.black)
+                                          .withOpacity(0.6),
+                                      fontSize: 14,
+                                    ),
+                                    hintText:
+                                        'Search projects, packages, workflows...',
+                                    border: InputBorder.none,
+                                    isCollapsed: true,
+                                  ),
+                                  controller: _searchController,
+                                  onChanged: (_) => _search(),
+                                ),
                               ),
-                              cursorRadius: const Radius.circular(5),
-                              decoration: InputDecoration(
-                                hintStyle: TextStyle(
-                                  color: (Theme.of(context).isDarkTheme
+                              HSeparators.xSmall(),
+                              if (_searchController.text.isEmpty ||
+                                  !_searchNode.hasFocus)
+                                const Icon(Icons.search_rounded, size: 16)
+                              else
+                                Tooltip(
+                                  message: 'Cancel',
+                                  waitDuration: const Duration(seconds: 1),
+                                  child: RectangleButton(
+                                    width: 30,
+                                    height: 30,
+                                    padding: const EdgeInsets.all(5),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      size: 13,
+                                      color: themeState.darkTheme
                                           ? Colors.white
-                                          : Colors.black)
-                                      .withOpacity(0.6),
-                                  fontSize: 14,
+                                          : Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      _searchNode.unfocus();
+                                      _searchController.clear();
+
+                                      appSearchNotifier.resetSearch();
+                                    },
+                                  ),
                                 ),
-                                hintText:
-                                    'Search projects, packages, workflows...',
-                                border: InputBorder.none,
-                                isCollapsed: true,
-                              ),
-                              controller: _searchController,
-                              onChanged: (_) {
-                                setState(() {});
-                                _search(); // Call search
-                              },
-                            ),
+                            ],
                           ),
-                          HSeparators.xSmall(),
-                          if (_searchController.text.isEmpty ||
-                              !_searchNode.hasFocus)
-                            const Icon(Icons.search_rounded, size: 16)
-                          else
-                            Tooltip(
-                              message: 'Cancel',
-                              waitDuration: const Duration(seconds: 1),
-                              child: RectangleButton(
-                                width: 30,
-                                height: 30,
-                                padding: const EdgeInsets.all(5),
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  size: 13,
-                                  color: Theme.of(context).isDarkTheme
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                                onPressed: () {
-                                  _searchNode.unfocus();
-                                  _searchController.clear();
-                                  setState(() {
-                                    _packageResults.clear();
-                                    _projectResults.clear();
-                                    _workflowResults.clear();
-                                  });
-                                },
-                              ),
-                            ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              const Spacer(),
-              Tooltip(
-                message: 'New Workflow',
-                waitDuration: const Duration(seconds: 1),
-                child: RectangleButton(
-                  width: 40,
-                  height: 40,
-                  child: const Icon(Icons.play_arrow_rounded,
-                      size: 20, color: kGreenColor),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const StartUpWorkflow(),
-                    );
-                  },
-                ),
-              ),
-              HSeparators.small(),
-              const _NotificationsButton(),
-            ],
-          ),
-          // Show the search results in realtime if the user has typed
-          // anything to search for.
-          if (_searchController.text.isNotEmpty)
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: Container(
-                  width: 500,
-                  constraints: const BoxConstraints(
-                    maxWidth: 500,
-                    maxHeight: 500,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).isDarkTheme
-                        ? const Color(0xff262F34)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.blueGrey.withOpacity(0.4)),
-                  ),
-                  // padding: const EdgeInsets.all(10),
-                  child: SingleChildScrollView(
-                    key: const ValueKey<String>('search-results'),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: (<dynamic>[
-                                ..._packageResults,
-                                ..._projectResults,
-                                ..._workflowResults
-                              ].isEmpty &&
-                              !_loadingPub)
-                          ? <Widget>[
-                              if (!_loadingSearch) ...<Widget>[
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      const StageTile(),
-                                      HSeparators.normal(),
-                                      const Expanded(
-                                        child: Text(
-                                            'The search feature is still an experimental feature and you have access to an early preview.'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                VSeparators.normal(),
-                                if (_loadingSearch)
-                                  const CustomLinearProgressIndicator(
-                                      includeBox: false)
-                                else
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 0, 10, 10),
-                                    child: informationWidget(
-                                      'There are no results for your search query. Try using another term instead.',
-                                      type: InformationType.error,
-                                    ),
-                                  ),
-                              ] else
-                                const Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child:
-                                      LoadActivityMessageElement(message: ''),
-                                ),
-                            ]
-                          : <Widget>[
-                              if (_projectResults.isNotEmpty) ...<Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10, top: 10),
-                                  child: Row(
-                                    children: const <Widget>[
-                                      Expanded(
-                                        child: Text('Projects',
-                                            style: TextStyle(fontSize: 18)),
-                                      ),
-                                      StageTile(),
-                                    ],
-                                  ),
-                                ),
-                                VSeparators.small(),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: SizedBox(
-                                    height: 150,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      key: const ValueKey<String>(
-                                          'project-list'),
-                                      itemCount: _projectResults.length,
-                                      itemBuilder: (_, int i) {
-                                        return SearchProjectTile(
-                                            project: _projectResults[i]);
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              if (_workflowResults.isNotEmpty)
-                                ..._workflowResults.map((_) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: SearchWorkflowsTile(workflow: _))),
-                              if (_loadingPub && _packageResults.isEmpty)
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      10,
-                                      <dynamic>[
-                                        ..._packageResults,
-                                        ..._projectResults,
-                                        ..._workflowResults
-                                      ].isEmpty
-                                          ? 10
-                                          : 0,
-                                      10,
-                                      10),
-                                  child: const LoadActivityMessageElement(
-                                      message: 'Searching Pub packages'),
-                                )
-                              else if (!_loadingPub && _packageResults.isEmpty)
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: RoundContainer(
-                                    child: Row(
-                                      children: <Widget>[
-                                        SvgPicture.asset(Assets.package,
-                                            color: context
-                                                    .read<ThemeChangeNotifier>()
-                                                    .isDarkTheme
-                                                ? Colors.white
-                                                : Colors.blueGrey,
-                                            height: 20),
-                                        HSeparators.xSmall(),
-                                        const Text(
-                                            'No packages found with your search query.'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              if (_packageResults.isNotEmpty) ...<Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10, top: 10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      const Expanded(
-                                        child: Text('Pub Packages',
-                                            style: TextStyle(fontSize: 18)),
-                                      ),
-                                      if (_loadingPub)
-                                        const Spinner(size: 14, thickness: 2),
-                                      HSeparators.small(),
-                                      const StageTile(),
-                                    ],
-                                  ),
-                                ),
-                                VSeparators.small(),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: SizedBox(
-                                    height: 150,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      key: const ValueKey<String>(
-                                          'package-list'),
-                                      itemCount: _packageResults.length,
-                                      itemBuilder: (_, int i) {
-                                        return SearchPackageTile(
-                                            package: _packageResults[i]);
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
+                  const Spacer(),
+                  Tooltip(
+                    message: 'New Workflow',
+                    waitDuration: const Duration(seconds: 1),
+                    child: RectangleButton(
+                      width: 40,
+                      height: 40,
+                      child: const Icon(Icons.play_arrow_rounded,
+                          size: 20, color: kGreenColor),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const StartUpWorkflow(),
+                        );
+                      },
                     ),
                   ),
-                ),
+                  HSeparators.small(),
+                  Tooltip(
+                    message: notificationsNotifier.notifications.isEmpty
+                        ? 'No Notifications'
+                        : 'Notifications (${notificationsNotifier.notifications.length})',
+                    waitDuration: const Duration(seconds: 1),
+                    child: Stack(
+                      children: <Widget>[
+                        RectangleButton(
+                          width: 40,
+                          height: 40,
+                          child: Icon(Icons.notifications_outlined,
+                              color: Colors.yellow[900], size: 20),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => const NotificationViewDialog(),
+                            );
+                          },
+                        ),
+                        Positioned(
+                          right: 10,
+                          top: 10,
+                          child: AnimatedOpacity(
+                            opacity:
+                                notificationsNotifier.notifications.isNotEmpty
+                                    ? 1
+                                    : 0,
+                            duration: const Duration(milliseconds: 150),
+                            child: const RoundContainer(
+                              color: kRedColor,
+                              radius: 20,
+                              height: 10,
+                              width: 10,
+                              child: SizedBox.shrink(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ),
-        ],
-      ),
-    );
-  }
-}
+              // Show the search results in realtime if the user has typed
+              // anything to search for.
+              Builder(
+                builder: (_) {
+                  if (_searchController.text.isNotEmpty) {
+                    return Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: Container(
+                          width: 500,
+                          constraints: const BoxConstraints(
+                            maxWidth: 500,
+                            maxHeight: 500,
+                          ),
+                          decoration: BoxDecoration(
+                            color: themeState.darkTheme
+                                ? const Color(0xff262F34)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                                color: Colors.blueGrey.withOpacity(0.4)),
+                          ),
+                          child: SingleChildScrollView(
+                            key: const ValueKey<String>('search-results'),
+                            child: Builder(
+                              builder: (_) {
+                                if (appSearchState.currentActivity.isNotEmpty) {
+                                  return LoadActivityMessageElement(
+                                      message: appSearchState.currentActivity);
+                                } else {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (appSearchNotifier
+                                          .projects.isNotEmpty) ...<Widget>[
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10, top: 10),
+                                          child: Text(
+                                            'Projects',
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        VSeparators.small(),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: SizedBox(
+                                            height: 150,
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              scrollDirection: Axis.horizontal,
+                                              key: const ValueKey<String>(
+                                                  'project-list'),
+                                              itemCount: appSearchNotifier
+                                                  .projects.length,
+                                              itemBuilder: (_, int i) {
+                                                return SearchProjectTile(
+                                                  project: appSearchNotifier
+                                                      .projects[i],
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      if (appSearchNotifier
+                                          .workflows.isNotEmpty)
+                                        ...appSearchNotifier.workflows.map(
+                                          (e) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: SearchWorkflowsTile(
+                                                  workflow: e),
+                                            );
+                                          },
+                                        ),
+                                      if (appSearchState.loading &&
+                                          appSearchNotifier.packages.isEmpty)
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              10,
+                                              <dynamic>[
+                                                ...appSearchNotifier.projects,
+                                                ...appSearchNotifier.workflows,
+                                                ...appSearchNotifier.packages
+                                              ].isEmpty
+                                                  ? 10
+                                                  : 0,
+                                              10,
+                                              10),
+                                          child:
+                                              const LoadActivityMessageElement(
+                                                  message:
+                                                      'Searching Pub packages'),
+                                        )
+                                      else if (!appSearchState.loading &&
+                                          appSearchNotifier.packages.isEmpty)
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              10,
+                                              appSearchNotifier
+                                                      .mergedResults.isEmpty
+                                                  ? 10
+                                                  : 0,
+                                              10,
+                                              10),
+                                          child: RoundContainer(
+                                            child: Row(
+                                              children: <Widget>[
+                                                SvgPicture.asset(Assets.package,
+                                                    color: themeState.darkTheme
+                                                        ? Colors.white
+                                                        : Colors.blueGrey,
+                                                    height: 20),
+                                                HSeparators.xSmall(),
+                                                const Text(
+                                                    'No packages found with your search query.'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      if (appSearchNotifier
+                                          .packages.isNotEmpty) ...<Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, right: 10, top: 10),
+                                          child: Row(
+                                            children: <Widget>[
+                                              const Expanded(
+                                                child: Text('Pub Packages',
+                                                    style: TextStyle(
+                                                        fontSize: 18)),
+                                              ),
+                                              if (appSearchState.loading)
+                                                const Spinner(
+                                                    size: 14, thickness: 2),
+                                            ],
+                                          ),
+                                        ),
+                                        VSeparators.small(),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: SizedBox(
+                                            height: 150,
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              scrollDirection: Axis.horizontal,
+                                              key: const ValueKey<String>(
+                                                  'package-list'),
+                                              itemCount: appSearchNotifier
+                                                  .packages.length,
+                                              itemBuilder: (_, int i) {
+                                                return SearchPackageTile(
+                                                  package: ref
+                                                      .watch(
+                                                          appSearchStateNotifier
+                                                              .notifier)
+                                                      .packages[i],
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
 
-class _NotificationsButton extends StatefulWidget {
-  const _NotificationsButton({Key? key}) : super(key: key);
-
-  @override
-  State<_NotificationsButton> createState() => _NotificationsButtonState();
-}
-
-class _NotificationsButtonState extends State<_NotificationsButton> {
-  int _notificationsCount = 0;
-  bool _hasNotifications = false;
-
-  Future<void> _reloadOnNotification() async {
-    while (mounted) {
-      await Future<void>.delayed(const Duration(seconds: 3));
-
-      if (mounted &&
-          context.read<NotificationsNotifier>().notifications.isNotEmpty) {
-        if (!_hasNotifications && mounted) {
-          setState(() => _hasNotifications = true);
-        }
-      } else {
-        if (_hasNotifications && mounted) {
-          setState(() => _hasNotifications = false);
-        }
-      }
-
-      if (mounted &&
-          context.read<NotificationsNotifier>().notifications.length !=
-              _notificationsCount) {
-        setState(() => _notificationsCount =
-            context.read<NotificationsNotifier>().notifications.length);
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    _reloadOnNotification();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: context.read<NotificationsNotifier>().notifications.isEmpty
-          ? 'No Notifications'
-          : 'Notifications (${context.read<NotificationsNotifier>().notifications.length})',
-      waitDuration: const Duration(seconds: 1),
-      child: Stack(
-        children: <Widget>[
-          RectangleButton(
-            width: 40,
-            height: 40,
-            child: Icon(Icons.notifications_outlined,
-                color: Colors.yellow[900], size: 20),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => const NotificationViewDialog(),
-              );
-            },
-          ),
-          Positioned(
-            right: 10,
-            top: 10,
-            child: AnimatedOpacity(
-              opacity: _hasNotifications ? 1 : 0,
-              duration: const Duration(milliseconds: 150),
-              child: const RoundContainer(
-                child: SizedBox.shrink(),
-                color: kRedColor,
-                radius: 20,
-                height: 10,
-                width: 10,
+                  return const SizedBox.shrink();
+                },
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

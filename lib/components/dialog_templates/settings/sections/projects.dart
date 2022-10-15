@@ -6,16 +6,16 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/actions/projects.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
-import 'package:fluttermatic/meta/views/tabs/sections/projects/models/projects.services.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class ProjectsSettingsSection extends StatefulWidget {
   const ProjectsSettingsSection({Key? key}) : super(key: key);
@@ -30,7 +30,7 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   String? _dirPath;
   bool _dirPathError = false;
 
-  int _refreshIntervals = 1;
+  int _refreshIntervals = 60;
 
   void _getProjectPath() {
     if (SharedPref().pref.containsKey(SPConst.projectsPath)) {
@@ -44,9 +44,9 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
   Future<void> _getProjectRefreshIntervals() async {
     if (SharedPref().pref.containsKey(SPConst.projectRefresh)) {
       setState(() => _refreshIntervals =
-          SharedPref().pref.getInt(SPConst.projectRefresh) ?? 1);
+          SharedPref().pref.getInt(SPConst.projectRefresh) ?? 60);
     } else {
-      await SharedPref().pref.setInt(SPConst.projectRefresh, 1);
+      await SharedPref().pref.setInt(SPConst.projectRefresh, 60);
     }
   }
 
@@ -106,23 +106,24 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                       color: Colors.blueGrey,
                     ),
                     onPressed: () async {
-                      String? _projectsDirectory;
-                      String? _directoryPath =
+                      String? projectsDirectory;
+                      String? directoryPath =
                           await file_selector.getDirectoryPath(
-                        initialDirectory: _projectsDirectory,
+                        initialDirectory: projectsDirectory,
                         confirmButtonText: 'Confirm',
                       );
-                      if (_directoryPath != null) {
+
+                      if (directoryPath != null) {
                         setState(() {
                           _dirPathError = false;
-                          _dirPath = _directoryPath;
+                          _dirPath = directoryPath;
                         });
                         await SharedPref()
                             .pref
-                            .setString(SPConst.projectsPath, _directoryPath);
+                            .setString(SPConst.projectsPath, directoryPath);
 
                         await logger.file(LogTypeTag.info,
-                            'Projects path was set to: $_directoryPath');
+                            'Projects path was set to: $directoryPath');
                       } else {
                         await logger.file(
                             LogTypeTag.warning, 'Projects path was not chosen');
@@ -146,13 +147,6 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
             ),
             HSeparators.normal(),
             PopupMenuButton<int>(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: _refreshIntervals == 60
-                    ? const Text('Every 1 hour')
-                    : Text(
-                        'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}'),
-              ),
               tooltip: '',
               itemBuilder: (_) {
                 return <PopupMenuEntry<int>>[
@@ -161,14 +155,15 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   const PopupMenuItem<int>(
                       value: 10, child: Text('10 minutes')),
                   const PopupMenuItem<int>(value: 60, child: Text('1 hour')),
+                  const PopupMenuItem<int>(value: -1, child: Text('Never')),
                 ];
               },
               onSelected: (int val) async {
                 try {
                   await SharedPref().pref.setInt(SPConst.projectRefresh, val);
-                  await ProjectServicesModel.updateProjectCache(
-                    supportDir: (await getApplicationSupportDirectory()).path,
-                    cache: ProjectCacheResult(
+                  await ProjectsNotifier.updateProjectSettings(
+                    (await getApplicationSupportDirectory()).path,
+                    ProjectCacheSettings(
                       projectsPath: null,
                       refreshIntervals: val,
                       lastProjectReload: null,
@@ -178,22 +173,34 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   await logger.file(LogTypeTag.info,
                       'Projects refresh intervals was set to: $val');
                   setState(() => _refreshIntervals = val);
-                } catch (_, s) {
+                } catch (e, s) {
                   await logger.file(LogTypeTag.error,
-                      'Couldn\'t set projects refresh interval: $_',
-                      stackTraces: s);
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    snackBarTile(
-                      context,
-                      'Couldn\'t update your project refresh intervals.',
-                      type: SnackBarType.error,
-                    ),
-                  );
+                      'Couldn\'t set projects refresh interval.',
+                      error: e, stackTrace: s);
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        'Couldn\'t update your project refresh intervals.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
                 }
               },
               initialValue: SharedPref().pref.getInt(SPConst.projectRefresh),
-            )
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _refreshIntervals == -1
+                    ? const Text('Never')
+                    : (_refreshIntervals == 60
+                        ? const Text('Every 1 hour')
+                        : Text(
+                            'Every $_refreshIntervals minute${_refreshIntervals > 1 ? 's' : ''}')),
+              ),
+            ),
           ],
         ),
         VSeparators.normal(),

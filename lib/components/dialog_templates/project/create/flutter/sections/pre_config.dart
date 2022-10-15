@@ -10,7 +10,7 @@ import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
@@ -98,91 +98,106 @@ class _FlutterProjectPreConfigSectionState
                         child: RectangleButton(
                           child: const Text('Upload .json'),
                           onPressed: () async {
-                            file_selector.XFile? _file =
+                            file_selector.XFile? file =
                                 await file_selector.openFile(
                               confirmButtonText: 'Upload',
                             );
 
-                            if (_file == null) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Please select your "google-services.json" file to setup Firebase.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                            if (file == null) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Please select your "google-services.json" file to setup Firebase.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                               return;
                             }
 
                             // Make sure it's a valid file
-                            if (!_file.path.endsWith('.json')) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'The file you selected is an invalid "google-services.json" file.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                            if (!file.path.endsWith('.json')) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'The file you selected is an invalid "google-services.json" file.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                               return;
                             }
 
                             // Make sure that the file name is "google-services.json"
-                            if (_file.name != 'google-services.json') {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Make sure that the file you selected is "google-services.json" file.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                            if (file.name != 'google-services.json') {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Make sure that the file you selected is "google-services.json" file.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                               return;
                             }
 
                             try {
                               // Read and extract the file.
-                              Map<String, dynamic> _googleServices =
-                                  jsonDecode(await _file.readAsString());
+                              Map<String, dynamic> googleServices =
+                                  jsonDecode(await file.readAsString());
 
-                              String _orgName = _googleServices['client'][0]
+                              String orgName = googleServices['client'][0]
                                       ['client_info']['android_client_info']
                                   ['package_name'];
 
-                              if (_orgName != widget.orgName) {
+                              if (orgName != widget.orgName) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    snackBarTile(
+                                      context,
+                                      'The file you selected is not for the current organization. Make sure organization name matches.',
+                                      type: SnackBarType.error,
+                                    ),
+                                  );
+                                }
+                                return;
+                              }
+
+                              widget.onJsonUpload(googleServices);
+
+                              if (mounted) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   snackBarTile(
                                     context,
-                                    'The file you selected is not for the current organization. Make sure organization name matches.',
+                                    'Successfully uploaded your "google-services.json" file. Your Flutter project will be setup to use Firebase.',
+                                    type: SnackBarType.done,
+                                  ),
+                                );
+                              }
+                            } catch (e, s) {
+                              await logger.file(LogTypeTag.error,
+                                  'Couldn\'t upload "google-services.json" file.',
+                                  error: e, stackTrace: s);
+
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Failed to upload your "google-services.json" file. Please make sure that the file is valid and not modified.',
                                     type: SnackBarType.error,
                                   ),
                                 );
-                                return;
                               }
-
-                              widget.onJsonUpload(_googleServices);
-
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Successfully uploaded your "google-services.json" file. Your Flutter project will be setup to use Firebase.',
-                                  type: SnackBarType.done,
-                                ),
-                              );
-                            } catch (_) {
-                              await logger.file(LogTypeTag.error,
-                                  'Couldn\'t upload "google-services.json" file. $_');
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Failed to upload your "google-services.json" file. Please make sure that the file is valid and not modified.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
                             }
                           },
                         ),
@@ -193,75 +208,87 @@ class _FlutterProjectPreConfigSectionState
                         child: RectangleButton(
                           child: const Text('Upload .plist'),
                           onPressed: () async {
-                            file_selector.XFile? _file =
+                            file_selector.XFile? file =
                                 await file_selector.openFile(
                               confirmButtonText: 'Upload',
                             );
 
-                            if (_file == null) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Please select your "GoogleService-Info.plist" file to setup Firebase.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                            if (file == null) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Please select your "GoogleService-Info.plist" file to setup Firebase.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                               return;
                             }
 
                             // Make sure it's a valid file
-                            if (!_file.path.endsWith('.plist')) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'The file you selected is an invalid "GoogleService-Info.plist" file.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                            if (!file.path.endsWith('.plist')) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'The file you selected is an invalid "GoogleService-Info.plist" file.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                               return;
                             }
 
                             // Make sure that the file name is "google-services.json"
-                            if (_file.name != 'GoogleService-Info.plist') {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Make sure that the file you selected is "GoogleService-Info.plist" file.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                            if (file.name != 'GoogleService-Info.plist') {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Make sure that the file you selected is "GoogleService-Info.plist" file.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                               return;
                             }
 
                             try {
                               // Read and extract the file.
-                              List<String> _plist =
-                                  await File(_file.path).readAsLines();
+                              List<String> plist =
+                                  await File(file.path).readAsLines();
 
-                              widget.onPlistUpload(_plist);
+                              widget.onPlistUpload(plist);
 
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Successfully uploaded your "GoogleService-Info.plist" file. Your Flutter project will be setup to use Firebase.',
-                                  type: SnackBarType.done,
-                                ),
-                              );
-                            } catch (_) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Successfully uploaded your "GoogleService-Info.plist" file. Your Flutter project will be setup to use Firebase.',
+                                    type: SnackBarType.done,
+                                  ),
+                                );
+                              }
+                            } catch (e, s) {
                               await logger.file(LogTypeTag.error,
-                                  'Couldn\'t upload "GoogleService-Info.plist" file. $_');
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                snackBarTile(
-                                  context,
-                                  'Failed to upload your "GoogleService-Info.plist" file. Please make sure that the file is valid and not modified.',
-                                  type: SnackBarType.error,
-                                ),
-                              );
+                                  'Couldn\'t upload "GoogleService-Info.plist" file.',
+                                  error: e, stackTrace: s);
+
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  snackBarTile(
+                                    context,
+                                    'Failed to upload your "GoogleService-Info.plist" file. Please make sure that the file is valid and not modified.',
+                                    type: SnackBarType.error,
+                                  ),
+                                );
+                              }
                             }
                           },
                         ),
@@ -318,7 +345,7 @@ class _FlutterProjectPreConfigSectionState
                         child: SquareButton(
                           icon: const Icon(Icons.close_rounded, size: 15),
                           onPressed: () {
-                            List<String> _config = widget.firebaseWebConfig;
+                            List<String> config = widget.firebaseWebConfig;
 
                             widget.onWebConfigUpload(<String>[]);
 
@@ -331,7 +358,7 @@ class _FlutterProjectPreConfigSectionState
                                 action: snackBarAction(
                                   text: 'Undo',
                                   onPressed: () =>
-                                      widget.onWebConfigUpload(_config),
+                                      widget.onWebConfigUpload(config),
                                 ),
                               ),
                             );
@@ -369,7 +396,7 @@ class _FlutterProjectPreConfigSectionState
                         child: SquareButton(
                           icon: const Icon(Icons.close_rounded, size: 15),
                           onPressed: () {
-                            Map<String, dynamic> _json = widget.firebaseJson;
+                            Map<String, dynamic> json = widget.firebaseJson;
 
                             widget.onJsonUpload(<String, dynamic>{});
 
@@ -381,7 +408,7 @@ class _FlutterProjectPreConfigSectionState
                                 type: SnackBarType.done,
                                 action: snackBarAction(
                                   text: 'Undo',
-                                  onPressed: () => widget.onJsonUpload(_json),
+                                  onPressed: () => widget.onJsonUpload(json),
                                 ),
                               ),
                             );
@@ -418,13 +445,13 @@ class _FlutterProjectPreConfigSectionState
             child: RoundContainer(
               child: Builder(
                 builder: (_) {
-                  String _projectId = 'Unknown';
-                  String _gcmSenderId = 'Unknown';
+                  String projectId = 'Unknown';
+                  String gcmSenderId = 'Unknown';
 
                   for (int i = 0; i < widget.firebasePlist.length; i++) {
                     if (widget.firebasePlist[i].trim() ==
                         '<key>GCM_SENDER_ID</key>') {
-                      _gcmSenderId = widget.firebasePlist[i + 1]
+                      gcmSenderId = widget.firebasePlist[i + 1]
                           .trim()
                           .split('<string>')[1]
                           .split('</string>')
@@ -435,7 +462,7 @@ class _FlutterProjectPreConfigSectionState
                   for (int i = 0; i < widget.firebasePlist.length; i++) {
                     if (widget.firebasePlist[i].trim() ==
                         '<key>PROJECT_ID</key>') {
-                      _projectId = widget.firebasePlist[i + 1]
+                      projectId = widget.firebasePlist[i + 1]
                           .trim()
                           .split('<string>')[1]
                           .split('</string>')
@@ -451,7 +478,7 @@ class _FlutterProjectPreConfigSectionState
                           const Icon(Icons.phone_iphone_rounded, size: 18),
                           HSeparators.small(),
                           Expanded(
-                            child: Text(_projectId + ' - iOS'),
+                            child: Text('$projectId - iOS'),
                           ),
                           Tooltip(
                             message: 'Remove',
@@ -459,7 +486,7 @@ class _FlutterProjectPreConfigSectionState
                             child: SquareButton(
                               icon: const Icon(Icons.close_rounded, size: 15),
                               onPressed: () {
-                                List<String> _plist = widget.firebasePlist;
+                                List<String> plist = widget.firebasePlist;
 
                                 widget.onPlistUpload(<String>[]);
 
@@ -472,7 +499,7 @@ class _FlutterProjectPreConfigSectionState
                                     action: snackBarAction(
                                       text: 'Undo',
                                       onPressed: () =>
-                                          widget.onPlistUpload(_plist),
+                                          widget.onPlistUpload(plist),
                                     ),
                                   ),
                                 );
@@ -493,7 +520,7 @@ class _FlutterProjectPreConfigSectionState
                           ),
                           Expanded(
                             child: Text(
-                              _gcmSenderId,
+                              gcmSenderId,
                               style: const TextStyle(color: Colors.grey),
                             ),
                           ),
@@ -507,7 +534,7 @@ class _FlutterProjectPreConfigSectionState
                       if (widget.firebaseJson.isNotEmpty &&
                           (widget.firebaseJson['project_info']
                                   ['project_number'] !=
-                              _gcmSenderId))
+                              gcmSenderId))
                         Padding(
                           padding: const EdgeInsets.only(top: 15),
                           child: informationWidget(
@@ -595,7 +622,7 @@ class __AddWebConfigState extends State<_AddWebConfig> {
                       return;
                     }
 
-                    List<String> _mustContain = <String>[
+                    List<String> mustContain = <String>[
                       'import { initializeApp } from "firebase/app";',
                       'const firebaseConfig = {',
                       'apiKey: ',
@@ -608,9 +635,8 @@ class __AddWebConfigState extends State<_AddWebConfig> {
                       'initializeApp(firebaseConfig)',
                     ];
 
-                    for (String _mustContainItem in _mustContain) {
-                      if (_webConfigController.text
-                          .contains(_mustContainItem)) {
+                    for (String mustContainItem in mustContain) {
+                      if (_webConfigController.text.contains(mustContainItem)) {
                         continue;
                       }
 

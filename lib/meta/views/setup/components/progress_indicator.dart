@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/core/notifiers/download.notifier.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/download.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
@@ -14,25 +15,28 @@ class CustomProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DownloadNotifier>(
-      builder: (BuildContext context, DownloadNotifier downloadNotifier, _) {
-        if (downloadNotifier.downloadProgress < 100) {
+    return Consumer(
+      builder: (_, ref, __) {
+        DownloadState downloadState = ref.watch(downloadStateController);
+
+        if (downloadState.downloadProgress < 100) {
           return SizedBox(
             width: 200,
             child: Column(
               children: <Widget>[
                 hLoadingIndicator(
-                  value: downloadNotifier.downloadProgress / 100,
+                  value: downloadState.downloadProgress / 100,
                   valueColor: const AlwaysStoppedAnimation<Color>(
                       AppTheme.primaryColor),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('${downloadNotifier.downloadProgress.floor()}%'),
-                    Text(downloadNotifier.remainingTime == 'calculating'
+                    Text('${downloadState.downloadProgress.floor()}%'),
+                    Text(downloadState.remainingTime ==
+                            const DownloadState().remainingTime
                         ? 'Calculating...'
-                        : '${downloadNotifier.remainingTime} left'),
+                        : '${downloadState.remainingTime} left'),
                   ],
                 ),
               ],

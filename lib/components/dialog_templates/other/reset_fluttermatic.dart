@@ -7,11 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
@@ -19,14 +19,14 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/core/notifiers/space.notifier.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/views/setup/components/loading_indicator.dart';
 
-class ResetFlutterMaticDialog extends StatefulWidget {
+class ResetFlutterMaticDialog extends ConsumerStatefulWidget {
   const ResetFlutterMaticDialog({Key? key}) : super(key: key);
 
   @override
@@ -34,7 +34,8 @@ class ResetFlutterMaticDialog extends StatefulWidget {
       _ResetFlutterMaticDialogState();
 }
 
-class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
+class _ResetFlutterMaticDialogState
+    extends ConsumerState<ResetFlutterMaticDialog> {
   String _verificationTxt = '';
 
   bool _loading = true;
@@ -47,28 +48,31 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
       await logger.file(
           LogTypeTag.info, 'FlutterMatic was restarted and deleted all data.');
 
-      Directory _appData = await getApplicationSupportDirectory();
+      Directory appData = await getApplicationSupportDirectory();
 
-      if (await _appData.exists()) {
-        await _appData.delete(recursive: true);
+      if (await appData.exists()) {
+        await appData.delete(recursive: true);
       }
 
-      Directory _downloadedTools =
-          Directory(context.read<SpaceCheck>().drive + '\\fluttermatic');
+      String drive = ref.watch(spaceStateController).drive;
 
-      if (await _downloadedTools.exists()) {
-        await _downloadedTools.delete(recursive: true);
+      Directory downloadedTools = Directory('$drive\\fluttermatic');
+
+      if (await downloadedTools.exists()) {
+        await downloadedTools.delete(recursive: true);
       }
 
       await SharedPref().pref.clear();
 
       // Restart the app.
-      RestartWidget.restartApp(context);
+      if (mounted) {
+        RestartWidget.restartApp(context);
+      }
 
       setState(() => _loading = false);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to delete app data: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to delete app data.',
+          error: e, stackTrace: s);
 
       setState(() => _loading = false);
     }
@@ -157,7 +161,9 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
 
                               await _beginDelete();
 
-                              Navigator.pop(context);
+                              if (mounted) {
+                                Navigator.pop(context);
+                              }
                             }
                           },
                         ),
@@ -177,14 +183,14 @@ class _ResetFlutterMaticDialogState extends State<ResetFlutterMaticDialog> {
 /// Generates a random string that contains [total] characters. This will
 /// contain numbers, uppercase and lowercase letters.
 String generateRandomString(int total) {
-  const String _chars =
+  const String chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 
-  Random _rnd = Random();
+  Random rnd = Random();
 
   String getRandomString(int length) =>
       String.fromCharCodes(Iterable<int>.generate(
-          length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+          length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
 
   return getRandomString(total);
 }

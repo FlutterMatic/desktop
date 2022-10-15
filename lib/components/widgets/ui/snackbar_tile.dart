@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 SnackBar snackBarTile(
   BuildContext context,

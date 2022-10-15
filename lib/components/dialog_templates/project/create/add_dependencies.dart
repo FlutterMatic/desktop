@@ -1,5 +1,5 @@
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 Future<bool> addDependencyToProject({
@@ -12,11 +12,15 @@ Future<bool> addDependencyToProject({
   try {
     await shell.cd(path).run(
         '${isDart ? 'dart' : 'flutter'} pub ${remove ? 'remove' : 'add'} $dependency${isDev ? ' --dev' : ''}');
+
+    await logger.file(LogTypeTag.info,
+        'Successfully ${remove ? 'removed' : 'added'} ${isDev ? 'dev' : 'normal'} dependency to project.');
+
     return true;
-  } catch (_, s) {
+  } catch (e, s) {
     await logger.file(LogTypeTag.warning,
-        'Failed to add ${isDev ? 'dev' : 'normal'} dependency to project. Could be already added: $_',
-        stackTraces: s);
+        'Failed to add ${isDev ? 'dev' : 'normal'} dependency to project. Could be already added.',
+        error: e, stackTrace: s);
 
     return false;
   }

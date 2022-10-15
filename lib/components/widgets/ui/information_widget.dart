@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 Widget informationWidget(
   String text, {
   InformationType type = InformationType.warning,
   bool showIcon = true,
 }) {
-  String _typeLabel = (type == InformationType.green
+  String typeLabel = (type == InformationType.green
       ? 'Success'
       : type == InformationType.info
           ? 'Info'
@@ -23,7 +23,7 @@ Widget informationWidget(
               : 'Warning');
   return MergeSemantics(
     child: Semantics(
-      label: _typeLabel + ': ' + text,
+      label: '$typeLabel: $text',
       child: RoundContainer(
         color: _getColor(type).withOpacity(0.1),
         borderColor: _getColor(type),

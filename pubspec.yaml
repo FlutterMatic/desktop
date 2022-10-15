@@ -11,56 +11,61 @@ dependencies:
     sdk: flutter
 
   # Dependencies
-  bitsdojo_window: ^0.1.1+1
-  connectivity_plus: ^2.2.1
-  pubspec_parse: ^1.2.0
-  file_selector: ^0.8.3
-  file_selector_linux: ^0.0.2+1
-  file_selector_macos: ^0.0.4+1
-  file_selector_windows: ^0.8.2
-  flutter_markdown: ^0.6.9
-  flutter_svg: ^1.0.3
+  connectivity_plus: ^2.3.9
+  bitsdojo_window: ^0.1.5
+  window_manager: ^0.2.7
+  flutter_riverpod: ^2.0.2
+  pubspec_parse: ^1.2.1
+  file_selector: ^0.9.2
+  file_selector_linux: ^0.9.0
+  file_selector_macos: ^0.9.0+2
+  file_selector_windows: ^0.9.1+3
+  flutter_markdown: ^0.6.12
+  flutter_svg: ^1.1.5
   highlight: ^0.7.0
-  http: ^0.13.4
+  http: ^0.13.5
   intl: ^0.17.0
-  path_provider: ^2.0.9
+  path_provider: ^2.0.11
   process_run: ^0.12.3+2
-  provider: ^6.0.2
   retry: ^3.1.0
-  shared_preferences: ^2.0.13
-  url_launcher: ^6.0.20
-  pub_api_client: ^2.2.1
+  shared_preferences: ^2.0.15
+  url_launcher: ^6.1.6
   universal_disk_space: ^0.2.3
 
-  # Package Info
-  package_info_plus: ^1.4.0
-  package_info_plus_linux: ^1.0.3
-  package_info_plus_macos: ^1.3.0
-  package_info_plus_windows: ^1.0.4
+  pub_api_client:
+    git:
+      url: https://github.com/fluttertools/pub_api_client.git
+      branch: main
 
-msix_config:
-  display_name: FlutterMatic
-  publisher_display_name: FlutterMatic
-  msix_version: 0.0.0.1
-  # certificate_path: ./CERTIFICATE.pfx
-  identity_name: com.fluttermatic.manager
-  publisher: CN=FLUTTERMATIC, O=FlutterMatic
-  icons_background_color: transparent
-  architecture: x64
-  capabilities: "internetClient"
-  # We want to be able to release this app on the Windows Store
-  store: true
+  # Package Info
+  package_info_plus: ^2.0.0
+  package_info_plus_linux: ^2.0.0
+  package_info_plus_macos: ^2.0.0
+  package_info_plus_windows: ^3.0.0
+
+# msix_config:
+#   display_name: FlutterMatic
+#   publisher_display_name: FlutterMatic
+#   msix_version: 0.0.0.1
+#   # certificate_path: ./CERTIFICATE.pfx
+#   identity_name: com.fluttermatic.manager
+#   publisher: CN=FLUTTERMATIC, O=FlutterMatic
+#   icons_background_color: transparent
+#   architecture: x64
+#   capabilities: "internetClient"
+#   # We want to be able to release this app on the Windows Store
+#   store: true
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   # Build Dependencies
-  build_runner: ^2.1.7
-  msix: ^3.2.0
+  build_runner: ^2.3.0
+  # msix: ^3.6.3
 
   # Lint
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.1
   import_sorter: ^4.6.0
 
 # Emoji Sorter Service

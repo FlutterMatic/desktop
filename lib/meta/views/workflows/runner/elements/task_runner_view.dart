@@ -6,12 +6,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/enum.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/enum.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/extract_pubspec.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/elements/action_scripts.dart';
@@ -19,7 +19,7 @@ import 'package:fluttermatic/meta/views/workflows/runner/models/write_log.dart';
 
 class TaskRunnerView extends StatefulWidget {
   final File logFile;
-  final WorkflowTemplate template;
+  final WorkflowTemplate workflow;
   final List<String> completedActions;
   final WorkflowActionStatus status;
   final WorkflowActionModel action;
@@ -32,7 +32,7 @@ class TaskRunnerView extends StatefulWidget {
     Key? key,
     required this.action,
     required this.currentAction,
-    required this.template,
+    required this.workflow,
     required this.onDone,
     required this.dirPath,
     required this.completedActions,
@@ -95,33 +95,33 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
   Future<void> _prepareCommands() async {
     _commands.clear();
 
-    bool _isFlutter = false;
+    bool isFlutter = false;
 
-    List<String> _pubspecLines =
-        await File(_projectPath + '\\pubspec.yaml').readAsLines();
+    List<String> pubspecLines =
+        await File('$_projectPath\\pubspec.yaml').readAsLines();
 
-    _isFlutter = extractPubspec(
-            lines: _pubspecLines, path: _projectPath + '\\pubspec.yaml')
-        .isFlutterProject;
+    isFlutter =
+        extractPubspec(lines: pubspecLines, path: '$_projectPath\\pubspec.yaml')
+            .isFlutterProject;
 
     // Analyze project
     if (widget.action.id == WorkflowActionsIds.analyzeDartProject) {
-      _commands.addAll(WorkflowActionScripts.analyzeDartProject(_isFlutter));
+      _commands.addAll(WorkflowActionScripts.analyzeDartProject(isFlutter));
       return;
     }
 
     // Test project
     if (widget.action.id == WorkflowActionsIds.runProjectTests) {
-      _commands.addAll(WorkflowActionScripts.runProjectTests(_isFlutter));
+      _commands.addAll(WorkflowActionScripts.runProjectTests(isFlutter));
       return;
     }
 
     // Build Web
     if (widget.action.id == WorkflowActionsIds.buildProjectForWeb) {
-      _timeoutMinutes = widget.template.webBuildTimeout;
+      _timeoutMinutes = widget.workflow.webBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForWeb(
-        mode: widget.template.webBuildMode,
-        renderer: widget.template.webRenderer,
+        mode: widget.workflow.webBuildMode,
+        renderer: widget.workflow.webRenderer,
       ));
       return;
     }
@@ -136,19 +136,19 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
-      _timeoutMinutes = widget.template.iOSBuildTimeout;
+      _timeoutMinutes = widget.workflow.iOSBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForIos(
-        widget.template.iOSBuildMode,
+        widget.workflow.iOSBuildMode,
       ));
       return;
     }
 
     // Build for Android
     if (widget.action.id == WorkflowActionsIds.buildProjectForAndroid) {
-      _timeoutMinutes = widget.template.androidBuildTimeout;
+      _timeoutMinutes = widget.workflow.androidBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForAndroid(
-        mode: widget.template.androidBuildMode,
-        type: widget.template.androidBuildType,
+        mode: widget.workflow.androidBuildMode,
+        type: widget.workflow.androidBuildType,
       ));
       return;
     }
@@ -163,9 +163,9 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
-      _timeoutMinutes = widget.template.windowsBuildTimeout;
+      _timeoutMinutes = widget.workflow.windowsBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForWindows(
-        widget.template.windowsBuildMode,
+        widget.workflow.windowsBuildMode,
       ));
       return;
     }
@@ -180,9 +180,9 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
-      _timeoutMinutes = widget.template.macosBuildTimeout;
+      _timeoutMinutes = widget.workflow.macosBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForMacos(
-        widget.template.macosBuildMode,
+        widget.workflow.macosBuildMode,
       ));
       return;
     }
@@ -197,9 +197,9 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
         return;
       }
 
-      _timeoutMinutes = widget.template.linuxBuildTimeout;
+      _timeoutMinutes = widget.workflow.linuxBuildTimeout;
       _commands.addAll(WorkflowActionScripts.buildProjectForLinux(
-        widget.template.linuxBuildMode,
+        widget.workflow.linuxBuildMode,
       ));
       return;
     }
@@ -208,7 +208,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
     if (widget.action.id == WorkflowActionsIds.runCustomCommands) {
       await writeWorkflowSessionLog(
           widget.logFile, LogTypeTag.info, 'Running custom commands');
-      _commands.addAll(widget.template.customCommands);
+      _commands.addAll(widget.workflow.customCommands);
       return;
     }
   }
@@ -286,15 +286,18 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
           'Workflow action done running: ${widget.action.id}');
 
       widget.onDone();
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
           'Error running workflow action: ${_commands.join(',')}',
-          stackTraces: s);
+          stackTrace: s);
+
       await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
           'Failed to run workflow action: ${widget.action.id}');
+
       if (mounted) {
         setState(() => _status = WorkflowActionStatus.failed);
       }
+
       widget.onDone();
     }
   }
@@ -380,8 +383,7 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
               else if (_status == WorkflowActionStatus.skipped)
                 const Tooltip(
                   padding: EdgeInsets.all(5),
-                  message:
-                      '''
+                  message: '''
 When a workflow action is skipped, it most likely means that it was 
 because this workflow action is not supported on your platform.''',
                   child: Text(

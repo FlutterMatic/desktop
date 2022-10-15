@@ -2,18 +2,18 @@
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/tab_view.dart';
-import 'package:fluttermatic/core/notifiers/theme.notifier.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class OverviewSettingsSection extends StatefulWidget {
   const OverviewSettingsSection({Key? key}) : super(key: key);
@@ -26,61 +26,67 @@ class OverviewSettingsSection extends StatefulWidget {
 class _OverviewSettingsSectionState extends State<OverviewSettingsSection> {
   @override
   Widget build(BuildContext context) {
-    return TabViewTabHeadline(
-      title: 'Overview',
-      allowContentScroll: false,
-      content: <Widget>[
-        RoundContainer(
-          child: CheckBoxElement(
-            onChanged: (bool? value) async {
-              await SharedPref()
-                  .pref
-                  .setBool(SPConst.homeShowGuide, value ?? false);
-              setState(() {});
-            },
-            value: SharedPref().pref.getBool(SPConst.homeShowGuide) ?? true,
-            text: 'Show home page setup guide',
-          ),
-        ),
-        VSeparators.normal(),
-        const Text('Theme'),
-        VSeparators.small(),
-        _themeTiles(
-          context,
-          selected: !Theme.of(context).isDarkTheme &&
-              !ThemeChangeNotifier().isSystemTheme,
-          title: 'Light Mode',
-          description: 'Get a bright and shining desktop',
-          onPressed: () {
-            if (Theme.of(context).isDarkTheme) {
-              context.read<ThemeChangeNotifier>().updateTheme(
-                  Theme.of(context).brightness == Brightness.light);
-            }
-          },
-        ),
-        VSeparators.small(),
-        _themeTiles(
-          context,
-          selected: Theme.of(context).isDarkTheme &&
-              !ThemeChangeNotifier().isSystemTheme,
-          title: 'Dark Mode',
-          description: 'For dark and nighty appearance',
-          onPressed: () {
-            if (!Theme.of(context).isDarkTheme) {
-              context.read<ThemeChangeNotifier>().updateTheme(
-                  Theme.of(context).brightness == Brightness.light);
-            }
-          },
-        ),
-        const Spacer(),
-        Align(
-          alignment: Alignment.centerRight,
-          child: SelectableText(
-            appVersion + ' - ' + appBuild,
-            style: const TextStyle(color: Colors.grey),
-          ),
-        ),
-      ],
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        var themeNotifier = ref.watch(themeStateController.notifier);
+
+        return TabViewTabHeadline(
+          title: 'Overview',
+          allowContentScroll: false,
+          content: <Widget>[
+            RoundContainer(
+              child: CheckBoxElement(
+                onChanged: (bool? value) async {
+                  await SharedPref()
+                      .pref
+                      .setBool(SPConst.homeShowGuide, value ?? false);
+                  setState(() {});
+                },
+                value: SharedPref().pref.getBool(SPConst.homeShowGuide) ?? true,
+                text: 'Show home page setup guide',
+              ),
+            ),
+            VSeparators.normal(),
+            const Text('Theme'),
+            VSeparators.small(),
+            _themeTiles(
+              context,
+              selected: !themeState.darkTheme && !themeState.systemTheme,
+              title: 'Light Mode',
+              description: 'Get a bright and shining desktop',
+              onPressed: () {
+                if (themeState.darkTheme) {
+                  themeNotifier.updateTheme(
+                      Theme.of(context).brightness == Brightness.light);
+                }
+              },
+            ),
+            VSeparators.small(),
+            _themeTiles(
+              context,
+              selected: themeState.darkTheme && !themeState.systemTheme,
+              title: 'Dark Mode',
+              description: 'For dark and nighty appearance',
+              onPressed: () {
+                if (!themeState.darkTheme) {
+                  themeNotifier.updateTheme(
+                      Theme.of(context).brightness == Brightness.light);
+                }
+              },
+            ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: SelectableText(
+                '$appVersion - $appBuild',
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

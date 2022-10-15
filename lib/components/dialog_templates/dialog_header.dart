@@ -1,9 +1,14 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/components/widgets/buttons/close_button.dart';
-import 'package:fluttermatic/meta/utils/app_theme.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
+import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 class DialogHeader extends StatelessWidget {
   final String title;
@@ -25,44 +30,51 @@ class DialogHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+    return Consumer(
+      builder: (_, ref, __) {
+        ThemeState themeState = ref.watch(themeStateController);
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: Stack(
+            alignment: Alignment.center,
             children: <Widget>[
-              leading ?? const SizedBox(width: 40),
-              const Spacer(),
-              AnimatedOpacity(
-                duration: Duration.zero,
-                opacity: canClose ? 1 : 0,
-                child: IgnorePointer(
-                  ignoring: !canClose,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: CustomCloseButton(
-                      onClose: onClose,
-                      iconColor: Theme.of(context).isDarkTheme
-                          ? AppTheme.darkTheme.iconTheme.color!
-                          : AppTheme.lightTheme.iconTheme.color!,
-                      onHoverColor: onHoverButtonColor,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  leading ?? const SizedBox(width: 40),
+                  const Spacer(),
+                  AnimatedOpacity(
+                    duration: Duration.zero,
+                    opacity: canClose ? 1 : 0,
+                    child: IgnorePointer(
+                      ignoring: !canClose,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: CustomCloseButton(
+                          onClose: onClose,
+                          iconColor: themeState.darkTheme
+                              ? AppTheme.darkTheme.iconTheme.color!
+                              : AppTheme.lightTheme.iconTheme.color!,
+                          onHoverColor: onHoverButtonColor,
+                        ),
+                      ),
                     ),
-                  ),
+                  )
+                ],
+              ),
+              Center(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-              )
+              ),
             ],
           ),
-          Center(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

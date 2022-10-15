@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
+import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
-import 'package:fluttermatic/meta/utils/bin/utils/workflow.search.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/views/options.dart';
@@ -30,7 +30,11 @@ class SearchWorkflowsTile extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                    workflow.path.split('\\').last.split('_').map((String e) {
+                    workflow.projectPath
+                        .split('\\')
+                        .last
+                        .split('_')
+                        .map((String e) {
                       // Capitalize first letter
                       return e.substring(0, 1).toUpperCase() + e.substring(1);
                     }).join(' '),
@@ -45,12 +49,12 @@ class SearchWorkflowsTile extends StatelessWidget {
           height: 150,
           child: ListView.builder(
             shrinkWrap: true,
-            key: ValueKey<String>(workflow.path),
+            key: ValueKey<String>(workflow.projectPath),
             scrollDirection: Axis.horizontal,
             itemCount: workflow.workflows.length,
             itemBuilder: (_, int i) {
               return _WorkflowTile(
-                  path: workflow.path, workflow: workflow.workflows[i]);
+                  path: workflow.projectPath, workflow: workflow.workflows[i]);
             },
           ),
         ),
@@ -103,14 +107,7 @@ class _WorkflowTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (_) => ShowWorkflowTileOptions(
-                        workflowPath: path +
-                            '\\' +
-                            fmWorkflowDir +
-                            '\\' +
-                            workflow.name +
-                            '.json',
-                        onDelete: () {},
-                        onReload: () {},
+                        workflow: workflow,
                       ),
                     );
                   },
@@ -127,12 +124,8 @@ class _WorkflowTile extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (_) => WorkflowRunnerDialog(
-                          workflowPath: path +
-                              '\\' +
-                              fmWorkflowDir +
-                              '\\' +
-                              workflow.name +
-                              '.json'),
+                        workflow: workflow,
+                      ),
                     );
                   },
                 ),

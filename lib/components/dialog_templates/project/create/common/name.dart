@@ -6,15 +6,15 @@ import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart' as file_selector;
 
 // 🌎 Project imports:
-import 'package:fluttermatic/app/constants/constants.dart';
-import 'package:fluttermatic/app/constants/shared_pref.dart';
+import 'package:fluttermatic/app/constants.dart';
+import 'package:fluttermatic/app/shared_pref.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/text_field.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/meta/utils/shared_pref.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class ProjectNameSection extends StatefulWidget {
   final String? path;
@@ -165,23 +165,25 @@ class _ProjectNameSectionState extends State<ProjectNameSection> {
                 child:
                     Text(widget.path == null ? 'Select Path' : 'Change path'),
                 onPressed: () async {
-                  String? _path = await file_selector.getDirectoryPath();
+                  String? path = await file_selector.getDirectoryPath();
 
-                  if (_path == null) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBarTile(
-                        context,
-                        'Please select a path.',
-                        type: widget.path == null
-                            ? SnackBarType.error
-                            : SnackBarType.warning,
-                      ),
-                    );
+                  if (path == null) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBarTile(
+                          context,
+                          'Please select a path.',
+                          type: widget.path == null
+                              ? SnackBarType.error
+                              : SnackBarType.warning,
+                        ),
+                      );
+                    }
                     return;
                   }
 
-                  widget.onPathUpdate(_path);
+                  widget.onPathUpdate(path);
                 },
               ),
             ],
