@@ -169,8 +169,3 @@ pubspec.lock
 
 # All FlutterMatic workflows are hidden.
 .fmatic/
-# Specific FlutterMatic workflow hidden: test
-.fmatic/test.json
-
-# Specific FlutterMatic workflow hidden: hello_samih
-.fmatic/hello_samih.json
