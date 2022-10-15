@@ -59,9 +59,9 @@ class CheckServicesState {
 }
 
 class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
-  final Reader read;
+  final Ref ref;
 
-  CheckServicesNotifier(this.read) : super(CheckServicesState.initial());
+  CheckServicesNotifier(this.ref) : super(CheckServicesState.initial());
 
   /// Getters/setters for the last fetched values.
   ServiceCheckResponse? _flutter;
@@ -186,10 +186,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
 
       try {
         result = await shell.run('dart --version');
-      } catch (_, s) {
+      } catch (e, s) {
         await logger.file(
-            LogTypeTag.error, 'CheckServices Failed to get Dart version: $_',
-            stackTraces: s, logDir: logPath);
+            LogTypeTag.error, 'CheckServices Failed to get Dart version.',
+            error: e, stackTrace: s, logDir: logPath);
 
         _dart = ServiceCheckResponse(version: null, channel: null);
       }
@@ -215,10 +215,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
         version: version,
         channel: channel,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to fetch dart information on system: $_',
-          stackTraces: s, logDir: logPath);
+          LogTypeTag.error, 'Failed to fetch Dart information on system.',
+          error: e, stackTrace: s, logDir: logPath);
 
       _dart = ServiceCheckResponse(version: null, channel: null);
 
@@ -254,10 +254,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
         version: info?.version,
         channel: info?.channel,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to fetch flutter information on system: $_',
-          stackTraces: s, logDir: logPath);
+          LogTypeTag.error, 'Failed to fetch Flutter information on system.',
+          error: e, stackTrace: s, logDir: logPath);
 
       _flutter = ServiceCheckResponse(version: null, channel: null);
 
@@ -291,10 +291,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
         version: info?.adbVersion,
         channel: null,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
-          'Failed to fetch android studio information on system: $_',
-          stackTraces: s, logDir: logPath);
+          'Failed to fetch Android Studio information on system.',
+          error: e, stackTrace: s, logDir: logPath);
 
       _adb = ServiceCheckResponse(version: null, channel: null);
 
@@ -328,10 +328,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
         version: info?.vscVersion,
         channel: null,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to fetch vscode information on system: $_',
-          stackTraces: s, logDir: logPath);
+          LogTypeTag.error, 'Failed to fetch VSCOde information on system.',
+          error: e, stackTrace: s, logDir: logPath);
 
       _vsCode = ServiceCheckResponse(version: null, channel: null);
 
@@ -363,10 +363,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
         version: info?.gitVersion,
         channel: null,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to fetch git information on system: $_',
-          stackTraces: s, logDir: logPath);
+          LogTypeTag.error, 'Failed to fetch Git information on system.',
+          error: e, stackTrace: s, logDir: logPath);
 
       _git = ServiceCheckResponse(version: null, channel: null);
 
@@ -407,10 +407,10 @@ class CheckServicesNotifier extends StateNotifier<CheckServicesState> {
         version: info?.javaVersion,
         channel: null,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to fetch java information on system: $_',
-          stackTraces: s, logDir: logPath);
+          LogTypeTag.error, 'Failed to fetch Java information on system.',
+          error: e, stackTrace: s, logDir: logPath);
 
       _java = ServiceCheckResponse(version: null, channel: null);
 

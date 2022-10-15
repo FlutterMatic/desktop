@@ -53,7 +53,7 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
         }
         break;
       case 'studio':
-        // TODO: Support opening projects in Android Studio
+        // TODO: Support opening projects in Android Studio.
         // if (Platform.isMacOS) {
         //   await shell.cd(widget.path).run(
         //       'open -a /Applications/Android\\ Studio.app /${widget.path}');
@@ -111,9 +111,9 @@ class _OpenProjectInEditorState extends State<OpenProjectInEditor> {
           return;
         }
       }
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t open project',
-          stackTraces: s);
+          stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();

@@ -1,5 +1,4 @@
 // 🎯 Dart imports:
-import 'dart:convert';
 import 'dart:io';
 
 // 🐦 Flutter imports:
@@ -35,7 +34,6 @@ class ShowWorkflowLogHistory extends StatefulWidget {
 
 class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
   final List<String> _logs = <String>[];
-  final List<WorkflowTemplate> _workflows = <WorkflowTemplate>[];
 
   // More than this number of days is considered to be an old log.
   static const int _oldestLogs = 30;
@@ -119,10 +117,7 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
       }
 
       if (mounted) {
-        setState(() {
-          _logs.clear();
-          _workflows.clear();
-        });
+        setState(_logs.clear);
       }
 
       await _loadLogs();
@@ -130,9 +125,9 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
       if (mounted) {
         Navigator.pop(context);
       }
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to clean old logs: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to clean old logs.',
+          error: e, stackTrace: s);
 
       if (mounted) {
         Navigator.pop(context);
@@ -153,13 +148,11 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
 
   Future<void> _loadLogs() async {
     String dir =
-        '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.workflowPath.split('\\').last.replaceAll('.json', '')}';
+        '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.workflowPath.split('\\').last.split('.').first}';
 
     if (!await Directory(dir).exists()) {
-      setState(() {
-        _logs.clear();
-        _workflows.clear();
-      });
+      setState(_logs.clear);
+
       return;
     }
 
@@ -167,13 +160,10 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
 
     for (FileSystemEntity log in workflowLogs) {
       if (log is File) {
-        _logs.add(log.path.split('\\').last.replaceAll('.log', ''));
-        _workflows.add(WorkflowTemplate.fromJson(
-            jsonDecode(await File(log.path).readAsString())));
+        setState(
+            () => _logs.add(log.path.split('\\').last.replaceAll('.log', '')));
       }
     }
-
-    setState(() {});
   }
 
   @override
@@ -236,23 +226,22 @@ class _ShowWorkflowLogHistoryState extends State<ShowWorkflowLogHistory> {
                 itemCount: _logs.length,
                 itemBuilder: (_, int i) {
                   bool isLast = i == _logs.length - 1;
+
                   return Padding(
                     padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
                     child: _LogTile(
                       log: _logs[i],
-                      workflow: _workflows[i],
+                      workflow: widget.workflow,
                       onDelete: () async {
-                        await File(_workflows[i].workflowPath)
+                        await File(
+                                '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.name}\\${_logs[i]}.log')
                             .delete(recursive: true);
 
                         await logger.file(LogTypeTag.info,
                             'Deleted log ${_logs[i]} for ${widget.workflow}');
 
                         if (mounted) {
-                          setState(() {
-                            _logs.removeAt(i);
-                            _workflows.removeAt(i);
-                          });
+                          setState(() => _logs.removeAt(i));
                         }
                       },
                     ),
@@ -345,8 +334,9 @@ class __LogTileState extends State<_LogTile> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (_) =>
-                        ViewWorkflowSessionLogs(logPath: widget.log),
+                    builder: (_) => ViewWorkflowSessionLogs(
+                        logPath:
+                            '${(widget.workflow.workflowPath.split('\\')..removeLast()).join('\\')}\\logs\\${widget.workflow.name}\\${widget.log}.log'),
                   );
                 },
               ),

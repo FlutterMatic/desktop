@@ -42,10 +42,10 @@ class PkgViewData {
         publisher: PackagePublisher.fromJson(
             json['publisher'] as Map<String, dynamic>),
       );
-    } catch (_, s) {
-      logger.file(
-          LogTypeTag.error, 'Failed to parse json package: $_, json: $json',
-          stackTraces: s);
+    } catch (e, s) {
+      logger.file(LogTypeTag.error, 'Failed to parse Json package. Json: $json',
+          error: e, stackTrace: s);
+
       rethrow;
     }
   }
@@ -184,16 +184,9 @@ class PkgViewData {
       // Kill isolate
       port.send(<dynamic>[response, true, false]);
       return;
-    } catch (_, s) {
-      print(_);
-      print(s);
-
-      await logger.file(
-        LogTypeTag.error,
-        'Failed to fetch pub packages. Error: $_',
-        stackTraces: s,
-        logDir: Directory(path),
-      );
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to fetch pub packages.',
+          error: e, stackTrace: s, logDir: Directory(path));
 
       GetPkgResponseModel response = GetPkgResponseModel(
           response: GetPkgResponse.error, packages: pubPackages);

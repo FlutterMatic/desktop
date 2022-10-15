@@ -82,11 +82,9 @@ class FlutterBinInfoImpl implements FlutterBinInfo {
   FlutterBinInfoImpl({this.channel, this.version});
 }
 
-/// Get flutter info.
+/// Get Flutter info.
 ///
-/// Not exposed yet
-///
-/// Returns null if flutter cannot be found in the path
+/// Returns null if Flutter cannot be found in the path.
 Future<FlutterBinInfo?> _getFlutterBinInfo() async {
   // $ flutter --version
   // Flutter 1.7.8+hotfix.4 • channel stable • https://github.com/flutter/flutter.git
@@ -96,6 +94,7 @@ Future<FlutterBinInfo?> _getFlutterBinInfo() async {
   try {
     List<ProcessResult> results =
         await run('flutter --version', verbose: false);
+
     // Take from stderr first
     String resultOutput = results.first.stderr.toString().trim();
 

@@ -11,21 +11,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
-import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
-import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/workflows.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 
 class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
-  final Reader read;
+  final Ref ref;
 
-  WorkflowsNotifier(this.read) : super(WorkflowsState.initial());
+  WorkflowsNotifier(this.ref) : super(WorkflowsState.initial());
 
   final List<ProjectWorkflowsGrouped> _workflows = <ProjectWorkflowsGrouped>[];
 
@@ -33,8 +30,8 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
       UnmodifiableListView<ProjectWorkflowsGrouped>(_workflows);
 
   /// Remove all the workflow groups that have empty [workflows] list.
-  void _cleanUpWorkflows() => _workflows
-      .removeWhere((ProjectWorkflowsGrouped group) => group.workflows.isEmpty);
+  void _cleanUpWorkflows() =>
+      _workflows.removeWhere((e) => e.workflows.isEmpty);
 
   /// Loads the workflows from the current projects. You can set [force]
   /// to true or false depending on whether or not you want to force reload
@@ -46,7 +43,7 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
   /// that list will not be loaded, or searched for in the first place.
   ///
   /// This also must only be called after the projects have been loaded.
-  Future<void> loadWorkflows(bool force) async {
+  Future<void> getWorkflows(bool force) async {
     try {
       // If already loading then ignore this request because it could've been
       // called multiple causing multiple copies of the same workflows shown.
@@ -62,32 +59,20 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
         error: false,
       );
 
-      // Contains the list of all projects from different catagories merged into
-      // one list.
-      List<ProjectObject> projects = [
-        ...read(projectsActionStateNotifier.notifier).pinned,
-        ...read(projectsActionStateNotifier.notifier).flutter,
-        ...read(projectsActionStateNotifier.notifier).dart,
-      ];
-
       // We will first try to load the projects if they aren't already loaded.
-      if (projects.isEmpty) {
+      if (ref.watch(projectsActionStateNotifier.notifier).projects.isEmpty) {
         await logger.file(LogTypeTag.info,
             'Projects is empty. Calling [getProjectsWithIsolate] in case it hasn\'t loaded already...');
 
-        await read(projectsActionStateNotifier.notifier)
-            .getProjectsWithIsolate(false);
-
-        projects = [
-          ...read(projectsActionStateNotifier.notifier).pinned,
-          ...read(projectsActionStateNotifier.notifier).flutter,
-          ...read(projectsActionStateNotifier.notifier).dart,
-        ];
+        await ref
+            .watch(projectsActionStateNotifier.notifier)
+            .getProjects(false);
       }
 
       _workflows.clear();
 
-      for (ProjectObject project in projects) {
+      for (ProjectObject project
+          in ref.watch(projectsActionStateNotifier.notifier).projects) {
         String workflowsPath = '${project.path}\\$fmWorkflowDir';
 
         /// Check if the directory exists in the first place.
@@ -115,10 +100,10 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
                   jsonDecode(await workflow.readAsString());
 
               templates.add(WorkflowTemplate.fromJson(rawContent));
-            } catch (_, s) {
+            } catch (e, s) {
               await logger.file(LogTypeTag.warning,
-                  'Failed to load workflow ${workflow.path}',
-                  stackTraces: s);
+                  'Failed to load workflow ${workflow.path}.',
+                  error: e, stackTrace: s);
             }
           }
         }
@@ -131,24 +116,24 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
         }
       }
 
-      if (mounted) {
-        state = state.copyWith(
-          loading: false,
-          error: false,
-        );
-      }
+      state = state.copyWith(
+        loading: false,
+        error: false,
+        initialized: true,
+      );
 
       return;
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Error loading workflows. Error: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Error loading workflows.',
+          error: e, stackTrace: s);
+
+      _workflows.clear();
 
       state = state.copyWith(
         loading: false,
         error: true,
+        initialized: false,
       );
-
-      _workflows.clear();
 
       return;
     }
@@ -161,6 +146,7 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
   /// succeeds and generally informs the user about the state of the save.
   Future<void> saveWorkflow(
     BuildContext context, {
+    required String originalName,
     required bool addToGitignore,
     required bool addAllToGitignore,
     required bool showAlerts,
@@ -168,13 +154,6 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
     required WorkflowTemplate template,
     required PubspecInfo? pubspecInfo,
   }) async {
-    state = state.copyWith(
-      loading: true,
-      error: false,
-    );
-
-    NavigatorState navigator = Navigator.of(context);
-
     try {
       if (template.name.isEmpty) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -184,24 +163,12 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
           ),
         );
 
-        state = state.copyWith(
-          loading: false,
-          error: true,
-        );
-
         return;
       }
 
-      // ignore: unawaited_futures
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) => const DialogTemplate(
-          width: 150,
-          height: 100,
-          outerTapExit: false,
-          child: Spinner(thickness: 2, size: 20),
-        ),
+      state = state.copyWith(
+        loading: true,
+        error: false,
       );
 
       String? dirPath = pubspecInfo?.pathToPubspec ?? pubspecPath;
@@ -256,52 +223,27 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
                 .writeAsString('$fmWorkflowDir/\n', mode: FileMode.append)
                 .timeout(const Duration(seconds: 3));
           }
-        } catch (_, s) {
+        } catch (e, s) {
           await logger.file(
-              LogTypeTag.error, 'Couldn\'t add to .gitignore for workflow: $_',
-              stackTraces: s);
+              LogTypeTag.error, 'Couldn\'t add to .gitignore for workflow.',
+              error: e, stackTrace: s);
         }
-      }
-
-      if (navigator.mounted) {
-        navigator.pop();
-      }
-
-      if (showAlerts && navigator.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTile(
-            context,
-            template.isSaved
-                ? 'Workflow saved successfully. You can find it in the "Workflows" tab.'
-                : 'We stored a copy of this workflow so you can continue editing it later.',
-            type: SnackBarType.done,
-          ),
-        );
       }
 
       // Update the workflows list.
       for (int i = 0; i < _workflows.length; i++) {
-        if (_workflows[i].projectPath == template.name) {
-          int j = _workflows[i].workflows.indexWhere((e) {
-            return e.name == template.name;
-          });
-
-          if (j != -1) {
-            _workflows[i].workflows.removeAt(j);
-            _workflows[i].workflows.insert(j, template);
-          } else {
-            _workflows[i].workflows.add(template);
+        for (int j = 0; j < _workflows[i].workflows.length; j++) {
+          if (_workflows[i].workflows[j].name == originalName) {
+            _workflows[i].workflows[j] = template;
+            break;
           }
-
-          break;
         }
       }
 
       _cleanUpWorkflows();
 
       await logger.file(LogTypeTag.info,
-          'New workflow created at the following path: ${'$dirPath\\$fmWorkflowDir\\${template.name}.json'}');
+          'New workflow created/edited at the following path: ${'$dirPath\\$fmWorkflowDir\\${template.name}.json'}');
 
       state = state.copyWith(
         loading: false,
@@ -309,24 +251,9 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
       );
 
       return;
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow: $_',
-          stackTraces: s);
-
-      if (navigator.mounted) {
-        navigator.pop();
-      }
-
-      if (showAlerts && navigator.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTile(
-            context,
-            'Couldn\'t save your workflow. Please try again.',
-            type: SnackBarType.error,
-          ),
-        );
-      }
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Couldn\'t save and run workflow.',
+          error: e, stackTrace: s);
 
       state = state.copyWith(
         loading: false,
@@ -405,10 +332,10 @@ class WorkflowsNotifier extends StateNotifier<WorkflowsState> {
       );
 
       return;
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
-          'Failed to delete workflow file from ${workflow.workflowPath}. Error: $_',
-          stackTraces: s);
+          'Failed to delete workflow file from ${workflow.workflowPath}.',
+          error: e, stackTrace: s);
 
       state = state.copyWith(
         loading: false,

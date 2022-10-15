@@ -1,14 +1,9 @@
-// 🎯 Dart imports:
-import 'dart:convert';
-import 'dart:io';
-
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
+import 'package:fluttermatic/core/models/pub_cache.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
@@ -47,11 +42,11 @@ class _ProjectDependenciesSectionState
   final FocusNode _searchNode = FocusNode();
   final TextEditingController _searchController = TextEditingController();
 
-  bool _isError = false;
   List<String> _pubPackages = <String>[];
   List<String> _searchResults = <String>[];
 
   static const int _maxResults = 100;
+  bool _loading = true;
 
   void _performSearch(String q) {
     q = q.toLowerCase();
@@ -102,69 +97,19 @@ class _ProjectDependenciesSectionState
   }
 
   Future<void> _getPubPackages() async {
-    File cache = File(
-        '${(await getApplicationSupportDirectory()).path}\\cache\\pub_packages.json');
+    List<String> packages = await PubCache.getCache();
 
-    if (await cache.exists()) {
-      // Will make sure it has been less than 10 minutes since the last time we
-      // updated the cache.
-      Map<String, dynamic> cachePackages =
-          jsonDecode(await cache.readAsString());
-
-      DateTime lastUpdated =
-          DateTime.fromMillisecondsSinceEpoch(cachePackages['last_updated']);
-
-      bool isCacheValid = DateTime.now().difference(lastUpdated).inMinutes < 10;
-
-      if (cachePackages['last_updated'] != null && isCacheValid) {
-        setState(() => _pubPackages =
-            (cachePackages['packages'] as List<dynamic>)
-                .map((_) => _.toString())
-                .toList()
-                .where((String e) =>
-                    !widget.dependencies.contains(e) &&
-                    !widget.devDependencies.contains(e))
-                .toList());
-        return;
-      }
-    }
-
-    String url = 'https://pub.dev/api/package-name-completion-data';
-
-    http.Response response = await http.get(Uri.parse(url));
-
-    if (response.statusCode != 200 && mounted) {
-      setState(() => _isError = true);
-      await Future<void>.delayed(const Duration(seconds: 5));
-      // ignore: unawaited_futures
-      _getPubPackages();
-      return;
-    } else if (mounted) {
-      List<dynamic> packages =
-          ((jsonDecode(response.body) as Map<String, dynamic>).entries.first)
-              .value as List<dynamic>;
-
-      setState(() => _pubPackages.addAll(packages
-          .map((_) => _.toString())
-          .toList()
-          .where((String e) =>
-              !widget.dependencies.contains(e) &&
-              !widget.devDependencies.contains(e))
-          .toList()));
-
-      // Will update the cache file.
-      Map<String, dynamic> cacheData = <String, dynamic>{
-        'last_updated': DateTime.now().millisecondsSinceEpoch,
-        'packages': packages.map((_) => _.toString()).toList(),
-      };
-
-      await cache.writeAsString(jsonEncode(cacheData));
-    }
+    setState(() {
+      _pubPackages = packages;
+      _loading = false;
+    });
   }
 
   @override
   void initState() {
-    _getPubPackages();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getPubPackages();
+    });
     super.initState();
   }
 
@@ -176,7 +121,7 @@ class _ProjectDependenciesSectionState
 
   @override
   Widget build(BuildContext context) {
-    if (_pubPackages.isEmpty && _isError) {
+    if (_pubPackages.isEmpty && !_loading) {
       return Column(
         children: <Widget>[
           informationWidget(
@@ -186,7 +131,7 @@ class _ProjectDependenciesSectionState
               'You can skip this part if you want to add dependencies later.'),
         ],
       );
-    } else if (_pubPackages.isEmpty && !_isError) {
+    } else if (_pubPackages.isEmpty) {
       return Column(
         children: <Widget>[
           infoWidget(

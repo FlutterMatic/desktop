@@ -1,5 +1,6 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,11 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
+import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/inputs/check_box_element.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/flutter.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/flutter.dart';
@@ -40,6 +43,7 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
             ref.watch(flutterActionsStateNotifier.notifier);
 
         return DialogTemplate(
+          width: flutterActionNotifier.flutterDoctor.isNotEmpty ? 700 : null,
           child: Column(
             children: <Widget>[
               const DialogHeader(
@@ -60,11 +64,6 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                             return const SizedBox.shrink();
                           }
 
-                          e = e.replaceAll('[âˆš]', '✅');
-                          e = e.replaceAll('â€¢', '🟢');
-                          e = e.replaceAll('[â˜ ]', '🔴');
-                          e = e.replaceAll('X', '❌');
-
                           bool isLast =
                               flutterActionNotifier.flutterDoctor.last == e;
 
@@ -76,7 +75,41 @@ class _FlutterDoctorDialogState extends State<FlutterDoctorDialog> {
                       ),
                     ),
                   ),
-                )
+                ),
+                VSeparators.normal(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    SquareButton(
+                      tooltip: 'Copy to clipboard',
+                      icon: const Icon(Icons.copy_rounded),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(
+                            text: flutterActionNotifier.flutterDoctor
+                                .join('\n')));
+
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackBarTile(
+                            context,
+                            'Flutter Doctor Result has been copied.',
+                            type: SnackBarType.done,
+                          ),
+                        );
+                      },
+                    ),
+                    HSeparators.normal(),
+                    Expanded(
+                      child: RectangleButton(
+                        onPressed: () {
+                          flutterActionNotifier.resetFlutterDoctor();
+                          setState(() {});
+                        },
+                        child: const Text('Restart'),
+                      ),
+                    ),
+                  ],
+                ),
               ] else ...<Widget>[
                 infoWidget(context,
                     'We will now run a diagnostic test for Flutter on your device to make sure everything is working as expected.'),

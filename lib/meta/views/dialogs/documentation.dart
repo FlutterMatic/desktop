@@ -62,10 +62,11 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
                   onTapLink: (String txt, String? href, String title) {
                     try {
                       launchUrl(Uri.parse(txt));
-                    } catch (_, s) {
+                    } catch (e, s) {
                       logger.file(LogTypeTag.error,
-                          'Couldn\'t open documentation referenced link: $txt - $href - $title - Error: $_',
-                          stackTraces: s);
+                          'Couldn\'t open documentation referenced link: $txt - $href - $title.',
+                          error: e, stackTrace: s);
+
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         snackBarTile(
@@ -94,9 +95,9 @@ class _DocumentationDialogState extends State<DocumentationDialog> {
       }
 
       setState(() => _isLoading = false);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to load documentation $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to load documentation.',
+          error: e, stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();

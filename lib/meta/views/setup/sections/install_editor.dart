@@ -56,7 +56,7 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
         AndroidStudioState androidStudioState =
             ref.watch(androidStudioNotifierController);
 
-        Progress _getProgress() {
+        Progress getProgress() {
           if (_editorTypes.contains(EditorType.none)) {
             return Progress.done;
           } else if (_editorTypes.contains(EditorType.vscode)) {
@@ -198,10 +198,10 @@ class _SetUpInstallEditorState extends State<SetUpInstallEditor> {
               ),
             VSeparators.normal(),
             SetUpButton(
-              buttonText: _getProgress() == Progress.done ? 'Continue' : null,
+              buttonText: getProgress() == Progress.done ? 'Continue' : null,
               onInstall: widget.onInstall,
               onContinue: widget.onContinue,
-              progress: _getProgress(),
+              progress: getProgress(),
             ),
           ],
         );

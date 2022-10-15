@@ -183,9 +183,10 @@ class _FlutterProjectPreConfigSectionState
                                   ),
                                 );
                               }
-                            } catch (_) {
+                            } catch (e, s) {
                               await logger.file(LogTypeTag.error,
-                                  'Couldn\'t upload "google-services.json" file. $_');
+                                  'Couldn\'t upload "google-services.json" file.',
+                                  error: e, stackTrace: s);
 
                               if (mounted) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
@@ -273,9 +274,10 @@ class _FlutterProjectPreConfigSectionState
                                   ),
                                 );
                               }
-                            } catch (_) {
+                            } catch (e, s) {
                               await logger.file(LogTypeTag.error,
-                                  'Couldn\'t upload "GoogleService-Info.plist" file. $_');
+                                  'Couldn\'t upload "GoogleService-Info.plist" file.',
+                                  error: e, stackTrace: s);
 
                               if (mounted) {
                                 ScaffoldMessenger.of(context).clearSnackBars();

@@ -49,6 +49,7 @@ abstract class ADBBinInfo {
     if (adbVersion != null) {
       return ADBBinInfoImpl(version: adbVersion);
     }
+
     return null;
   }
 }
@@ -69,31 +70,27 @@ Future<ADBBinInfo?> _getADBBinInfo() async {
   // adb version
   // Android Debug Bridge version 1.0.41
   // Version 31.0.2-7242960
-  // Installed as C:\Users\${name}\AppData\Local\Android\Sdk\platform-tools\adb.exe
+  // Installed as C:\Users\USER\AppData\Local\Android\Sdk\platform-tools\adb.exe
   try {
     List<ProcessResult> adbResults = await shell.run('adb version');
 
     /// `adb version` outputs to stderr, so we need to check the first line.
     resultOutput = adbResults.first.stderr.toString().trim();
 
-    /// If the output is empty,
-    /// It means that the command logged the result in stdout.
+    /// If the output is empty, it means that the command logged the
+    /// result in stdout.
     if (resultOutput.isEmpty) {
       resultOutput = adbResults.first.stdout.toString().trim();
     }
 
-    /// returning the data.
     return ADBBinInfo.parseVersionOutput(resultOutput);
+  } on ShellException catch (e, s) {
+    await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+  } catch (e, s) {
+    await logger.file(LogTypeTag.error,
+        'Something went wrong when trying to get the ADB info.',
+        error: e, stackTrace: s);
   }
 
-  /// On [ShellException], Catch the error data to the logs file.
-  on ShellException catch (shellException) {
-    await logger.file(LogTypeTag.error, shellException.message);
-  }
-
-  /// On any other error, Catch the error data to the logs file.
-  catch (err) {
-    await logger.file(LogTypeTag.error, err.toString());
-  }
   return null;
 }

@@ -18,6 +18,7 @@ import 'package:fluttermatic/core/notifiers/models/state/checks/studio.dart';
 import 'package:fluttermatic/core/notifiers/models/state/checks/vsc.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/connection.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/download.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/actions/dart.dart';
@@ -37,82 +38,78 @@ import 'package:fluttermatic/core/notifiers/notifiers/general/connection.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/download.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/file.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/notifications.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/search.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/space.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/theme.dart';
 
 // API Notifiers
 final StateNotifierProvider<FlutterSDKNotifier, FlutterSDKState>
-    flutterSdkAPIStateNotifier =
-    StateNotifierProvider((_) => FlutterSDKNotifier(_.read));
+    flutterSdkAPIStateNotifier = StateNotifierProvider(FlutterSDKNotifier.new);
 
 final StateNotifierProvider<FlutterMaticAPINotifier, FlutterMaticAPIState>
-    fmAPIStateNotifier =
-    StateNotifierProvider((_) => FlutterMaticAPINotifier(_.read));
+    fmAPIStateNotifier = StateNotifierProvider(FlutterMaticAPINotifier.new);
 
 final StateNotifierProvider<VSCodeAPINotifier, VSCodeAPIState>
-    vsCodeAPIStateNotifier =
-    StateNotifierProvider((_) => VSCodeAPINotifier(_.read));
+    vsCodeAPIStateNotifier = StateNotifierProvider(VSCodeAPINotifier.new);
 
 // Checks Notifiers
 final StateNotifierProvider<FlutterNotifier, FlutterState>
-    flutterNotifierController =
-    StateNotifierProvider((_) => FlutterNotifier(_.read));
+    flutterNotifierController = StateNotifierProvider(FlutterNotifier.new);
 
 final StateNotifierProvider<JavaNotifier, JavaState> javaNotifierController =
-    StateNotifierProvider((_) => JavaNotifier(_.read));
+    StateNotifierProvider(JavaNotifier.new);
 
 final StateNotifierProvider<GitNotifier, GitState> gitNotifierController =
-    StateNotifierProvider((_) => GitNotifier(_.read));
+    StateNotifierProvider(GitNotifier.new);
 
 final StateNotifierProvider<ADBNotifier, ADBState> adbNotifierController =
-    StateNotifierProvider((_) => ADBNotifier(_.read));
+    StateNotifierProvider(ADBNotifier.new);
 
 final StateNotifierProvider<AndroidStudioNotifier, AndroidStudioState>
     androidStudioNotifierController =
-    StateNotifierProvider((_) => AndroidStudioNotifier(_.read));
+    StateNotifierProvider(AndroidStudioNotifier.new);
 
 final StateNotifierProvider<VSCodeNotifier, VSCState> vscNotifierController =
-    StateNotifierProvider((_) => VSCodeNotifier(_.read));
+    StateNotifierProvider(VSCodeNotifier.new);
 
 // General Notifiers
 final StateNotifierProvider<ConnectionNotifier, NetworkState>
     connectionNotifierController =
-    StateNotifierProvider((_) => ConnectionNotifier(_.read));
+    StateNotifierProvider(ConnectionNotifier.new);
 
 final StateNotifierProvider<DownloadNotifier, DownloadState>
-    downloadStateController =
-    StateNotifierProvider((_) => DownloadNotifier(_.read));
+    downloadStateController = StateNotifierProvider(DownloadNotifier.new);
+
+final StateNotifierProvider<AppSearchNotifier, AppSearchState>
+    appSearchStateNotifier = StateNotifierProvider(AppSearchNotifier.new);
 
 final StateNotifierProvider<NotificationsNotifier, void>
     notificationStateController =
-    StateNotifierProvider((_) => NotificationsNotifier(_.read));
+    StateNotifierProvider(NotificationsNotifier.new);
 
 final StateNotifierProvider<FileNotifier, void> fileStateNotifier =
-    StateNotifierProvider((_) => FileNotifier(_.read));
+    StateNotifierProvider(FileNotifier.new);
 
 final StateNotifierProvider<SpaceNotifier, SpaceState> spaceStateController =
-    StateNotifierProvider((_) => SpaceNotifier(_.read));
+    StateNotifierProvider(SpaceNotifier.new);
 
 final StateNotifierProvider<ThemeNotifier, ThemeState> themeStateController =
-    StateNotifierProvider((_) => ThemeNotifier(_.read));
+    StateNotifierProvider(ThemeNotifier.new);
 
 // Actions Notifiers
 final StateNotifierProvider<FlutterActionsNotifier, FlutterActionsState>
     flutterActionsStateNotifier =
-    StateNotifierProvider((_) => FlutterActionsNotifier(_.read));
+    StateNotifierProvider(FlutterActionsNotifier.new);
 
 final StateNotifierProvider<DartActionsNotifier, DartActionsState>
-    dartActionsStateNotifier =
-    StateNotifierProvider((_) => DartActionsNotifier(_.read));
+    dartActionsStateNotifier = StateNotifierProvider(DartActionsNotifier.new);
 
 final StateNotifierProvider<ProjectsNotifier, ProjectsState>
-    projectsActionStateNotifier =
-    StateNotifierProvider((_) => ProjectsNotifier(_.read));
+    projectsActionStateNotifier = StateNotifierProvider(ProjectsNotifier.new);
 
 final StateNotifierProvider<WorkflowsNotifier, WorkflowsState>
-    workflowsActionStateNotifier =
-    StateNotifierProvider((_) => WorkflowsNotifier(_.read));
+    workflowsActionStateNotifier = StateNotifierProvider(WorkflowsNotifier.new);
 
 final StateNotifierProvider<CheckServicesNotifier, CheckServicesState>
     checkServicesStateNotifier =
-    StateNotifierProvider((_) => CheckServicesNotifier(_.read));
+    StateNotifierProvider(CheckServicesNotifier.new);

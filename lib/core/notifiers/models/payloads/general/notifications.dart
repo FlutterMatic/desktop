@@ -1,5 +1,5 @@
 class NotificationObject {
-  final String id;
+  final int id;
   final String title;
   final String message;
   final Function()? onPressed;

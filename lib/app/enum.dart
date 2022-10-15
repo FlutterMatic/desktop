@@ -10,13 +10,28 @@ enum SetUpTab {
 enum EditorType { vscode, androidStudio, none }
 
 enum Progress {
+  /// No progress has been made
   none,
+
+  /// Started to make progress
   started,
+
+  /// Checking tool state
   checking,
+
+  /// Download the tool
   downloading,
+
+  /// Extracting the tool downloaded resource
   extracting,
+
+  /// Done downloading/extracting the tool resource
   done,
+
+  /// Failed to download/extract the tool resource
   failed,
+
+  /// Found the tool downloaded already on system
   found,
 }
 

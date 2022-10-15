@@ -50,9 +50,8 @@ class LogViewBuilder extends StatelessWidget {
             if (date == null) {
               log = txt;
             } else {
-              log = txt
-                  .substring(txt.indexOf(endTag) + endTag.length)
-                  .trimLeft();
+              log =
+                  txt.substring(txt.indexOf(endTag) + endTag.length).trimLeft();
             }
 
             return Padding(
@@ -85,10 +84,11 @@ class LogViewBuilder extends StatelessWidget {
                 ),
               ),
             );
-          } catch (_, s) {
+          } catch (e, s) {
             logger.file(LogTypeTag.error,
                 'Failed to parse workflow log line message for line $i',
-                stackTraces: s);
+                stackTrace: s);
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: SelectableText(logs[i]),

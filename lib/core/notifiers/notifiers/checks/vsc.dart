@@ -23,18 +23,18 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class VSCodeNotifier extends StateNotifier<VSCState> {
-  final Reader read;
+  final Ref ref;
 
-  VSCodeNotifier(this.read) : super(VSCState.initial());
+  VSCodeNotifier(this.ref) : super(VSCState.initial());
 
   Future<void> checkVSCode() async {
     Directory dir = await getApplicationSupportDirectory();
     String archiveType = platform == 'linux' ? 'tar.gz' : 'zip';
 
     try {
-      FlutterSDKState flutterSdkState = read(flutterSdkAPIStateNotifier);
+      FlutterSDKState flutterSdkState = ref.watch(flutterSdkAPIStateNotifier);
 
-      String drive = read(spaceStateController).drive;
+      String drive = ref.watch(spaceStateController).drive;
 
       state = state.copyWith(
         progress: Progress.checking,
@@ -44,16 +44,19 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
       if (vscPath == null) {
         await logger.file(
             LogTypeTag.warning, 'VS Code not installed in the system.');
+
         await logger.file(LogTypeTag.info, 'Downloading VS Code');
 
         /// Check for code Directory to extract files
-        bool codeDir = await read(fileStateNotifier.notifier)
+        bool codeDir = await ref
+            .watch(fileStateNotifier.notifier)
             .checkDir('$drive:\\fluttermatic\\', subDirName: 'code');
 
         /// If tmpDir is false, then create a temporary directory.
         if (!codeDir) {
           await Directory('$drive:\\fluttermatic\\code')
               .create(recursive: true);
+
           await logger.file(LogTypeTag.info,
               'Created code directory for extracting vscode files');
         }
@@ -65,14 +68,14 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
         /// Downloading VSCode. In debug mode, it will download a fake video
         /// file that is 50mb (for testing purposes).
         if (kDebugMode || kProfileMode) {
-          await read(downloadStateController.notifier).downloadFile(
+          await ref.watch(downloadStateController.notifier).downloadFile(
               'https://sample-videos.com/zip/50mb.zip',
               'code.$archiveType',
               '${dir.path}\\tmp');
         } else {
-          VSCodeAPIState vscState = read(vsCodeAPIStateNotifier);
+          VSCodeAPIState vscState = ref.watch(vsCodeAPIStateNotifier);
 
-          await read(downloadStateController.notifier).downloadFile(
+          await ref.watch(downloadStateController.notifier).downloadFile(
               platform == 'windows'
                   ? 'https://az764295.vo.msecnd.net/stable/${vscState.sha}/VSCode-win32-x64-${vscState.tagName}.zip'
                   : platform == 'mac'
@@ -88,10 +91,11 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
           progress: Progress.extracting,
         );
 
-        read(downloadStateController.notifier).resetState();
+        ref.watch(downloadStateController.notifier).resetState();
 
         /// Extract java from compressed file.
-        bool vscExtracted = await read(fileStateNotifier.notifier)
+        bool vscExtracted = await ref
+            .watch(fileStateNotifier.notifier)
             .unzip('${dir.path}\\tmp\\code.zip', '$drive:\\fluttermatic\\code');
 
         if (vscExtracted) {
@@ -106,13 +110,15 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
         }
 
         /// Appending path to env
-        bool isVSCPathSet = await read(fileStateNotifier.notifier)
+        bool isVSCPathSet = await ref
+            .watch(fileStateNotifier.notifier)
             .setPath('$drive:\\fluttermatic\\code\\bin', dir.path);
 
         if (isVSCPathSet) {
           await SharedPref()
               .pref
               .setString(SPConst.vscPath, '$drive:\\fluttermatic\\code\\bin');
+
           await logger.file(LogTypeTag.info, 'VSCode set to path');
 
           state = state.copyWith(
@@ -128,6 +134,7 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
       } else if (!SharedPref().pref.containsKey(SPConst.vscPath) ||
           !SharedPref().pref.containsKey(SPConst.vscVersion)) {
         await logger.file(LogTypeTag.info, 'VS Code found at: $vscPath');
+
         await SharedPref().pref.setString(SPConst.vscPath, vscPath);
 
         state = state.copyWith(
@@ -136,6 +143,7 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
 
         await logger.file(
             LogTypeTag.info, 'VS Code version: ${state.vscVersion.toString()}');
+
         await SharedPref()
             .pref
             .setString(SPConst.vscVersion, state.vscVersion.toString());
@@ -161,13 +169,15 @@ class VSCodeNotifier extends StateNotifier<VSCState> {
           progress: Progress.done,
         );
       }
-    } on ShellException catch (_, s) {
-      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
+    } on ShellException catch (e, s) {
+      await logger.file(LogTypeTag.error, e.message, stackTrace: s);
+
       state = state.copyWith(
         progress: Progress.failed,
       );
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
+
       state = state.copyWith(
         progress: Progress.failed,
       );

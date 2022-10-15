@@ -1,19 +1,19 @@
 class FlutterActionsState {
+  final String error;
   final bool loading;
   final String currentActivity;
-  final String error;
 
   const FlutterActionsState({
-    this.loading = false,
     this.error = '',
+    this.loading = false,
     this.currentActivity = '...',
   });
 
-  factory FlutterActionsState.initial() => FlutterActionsState.initial();
+  factory FlutterActionsState.initial() => const FlutterActionsState();
 
   FlutterActionsState copyWith({
-    bool? loading,
     String? error,
+    bool? loading,
     String? currentActivity,
   }) {
     return FlutterActionsState(

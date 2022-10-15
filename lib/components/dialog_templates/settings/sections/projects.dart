@@ -173,10 +173,10 @@ class _ProjectsSettingsSectionState extends State<ProjectsSettingsSection> {
                   await logger.file(LogTypeTag.info,
                       'Projects refresh intervals was set to: $val');
                   setState(() => _refreshIntervals = val);
-                } catch (_, s) {
+                } catch (e, s) {
                   await logger.file(LogTypeTag.error,
-                      'Couldn\'t set projects refresh interval: $_',
-                      stackTraces: s);
+                      'Couldn\'t set projects refresh interval.',
+                      error: e, stackTrace: s);
 
                   if (mounted) {
                     ScaffoldMessenger.of(context).clearSnackBars();

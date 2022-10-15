@@ -15,9 +15,9 @@ import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/workflows.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/startup.dart';
@@ -66,10 +66,10 @@ class _ShowExistingWorkflowsState extends ConsumerState<ShowExistingWorkflows> {
 
         return;
       }
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
           'Couldn\'t load workflows for project at pubspec path: ${widget.pubspecPath}',
-          stackTraces: s);
+          stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -207,7 +207,8 @@ class __WorkflowTileState extends State<_WorkflowTile> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Tooltip(
                   padding: const EdgeInsets.all(5),
-                  message: '''
+                  message:
+                      '''
 This workflow is not completed yet. You can edit it, 
 but you will need to save it before you can run it.''',
                   child: SvgPicture.asset(Assets.warn, height: 20),

@@ -70,9 +70,9 @@ class _ResetFlutterMaticDialogState
       }
 
       setState(() => _loading = false);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to delete app data: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to delete app data.',
+          error: e, stackTrace: s);
 
       setState(() => _loading = false);
     }

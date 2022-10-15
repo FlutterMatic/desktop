@@ -6,7 +6,7 @@ import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/widgets/buttons/square_button.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
-import 'package:fluttermatic/meta/utils/search/workflow_search.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 import 'package:fluttermatic/meta/views/workflows/runner/runner.dart';
 import 'package:fluttermatic/meta/views/workflows/views/options.dart';

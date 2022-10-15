@@ -18,16 +18,16 @@ import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class ADBNotifier extends StateNotifier<ADBState> {
-  final Reader read;
+  final Ref ref;
 
-  ADBNotifier(this.read) : super(ADBState.initial());
+  ADBNotifier(this.ref) : super(ADBState.initial());
 
   Future<void> checkADB(BuildContext context, FlutterMaticAPI? api) async {
     try {
       /// Application supporting Directory
       Directory dir = await getApplicationSupportDirectory();
 
-      String drive = read(spaceStateController).drive;
+      String drive = ref.watch(spaceStateController).drive;
 
       String? adbPath = await which('adb');
 
@@ -37,11 +37,12 @@ class ADBNotifier extends StateNotifier<ADBState> {
         await logger.file(LogTypeTag.info, 'Downloading Platform-tools');
 
         /// Downloading ADB.
-        await read(downloadStateController.notifier).downloadFile(
+        await ref.watch(downloadStateController.notifier).downloadFile(
             api!.data!['adb'][platform], 'adb.zip', '${dir.path}\\tmp');
 
         /// Extract java from compressed file.
-        bool adbExtracted = await read(fileStateNotifier.notifier)
+        bool adbExtracted = await ref
+            .watch(fileStateNotifier.notifier)
             .unzip('${dir.path}\\tmp\\adb.zip', '$drive:\\fluttermatic\\');
 
         if (adbExtracted) {
@@ -51,7 +52,8 @@ class ADBNotifier extends StateNotifier<ADBState> {
         }
 
         /// Appending path to env
-        bool isADBPathSet = await read(fileStateNotifier.notifier)
+        bool isADBPathSet = await ref
+            .watch(fileStateNotifier.notifier)
             .setPath('$drive:\\fluttermatic\\platform-tools', dir.path);
 
         if (isADBPathSet) {
@@ -70,9 +72,9 @@ class ADBNotifier extends StateNotifier<ADBState> {
       }
     } on ShellException catch (shellException, s) {
       await logger.file(LogTypeTag.error, shellException.message,
-          stackTraces: s);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+          stackTrace: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
     }
   }
 }

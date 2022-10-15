@@ -128,8 +128,11 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
   String get _pubspecPath =>
       _pubspecFile?.pathToPubspec ?? widget.pubspecPath ?? '';
 
-  // Whether we are syncing in the background or not. This is to show a small
-  // indicator to the user.
+  // The original workflow name. If the user decided to change the workflow
+  // name, we need to know the original name so that we can change the file
+  // name too.
+  String get _originalWorkflowName =>
+      widget.workflow?.name ?? _nameController.text;
 
   // Store the workflow template so we can use it anywhere to access the state
   // of the workflow so far.
@@ -184,7 +187,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
 
       await Future.sync(() async {
         try {
-          pubspecPath = (pubspecPath.split('\\')..removeLast()).join('\\');
+          pubspecPath = (_pubspecPath.split('\\')..removeLast()).join('\\');
 
           Directory workflowsDir = Directory('$pubspecPath\\$fmWorkflowDir');
 
@@ -201,10 +204,10 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             _lastSavedContent = _workflowTemplate().toJson();
             _saveLocalError = false;
           });
-        } catch (_, s) {
+        } catch (e, s) {
           await logger.file(
               LogTypeTag.error, 'Couldn\'t sync workflow settings.',
-              stackTraces: s);
+              stackTrace: s);
 
           setState(() => _saveLocalError = true);
         }
@@ -227,9 +230,9 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
         _pubspecFile = extractPubspec(lines: pubspec, path: _pubspecPath);
         _forcePubspec = true;
       });
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error, 'Couldn\'t read pubspec.yaml file',
-          stackTraces: s);
+          stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -349,6 +352,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
             await workflowsNotifier.saveWorkflow(
               context,
               showAlerts: true,
+              originalName: _originalWorkflowName,
               pubspecInfo: _pubspecFile,
               pubspecPath: _pubspecPath,
               addToGitignore: _addToGitIgnore,
@@ -368,6 +372,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
               await workflowsNotifier.saveWorkflow(
                 context,
                 showAlerts: false,
+                originalName: _originalWorkflowName,
                 pubspecInfo: _pubspecFile,
                 pubspecPath: _pubspecPath,
                 addToGitignore: _addToGitIgnore,
@@ -411,6 +416,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                     await workflowsNotifier.saveWorkflow(
                       context,
                       showAlerts: false,
+                      originalName: _originalWorkflowName,
                       pubspecInfo: _pubspecFile,
                       pubspecPath: _pubspecPath,
                       addToGitignore: _addToGitIgnore,
@@ -581,6 +587,7 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       await workflowsNotifier.saveWorkflow(
                         context,
                         showAlerts: true,
+                        originalName: _originalWorkflowName,
                         pubspecInfo: _pubspecFile,
                         pubspecPath: _pubspecPath,
                         addToGitignore: _addToGitIgnore,
@@ -591,29 +598,15 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                       bool hasSaved =
                           !workflowsState.loading && !workflowsState.error;
 
-                      if (hasSaved) {
-                        // Update the cache with the new changes
-                        // await WorkflowSearchUtils.getWorkflowsFromPath(
-                        //   cache: await ProjectsNotifier.getCacheSettings(
-                        //           (await getApplicationSupportDirectory()).path) ??
-                        //       const ProjectCacheSettings(
-                        //         projectsPath: null,
-                        //         refreshIntervals: null,
-                        //         lastProjectReload: null,
-                        //         lastWorkflowsReload: null,
-                        //       ),
-                        //   supportDir: (await getApplicationSupportDirectory()).path,
-                        // );
-
-                        if (mounted) {
-                          Navigator.pop(context);
-                        }
+                      if (hasSaved && mounted) {
+                        Navigator.pop(context);
                       }
                     },
                     onSaveAndRun: () async {
                       await workflowsNotifier.saveWorkflow(
                         context,
                         showAlerts: true,
+                        originalName: _originalWorkflowName,
                         pubspecInfo: _pubspecFile,
                         pubspecPath: _pubspecPath,
                         addToGitignore: _addToGitIgnore,
@@ -625,19 +618,6 @@ class _StartUpWorkflowState extends State<StartUpWorkflow> {
                           !workflowsState.loading && !workflowsState.error;
 
                       if (hasSaved) {
-                        // Update the cache with the new changes
-                        // await WorkflowSearchUtils.getWorkflowsFromPath(
-                        //   cache: await ProjectsNotifier.getCacheSettings(
-                        //           (await getApplicationSupportDirectory()).path) ??
-                        //       const ProjectCacheSettings(
-                        //         projectsPath: null,
-                        //         refreshIntervals: null,
-                        //         lastProjectReload: null,
-                        //         lastWorkflowsReload: null,
-                        //       ),
-                        //   supportDir: (await getApplicationSupportDirectory()).path,
-                        // );
-
                         if (mounted) {
                           Navigator.pop(context);
                         }

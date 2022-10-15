@@ -81,8 +81,8 @@ class _HomePubSectionState extends State<HomePubSection> {
         (await getApplicationSupportDirectory()).path,
       ],
     ).timeout(const Duration(minutes: 2)).onError((_, StackTrace s) async {
-      await logger.file(LogTypeTag.error, 'Failed to get packages: $_',
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Failed to get packages.',
+          error: _, stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();

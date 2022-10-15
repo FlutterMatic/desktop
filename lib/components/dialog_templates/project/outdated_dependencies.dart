@@ -100,10 +100,10 @@ class _ScanProjectOutdatedDependenciesDialogState
       if (mounted) {
         setState(() => _isLoading = false);
       }
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
-          'Failed to fetch the outdated dependencies for a pubspec.yaml file: $_',
-          stackTraces: s);
+          'Failed to fetch the outdated dependencies for a pubspec.yaml file.',
+          error: e, stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -129,7 +129,7 @@ class _ScanProjectOutdatedDependenciesDialogState
 
     // Gets the index of which line the provided package is declared in the
     // pubspec.yaml file.
-    int _getPackageDeclarationLineIndex(String pkgName) {
+    int getPackageDeclarationLineIndex(String pkgName) {
       for (int i = 0; i < pubspecLines.length; i++) {
         if (pubspecLines[i].trim().startsWith('$pkgName: ')) {
           return i;
@@ -163,15 +163,17 @@ class _ScanProjectOutdatedDependenciesDialogState
             _OutdatedPackageModel(
               pkgName: name,
               latestVersion: '^${info.latest.version}',
-              index: _getPackageDeclarationLineIndex(name),
+              index: getPackageDeclarationLineIndex(name),
             ),
           );
         }
-      } catch (_) {
+      } catch (e, s) {
         // If the package is not found, then we will log a warning and continue
         // with the next package.
         await logger.file(LogTypeTag.warning,
-            'Could not find the package ${packages[i].name} in the pubspec.yaml file.');
+            'Could not find the package ${packages[i].name} in the pubspec.yaml file.',
+            error: e, stackTrace: s);
+
         continue;
       }
 
@@ -197,17 +199,18 @@ class _ScanProjectOutdatedDependenciesDialogState
       for (int i = 0; i < dependencies.length; i++) {
         // Replace the index of that file with the new package info.
         pubspecLines.removeAt(dependencies[i].index);
-        pubspecLines.insert(
-            dependencies[i].index,
+        pubspecLines.insert(dependencies[i].index,
             '${' ' * 2}${dependencies[i].pkgName}: ${dependencies[i].latestVersion}');
       }
 
       // Write the new pubspec.yaml file.
       await pubspec.writeAsString(pubspecLines.join('\n'));
       return;
-    } catch (_) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.warning,
-          'Failed to update dependency $dependencies in the pubspec.yaml file.');
+          'Failed to update dependency $dependencies in the pubspec.yaml file.',
+          error: e, stackTrace: s);
+
       return;
     }
   }
@@ -232,8 +235,7 @@ class _ScanProjectOutdatedDependenciesDialogState
           const DialogHeader(title: 'Scan pubspec.yaml'),
           if (_isLoading) ...<Widget>[
             LoadActivityMessageElement(
-                message:
-                    '$_totalChecked - $_totalAvailable $_activityMessage')
+                message: '$_totalChecked - $_totalAvailable $_activityMessage')
           ] else ...<Widget>[
             if (_oldDependencies.isEmpty && _oldDevDependencies.isEmpty)
               informationWidget(

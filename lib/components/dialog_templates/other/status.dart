@@ -14,7 +14,6 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/installation_status.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
-import 'package:fluttermatic/components/widgets/ui/stage_tile.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 
 class StatusDialog extends ConsumerWidget {
@@ -63,10 +62,7 @@ class StatusDialog extends ConsumerWidget {
             )
           : Column(
               children: <Widget>[
-                const DialogHeader(
-                  title: 'Status',
-                  leading: StageTile(),
-                ),
+                const DialogHeader(title: 'Status'),
                 // Dart
                 InstallationStatusTile(
                   status: notifier.dart?.version != null

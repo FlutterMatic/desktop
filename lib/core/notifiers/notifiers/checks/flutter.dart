@@ -21,23 +21,23 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class FlutterNotifier extends StateNotifier<FlutterState> {
-  final Reader read;
+  final Ref ref;
 
-  FlutterNotifier(this.read) : super(FlutterState.initial());
+  FlutterNotifier(this.ref) : super(FlutterState.initial());
 
   /// Function checks whether Flutter-SDK exists in the system or not.
   Future<void> checkFlutter() async {
     try {
-      FlutterSDKState flutterSdkState = read(flutterSdkAPIStateNotifier);
+      FlutterSDKState flutterSdkState = ref.watch(flutterSdkAPIStateNotifier);
 
-      String drive = read(spaceStateController).drive;
+      String drive = ref.watch(spaceStateController).drive;
 
       state = state.copyWith(
         progress: Progress.started,
       );
 
       /// stable/windows/flutter_windows_2.2.3-stable.zip
-      String? archive = read(flutterSdkAPIStateNotifier).sdk;
+      String? archive = ref.watch(flutterSdkAPIStateNotifier).sdk;
 
       /// The compressed archive type.
       String? archiveType = Platform.isLinux ? 'tar.xz' : 'zip';
@@ -57,7 +57,8 @@ class FlutterNotifier extends StateNotifier<FlutterState> {
         await logger.file(LogTypeTag.warning, 'Flutter-SDK not found');
         await logger.file(LogTypeTag.info, 'Downloading Flutter-SDK');
 
-        bool fZip = await read(fileStateNotifier.notifier)
+        bool fZip = await ref
+            .watch(fileStateNotifier.notifier)
             .fileExists('${dir.path}\\tmp', 'flutter.$archiveType');
 
         if (fZip) {
@@ -73,12 +74,12 @@ class FlutterNotifier extends StateNotifier<FlutterState> {
 
         /// Downloading flutter
         if (kDebugMode || kProfileMode) {
-          await read(downloadStateController.notifier).downloadFile(
+          await ref.watch(downloadStateController.notifier).downloadFile(
               'https://sample-videos.com/zip/50mb.zip',
               'flutter.$archiveType',
               '${dir.path}\\tmp');
         } else {
-          await read(downloadStateController.notifier).downloadFile(
+          await ref.watch(downloadStateController.notifier).downloadFile(
               flutterSdkState.sdkMap.data!['base_url'] + '/' + archive,
               'flutter.$archiveType',
               '${dir.path}\\tmp');
@@ -88,10 +89,10 @@ class FlutterNotifier extends StateNotifier<FlutterState> {
           progress: Progress.extracting,
         );
 
-        read(downloadStateController.notifier).resetState();
+        ref.watch(downloadStateController.notifier).resetState();
 
         /// Extraction
-        bool extracted = await read(fileStateNotifier.notifier).unzip(
+        bool extracted = await ref.watch(fileStateNotifier.notifier).unzip(
             '${dir.path}\\tmp\\flutter.$archiveType',
             '$drive:\\fluttermatic\\');
 
@@ -108,7 +109,8 @@ class FlutterNotifier extends StateNotifier<FlutterState> {
         }
 
         /// Appending path to env
-        bool isPathSet = await read(fileStateNotifier.notifier)
+        bool isPathSet = await ref
+            .watch(fileStateNotifier.notifier)
             .setPath('$drive:\\fluttermatic\\flutter\\bin', dir.path);
 
         if (isPathSet) {
@@ -170,18 +172,18 @@ class FlutterNotifier extends StateNotifier<FlutterState> {
           progress: Progress.done,
         );
       }
-    } on ShellException catch (_, s) {
+    } on ShellException catch (e, s) {
       state = state.copyWith(
         progress: Progress.failed,
       );
 
-      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
-    } catch (_, s) {
+      await logger.file(LogTypeTag.error, e.message, stackTrace: s);
+    } catch (e, s) {
       state = state.copyWith(
         progress: Progress.failed,
       );
 
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
     }
   }
 }

@@ -40,7 +40,6 @@ class WorkflowRunnerDialog extends StatefulWidget {
 
 class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
   // Workflow Info
-  late String workflowPath;
   final List<String> _workflowActions = <String>[];
   final List<String> _completedActions = <String>[];
 
@@ -57,6 +56,19 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
 
   Future<void> _loadWorkflow() async {
     try {
+      // Ensure that the workflow logs directory exists, and create it if it doesn't.
+      // Will also create the log file for this workflow session.
+      String footPath = '$fmWorkflowDir\\${widget.workflow.name}.json';
+
+      _workflowSessionLogs = File(
+        '${widget.workflow.workflowPath.substring(0, widget.workflow.workflowPath.indexOf(footPath) + fmWorkflowDir.length)}\\logs\\${widget.workflow.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
+      );
+
+      await _workflowSessionLogs.create(recursive: true);
+
+      await writeWorkflowSessionLog(
+          _workflowSessionLogs, LogTypeTag.info, 'Workflow session started.');
+
       if (!widget.workflow.isSaved) {
         if (mounted) {
           Navigator.pop(context);
@@ -83,35 +95,23 @@ class _WorkflowRunnerDialogState extends State<WorkflowRunnerDialog> {
       await logger.file(LogTypeTag.info,
           'Begin loading workflow actions to run workflow. Workflow path: ${widget.workflow.workflowPath}');
 
-      // Ensure that the workflow logs directory exists, and create it if it doesn't.
-      // Will also create the log file for this workflow session.
-      String footPath = '$fmWorkflowDir\\${widget.workflow.name}.json';
-
-      _workflowSessionLogs = File(
-        '${widget.workflow.workflowPath.substring(0, widget.workflow.workflowPath.indexOf(footPath) + fmWorkflowDir.length)}\\logs\\${widget.workflow.name}\\${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}-${DateTime.now().hour}-${DateTime.now().minute}-${DateTime.now().second}.log',
-      );
-
-      await _workflowSessionLogs.create(recursive: true);
-
-      await writeWorkflowSessionLog(
-          _workflowSessionLogs, LogTypeTag.info, 'Workflow session started.');
-
       setState(() {
         _workflowActions.addAll(widget.workflow.workflowActions);
         _currentActionRunning = _workflowActions.first;
         _loading = false;
       });
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to load workflow: ${widget.workflow}: $_',
-          stackTraces: s);
+          LogTypeTag.error, 'Failed to load workflow: ${widget.workflow}.',
+          error: e, stackTrace: s);
+
       try {
         await writeWorkflowSessionLog(_workflowSessionLogs, LogTypeTag.error,
             'Workflow session failed to initialize.');
-      } catch (_, s) {
+      } catch (e2, s) {
         await logger.file(
-            LogTypeTag.error, 'Failed to write workflow session log: $_',
-            stackTraces: s);
+            LogTypeTag.error, 'Failed to write workflow session log.',
+            error: e2, stackTrace: s);
       }
 
       if (mounted) {

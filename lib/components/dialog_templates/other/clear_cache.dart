@@ -19,6 +19,7 @@ import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/main.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
+import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class ClearCacheDialog extends StatefulWidget {
   const ClearCacheDialog({Key? key}) : super(key: key);
@@ -38,18 +39,20 @@ class _ClearCacheDialogState extends State<ClearCacheDialog> {
 
       await dir.delete(recursive: true);
 
+      await SharedPref().pref.clear();
+
       if (mounted) {
         RestartWidget.restartApp(context);
       }
-    } catch (_, s) {
-      await logger.file(
-          LogTypeTag.error, 'Failed to clear FlutterMatic cache: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to clear FlutterMatic cache.',
+          error: e, stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(
-            context, 'Failed to clear FlutterMatic cache. Please try again.'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBarTile(context,
+            'Failed to clear FlutterMatic cache. Please try again or delete cache manually.',
+            type: SnackBarType.error));
       }
 
       setState(() => _isClearing = false);

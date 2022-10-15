@@ -19,9 +19,9 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class JavaNotifier extends StateNotifier<JavaState> {
-  final Reader read;
+  final Ref ref;
 
-  JavaNotifier(this.read) : super(JavaState.initial());
+  JavaNotifier(this.ref) : super(JavaState.initial());
 
   Java _sw = Java.jdk;
   Java get sw => _sw;
@@ -29,9 +29,9 @@ class JavaNotifier extends StateNotifier<JavaState> {
   /// Check java exists in the system or not.
   Future<void> checkJava() async {
     try {
-      FlutterSDKState flutterSdkState = read(flutterSdkAPIStateNotifier);
+      FlutterSDKState flutterSdkState = ref.watch(flutterSdkAPIStateNotifier);
 
-      String drive = read(spaceStateController).drive;
+      String drive = ref.watch(spaceStateController).drive;
 
       state = state.copyWith(
         progress: Progress.started,
@@ -60,7 +60,8 @@ class JavaNotifier extends StateNotifier<JavaState> {
           progress: Progress.downloading,
         );
 
-        bool javaDir = await read(fileStateNotifier.notifier)
+        bool javaDir = await ref
+            .watch(fileStateNotifier.notifier)
             .checkDir('$drive:\\fluttermatic\\', subDirName: 'Java');
 
         if (!javaDir) {
@@ -71,7 +72,7 @@ class JavaNotifier extends StateNotifier<JavaState> {
         await logger.file(LogTypeTag.info, 'Downloading Java');
 
         /// Downloading JDK.
-        await read(downloadStateController.notifier).downloadFile(
+        await ref.watch(downloadStateController.notifier).downloadFile(
             flutterSdkState.sdkMap.data!['java']['JDK'][platform],
             'jdk.$archiveType',
             '${dir.path}\\tmp');
@@ -80,10 +81,10 @@ class JavaNotifier extends StateNotifier<JavaState> {
           progress: Progress.extracting,
         );
 
-        read(downloadStateController.notifier).resetState();
+        ref.watch(downloadStateController.notifier).resetState();
 
         /// Extract java from compressed file.
-        bool jdkExtracted = await read(fileStateNotifier.notifier).unzip(
+        bool jdkExtracted = await ref.watch(fileStateNotifier.notifier).unzip(
             '${dir.path}\\tmp\\jdk.$archiveType',
             '$drive:\\fluttermatic\\Java\\');
 
@@ -101,11 +102,11 @@ class JavaNotifier extends StateNotifier<JavaState> {
               } on FileSystemException catch (fileSystemException, s) {
                 await logger.file(
                     LogTypeTag.error, 'Extracted folder rename failed',
-                    stackTraces: s);
-              } catch (_, s) {
+                    stackTrace: s);
+              } catch (e, s) {
                 await logger.file(
                     LogTypeTag.error, 'Extracted folder rename failed',
-                    stackTraces: s);
+                    stackTrace: s);
               }
             }
           }
@@ -118,7 +119,8 @@ class JavaNotifier extends StateNotifier<JavaState> {
         }
 
         /// Appending path to env
-        bool isJDKPathSet = await read(fileStateNotifier.notifier)
+        bool isJDKPathSet = await ref
+            .watch(fileStateNotifier.notifier)
             .setPath('$drive:\\fluttermatic\\Java\\jdk\\bin', dir.path);
 
         if (isJDKPathSet) {
@@ -137,10 +139,10 @@ class JavaNotifier extends StateNotifier<JavaState> {
           progress: Progress.downloading,
         );
 
-        read(downloadStateController.notifier).resetState();
+        ref.watch(downloadStateController.notifier).resetState();
 
         /// Downloading JRE
-        await read(downloadStateController.notifier).downloadFile(
+        await ref.watch(downloadStateController.notifier).downloadFile(
             flutterSdkState.sdkMap.data!['java']['JRE'][platform],
             'jre.$archiveType',
             '${dir.path}\\tmp');
@@ -149,10 +151,10 @@ class JavaNotifier extends StateNotifier<JavaState> {
           progress: Progress.extracting,
         );
 
-        read(downloadStateController.notifier).resetState();
+        ref.watch(downloadStateController.notifier).resetState();
 
         /// Extract java from compressed file.
-        bool jreExtracted = await read(fileStateNotifier.notifier).unzip(
+        bool jreExtracted = await ref.watch(fileStateNotifier.notifier).unzip(
             '${dir.path}\\tmp\\jre.$archiveType',
             '$drive:\\fluttermatic\\Java\\');
 
@@ -167,14 +169,14 @@ class JavaNotifier extends StateNotifier<JavaState> {
                 await e.rename('$drive:\\fluttermatic\\Java\\jre');
                 await logger.file(
                     LogTypeTag.info, 'Extracted folder rename successful');
-              } on FileSystemException catch (_, s) {
+              } on FileSystemException catch (e, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed: $_',
-                    stackTraces: s);
-              } catch (_, s) {
+                    LogTypeTag.error, 'Extracted folder rename failed',
+                    error: e, stackTrace: s);
+              } catch (e, s) {
                 await logger.file(
-                    LogTypeTag.error, 'Extracted folder rename failed: $_',
-                    stackTraces: s);
+                    LogTypeTag.error, 'Extracted folder rename failed.',
+                    error: e, stackTrace: s);
               }
             }
           }
@@ -187,7 +189,8 @@ class JavaNotifier extends StateNotifier<JavaState> {
         }
 
         /// Appending path to env
-        bool isJREPathSet = await read(fileStateNotifier.notifier)
+        bool isJREPathSet = await ref
+            .watch(fileStateNotifier.notifier)
             .setPath('$drive:\\fluttermatic\\Java\\jre\\bin', dir.path);
 
         if (isJREPathSet) {
@@ -242,18 +245,18 @@ class JavaNotifier extends StateNotifier<JavaState> {
           progress: Progress.done,
         );
       }
-    } on ShellException catch (_, s) {
+    } on ShellException catch (e, s) {
       state = state.copyWith(
         progress: Progress.failed,
       );
 
-      await logger.file(LogTypeTag.error, _.message, stackTraces: s);
-    } catch (_, s) {
+      await logger.file(LogTypeTag.error, e.message, stackTrace: s);
+    } catch (e, s) {
       state = state.copyWith(
         progress: Progress.failed,
       );
 
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
     }
   }
 }

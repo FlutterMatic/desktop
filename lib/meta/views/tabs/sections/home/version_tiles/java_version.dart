@@ -13,7 +13,7 @@ import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/dialog_templates/other/install_tool.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
-import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/shimmer.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
@@ -66,7 +66,8 @@ class HomeJavaVersionTile extends ConsumerWidget {
                 ignoring: notifier.java?.version == null && state.loading,
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
-                  opacity: notifier.java?.version == null && state.loading ? 0.2 : 1,
+                  opacity:
+                      notifier.java?.version == null && state.loading ? 0.2 : 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -163,9 +164,9 @@ class _JavaAndroidDevelopment extends StatelessWidget {
       child: Column(
         children: <Widget>[
           const DialogHeader(title: 'Java'),
-          informationWidget(
+          infoWidget(
+            context,
             'Java is specifically targeted at Android development. When using some plugins, Java helps avoid common issues with Android plugins for Flutter.',
-            type: InformationType.green,
           ),
           VSeparators.normal(),
           RectangleButton(

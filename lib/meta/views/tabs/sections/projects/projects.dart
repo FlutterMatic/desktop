@@ -47,7 +47,7 @@ class _HomeProjectsSectionState extends ConsumerState<HomeProjectsSection> {
       return;
     }
 
-    await projectsNotifier.getProjectsWithIsolate(force);
+    await projectsNotifier.getProjects(force);
 
     if (projectsState.error && mounted) {
       ScaffoldMessenger.of(context).clearSnackBars();

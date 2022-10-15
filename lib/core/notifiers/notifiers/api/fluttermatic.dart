@@ -11,9 +11,9 @@ import 'package:fluttermatic/core/notifiers/models/state/api/fm_api.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class FlutterMaticAPINotifier extends StateNotifier<FlutterMaticAPIState> {
-  final Reader read;
+  final Ref ref;
 
-  FlutterMaticAPINotifier(this.read) : super(FlutterMaticAPIState.initial());
+  FlutterMaticAPINotifier(this.ref) : super(FlutterMaticAPIState.initial());
 
   /// Fetch the FlutterMatic api data from the API.
   ///

@@ -42,7 +42,7 @@ class _HomeWorkflowSectionsState extends ConsumerState<HomeWorkflowSections> {
       return;
     }
 
-    await workflowsNotifier.loadWorkflows(force);
+    await workflowsNotifier.getWorkflows(force);
 
     if (workflowsState.error && mounted) {
       ScaffoldMessenger.of(context).clearSnackBars();

@@ -17,10 +17,10 @@ Future<bool> addDependencyToProject({
         'Successfully ${remove ? 'removed' : 'added'} ${isDev ? 'dev' : 'normal'} dependency to project.');
 
     return true;
-  } catch (_, s) {
+  } catch (e, s) {
     await logger.file(LogTypeTag.warning,
-        'Failed to add ${isDev ? 'dev' : 'normal'} dependency to project. Could be already added: $_',
-        stackTraces: s);
+        'Failed to add ${isDev ? 'dev' : 'normal'} dependency to project. Could be already added.',
+        error: e, stackTrace: s);
 
     return false;
   }

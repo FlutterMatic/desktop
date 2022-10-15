@@ -6,15 +6,17 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:isolate';
 
-// 📦 Package imports:
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/components/dialog_templates/project/create/add_dependencies.dart';
-import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/shared_pref.dart';
+import 'package:fluttermatic/components/dialog_templates/project/create/add_dependencies.dart';
+import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/models/projects.dart';
 import 'package:fluttermatic/core/notifiers/models/payloads/general/notifications.dart';
 import 'package:fluttermatic/core/notifiers/models/state/actions/projects.dart';
@@ -24,16 +26,23 @@ import 'package:fluttermatic/meta/utils/general/extract_pubspec.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class ProjectsNotifier extends StateNotifier<ProjectsState> {
-  final Reader read;
+  final Ref ref;
 
-  ProjectsNotifier(this.read) : super(ProjectsState.initial());
+  ProjectsNotifier(this.ref) : super(ProjectsState.initial());
 
   // Variables
+  static final List<ProjectObject> _projects = [
+    ..._pinned,
+    ..._flutter,
+    ..._dart,
+  ];
   static final List<ProjectObject> _pinned = [];
   static final List<ProjectObject> _flutter = [];
   static final List<ProjectObject> _dart = [];
 
   // Getters
+  UnmodifiableListView<ProjectObject> get projects =>
+      UnmodifiableListView(_projects);
   UnmodifiableListView<ProjectObject> get pinned =>
       UnmodifiableListView(_pinned);
   UnmodifiableListView<ProjectObject> get flutter =>
@@ -108,6 +117,12 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
     _dart.clear();
 
     for (ProjectObject project in projects) {
+      // Make sure that the project exists (it might have been loaded from
+      // cache).
+      if (!await Directory(project.path).exists()) {
+        continue;
+      }
+
       if (project.pinned) {
         _pinned.add(project);
         continue;
@@ -125,6 +140,100 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       }
 
       continue;
+    }
+  }
+
+  /// Inject a project into the state. Useful when the user creates a new
+  /// project in the app and you want to add the project without having to
+  /// reload the projects.
+  ///
+  /// It will sort the projects and then notify the listeners. Will
+  /// automatically update the cache and handle sorting it to the right place.
+  Future<void> addProject(PubspecInfo pubspecInfo) async {
+    try {
+      state = state.copyWith(
+        loading: true,
+        error: false,
+      );
+
+      /// Before adding it, we need to make sure that this project is within
+      /// the scope of the projects path. If it outside then we will not add
+      /// it.
+      ProjectCacheSettings? cache = await getProjectSettings(
+        (await getApplicationSupportDirectory()).path,
+      );
+
+      if (cache == null) {
+        await logger.file(LogTypeTag.warning, 'No cache found for projects.');
+
+        state = state.copyWith(
+          loading: false,
+          error: false,
+        );
+
+        return;
+      }
+
+      if (pubspecInfo.pathToPubspec == null ||
+          !pubspecInfo.pathToPubspec!.startsWith(cache.projectsPath!)) {
+        await logger.file(
+          LogTypeTag.warning,
+          'The project ${pubspecInfo.pathToPubspec} is not within the scope of the projects path ${cache.projectsPath}.',
+        );
+
+        state = state.copyWith(
+          loading: false,
+          error: false,
+        );
+
+        return;
+      }
+
+      ProjectObject newProject = ProjectObject(
+        name: pubspecInfo.name ?? pubspecInfo.pathToPubspec!,
+        pinned: false,
+        description: pubspecInfo.description,
+        modDate: File(pubspecInfo.pathToPubspec!).lastModifiedSync(),
+        // Remove from the path the pubspec.yaml file. Only parent path.
+        path: (pubspecInfo.pathToPubspec!.split('\\')..removeLast()).join('\\'),
+      );
+
+      // Add the project to the list based on which category it is in.
+      if (pubspecInfo.isFlutterProject) {
+        _flutter.add(newProject);
+      } else {
+        _dart.add(newProject);
+      }
+
+      // Add the project to the cache in the system so we can reload it next
+      // time.
+      List<Map<String, dynamic>> newCache =
+          _projects.map((e) => e.toJson()).toList();
+
+      // Add the new project.
+      newCache.add(newProject.toJson());
+
+      String supportDir = (await getApplicationSupportDirectory()).path;
+
+      // Now we will write the new cache to the file.
+      await File(getProjectCachePath(supportDir))
+          .writeAsString(jsonEncode(newCache));
+
+      state = state.copyWith(
+        loading: false,
+        error: false,
+      );
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error,
+          'Something went wrong when trying to add a project individually.',
+          error: e, stackTrace: s);
+
+      state = state.copyWith(
+        loading: false,
+        error: false,
+      );
+
+      return;
     }
   }
 
@@ -151,9 +260,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       // Check to see where the project is in, pinned, flutter, or dart
       // category.
       ProjectObject project =
-          [..._pinned, ..._flutter, ..._dart].firstWhere((e) {
-        return e.path == projectPath;
-      });
+          _projects.firstWhere((e) => e.path == projectPath);
 
       // It is in the pinned category.
       if (project.pinned) {
@@ -188,15 +295,15 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       await File(getProjectCachePath(supportDir))
           .writeAsString(jsonEncode(projects));
 
-      await read(notificationStateController.notifier).newNotification(
-        NotificationObject(
-          Timeline.now.toString(),
-          title: 'Project Deleted',
-          message:
-              'Your project "${projectPath.split('\\').last}" has been deleted successfully.',
-          onPressed: null,
-        ),
-      );
+      await ref.watch(notificationStateController.notifier).newNotification(
+            NotificationObject(
+              Timeline.now,
+              title: 'Project Deleted',
+              message:
+                  'Your project "${projectPath.split('\\').last}" has been deleted successfully.',
+              onPressed: null,
+            ),
+          );
 
       state = state.copyWith(
         error: false,
@@ -204,10 +311,10 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       );
 
       return;
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to delete project: $projectPath: $_',
-          stackTraces: s);
+          LogTypeTag.error, 'Failed to delete project: $projectPath.',
+          error: e, stackTrace: s);
 
       state = state.copyWith(
         error: true,
@@ -341,9 +448,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
             isDev: false,
             isDart: !pubspecInfo.isFlutterProject,
           ).timeout(_pubCommandDuration);
-        } catch (_) {
-          // Ignore...
-        }
+        } catch (_) {} // Ignore...
       }
 
       for (String dependency in addedDevDependencies) {
@@ -358,9 +463,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
             isDev: true,
             isDart: !pubspecInfo.isFlutterProject,
           ).timeout(_pubCommandDuration);
-        } catch (_) {
-          // Ignore...
-        }
+        } catch (_) {} // Ignore...
       }
 
       // We will remove all the dependencies that are not in the list of
@@ -388,9 +491,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
               isDart: !pubspecInfo.isFlutterProject,
               remove: true,
             ).timeout(_pubCommandDuration);
-          } catch (_) {
-            // Ignore...
-          }
+          } catch (_) {} // Ignore...
         }
       }
 
@@ -417,9 +518,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
               isDart: !pubspecInfo.isFlutterProject,
               remove: true,
             ).timeout(_pubCommandDuration);
-          } catch (_) {
-            // Ignore...
-          }
+          } catch (_) {} // Ignore...
         }
       }
 
@@ -513,10 +612,9 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       );
 
       return;
-    } catch (_, s) {
-      await logger.file(
-          LogTypeTag.error, 'Failed to save project changes. Error: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to save project changes.',
+          error: e, stackTrace: s);
 
       state = state.copyWith(
         loading: false,
@@ -540,8 +638,8 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
 
       // Remove the project from it's current position and add it to the
       // pinned or flutter/dart category.
-      ProjectObject project = [..._pinned, ..._flutter, ..._dart]
-          .firstWhere((e) => e.path == projectPath);
+      ProjectObject project =
+          _projects.firstWhere((e) => e.path == projectPath);
 
       PubspecInfo pubspecParsed = extractPubspec(
         lines: await File('$projectPath\\pubspec.yaml').readAsLines(),
@@ -590,7 +688,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
 
       // Will find the project that matches the provided path and update the
       // pinned status.
-      for (ProjectObject project in [..._pinned, ..._flutter, ..._dart]) {
+      for (ProjectObject project in _projects) {
         ProjectObject newProject = ProjectObject(
           name: project.name,
           modDate: project.modDate,
@@ -614,38 +712,40 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       );
 
       return;
-    } catch (_, s) {
+    } catch (e, s) {
       state = state.copyWith(
         error: true,
         loading: false,
       );
 
-      await logger.file(
-        LogTypeTag.error,
-        'Failed to update the pinned status for the project: $projectPath :$_',
-        stackTraces: s,
-      );
+      await logger.file(LogTypeTag.error,
+          'Failed to update the pinned status for the project: $projectPath.',
+          error: e, stackTrace: s);
 
       return;
     }
   }
 
-  /// Will fetch the projects from either the cache or realtime. This depends on
-  /// the [force] parameter. If it is set to true then it will fetch from
+  /// Will fetch the projects from either the cache or realtime. This depends
+  /// on the [force] parameter. If it is set to true then it will fetch from
   /// realtime, if [force] is set to false then we will fetch from cache or
-  /// realtime, whichever we think is suitable. It is recommend to set [force]
-  /// to false whenever possible, as this will help with performance and it self
-  /// manages and decides that it should consider [force] as true.
+  /// realtime, whichever we think is suitable.
   ///
-  /// Once returned, you should kill the isolate to prevent memory leaks and
-  /// other issues.
-  Future<void> getProjectsWithIsolate(bool force) async {
+  /// It is recommend to set [force] to false whenever possible, as this will
+  /// help with performance and it self manages and decides that it should
+  /// consider [force] as true.
+  ///
+  /// This will use an isolate in the background to fetch the projects from
+  /// the file system. This will also update the state with the new projects.
+  /// This is resource intensive to call at times with larger scopes of project
+  /// search paths. It is recommended to use [force] as false whenever possible.
+  Future<void> getProjects(bool force) async {
     try {
       // If already loading then ignore this request because it could've been
       // called multiple causing multiple isolates to be released and multiple
       // copies of the same projects shown.
-      // 
-      // Merging projects and automatically removing duplicates isn't supported 
+      //
+      // Merging projects and automatically removing duplicates isn't supported
       // yet.
       if (state.loading) {
         await logger.file(LogTypeTag.warning,
@@ -664,7 +764,13 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       // Load a temporarily UI view, and if we decide to reload all projects
       // (re-index), we can do that in the background while displaying the last
       // known indexes.
-      if (await hasCache(supportDir)) {
+      //
+      // Thats why we should check if a project exists before doing anything
+      // else, it might have existed from a previous session's cache.
+      //
+      // If were given a force request, we don't need to load a temporary cache
+      // preview.
+      if (await hasCache(supportDir) && !force) {
         try {
           List<ProjectObject> projects =
               await _getProjectsFromCacheRaw(supportDir);
@@ -679,7 +785,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
         } catch (e, s) {
           await logger.file(LogTypeTag.error,
               'Failed to load temporary UI projects from cache. Error: $e',
-              stackTraces: s);
+              stackTrace: s);
         }
       }
 
@@ -694,7 +800,7 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
           ),
         );
 
-        List<ProjectObject> projects;
+        List<ProjectObject> projects = [];
 
         ProjectCacheSettings? settings = await getProjectSettings(supportDir);
 
@@ -710,24 +816,17 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
           await logger.file(
               LogTypeTag.info, 'Beginning projects fetch with isolate.');
 
-          projects = await _getProjectsWithIsolateFromRaw(force);
-        } else {
-          await logger.file(LogTypeTag.info,
-              'Beginning projects fetch from cache (last session).');
-
-          projects = await _getProjectsFromCacheRaw(supportDir);
+          projects.addAll(await _getProjectsWithIsolateFromRaw(force));
         }
 
-        await _sortProjects(projects);
+        if (projects.isNotEmpty && _projects.isEmpty) {
+          await _sortProjects(projects);
 
-        await logger.file(
-          LogTypeTag.info,
-          'Loaded ${[
-            ..._pinned,
-            ..._flutter,
-            ..._dart,
-          ].length} project(s) with isolate using ${force ? 'realtime' : 'cache'}.',
-        );
+          await logger.file(
+            LogTypeTag.info,
+            'Loaded ${_projects.length} project(s) with isolate using ${force ? 'realtime' : 'cache'}.',
+          );
+        }
       } else {
         await logger.file(LogTypeTag.warning,
             'Tried to load projects with isolate when no projects path has been set.');
@@ -736,19 +835,19 @@ class ProjectsNotifier extends StateNotifier<ProjectsState> {
       state = state.copyWith(
         error: false,
         loading: false,
+        initialized: true,
       );
 
       return;
-    } catch (_, s) {
-      await logger.file(
-        LogTypeTag.error,
-        'Couldn\'t fetch projects with isolate. No projects loaded. Error: $_',
-        stackTraces: s,
-      );
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error,
+          'Couldn\'t fetch projects with isolate. No projects loaded.',
+          error: e, stackTrace: s);
 
       state = state.copyWith(
         error: true,
         loading: false,
+        initialized: false,
       );
 
       return;
@@ -760,23 +859,35 @@ Future<List<ProjectObject>> _getProjectsFromCacheRaw(String supportDir) async {
   try {
     String cachePath = ProjectsNotifier.getProjectCachePath(supportDir);
 
-    if (File(cachePath).existsSync()) {
+    if (await File(cachePath).exists()) {
       List<ProjectObject> projects = <ProjectObject>[];
 
-      for (Map<String, dynamic> project
-          in jsonDecode(await File(cachePath).readAsString())) {
-        projects.add(ProjectObject.fromJson(project));
+      List<Map<String, dynamic>> raw =
+          (jsonDecode(await File(cachePath).readAsString()) as List)
+              .cast<Map<String, dynamic>>();
+
+      for (Map<String, dynamic> project in raw) {
+        try {
+          projects.add(ProjectObject.fromJson(project));
+        } catch (e, s) {
+          await logger.file(LogTypeTag.error, 'Failed to parse cache project.',
+              error: e, stackTrace: s, logDir: Directory(supportDir));
+        }
       }
+
+      await logger.file(
+          LogTypeTag.info, 'Loaded ${projects.length} projects from cache.',
+          logDir: Directory(supportDir));
 
       return projects;
     }
 
-    return <ProjectObject>[];
-  } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Couldn\'t get projects from cache: $_',
-        stackTraces: s);
+    return [];
+  } catch (e, s) {
+    await logger.file(LogTypeTag.error, 'Couldn\'t get projects from cache.',
+        error: e, stackTrace: s, logDir: Directory(supportDir));
 
-    return <ProjectObject>[];
+    return [];
   }
 }
 
@@ -802,10 +913,8 @@ Future<List<ProjectObject>> _getProjectsWithIsolateFromRaw(bool force) async {
         }
 
         await logger.file(
-          LogTypeTag.info,
-          'Fetching projects from path. Forced request.',
-          logDir: Directory(supportDir),
-        );
+            LogTypeTag.info, 'Fetching projects from path. Forced request.',
+            logDir: Directory(supportDir));
 
         List<ProjectObject> newProjects = <ProjectObject>[];
 
@@ -960,12 +1069,10 @@ Future<List<ProjectObject>> _getProjectsWithIsolateFromRaw(bool force) async {
 
         List<ProjectObject> forcedProjects = await forceFetch();
         Isolate.exit(sendPort, forcedProjects);
-      } catch (_, s) {
+      } catch (e, s) {
         await logger.file(
-          LogTypeTag.error,
-          'Failed to run projects fetch on isolate. Error: $_',
-          stackTraces: s,
-        );
+            LogTypeTag.error, 'Failed to run projects fetch on isolate.',
+            error: e, stackTrace: s, logDir: Directory(supportDir));
 
         List<ProjectObject> forcedProjects = await forceFetch();
         Isolate.exit(sendPort, forcedProjects);
@@ -990,12 +1097,10 @@ Future<List<ProjectObject>> _getProjectsWithIsolateFromRaw(bool force) async {
         (await receivePort.first) as List<ProjectObject>;
 
     return projects;
-  } catch (_, s) {
+  } catch (e, s) {
     await logger.file(
-      LogTypeTag.error,
-      'Couldn\'t fetch projects with isolate. Error: $_',
-      stackTraces: s,
-    );
+        LogTypeTag.error, 'Couldn\'t fetch projects with isolate.',
+        error: e, stackTrace: s);
 
     rethrow;
   }

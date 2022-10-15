@@ -11,9 +11,9 @@ import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class DownloadNotifier extends StateNotifier<DownloadState> {
-  final Reader read;
+  final Ref ref;
 
-  DownloadNotifier(this.read) : super(DownloadState.initial());
+  DownloadNotifier(this.ref) : super(DownloadState.initial());
 
   // ignore: prefer_final_fields
   List<int> _buffer = <int>[];
@@ -53,7 +53,8 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
 
         await logger.file(LogTypeTag.info, 'Started downloading $fileName.');
 
-        bool exists = await read(fileStateNotifier.notifier)
+        bool exists = await ref
+            .watch(fileStateNotifier.notifier)
             .fileExists('$dir\\', fileName);
 
         if (!exists) {
@@ -115,13 +116,13 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         await logger.file(LogTypeTag.error,
             'Error code while downloading $fileName - ${response.statusCode}');
       }
-    } catch (_, s) {
+    } catch (e, s) {
       state = state.copyWith(
         progress: Progress.failed,
       );
 
-      await logger.file(LogTypeTag.error, 'Failed to use download notifier: $_',
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Failed to use download notifier.',
+          error: e, stackTrace: s);
     }
 
     // Reset the state back to default.

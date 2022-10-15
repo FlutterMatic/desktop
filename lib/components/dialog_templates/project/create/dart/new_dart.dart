@@ -4,6 +4,9 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/shared_pref.dart';
@@ -19,22 +22,23 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/notifiers/models/payloads/actions/dart.dart';
-import 'package:fluttermatic/core/notifiers/notifiers/actions/dart.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
-class NewDartProjectDialog extends StatefulWidget {
+class NewDartProjectDialog extends ConsumerStatefulWidget {
   const NewDartProjectDialog({Key? key}) : super(key: key);
 
   @override
   _NewDartProjectDialogState createState() => _NewDartProjectDialogState();
 }
 
-class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
+class _NewDartProjectDialogState extends ConsumerState<NewDartProjectDialog> {
+  // Dart Template
+  String _template = 'console-simple';
+
   // Input Controllers
   final TextEditingController _nameController = TextEditingController();
-
-  String _template = 'console-simple';
 
   _NewProjectSections _index = _NewProjectSections.projectName;
 
@@ -80,148 +84,152 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
     return true;
   }
 
-  // Future<void> _createNewProject() async {
-  //   if (_createProjectFormKey.currentState!.validate()) {
-  //     // Name
-  //     if (_index == _NewProjectSections.projectName &&
-  //         _projectNameCondition()) {
-  //       if (!_projectPathCondition()) {
-  //         ScaffoldMessenger.of(context).clearSnackBars();
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           snackBarTile(
-  //             context,
-  //             'Please select a valid path to save project to.',
-  //             type: SnackBarType.error,
-  //           ),
-  //         );
+  Future<void> _createNewProject() async {
+    if (_createProjectFormKey.currentState!.validate()) {
+      // Name of the project is valid name in which we can save a project to.
+      if (_index == _NewProjectSections.projectName &&
+          _projectNameCondition()) {
+        if (!_projectPathCondition()) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'Please select a valid path to save project to.',
+              type: SnackBarType.error,
+            ),
+          );
 
-  //         return;
-  //       }
+          return;
+        }
 
-  //       // Make sure that this project name doesn't already exist in the
-  //       // selected path.
-  //       bool confirm = _confirmDirectory();
+        // Make sure that this project name doesn't already exist in the
+        // selected path.
+        bool confirm = _confirmDirectory();
 
-  //       if (confirm) {
-  //         setState(() {
-  //           _nameController.text = _nameController.text.toLowerCase();
-  //           _index = _NewProjectSections.projectTemplate;
-  //         });
-  //       }
-  //     } else if (_index == _NewProjectSections.projectTemplate) {
-  //       setState(() => _index = _NewProjectSections.projectDependencies);
-  //     } else if (_index == _NewProjectSections.projectDependencies) {
-  //       try {
-  //         // Make sure that this project name doesn't already exist in the
-  //         // selected path.
-  //         bool confirm = _confirmDirectory();
+        if (confirm) {
+          setState(() {
+            _nameController.text = _nameController.text.toLowerCase();
+            _index = _NewProjectSections.projectTemplate;
+          });
+        }
+      } else if (_index == _NewProjectSections.projectTemplate) {
+        setState(() => _index = _NewProjectSections.projectDependencies);
+      } else if (_index == _NewProjectSections.projectDependencies) {
+        try {
+          // Make sure that this project name doesn't already exist in the
+          // selected path.
+          bool confirm = _confirmDirectory();
 
-  //         if (confirm) {
-  //           setState(() => _index = _NewProjectSections.creatingProject);
+          if (confirm) {
+            setState(() => _index = _NewProjectSections.creatingProject);
 
-  //           String result = await DartActionsNotifier.createNewProject(
-  //             NewDartProjectInfo(
-  //               projectName: _nameController.text,
-  //               projectPath: _path!,
-  //               template: _template,
-  //             ),
-  //           );
+            await ref.watch(dartActionsStateNotifier.notifier).createNewProject(
+                  NewDartProjectInfo(
+                    projectName: _nameController.text,
+                    projectPath: _path!,
+                    template: _template,
+                  ),
+                );
 
-  //           if (result == 'success') {
-  //             List<String> failedDependencies = <String>[];
+            bool done = !ref.watch(dartActionsStateNotifier).loading &&
+                ref.watch(dartActionsStateNotifier).error.isEmpty;
 
-  //             // Add the normal dependencies to the project.
-  //             if (_dependencies.isNotEmpty) {
-  //               for (String dependency in _dependencies) {
-  //                 setState(() => _currentActivity =
-  //                     'Adding $dependency to dependencies...');
+            if (done) {
+              List<String> failedDependencies = <String>[];
 
-  //                 bool result = await addDependencyToProject(
-  //                   path: '${_path!}\\${_nameController.text}',
-  //                   dependency: dependency,
-  //                   isDev: false,
-  //                   isDart: true,
-  //                 );
+              // Add the normal dependencies to the project.
+              if (_dependencies.isNotEmpty) {
+                for (String dependency in _dependencies) {
+                  setState(() => _currentActivity =
+                      'Adding $dependency to dependencies...');
 
-  //                 if (!result) {
-  //                   failedDependencies.add(dependency);
-  //                 }
-  //               }
-  //             }
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
+                    dependency: dependency,
+                    isDev: false,
+                    isDart: true,
+                  );
 
-  //             // Add the dev dependencies to the project.
-  //             if (_devDependencies.isNotEmpty) {
-  //               for (String dev in _devDependencies) {
-  //                 setState(() =>
-  //                     _currentActivity = 'Adding $dev to dev dependencies...');
+                  if (!result) {
+                    failedDependencies.add(dependency);
+                  }
+                }
+              }
 
-  //                 bool result = await addDependencyToProject(
-  //                   path: '${_path!}\\${_nameController.text}',
-  //                   dependency: dev,
-  //                   isDev: true,
-  //                   isDart: true,
-  //                 );
+              // Add the dev dependencies to the project.
+              if (_devDependencies.isNotEmpty) {
+                for (String dev in _devDependencies) {
+                  setState(() =>
+                      _currentActivity = 'Adding $dev to dev dependencies...');
 
-  //                 if (!result) {
-  //                   failedDependencies.add(dev);
-  //                 }
-  //               }
-  //             }
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
+                    dependency: dev,
+                    isDev: true,
+                    isDart: true,
+                  );
 
-  //             if (failedDependencies.isNotEmpty) {
-  //               await logger.file(LogTypeTag.warning,
-  //                   'Created new Dart project but failed to add the following dependencies: ${failedDependencies.join(', ')}');
-  //             }
+                  if (!result) {
+                    failedDependencies.add(dev);
+                  }
+                }
+              }
 
-  //             if (mounted) {
-  //               Navigator.pop(context);
-  //             }
+              if (failedDependencies.isNotEmpty) {
+                await logger.file(LogTypeTag.warning,
+                    'Created new Dart project but failed to add the following dependencies: ${failedDependencies.join(', ')}');
+              }
 
-  //             await showDialog(
-  //               context: context,
-  //               builder: (_) => ProjectCreatedDialog(
-  //                 projectName: _nameController.text,
-  //                 projectPath: '${_path!}\\${_nameController.text}',
-  //               ),
-  //             );
+              if (mounted) {
+                Navigator.pop(context);
+              }
 
-  //             return;
-  //           }
+              await showDialog(
+                context: context,
+                builder: (_) => ProjectCreatedDialog(
+                  projectName: _nameController.text,
+                  projectPath: '${_path!}\\${_nameController.text}',
+                ),
+              );
 
-  //           setState(() => _index = _NewProjectSections
-  //               .values[_NewProjectSections.values.length - 2]);
+              return;
+            }
 
-  //           if (mounted) {
-  //             ScaffoldMessenger.of(context).clearSnackBars();
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               snackBarTile(
-  //                 context,
-  //                 result,
-  //                 type: SnackBarType.error,
-  //               ),
-  //             );
-  //           }
-  //         }
-  //       } catch (_, s) {
-  //         await logger.file(
-  //             LogTypeTag.error, 'Failed to create new Flutter project: $_',
-  //             stackTraces: s);
+            setState(() => _index = _NewProjectSections
+                .values[_NewProjectSections.values.length - 2]);
 
-  //         if (mounted) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             snackBarTile(
-  //               context,
-  //               'Failed to create project. Please file an issue.',
-  //               type: SnackBarType.error,
-  //             ),
-  //           );
-  //         }
-  //         setState(() => _index = _NewProjectSections
-  //             .values[_NewProjectSections.values.length - 2]);
-  //       }
-  //     }
-  //   }
-  // }
+            if (mounted) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                snackBarTile(
+                  context,
+                  ref.watch(dartActionsStateNotifier).error,
+                  type: SnackBarType.error,
+                ),
+              );
+            }
+          }
+        } catch (e, s) {
+          await logger.file(
+              LogTypeTag.error, 'Failed to create new Flutter project.',
+              error: e, stackTrace: s);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(
+                context,
+                'Failed to create project. Please file an issue.',
+                type: SnackBarType.error,
+              ),
+            );
+          }
+
+          setState(() => _index = _NewProjectSections
+              .values[_NewProjectSections.values.length - 2]);
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +242,8 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
             DialogHeader(
               title: 'Dart Project',
               leading: _index != _NewProjectSections.projectName &&
-                      _index != _NewProjectSections.creatingProject
+                      _index != _NewProjectSections.creatingProject &&
+                      !ref.watch(dartActionsStateNotifier).loading
                   ? SquareButton(
                       icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
                       color: Colors.transparent,
@@ -296,8 +305,7 @@ class _NewDartProjectDialogState extends State<NewDartProjectDialog> {
                   const Spacer(),
                   RectangleButton(
                     radius: BorderRadius.circular(5),
-                    // onPressed: _createNewProject, // TODO: Implement.
-                    onPressed: () {},
+                    onPressed: _createNewProject,
                     width: 120,
                     child: Text(
                       _index ==

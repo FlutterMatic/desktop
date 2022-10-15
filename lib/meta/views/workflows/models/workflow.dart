@@ -171,10 +171,10 @@ class WorkflowTemplate {
         // ...
         isSaved: (json['isSaved'] as bool?) ?? false,
       );
-    } catch (_, s) {
+    } catch (e, s) {
       logger.file(LogTypeTag.error,
           'WorkflowTemplate.fromJson() Failed to convert JSON to WorkflowTemplate. It might be missing some required fields or corrupted. JSON: $json',
-          stackTraces: s);
+          stackTrace: s);
       throw Exception(
           'Failed to parse WorkflowTemplate from JSON. Template: $json');
     }

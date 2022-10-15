@@ -7,7 +7,7 @@ class DartActionsState {
     this.error = '',
   });
 
-  factory DartActionsState.initial() => DartActionsState.initial();
+  factory DartActionsState.initial() => const DartActionsState();
 
   DartActionsState copyWith({
     bool? loading,

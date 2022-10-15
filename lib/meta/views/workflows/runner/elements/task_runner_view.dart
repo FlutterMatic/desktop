@@ -286,15 +286,18 @@ class _TaskRunnerViewState extends State<TaskRunnerView> {
           'Workflow action done running: ${widget.action.id}');
 
       widget.onDone();
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
           'Error running workflow action: ${_commands.join(',')}',
-          stackTraces: s);
+          stackTrace: s);
+
       await writeWorkflowSessionLog(widget.logFile, LogTypeTag.info,
           'Failed to run workflow action: ${widget.action.id}');
+
       if (mounted) {
         setState(() => _status = WorkflowActionStatus.failed);
       }
+
       widget.onDone();
     }
   }

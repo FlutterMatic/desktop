@@ -71,7 +71,8 @@ const Color kRedColor = Color(0xffE44516);
 const Color kYellowColor = Color(0xffF7C605);
 const Color kGreenColor = Color(0xff07C2A3);
 
-/// ### SEPARATORS
+/// SEPARATORS
+/// 
 /// The following are size boxes used across the app. Try to use these
 /// as much as possible as it helps simplify the code and makes it easier
 /// for changes in the future. If the size you are looking for doesn't

@@ -12,9 +12,9 @@ import 'package:fluttermatic/core/notifiers/models/state/general/space.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class SpaceNotifier extends StateNotifier<SpaceState> {
-  final Reader read;
+  final Ref ref;
 
-  SpaceNotifier(this.read) : super(SpaceState.initial());
+  SpaceNotifier(this.ref) : super(SpaceState.initial());
 
   final List<String> _drives = [];
   UnmodifiableListView<String> get drives => UnmodifiableListView(_drives);
@@ -157,9 +157,9 @@ class SpaceNotifier extends StateNotifier<SpaceState> {
       }
 
       // Will now check to see if there is a conflicting drive error.
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to check disk space: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to check disk space.',
+          error: e, stackTrace: s);
 
       state = state.copyWith(
         hasConflictingError: true,

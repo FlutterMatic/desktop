@@ -67,18 +67,16 @@ Future<VSCBinInfo?> _getVSCBinInfo() async {
       resultOutput = vscResults.first.stdout.toString().trim();
     }
 
-    /// returning the data.
     return VSCBinInfo.parseVersionOutput(resultOutput);
+  } on ShellException catch (e, s) {
+    await logger.file(
+        LogTypeTag.error, 'Something went wrong when getting VSC Bin Info.',
+        error: e, stackTrace: s);
+  } catch (e, s) {
+    await logger.file(LogTypeTag.error,
+        'Something unexpected went wrong when getting VSC Bin Info.',
+        error: e, stackTrace: s);
   }
 
-  /// On [ShellException], Catch the error data to the logs file.
-  on ShellException catch (_, s) {
-    await logger.file(LogTypeTag.error, _.message, stackTraces: s);
-  }
-
-  /// On any other error, Catch the error data to the logs file.
-  catch (err) {
-    await logger.file(LogTypeTag.error, err.toString());
-  }
   return null;
 }

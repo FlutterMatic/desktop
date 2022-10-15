@@ -33,10 +33,11 @@ Future<void> clearOldLogs(List<dynamic> data) async {
         );
 
         return DateTime.now().difference(dateTime).inDays < _oldLogDays;
-      } catch (_, s) {
+      } catch (e, s) {
         logger.file(LogTypeTag.error,
-            'Failed to parse date time to delete old logs and the file name was: $element Error: $_',
-            stackTraces: s, logDir: Directory(path));
+            'Failed to parse date time to delete old logs and the file name was: $element.',
+            error: e, stackTrace: s, logDir: Directory(path));
+
         return false;
       }
     });
@@ -50,15 +51,16 @@ Future<void> clearOldLogs(List<dynamic> data) async {
 
     if (fileNames.isNotEmpty) {
       await logger.file(LogTypeTag.info,
-          'Deleted old logs with a total of ${fileNames.length} log(s)',
+          'Deleted old logs with a total of ${fileNames.length} log(s).',
           logDir: Directory(path));
     }
 
     port.send(true);
     return;
-  } catch (_, s) {
-    await logger.file(LogTypeTag.error, 'Failed to delete old logs: $_',
-        stackTraces: s, logDir: Directory(path));
+  } catch (e, s) {
+    await logger.file(LogTypeTag.error, 'Failed to delete old logs.',
+        error: e, stackTrace: s, logDir: Directory(path));
+
     port.send(false);
     return;
   }

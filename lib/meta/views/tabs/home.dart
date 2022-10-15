@@ -69,9 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
         i.kill();
         _clearLogsPort.close();
       });
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Couldn\'t clear logs: $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Couldn\'t clear logs.',
+          error: e, stackTrace: s);
     }
   }
 
@@ -100,8 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedTab = _tabs.first;
       }
     });
+
     Future<void>.delayed(const Duration(milliseconds: 100),
         () => setState(() => _animateFinish = true));
+
     _cleanLogs();
     super.initState();
   }
@@ -115,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     bool showShortView = size.width < 900 || _collapse;
+
     return Consumer(
       builder: (_, ref, __) {
         ThemeState themeState = ref.watch(themeStateController);
@@ -153,25 +155,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: Column(
                                   children: <Widget>[
-                                    ..._tabs.map(
-                                      (HomeTabObject e) {
-                                        return _tabTile(
-                                          context,
-                                          _collapse,
-                                          stageType: e.stageType,
-                                          icon: SvgPicture.asset(
-                                            e.icon,
-                                            color: themeState.darkTheme
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                          name: e.name,
-                                          onPressed: () =>
-                                              setState(() => _selectedTab = e),
-                                          selected: _selectedTab == e,
-                                        );
-                                      },
-                                    ),
+                                    ..._tabs.map((e) {
+                                      return _tabTile(
+                                        context,
+                                        _collapse,
+                                        stageType: e.stageType,
+                                        icon: SvgPicture.asset(
+                                          e.icon,
+                                          color: themeState.darkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        name: e.name,
+                                        onPressed: () =>
+                                            setState(() => _selectedTab = e),
+                                        selected: _selectedTab == e,
+                                      );
+                                    }),
                                     const Spacer(),
                                     // Short view
                                     if (showShortView)
@@ -290,7 +290,7 @@ Widget _tabTile(
           child: !showShortView
               ? Row(
                   children: <Widget>[
-                    Flexible(child: icon),
+                    icon,
                     HSeparators.small(),
                     Expanded(
                       child: Text(

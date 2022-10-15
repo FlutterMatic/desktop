@@ -28,13 +28,16 @@ abstract class AndroidStudioBinInfo {
     Version? studioVersion;
     try {
       studioVersion = Version.parse(resultOutput);
+
       return AndroidStudioBinInfoImpl(version: studioVersion);
     } on FormatException catch (formatException) {
       logger.file(
           LogTypeTag.error, 'Format Exception: ${formatException.toString()}');
+
       return null;
-    } catch (_, s) {
-      logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+    } catch (e, s) {
+      logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
+
       return null;
     }
   }
@@ -63,18 +66,16 @@ Future<AndroidStudioBinInfo?> _getAndroidStudioBinInfo() async {
       }
     });
 
-    /// returning the data.
     return AndroidStudioBinInfo.parseVersionOutput(resultOutput!);
+  } on ShellException catch (e, s) {
+    await logger.file(LogTypeTag.error,
+        'Something went wrong when getting Android Studio Bin Info.',
+        error: e, stackTrace: s);
+  } catch (e, s) {
+    await logger.file(LogTypeTag.error,
+        'Something went unexpectedly wrong when Getting Android Studio Bin Info.',
+        error: e, stackTrace: s);
   }
 
-  /// On [ShellException], Catch the error data to the logs file.
-  on ShellException catch (_, s) {
-    await logger.file(LogTypeTag.error, _.message, stackTraces: s);
-  }
-
-  /// On any other error, Catch the error data to the logs file.
-  catch (_, s) {
-    await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
-  }
   return null;
 }

@@ -20,18 +20,18 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class GitNotifier extends StateNotifier<GitState> {
-  final Reader read;
+  final Ref ref;
 
-  GitNotifier(this.read) : super(GitState.initial());
+  GitNotifier(this.ref) : super(GitState.initial());
 
   /// Check git exists in the system or not.
   Future<void> checkGit() async {
     String? gitDownloadLink;
 
     try {
-      FlutterSDKState flutterSdkState = read(flutterSdkAPIStateNotifier);
+      FlutterSDKState flutterSdkState = ref.watch(flutterSdkAPIStateNotifier);
 
-      String drive = read(spaceStateController).drive;
+      String drive = ref.watch(spaceStateController).drive;
 
       state = state.copyWith(
         progress: Progress.started,
@@ -73,7 +73,7 @@ class GitNotifier extends StateNotifier<GitState> {
           );
 
           /// Downloading Git.
-          await read(downloadStateController.notifier).downloadFile(
+          await ref.watch(downloadStateController.notifier).downloadFile(
               gitDownloadLink!, 'git.tar.bz2', '${dir.path}\\tmp');
 
           state = state.copyWith(
@@ -81,7 +81,7 @@ class GitNotifier extends StateNotifier<GitState> {
           );
 
           /// Extract java from compressed file.
-          bool gitExtracted = await read(fileStateNotifier.notifier).unzip(
+          bool gitExtracted = await ref.watch(fileStateNotifier.notifier).unzip(
               '${dir.path}\\tmp\\git.tar.bz2', '$drive:\\fluttermatic\\git');
 
           if (gitExtracted) {
@@ -91,7 +91,8 @@ class GitNotifier extends StateNotifier<GitState> {
           }
 
           /// Appending path to env
-          bool isGitPathSet = await read(fileStateNotifier.notifier)
+          bool isGitPathSet = await ref
+              .watch(fileStateNotifier.notifier)
               .setPath('$drive:\\fluttermatic\\git\\bin', dir.path);
 
           if (isGitPathSet) {
@@ -161,12 +162,12 @@ class GitNotifier extends StateNotifier<GitState> {
         progress: Progress.failed,
       );
       await logger.file(LogTypeTag.error, shellException.message,
-          stackTraces: s);
-    } catch (_, s) {
+          stackTrace: s);
+    } catch (e, s) {
       state = state.copyWith(
         progress: Progress.failed,
       );
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
     }
   }
 }

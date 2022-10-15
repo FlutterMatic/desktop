@@ -181,7 +181,7 @@ class _ContributorTileState extends State<_ContributorTile> {
                         children: <Widget>[
                           Text(_userName),
                           VSeparators.xSmall(),
-                          Text('GitHub: ' + _userId,
+                          Text('GitHub: $_userId',
                               style: const TextStyle(color: Colors.grey)),
                         ],
                       ),

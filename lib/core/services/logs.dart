@@ -19,22 +19,22 @@ class Logger {
       Directory applicationDirectory;
       applicationDirectory = dir ?? await getApplicationSupportDirectory();
       return '${applicationDirectory.path}\\logs';
-    } on FileSystemException catch (_, s) {
-      console.log('${_.message}\n STACKTRACES: $s');
-      throw _.message;
-    } on OSError catch (_, s) {
-      console.log('${_.message}\n STACKTRACES: $s');
-      throw _.message;
-    } catch (_, s) {
-      console.log('$_\n STACKTRACES: $s');
-      throw _.toString();
+    } on FileSystemException catch (e, s) {
+      console.log('${e.message}\n STACKTRACES: $s');
+      throw e.message;
+    } on OSError catch (e, s) {
+      console.log('${e.message}\n STACKTRACES: $s');
+      throw e.message;
+    } catch (e, s) {
+      console.log('$e\n STACKTRACES: $s');
+      throw e.toString();
     }
   }
 
   static Future<File> currentFile(Directory? dir) async {
     String path = await _localPath(dir);
     String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    
+
     if (!kReleaseMode) {
       return File('$path\\fm-${Platform.operatingSystem}-debug-$date.log');
     } else {
@@ -48,7 +48,8 @@ class Logger {
   Future<void> file(
     LogTypeTag tag,
     String? message, {
-    StackTrace? stackTraces,
+    Object? error,
+    StackTrace? stackTrace,
     Directory? logDir,
   }) async {
     File file = await currentFile(logDir);
@@ -60,6 +61,10 @@ class Logger {
 
     String baseData =
         '[${addZero(now.hour)}:${addZero(now.minute)}:${addZero(now.second)}] - $message\n';
+
+    if (error != null) {
+      baseData += ' - [Error] - $error';
+    }
 
     try {
       switch (tag) {
@@ -73,27 +78,29 @@ class Logger {
         case LogTypeTag.warning:
           if (kDebugMode || kProfileMode) console.log('WARNING $baseData');
           await file.writeAsString(
-            '''WARNING $baseData[StackTraces] - ${stackTraces ?? StackTrace.empty}\n''',
+            '''WARNING $baseData
+            [StackTraces] - ${stackTrace ?? StackTrace.empty}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
         case LogTypeTag.error:
           if (kDebugMode || kProfileMode) console.log('ERROR $baseData');
           await file.writeAsString(
-            '''ERROR $baseData[StackTraces] - ${stackTraces ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
+            '''ERROR $baseData
+            [StackTraces] - ${stackTrace ?? StackTrace.fromString(StackTrace.current.toString())}\n''',
             mode: FileMode.writeOnlyAppend,
           );
           break;
       }
-    } on FileSystemException catch (_, s) {
+    } on FileSystemException catch (e, s) {
       console.log(
-          '${_.message}\n- [FileSystemException] This occurred when trying to write a log.\n- StackTraces: $s');
-    } on OSError catch (_, s) {
+          '${e.message}\n-FATAL: [FileSystemException] THIS ERROR OCCURRED WHEN TRYING TO WRITE A LOG.\n- StackTraces: $s');
+    } on OSError catch (e, s) {
       console.log(
-          '${_.message}\n- [OSError] This occurred when trying to write a log.\n- StackTraces: $s');
-    } catch (_, s) {
+          '${e.message}\n-FATAL: [OSError] THIS ERROR OCCURRED WHEN TRYING TO WRITE A LOG.\n- StackTraces: $s');
+    } catch (e, s) {
       console.log(
-          '$_\n- This occurred when trying to write a log.\n- StackTraces: $s');
+          '$e\n-FATAL: [Error] THIS ERROR OCCURRED WHEN TRYING TO WRITE A LOG.\n- StackTraces: $s');
     }
   }
 }

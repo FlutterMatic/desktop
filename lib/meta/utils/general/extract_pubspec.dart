@@ -109,9 +109,10 @@ PubspecInfo extractPubspec({
       devDependencies: devDependenciesList,
       pathToPubspec: path,
     );
-  } catch (_, s) {
-    logger.file(LogTypeTag.error, 'Failed to extract pubspec file: $_',
-        stackTraces: s);
+  } catch (e, s) {
+    logger.file(LogTypeTag.error, 'Failed to extract pubspec file.',
+        error: e, stackTrace: s);
+
     return const PubspecInfo(
       isValid: false,
       isFlutterProject: false,

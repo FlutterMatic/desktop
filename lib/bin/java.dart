@@ -32,6 +32,7 @@ abstract class JavaBinInfo {
         .split(' ')
         .map((String word) => word.trim())
         .where((String word) => word.isNotEmpty);
+
     bool foundJava = false;
 
     for (String word in output) {
@@ -48,9 +49,11 @@ abstract class JavaBinInfo {
         }
       }
     }
+
     if (javaVersion != null) {
       return JavaBinInfoImpl(version: javaVersion);
     }
+
     return null;
   }
 }
@@ -78,24 +81,18 @@ Future<JavaBinInfo?> _getJavaBinInfo() async {
     /// `java -version` outputs to stderr, so we need to check the first line.
     resultOutput = javaResults.first.stderr.toString().trim();
 
-    /// If the output is empty,
-    /// It means that the command logged the result in stdout.
+    /// If the output is empty, it means that the command logged the result
+    /// in stdout.
     if (resultOutput.isEmpty) {
       resultOutput = javaResults.first.stdout.toString().trim();
     }
 
-    /// returning the data.
     return JavaBinInfo.parseVersionOutput(resultOutput);
-  }
-
-  /// On [ShellException], Catch the error data to the logs file.
-  on ShellException catch (shellException) {
+  } on ShellException catch (shellException) {
     await logger.file(LogTypeTag.error, shellException.message);
-  }
-
-  /// On any other error, Catch the error data to the logs file.
-  catch (err) {
+  } catch (err) {
     await logger.file(LogTypeTag.error, err.toString());
   }
+
   return null;
 }

@@ -30,7 +30,7 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
     List<String> releases = <String>[];
     String currentRelease = '';
 
-    bool _isReleaseLine(String line) {
+    bool isReleaseLine(String line) {
       line.trim();
 
       if (!line.startsWith('### v')) {
@@ -74,7 +74,7 @@ class _ChangelogAboutSectionState extends State<ChangelogAboutSection> {
 
     data.split('\n').forEach((String line) {
       // Splits each release chunks into a list of lines.
-      if (_isReleaseLine(line)) {
+      if (isReleaseLine(line)) {
         releases.add(currentRelease);
         currentRelease = line;
       } else {

@@ -6,6 +6,7 @@ import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/components/dialog_templates/dialog_header.dart';
 import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
+import 'package:fluttermatic/components/widgets/ui/info_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/information_widget.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/meta/views/workflows/actions.dart';
@@ -51,9 +52,9 @@ class _SetProjectWorkflowActionsOrderState
             type: InformationType.info,
           )
         else
-          informationWidget(
+          infoWidget(
+            context,
             'You can order your workflow actions to set the order they are executed in your ${widget.workflowName} workflow.',
-            type: InformationType.green,
           ),
         VSeparators.normal(),
         ClipRRect(
@@ -133,7 +134,8 @@ class _SetProjectWorkflowActionsOrderState
                       ),
                     ),
                     HSeparators.small(),
-                    const Text('Suggestions'),
+                    Text(
+                        'Suggestion${_suggestions(widget.workflowActions).length == 1 ? '' : 's'}'),
                   ],
                 ),
                 onPressed: () {

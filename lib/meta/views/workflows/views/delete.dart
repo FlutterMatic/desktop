@@ -140,10 +140,10 @@ class _ConfirmWorkflowDeleteState extends State<ConfirmWorkflowDelete> {
                                 type: SnackBarType.error,
                               ));
                             }
-                          } catch (_, s) {
+                          } catch (e, s) {
                             await logger.file(
                                 LogTypeTag.error, 'Failed to delete workflow',
-                                stackTraces: s);
+                                stackTrace: s);
 
                             if (mounted) {
                               ScaffoldMessenger.of(context).clearSnackBars();

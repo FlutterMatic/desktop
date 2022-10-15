@@ -10,9 +10,9 @@ import 'package:fluttermatic/core/models/tools/vscode.dart';
 import 'package:fluttermatic/core/notifiers/models/state/api/vscode_api.dart';
 
 class VSCodeAPINotifier extends StateNotifier<VSCodeAPIState> {
-  final Reader read;
+  final Ref ref;
 
-  VSCodeAPINotifier(this.read) : super(VSCodeAPIState.initial());
+  VSCodeAPINotifier(this.ref) : super(VSCodeAPIState.initial());
 
   /// Fetches the Visual Studio Code API data from GitHub. This will get the
   /// latest release information.

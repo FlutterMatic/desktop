@@ -13,9 +13,9 @@ import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 
 class FileNotifier extends StateNotifier<void> {
-  final Reader read;
+  final Ref ref;
 
-  FileNotifier(this.read) : super(null);
+  FileNotifier(this.ref) : super(null);
 
   /// Checks whether the directory exists in the path provided or not.
   ///
@@ -38,13 +38,17 @@ class FileNotifier extends StateNotifier<void> {
           return true;
         }
       }
+
       await logger.file(LogTypeTag.info, '$subDirName directory not found.');
+
       return false;
-    } on FileSystemException catch (_, s) {
-      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
+    } on FileSystemException catch (e, s) {
+      await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+
       return false;
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
+
       return false;
     }
   }
@@ -73,11 +77,11 @@ class FileNotifier extends StateNotifier<void> {
 
       await logger.file(LogTypeTag.info, '$fileName file not found.');
       return false;
-    } on FileSystemException catch (_, s) {
-      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
+    } on FileSystemException catch (e, s) {
+      await logger.file(LogTypeTag.error, e.message.toString(), stackTrace: s);
       return false;
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
       return false;
     }
   }
@@ -123,10 +127,10 @@ class FileNotifier extends StateNotifier<void> {
       }
 
       await logger.file(LogTypeTag.info, '$fileName file not found.');
-    } on FileSystemException catch (_, s) {
-      await logger.file(LogTypeTag.error, _.message.toString(), stackTraces: s);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+    } on FileSystemException catch (e, s) {
+      await logger.file(LogTypeTag.error, e.message.toString(), stackTrace: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, e.toString(), stackTrace: s);
     }
 
     return null;
@@ -147,9 +151,9 @@ class FileNotifier extends StateNotifier<void> {
     /// Appending script link.
     String? appenderLink;
     String baseURL =
-        read(fmAPIStateNotifier).apiMap.data!['scripts']['base_url'];
+        ref.watch(fmAPIStateNotifier).apiMap.data!['scripts']['base_url'];
 
-    FlutterMaticAPIState apiState = read(fmAPIStateNotifier);
+    FlutterMaticAPIState apiState = ref.watch(fmAPIStateNotifier);
 
     /// Check if given path is null.
     if (path != null) {
@@ -188,32 +192,36 @@ class FileNotifier extends StateNotifier<void> {
           await pathDownload(appenderLink, 'linux.sh', appDir: appDir);
           await shell.run('"$appDir\\scripts\\linux.sh" "$path"');
         }
+
         await logger.file(LogTypeTag.info,
             '$path was set to ${Platform.operatingSystem}\'s env.');
+
         return true;
-      } on OSError catch (_, s) {
+      } on OSError catch (e, s) {
         await logger.file(LogTypeTag.error, 'Path appending failed - OS Error');
-        await logger.file(LogTypeTag.error, _.message.toString(),
-            stackTraces: s);
-      } on ShellException catch (_, s) {
+        await logger.file(LogTypeTag.error, e.message.toString(),
+            stackTrace: s);
+      } on ShellException catch (e, s) {
         await logger.file(
             LogTypeTag.error, 'Path appending failed - Shell Exception');
-        await logger.file(LogTypeTag.error, _.message.toString(),
-            stackTraces: s);
-      } on FileSystemException catch (_, s) {
+        await logger.file(LogTypeTag.error, e.message.toString(),
+            stackTrace: s);
+      } on FileSystemException catch (e, s) {
         await logger.file(
             LogTypeTag.error, 'Path appending failed - File System Exception');
-        await logger.file(LogTypeTag.error, _.message.toString(),
-            stackTraces: s);
-      } catch (_, s) {
+        await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+      } catch (e, s) {
         await logger.file(
             LogTypeTag.error, 'Path appending failed - Exception');
-        await logger.file(LogTypeTag.error, _.toString(), stackTraces: s);
+        await logger.file(LogTypeTag.error, e.toString(),
+            error: e, stackTrace: s);
       }
+
       return false;
     } else {
       /// Else log a warning stating path was not provided.
       await logger.file(LogTypeTag.warning, 'Path was not provided');
+
       return false;
     }
   }
@@ -234,12 +242,11 @@ class FileNotifier extends StateNotifier<void> {
               'Response code is ${response.statusCode} for downloading script.');
         }
       });
-    } on FileSystemException catch (fileException, s) {
-      await logger.file(LogTypeTag.error, fileException.message.toString(),
-          stackTraces: s);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Exception: ${_.toString()}',
-          stackTraces: s);
+    } on FileSystemException catch (e, s) {
+      await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, e.toString(),
+          error: e, stackTrace: s);
     }
   }
 
@@ -256,7 +263,7 @@ class FileNotifier extends StateNotifier<void> {
   /// This will return `true` or `false` if successful.
   Future<bool> unzip(String source, String destination) async {
     try {
-      String drive = read(spaceStateController).drive;
+      String drive = ref.watch(spaceStateController).drive;
 
       /// Check for temporary Directory to download files
       bool destinationDir =
@@ -297,34 +304,32 @@ class FileNotifier extends StateNotifier<void> {
       await logger.file(LogTypeTag.error, 'Cleaned ${source.split('\\').last}');
 
       return true;
-    } on OSError catch (_, s) {
+    } on OSError catch (e, s) {
       await File(source).delete(recursive: true);
 
-      await logger.file(LogTypeTag.error, 'Extracting failed - OS Error: $_',
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Extracting failed.',
+          error: e, stackTrace: s);
 
-      await logger.file(LogTypeTag.error, _.message.toString());
-    } on ShellException catch (_, s) {
+      await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+    } on ShellException catch (e, s) {
       await File(source).delete(recursive: true);
 
-      await logger.file(
-          LogTypeTag.error, 'Extracting failed - Shell Exception: $_',
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Extracting failed.',
+          error: e, stackTrace: s);
 
-      await logger.file(LogTypeTag.error, _.message.toString());
-    } on FileSystemException catch (_, s) {
+      await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+    } on FileSystemException catch (e, s) {
       await File(source).delete(recursive: true);
 
-      await logger.file(
-          LogTypeTag.error, 'Extracting failed - File System Exception: $_',
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Extracting failed.',
+          error: e, stackTrace: s);
 
-      await logger.file(LogTypeTag.error, _.message.toString());
-    } catch (_, s) {
+      await logger.file(LogTypeTag.error, e.message, error: e, stackTrace: s);
+    } catch (e, s) {
       await File(source).delete(recursive: true);
 
-      await logger.file(LogTypeTag.error, 'Extracting failed - ${_.toString()}',
-          stackTraces: s);
+      await logger.file(LogTypeTag.error, 'Extracting failed.',
+          error: e, stackTrace: s);
     }
 
     return false;

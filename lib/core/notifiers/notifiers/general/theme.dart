@@ -12,9 +12,9 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 
 class ThemeNotifier extends StateNotifier<ThemeState> {
-  final Reader read;
+  final Ref ref;
 
-  ThemeNotifier(this.read) : super(ThemeState.initial());
+  ThemeNotifier(this.ref) : super(ThemeState.initial());
 
   /// [_isDarkTheme] boolean value that indicates
   /// whether the app is currently in DarkTheme mode.

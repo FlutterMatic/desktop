@@ -12,7 +12,7 @@ import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 
 Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
-  Widget _title(String title, SetUpTab tileTab) {
+  Widget headerTitle(String title, SetUpTab tileTab) {
     if (tab == tileTab) {
       return Expanded(
         child: Column(
@@ -67,12 +67,12 @@ Widget createSetUpHeader(SetUpTab tab, BuildContext context) {
             ),
             Row(
               children: <Widget>[
-                _title('Getting Started', SetUpTab.gettingStarted),
-                _title('Install Flutter', SetUpTab.installFlutter),
-                _title('Install Editor', SetUpTab.installEditor),
-                _title('Install Git', SetUpTab.installGit),
-                _title('Install Java', SetUpTab.installJava),
-                _title('Restart', SetUpTab.restart),
+                headerTitle('Getting Started', SetUpTab.gettingStarted),
+                headerTitle('Install Flutter', SetUpTab.installFlutter),
+                headerTitle('Install Editor', SetUpTab.installEditor),
+                headerTitle('Install Git', SetUpTab.installGit),
+                headerTitle('Install Java', SetUpTab.installJava),
+                headerTitle('Restart', SetUpTab.restart),
               ],
             )
           ],

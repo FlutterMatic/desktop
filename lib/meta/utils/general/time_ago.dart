@@ -9,13 +9,13 @@ String getTimeAgo(DateTime date) {
   if (days > 6) {
     return '${date.day}/${date.month}/${date.year}';
   } else if (days > 0) {
-    return '$days days ago';
+    return '$days day${days > 1 ? 's' : ''} ago';
   } else if (hours > 0) {
-    return '$hours hours ago';
+    return '$hours hour${hours > 1 ? 's' : ''} ago';
   } else if (minutes > 0) {
-    return '$minutes minutes ago';
+    return '$minutes minute${minutes > 1 ? 's' : ''} ago';
   } else if (seconds > 0) {
-    return '$seconds seconds ago';
+    return '$seconds second${seconds > 1 ? 's' : ''} ago';
   } else {
     return 'Just now';
   }

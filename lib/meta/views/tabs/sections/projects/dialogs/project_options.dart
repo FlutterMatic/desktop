@@ -133,7 +133,7 @@ class _ProjectOptionsDialogState extends State<ProjectOptionsDialog> {
                   );
                 },
               ),
-              // TODO: Support the following option:
+              // TODO: Support creating a new release of a Flutter app.
               ActionOptionsObject('Create Release', () {}),
             ],
           ),

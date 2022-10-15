@@ -42,7 +42,7 @@ Future<void> main() async {
   // window controls on Windows natively.
   await windowManager
       .waitUntilReadyToShow()
-      .then((_) => windowManager.setAsFrameless());
+      .then((_) => windowManager.setFullScreen(true));
 
   doWhenWindowReady(() {
     appWindow.minSize = const Size(750, 600);
@@ -190,9 +190,9 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
       }
 
       setState(() => _isChecking = false);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch. $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to initialize data fetch.',
+          error: e, stackTrace: s);
 
       await _hasCompletedSetup();
       setState(() => _isChecking = false);
@@ -242,7 +242,7 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
                         logger.file(
                           LogTypeTag.error,
                           'Error while building UI: ${errorDetails.exception}',
-                          stackTraces: errorDetails.stack,
+                          stackTrace: errorDetails.stack,
                         );
                         if (!kReleaseMode) {
                           return ErrorWidget(errorDetails.exception);
@@ -327,10 +327,10 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
                         if (_isChecking) {
                           return const Scaffold(
                               body: Center(child: Spinner(thickness: 2)));
-                        } else if (!completedSetup) {
-                          return const SetupScreen();
-                        } else {
+                        } else if (completedSetup) {
                           return const HomeScreen();
+                        } else {
+                          return const SetupScreen();
                         }
                       },
                     ),

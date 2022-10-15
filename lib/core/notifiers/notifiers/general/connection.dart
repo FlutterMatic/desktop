@@ -13,9 +13,9 @@ import 'package:fluttermatic/core/notifiers/models/state/general/connection.dart
 import 'package:fluttermatic/core/services/logs.dart';
 
 class ConnectionNotifier extends StateNotifier<NetworkState> {
-  final Reader read;
+  final Ref ref;
 
-  ConnectionNotifier(this.read) : super(NetworkState.initial());
+  ConnectionNotifier(this.ref) : super(NetworkState.initial());
 
   final Connectivity _connectivity = Connectivity();
 
@@ -41,14 +41,13 @@ class ConnectionNotifier extends StateNotifier<NetworkState> {
 
       _startMonitoring();
       return;
-    } on PlatformException catch (_, s) {
-      await logger.file(LogTypeTag.error,
-          'Failed to initialize connection. PlatformException: $_',
-          stackTraces: s);
-    } catch (_, s) {
-      await logger.file(LogTypeTag.error,
-          'Failed to establish initial connection: ${_.toString()}',
-          stackTraces: s);
+    } on PlatformException catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to initialize connection.',
+          error: e, stackTrace: s);
+    } catch (e, s) {
+      await logger.file(
+          LogTypeTag.error, 'Failed to establish initial connection.',
+          error: e, stackTrace: s);
     }
   }
 
@@ -94,14 +93,16 @@ class ConnectionNotifier extends StateNotifier<NetworkState> {
           await InternetAddress.lookup('www.google.com');
 
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_, s) {
-      await logger.file(LogTypeTag.error, 'SocketException: $_',
-          stackTraces: s);
+    } on SocketException catch (e, s) {
+      await logger.file(LogTypeTag.error,
+          'Something went wrong while getting connection status.',
+          error: e, stackTrace: s);
+
       return false;
-    } catch (_, s) {
-      await logger.file(
-          LogTypeTag.error, 'Failed to update connection status $_',
-          stackTraces: s);
+    } catch (e, s) {
+      await logger.file(LogTypeTag.error, 'Failed to update connection status.',
+          error: e, stackTrace: s);
+
       return false;
     }
   }

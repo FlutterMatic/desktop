@@ -40,9 +40,9 @@ class _PubPackageSearchResultTileState
       if (mounted) {
         setState(() => _pkgInfo = info);
       }
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error, 'Failed to get package info.',
-          stackTraces: s);
+          stackTrace: s);
     }
   }
 

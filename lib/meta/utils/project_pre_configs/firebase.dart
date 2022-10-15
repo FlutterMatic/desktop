@@ -90,15 +90,14 @@ class FirebasePreConfig {
         // Will now add packages to the pubspec.yaml file for the app to work
         // with Firebase.
         await shell.cd(projectPath).run('flutter pub add firebase_core');
-      } catch (_) {
-        // Will ignore if the pub add fails.
-      }
+      } catch (_) {} // Will ignore if the pub add fails.
 
       return PreConfigResponse(success: true, error: null);
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to add Android Firebase pre config: $_',
-          stackTraces: s);
+          LogTypeTag.error, 'Failed to add Android Firebase pre config.',
+          error: e, stackTrace: s);
+
       return PreConfigResponse(
           success: false, error: 'Failed to add Android Firebase pre config.');
     }
@@ -142,15 +141,14 @@ class FirebasePreConfig {
         // Will now add packages to the pubspec.yaml file for the app to work
         // with Firebase.
         await shell.cd(projectPath).run('flutter pub add firebase_core');
-      } catch (_) {
-        // Will ignore if the pub add fails.
-      }
+      } catch (_) {} // Will ignore if the pub add fails.
 
       return PreConfigResponse(success: true, error: null);
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to add iOS Firebase pre config: $_',
-          stackTraces: s);
+          LogTypeTag.error, 'Failed to add iOS Firebase pre config.',
+          error: e, stackTrace: s);
+
       return PreConfigResponse(
           success: false, error: 'Failed to add iOS Firebase pre config.');
     }
@@ -270,15 +268,14 @@ class FirebasePreConfig {
         // Will now add packages to the pubspec.yaml file for the app to work
         // with Firebase.
         await shell.cd(projectPath).run('flutter pub add firebase_core');
-      } catch (_) {
-        // Will ignore if the pub add fails.
-      }
+      } catch (_) {} // Will ignore if the pub add fails.
 
       return PreConfigResponse(success: true, error: null);
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(
-          LogTypeTag.error, 'Failed to add Web Firebase pre config: $_',
-          stackTraces: s);
+          LogTypeTag.error, 'Failed to add Web Firebase pre config.',
+          error: e, stackTrace: s);
+
       return PreConfigResponse(
           success: false, error: 'Failed to add Web Firebase pre config.');
     }

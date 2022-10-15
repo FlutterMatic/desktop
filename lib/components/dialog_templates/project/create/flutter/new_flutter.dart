@@ -4,6 +4,9 @@ import 'dart:io';
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
 import 'package:fluttermatic/app/shared_pref.dart';
@@ -22,13 +25,13 @@ import 'package:fluttermatic/components/widgets/ui/dialog_template.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/snackbar_tile.dart';
 import 'package:fluttermatic/core/notifiers/models/payloads/actions/flutter.dart';
-import 'package:fluttermatic/core/notifiers/notifiers/actions/flutter.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
 import 'package:fluttermatic/meta/utils/project_pre_configs/firebase.dart';
 import 'package:fluttermatic/meta/utils/project_pre_configs/response.dart';
 
-class NewFlutterProjectDialog extends StatefulWidget {
+class NewFlutterProjectDialog extends ConsumerStatefulWidget {
   const NewFlutterProjectDialog({Key? key}) : super(key: key);
 
   @override
@@ -36,7 +39,8 @@ class NewFlutterProjectDialog extends StatefulWidget {
       _NewFlutterProjectDialogState();
 }
 
-class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
+class _NewFlutterProjectDialogState
+    extends ConsumerState<NewFlutterProjectDialog> {
   // Input Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -111,298 +115,303 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
     return true;
   }
 
-  // Future<void> _createNewProject() async {
-  //   if (_createProjectFormKey.currentState!.validate()) {
-  //     // Name
-  //     if (_index == _NewProjectSections.projectName &&
-  //         _projectNameCondition()) {
-  //       if (!_projectPathCondition()) {
-  //         ScaffoldMessenger.of(context).clearSnackBars();
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           snackBarTile(
-  //             context,
-  //             'Please select a valid path to save project to.',
-  //             type: SnackBarType.error,
-  //           ),
-  //         );
+  Future<void> _createNewProject() async {
+    if (_createProjectFormKey.currentState!.validate()) {
+      // Name of the Flutter project.
+      if (_index == _NewProjectSections.projectName &&
+          _projectNameCondition()) {
+        if (!_projectPathCondition()) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'Please select a valid path to save project to.',
+              type: SnackBarType.error,
+            ),
+          );
 
-  //         return;
-  //       }
+          return;
+        }
 
-  //       // Make sure that this project name doesn't already exist in the
-  //       // selected path.
-  //       bool valid = _confirmDirectory();
+        // Make sure that this project name doesn't already exist in the
+        // selected path.
+        bool valid = _confirmDirectory();
 
-  //       if (valid) {
-  //         setState(() {
-  //           _nameController.text = _nameController.text.toLowerCase();
-  //           _index = _NewProjectSections.projectDescription;
-  //         });
-  //       }
-  //     }
-  //     // Description
-  //     else if (_index == _NewProjectSections.projectDescription) {
-  //       setState(() => _index = _NewProjectSections.projectOrgName);
-  //     }
-  //     // Organization Name
-  //     else if (_index == _NewProjectSections.projectOrgName &&
-  //         _validateOrgName()) {
-  //       setState(() => _index = _NewProjectSections.projectPlatforms);
-  //     }
-  //     // Platforms
-  //     else if (_index == _NewProjectSections.projectPlatforms) {
-  //       bool isValid = validatePlatformSelection(
-  //         ios: _ios,
-  //         android: _android,
-  //         web: _web,
-  //         windows: _windows,
-  //         macos: _macos,
-  //         linux: _linux,
-  //       );
+        if (valid) {
+          setState(() {
+            _nameController.text = _nameController.text.toLowerCase();
+            _index = _NewProjectSections.projectDescription;
+          });
+        }
+      }
+      // Description
+      else if (_index == _NewProjectSections.projectDescription) {
+        setState(() => _index = _NewProjectSections.projectOrgName);
+      }
+      // Organization Name
+      else if (_index == _NewProjectSections.projectOrgName &&
+          _validateOrgName()) {
+        setState(() => _index = _NewProjectSections.projectPlatforms);
+      }
+      // Platforms
+      else if (_index == _NewProjectSections.projectPlatforms) {
+        bool isValid = validatePlatformSelection(
+          ios: _ios,
+          android: _android,
+          web: _web,
+          windows: _windows,
+          macos: _macos,
+          linux: _linux,
+        );
 
-  //       if (isValid) {
-  //         setState(() => _index = _NewProjectSections.preConfigProject);
-  //       } else {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           snackBarTile(
-  //             context,
-  //             'Please select appropriate platforms.',
-  //             type: SnackBarType.error,
-  //           ),
-  //         );
-  //       }
-  //     } else if (_index == _NewProjectSections.preConfigProject) {
-  //       setState(() => _index = _NewProjectSections.projectDependencies);
-  //     } else if (_index == _NewProjectSections.projectDependencies) {
-  //       try {
-  //         // Make sure that this project name doesn't already exist in the
-  //         // selected path.
-  //         bool valid = _confirmDirectory();
+        if (isValid) {
+          setState(() => _index = _NewProjectSections.preConfigProject);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            snackBarTile(
+              context,
+              'Please select appropriate platforms.',
+              type: SnackBarType.error,
+            ),
+          );
+        }
+      } else if (_index == _NewProjectSections.preConfigProject) {
+        setState(() => _index = _NewProjectSections.projectDependencies);
+      } else if (_index == _NewProjectSections.projectDependencies) {
+        try {
+          // Make sure that this project name doesn't already exist in the
+          // selected path.
+          bool valid = _confirmDirectory();
 
-  //         if (valid) {
-  //           setState(() => _index = _NewProjectSections.creatingProject);
+          if (valid) {
+            setState(() => _index = _NewProjectSections.creatingProject);
 
-  //           NewFlutterProjectInfo projectInfo = NewFlutterProjectInfo(
-  //             projectPath: _path!,
-  //             projectName: _nameController.text,
-  //             description: _descriptionController.text,
-  //             orgName: _orgController.text,
-  //             firebaseJson: _firebaseJson,
-  //             iOS: _ios,
-  //             android: _android,
-  //             web: _web,
-  //             windows: _windows,
-  //             macos: _macos,
-  //             linux: _linux,
-  //           );
+            NewFlutterProjectInfo projectInfo = NewFlutterProjectInfo(
+              projectPath: _path!,
+              projectName: _nameController.text,
+              description: _descriptionController.text,
+              orgName: _orgController.text,
+              firebaseJson: _firebaseJson,
+              iOS: _ios,
+              android: _android,
+              web: _web,
+              windows: _windows,
+              macos: _macos,
+              linux: _linux,
+            );
 
-  //           Future<void> _deleteProject() async {
-  //             try {
-  //               Directory dir = Directory(
-  //                   '${projectInfo.projectPath}\\${projectInfo.projectName}');
-  //               await dir.delete(recursive: true);
-  //               await logger.file(LogTypeTag.warning,
-  //                   'Project has been deleted because of pre-config error during setup.');
-  //             } catch (_, s) {
-  //               await logger.file(LogTypeTag.error,
-  //                   'Error deleting project for pre-config error: $_',
-  //                   stackTraces: s);
-  //             }
+            Future<void> deleteProject() async {
+              try {
+                Directory dir = Directory(
+                    '${projectInfo.projectPath}\\${projectInfo.projectName}');
+                await dir.delete(recursive: true);
+                await logger.file(LogTypeTag.warning,
+                    'Project has been deleted because of pre-config error during setup.');
+              } catch (_, s) {
+                await logger.file(LogTypeTag.error,
+                    'Error deleting project for pre-config error.',
+                    error: _, stackTrace: s);
+              }
 
-  //             setState(() {
-  //               _index = _NewProjectSections
-  //                   .values[_NewProjectSections.values.length - 2];
-  //               _currentActivity = '';
-  //             });
-  //           }
+              setState(() {
+                _index = _NewProjectSections
+                    .values[_NewProjectSections.values.length - 2];
+                _currentActivity = '';
+              });
+            }
 
-  //           String result =
-  //               await FlutterActionsNotifier.createNewProject(projectInfo);
+            await ref
+                .watch(flutterActionsStateNotifier.notifier)
+                .createNewProject(context, projectInfo);
 
-  //           if (result == 'success') {
-  //             // Add the pre-config for Firebase Android.
-  //             if (_firebaseJson.isNotEmpty) {
-  //               setState(() =>
-  //                   _currentActivity = 'Adding Firebase Android pre-config...');
-  //               PreConfigResponse result = await FirebasePreConfig.addAndroid(
-  //                 projectPath: _path!,
-  //                 googleServicesJSON: _firebaseJson,
-  //                 project: projectInfo,
-  //               );
+            bool done = ref.watch(flutterActionsStateNotifier).error.isEmpty &&
+                !ref.watch(flutterActionsStateNotifier).loading;
 
-  //               if (!result.success) {
-  //                 await _deleteProject();
+            if (done) {
+              // Add the pre-config for Firebase Android.
+              if (_firebaseJson.isNotEmpty) {
+                setState(() =>
+                    _currentActivity = 'Adding Firebase Android pre-config...');
 
-  //                 if (mounted) {
-  //                   ScaffoldMessenger.of(context).clearSnackBars();
-  //                   ScaffoldMessenger.of(context).showSnackBar(
-  //                     snackBarTile(
-  //                       context,
-  //                       result.error ??
-  //                           'Failed to add Firebase Android config.',
-  //                       type: SnackBarType.error,
-  //                     ),
-  //                   );
-  //                 }
-  //                 return;
-  //               }
-  //             }
+                PreConfigResponse result = await FirebasePreConfig.addAndroid(
+                  projectPath: _path!,
+                  googleServicesJSON: _firebaseJson,
+                  project: projectInfo,
+                );
 
-  //             // Add the pre-config for Firebase iOS.
-  //             if (_firebasePlist.isNotEmpty) {
-  //               setState(() =>
-  //                   _currentActivity = 'Adding Firebase iOS pre-config...');
-  //               PreConfigResponse result = await FirebasePreConfig.addIOS(
-  //                 projectPath: _path!,
-  //                 googleServicesPlist: _firebasePlist,
-  //                 project: projectInfo,
-  //               );
+                if (!result.success) {
+                  await deleteProject();
 
-  //               if (!result.success) {
-  //                 await _deleteProject();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        result.error ??
+                            'Failed to add Firebase Android config.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
+                  return;
+                }
+              }
 
-  //                 if (mounted) {
-  //                   ScaffoldMessenger.of(context).clearSnackBars();
-  //                   ScaffoldMessenger.of(context).showSnackBar(
-  //                     snackBarTile(
-  //                       context,
-  //                       result.error ?? 'Failed to add Firebase iOS config.',
-  //                       type: SnackBarType.error,
-  //                     ),
-  //                   );
-  //                 }
-  //                 return;
-  //               }
-  //             }
+              // Add the pre-config for Firebase iOS.
+              if (_firebasePlist.isNotEmpty) {
+                setState(() =>
+                    _currentActivity = 'Adding Firebase iOS pre-config...');
+                PreConfigResponse result = await FirebasePreConfig.addIOS(
+                  projectPath: _path!,
+                  googleServicesPlist: _firebasePlist,
+                  project: projectInfo,
+                );
 
-  //             // Add the pre-config for Firebase Web.
-  //             if (_firebaseWebConfig.isNotEmpty) {
-  //               setState(() =>
-  //                   _currentActivity = 'Adding Firebase web pre-config...');
-  //               PreConfigResponse result = await FirebasePreConfig.addWeb(
-  //                 projectPath: _path!,
-  //                 firebaseConfig: _firebaseWebConfig,
-  //                 project: projectInfo,
-  //               );
+                if (!result.success) {
+                  await deleteProject();
 
-  //               if (!result.success) {
-  //                 await _deleteProject();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        result.error ?? 'Failed to add Firebase iOS config.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
+                  return;
+                }
+              }
 
-  //                 if (mounted) {
-  //                   ScaffoldMessenger.of(context).clearSnackBars();
-  //                   ScaffoldMessenger.of(context).showSnackBar(
-  //                     snackBarTile(
-  //                       context,
-  //                       result.error ?? 'Failed to add Firebase Web config.',
-  //                       type: SnackBarType.error,
-  //                     ),
-  //                   );
-  //                 }
-  //                 return;
-  //               }
-  //             }
+              // Add the pre-config for Firebase Web.
+              if (_firebaseWebConfig.isNotEmpty) {
+                setState(() =>
+                    _currentActivity = 'Adding Firebase web pre-config...');
+                PreConfigResponse result = await FirebasePreConfig.addWeb(
+                  projectPath: _path!,
+                  firebaseConfig: _firebaseWebConfig,
+                  project: projectInfo,
+                );
 
-  //             List<String> failedDependencies = <String>[];
+                if (!result.success) {
+                  await deleteProject();
 
-  //             // Add the normal dependencies to the project.
-  //             if (_dependencies.isNotEmpty) {
-  //               for (String dependency in _dependencies) {
-  //                 setState(() => _currentActivity =
-  //                     'Adding $dependency to dependencies...');
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBarTile(
+                        context,
+                        result.error ?? 'Failed to add Firebase Web config.',
+                        type: SnackBarType.error,
+                      ),
+                    );
+                  }
+                  return;
+                }
+              }
 
-  //                 bool result = await addDependencyToProject(
-  //                   path: '${_path!}\\${_nameController.text}',
-  //                   dependency: dependency,
-  //                   isDev: false,
-  //                   isDart: false,
-  //                 );
+              List<String> failedDependencies = <String>[];
 
-  //                 if (!result) {
-  //                   failedDependencies.add(dependency);
-  //                 }
-  //               }
-  //             }
+              // Add the normal dependencies to the project.
+              if (_dependencies.isNotEmpty) {
+                for (String dependency in _dependencies) {
+                  setState(() => _currentActivity =
+                      'Adding $dependency to dependencies...');
 
-  //             // Add the dev dependencies to the project.
-  //             if (_devDependencies.isNotEmpty) {
-  //               for (String dev in _devDependencies) {
-  //                 setState(() =>
-  //                     _currentActivity = 'Adding $dev to dev dependencies...');
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
+                    dependency: dependency,
+                    isDev: false,
+                    isDart: false,
+                  );
 
-  //                 bool result = await addDependencyToProject(
-  //                   path: '${_path!}\\${_nameController.text}',
-  //                   dependency: dev,
-  //                   isDev: true,
-  //                   isDart: false,
-  //                 );
+                  if (!result) {
+                    failedDependencies.add(dependency);
+                  }
+                }
+              }
 
-  //                 if (!result) {
-  //                   failedDependencies.add(dev);
-  //                 }
-  //               }
-  //             }
+              // Add the dev dependencies to the project.
+              if (_devDependencies.isNotEmpty) {
+                for (String dev in _devDependencies) {
+                  setState(() =>
+                      _currentActivity = 'Adding $dev to dev dependencies...');
 
-  //             if (failedDependencies.isNotEmpty) {
-  //               await logger.file(LogTypeTag.warning,
-  //                   'Created new Flutter project but failed to add the following dependencies: ${failedDependencies.join(', ')}');
-  //             }
+                  bool result = await addDependencyToProject(
+                    path: '${_path!}\\${_nameController.text}',
+                    dependency: dev,
+                    isDev: true,
+                    isDart: false,
+                  );
 
-  //             if (mounted) {
-  //               Navigator.pop(context);
-  //             }
+                  if (!result) {
+                    failedDependencies.add(dev);
+                  }
+                }
+              }
 
-  //             await showDialog(
-  //               context: context,
-  //               builder: (_) => ProjectCreatedDialog(
-  //                 projectName: _nameController.text,
-  //                 projectPath: '${_path!}\\${_nameController.text}',
-  //               ),
-  //             );
-  //           } else {
-  //             setState(() {
-  //               _index = _NewProjectSections
-  //                   .values[_NewProjectSections.values.length - 2];
-  //               _currentActivity = '';
-  //             });
+              if (failedDependencies.isNotEmpty) {
+                await logger.file(LogTypeTag.warning,
+                    'Created new Flutter project but failed to add the following dependencies: ${failedDependencies.join(', ')}');
+              }
 
-  //             if (mounted) {
-  //               ScaffoldMessenger.of(context).clearSnackBars();
-  //               ScaffoldMessenger.of(context).showSnackBar(
-  //                 snackBarTile(
-  //                   context,
-  //                   result,
-  //                   type: SnackBarType.error,
-  //                 ),
-  //               );
-  //             }
-  //           }
+              if (mounted) {
+                Navigator.pop(context);
+              }
 
-  //           return;
-  //         }
-  //       } catch (_, s) {
-  //         await logger.file(
-  //             LogTypeTag.error, 'Failed to create new Flutter project: $_',
-  //             stackTraces: s);
+              await showDialog(
+                context: context,
+                builder: (_) => ProjectCreatedDialog(
+                  projectName: _nameController.text,
+                  projectPath: '${_path!}\\${_nameController.text}',
+                ),
+              );
+            } else {
+              setState(() {
+                _index = _NewProjectSections
+                    .values[_NewProjectSections.values.length - 2];
+                _currentActivity = '';
+              });
 
-  //         if (mounted) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             snackBarTile(
-  //               context,
-  //               'Failed to create project. Please file an issue.',
-  //               type: SnackBarType.error,
-  //             ),
-  //           );
-  //         }
+              if (mounted) {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  snackBarTile(
+                    context,
+                    ref.watch(flutterActionsStateNotifier).error,
+                    type: SnackBarType.error,
+                  ),
+                );
+              }
+            }
 
-  //         setState(() {
-  //           _index = _NewProjectSections
-  //               .values[_NewProjectSections.values.length - 2];
-  //           _currentActivity = '';
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
+            return;
+          }
+        } catch (_, s) {
+          await logger.file(
+              LogTypeTag.error, 'Failed to create new Flutter project.',
+              error: _, stackTrace: s);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              snackBarTile(
+                context,
+                'Failed to create project. Please file an issue.',
+                type: SnackBarType.error,
+              ),
+            );
+          }
+
+          setState(() {
+            _index = _NewProjectSections
+                .values[_NewProjectSections.values.length - 2];
+            _currentActivity = '';
+          });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -525,8 +534,7 @@ class _NewFlutterProjectDialogState extends State<NewFlutterProjectDialog> {
                   const Spacer(),
                   RectangleButton(
                     radius: BorderRadius.circular(5),
-                    onPressed: () {},
-                    // onPressed: _createNewProject, // TODO: Implement.
+                    onPressed: _createNewProject,
                     width: 120,
                     child: Text(
                       _index ==

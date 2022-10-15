@@ -104,6 +104,7 @@ class _SetUpGettingStartedState extends ConsumerState<SetUpGettingStarted> {
           if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
+
             result = 'error';
             return;
           }
@@ -125,6 +126,7 @@ class _SetUpGettingStartedState extends ConsumerState<SetUpGettingStarted> {
           if (_totalAttempts == _options.maxAttempts && mounted) {
             await logger.file(LogTypeTag.info,
                 'Couldn\'t initialize for setup and attempted to fetch $_totalAttempts times.');
+
             result = 'error';
             return;
           }
@@ -151,10 +153,11 @@ class _SetUpGettingStartedState extends ConsumerState<SetUpGettingStarted> {
       }
 
       return result;
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
-          'Couldn\'t request to make FlutterMatic API calls initially for setup. $_',
-          stackTraces: s);
+          'Couldn\'t request to make FlutterMatic API calls initially for setup.',
+          error: e, stackTrace: s);
+
       return 'error';
     }
   }

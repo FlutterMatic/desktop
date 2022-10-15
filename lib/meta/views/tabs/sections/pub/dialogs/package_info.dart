@@ -49,10 +49,10 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
       await _pubClient
           .packageOptions(widget.pkgInfo.name)
           .then((PackageOptions value) => setState(() => _pkgOptions = value));
-    } catch (_, s) {
+    } catch (e, s) {
       await logger.file(LogTypeTag.error,
           'Failed to fetch package options for package: ${widget.pkgInfo.name}',
-          stackTraces: s);
+          stackTrace: s);
 
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -240,15 +240,6 @@ class _PubPackageDialogState extends State<PubPackageDialog> {
                                     'Unknown Publisher',
                               ),
                             ),
-                            HSeparators.small(),
-                            // Shows verified icon if the publisher is verified.
-                            // TODO: Check if the publisher is verified first.
-                            if (1 == 2)
-                              const Tooltip(
-                                message: 'Verified Publisher',
-                                child: Icon(Icons.verified_rounded,
-                                    size: 18, color: kGreenColor),
-                              ),
                           ],
                         ),
                       ),
