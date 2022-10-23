@@ -1,14 +1,15 @@
-// 📦 Package imports:
+// 🎯 Dart imports:
 import 'dart:async';
 import 'dart:collection';
 
+// 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
-import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:pub_api_client/pub_api_client.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/core/models/projects.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
+import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/tabs/sections/pub/models/pkg_data.dart';
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';

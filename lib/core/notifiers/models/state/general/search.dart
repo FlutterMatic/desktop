@@ -1,3 +1,4 @@
+// 🌎 Project imports:
 import 'package:fluttermatic/meta/views/workflows/models/workflow.dart';
 
 class AppSearchState {

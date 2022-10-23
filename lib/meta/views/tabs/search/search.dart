@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
-import 'package:fluttermatic/core/notifiers/notifiers/general/search.dart';
 import 'package:path_provider/path_provider.dart';
 
 // 🌎 Project imports:
@@ -16,8 +14,10 @@ import 'package:fluttermatic/components/widgets/buttons/rectangle_button.dart';
 import 'package:fluttermatic/components/widgets/ui/load_activity_msg.dart';
 import 'package:fluttermatic/components/widgets/ui/round_container.dart';
 import 'package:fluttermatic/components/widgets/ui/spinner.dart';
+import 'package:fluttermatic/core/notifiers/models/state/general/search.dart';
 import 'package:fluttermatic/core/notifiers/models/state/general/theme.dart';
 import 'package:fluttermatic/core/notifiers/notifiers/general/notifications.dart';
+import 'package:fluttermatic/core/notifiers/notifiers/general/search.dart';
 import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/views/dialogs/notifications/notification_view.dart';
