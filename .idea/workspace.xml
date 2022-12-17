@@ -6,63 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="c65604cf-83e9-4665-9318-f8c4a3058e61" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.metadata" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fluttermatic_desktop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/fluttermatic_desktop.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/app/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/app/constants.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/bin/flutter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/bin/flutter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/components/dialog_templates/flutter/switch.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/components/dialog_templates/flutter/switch.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/components/dialog_templates/other/install_tool.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/components/dialog_templates/other/install_tool.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/components/dialog_templates/settings/sections/projects.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/components/dialog_templates/settings/sections/projects.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/components/dialog_templates/settings/sections/updates.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/components/dialog_templates/settings/sections/updates.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/components/widgets/buttons/action_options.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/components/widgets/buttons/action_options.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/flutter_sdk.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/fluttermatic.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/git.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/paths.model.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/progress.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/version.model.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/models/vscode.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/models/state/api/flutter_sdk.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/models/state/api/flutter_sdk.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/models/state/api/fm_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/models/state/api/fm_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/models/state/api/vscode_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/models/state/api/vscode_api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/models/state/checks/check_services.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/models/state/general/space.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/models/state/general/space.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/api/flutter_sdk.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/api/flutter_sdk.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/api/fluttermatic.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/api/fluttermatic.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/api/vscode.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/api/vscode.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/adb.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/adb.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/git.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/git.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/java.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/java.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/studio.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/checks/studio.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/notifiers/general/space.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/notifiers/general/space.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/notifiers/out.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/notifiers/out.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/utils/general/clear_old_logs.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/utils/general/clear_old_logs.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/utils/general/extract_pubspec.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/utils/general/extract_pubspec.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/utils/search/projects_search.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/utils/search/workflow_search.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/utils/search/workflow_search.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/dialogs/drive_error.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/dialogs/drive_error.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/setup/sections/get_started.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/setup/sections/get_started.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/search/search.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/search/search.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/dart_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/dart_version.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/flutter_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/flutter_version.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/git_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/git_version.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/java_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/java_version.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/studio_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/studio_version.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/vsc_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/home/version_tiles/vsc_version.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/dialogs/delete_project.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/dialogs/delete_project.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/dialogs/project_options.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/dialogs/project_options.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/elements/project_tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/elements/project_tile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/models/projects.services.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/projects.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/projects.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/pub/models/pkg_data.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/pub/models/pkg_data.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/workflows/models/workflows.services.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/workflows/models/workflows.services.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/workflows/workflow.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/sections/workflows/workflow.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meta/views/workflows/startup.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/workflows/startup.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/loc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meta/utils/general/check_new_version.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/utils/general/check_new_version.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meta/utils/project_pre_configs/firebase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/utils/project_pre_configs/firebase.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/components/horizontal_axis.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meta/views/tabs/components/horizontal_axis.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/projects/elements/search_result_tile.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/pub/elements/search_result_tile.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meta/views/tabs/sections/workflows/models/workflows.services.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/windows/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/windows/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/windows/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/windows/flutter/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/windows/runner/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/CMakeLists.txt" afterDir="false" />
@@ -70,10 +24,12 @@
       <change beforePath="$PROJECT_DIR$/windows/runner/flutter_window.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/flutter_window.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/windows/runner/flutter_window.h" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/flutter_window.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/windows/runner/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/runner/resources/flutter_fluttermatic.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/runner/run_loop.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/runner/run_loop.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/runner/resource.h" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/resource.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/runner/runner.exe.manifest" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/runner.exe.manifest" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/windows/runner/utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/utils.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/runner/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/runner/win32_window.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/win32_window.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/runner/win32_window.h" beforeDir="false" afterPath="$PROJECT_DIR$/windows/runner/win32_window.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

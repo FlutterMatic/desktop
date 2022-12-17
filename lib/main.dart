@@ -6,10 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:window_manager/window_manager.dart';
 
 // 🌎 Project imports:
 import 'package:fluttermatic/app/constants.dart';
@@ -24,7 +22,6 @@ import 'package:fluttermatic/core/notifiers/out.dart';
 import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/general/app_theme.dart';
 import 'package:fluttermatic/meta/utils/general/shared_pref.dart';
-import 'package:fluttermatic/meta/views/setup/components/windows_controls.dart';
 import 'package:fluttermatic/meta/views/tabs/home.dart';
 import 'meta/views/setup/screens/setup_view.dart';
 
@@ -38,19 +35,6 @@ Future<void> main() async {
   // Initialize shared preference.
   await SharedPref.init();
 
-  // The bitsdojo window plugin fails to compile when trying to hide the
-  // window controls on Windows natively.
-  await windowManager
-      .waitUntilReadyToShow()
-      .then((_) => windowManager.setFullScreen(true));
-
-  doWhenWindowReady(() {
-    appWindow.minSize = const Size(750, 600);
-    appWindow.alignment = Alignment.center;
-    appWindow.title = 'FlutterMatic';
-    appWindow.show();
-    appWindow.maximize();
-  });
   // Wrapped with a restart widget to allow restarting FlutterMatic from
   // anywhere in the app without restarting Flutter engine.
   runApp(const RestartWidget(child: ProviderScope(child: FlutterMaticMain())));
@@ -218,125 +202,109 @@ class _FlutterMaticMainState extends ConsumerState<FlutterMaticMain> {
             color: themeState.darkTheme
                 ? AppTheme.darkBackgroundColor
                 : AppTheme.lightBackgroundColor,
-            child: Column(
-              children: <Widget>[
-                WindowTitleBarBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(child: MoveWindow()),
-                      if (Platform.isWindows) windowControls(context),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: MaterialApp(
-                    theme: AppTheme.lightTheme,
-                    darkTheme: AppTheme.darkTheme,
-                    themeMode:
-                        themeState.darkTheme ? ThemeMode.dark : ThemeMode.light,
-                    debugShowCheckedModeBanner: false,
-                    builder: (_, Widget? child) {
-                      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                        // Log the render error to the log file so we can see it.
-                        logger.file(
-                          LogTypeTag.error,
-                          'Error while building UI: ${errorDetails.exception}',
-                          stackTrace: errorDetails.stack,
-                        );
-                        if (!kReleaseMode) {
-                          return ErrorWidget(errorDetails.exception);
-                        } else {
-                          return Scaffold(
-                            body: Material(
-                              color: Colors.transparent,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      const Text(
-                                        'Rendering Error - Restart App',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      VSeparators.normal(),
-                                      SelectableText(
-                                          'Error: ${errorDetails.exception}'),
-                                      VSeparators.normal(),
-                                      informationWidget(
-                                          'Please report this error by generating report in settings and filing a bug report on GitHub. To do that, close and reopen the app, go to Settings > GitHub > Create Issue.'),
-                                      VSeparators.normal(),
-                                      Expanded(
-                                        child: SingleChildScrollView(
-                                          child: SelectableText(
-                                              'StackTrace: ${errorDetails.stack}'),
-                                        ),
-                                      ),
-                                    ],
+            child: MaterialApp(
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode:
+                  themeState.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              builder: (_, Widget? child) {
+                ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                  // Log the render error to the log file so we can see it.
+                  logger.file(
+                    LogTypeTag.error,
+                    'Error while building UI: ${errorDetails.exception}',
+                    stackTrace: errorDetails.stack,
+                  );
+                  if (!kReleaseMode) {
+                    return ErrorWidget(errorDetails.exception);
+                  } else {
+                    return Scaffold(
+                      body: Material(
+                        color: Colors.transparent,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  'Rendering Error - Restart App',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }
-                      };
-
-                      return Stack(
-                        children: <Widget>[
-                          Center(child: child),
-                          if (allowDevControls)
-                            Positioned(
-                              bottom: 10,
-                              right: 10,
-                              child: SquareButton(
-                                color: Colors.transparent,
-                                hoverColor: Colors.transparent,
-                                icon: Icon(
-                                  themeState.darkTheme
-                                      ? Icons.dark_mode
-                                      : Icons.light_mode,
-                                  color: themeState.darkTheme
-                                      ? Colors.white
-                                      : Colors.black,
+                                VSeparators.normal(),
+                                SelectableText(
+                                    'Error: ${errorDetails.exception}'),
+                                VSeparators.normal(),
+                                informationWidget(
+                                    'Please report this error by generating report in settings and filing a bug report on GitHub. To do that, close and reopen the app, go to Settings > GitHub > Create Issue.'),
+                                VSeparators.normal(),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: SelectableText(
+                                        'StackTrace: ${errorDetails.stack}'),
+                                  ),
                                 ),
-                                onPressed: () {
-                                  themeNotifier.updateTheme(themeState.darkTheme
-                                      ? Theme.of(context).brightness !=
-                                          Brightness.light
-                                      : Theme.of(context).brightness ==
-                                          Brightness.light);
-                                },
-                              ),
+                              ],
                             ),
-                        ],
-                      );
-                    },
-                    home: Consumer(
-                      builder: (_, ref, __) {
-                        // Make sure this is an official build of the app.
-                        if (appBuild.isEmpty || appVersion.isEmpty) {
-                          return const UnofficialReleaseDialog();
-                        }
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                };
 
-                        if (_isChecking) {
-                          return const Scaffold(
-                              body: Center(child: Spinner(thickness: 2)));
-                        } else if (completedSetup) {
-                          return const HomeScreen();
-                        } else {
-                          return const SetupScreen();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                return Stack(
+                  children: <Widget>[
+                    Center(child: child),
+                    if (allowDevControls)
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: SquareButton(
+                          color: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          icon: Icon(
+                            themeState.darkTheme
+                                ? Icons.dark_mode
+                                : Icons.light_mode,
+                            color: themeState.darkTheme
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          onPressed: () {
+                            themeNotifier.updateTheme(themeState.darkTheme
+                                ? Theme.of(context).brightness !=
+                                    Brightness.light
+                                : Theme.of(context).brightness ==
+                                    Brightness.light);
+                          },
+                        ),
+                      ),
+                  ],
+                );
+              },
+              home: Consumer(
+                builder: (_, ref, __) {
+                  // Make sure this is an official build of the app.
+                  if (appBuild.isEmpty || appVersion.isEmpty) {
+                    return const UnofficialReleaseDialog();
+                  }
+
+                  if (_isChecking) {
+                    return const Scaffold(
+                        body: Center(child: Spinner(thickness: 2)));
+                  } else if (completedSetup) {
+                    return const HomeScreen();
+                  } else {
+                    return const SetupScreen();
+                  }
+                },
+              ),
             ),
           ),
         );

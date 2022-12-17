@@ -39,6 +39,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -151,7 +152,7 @@ class _HorizontalAxisViewState extends State<HorizontalAxisView> {
                       opacity: _hoveringOnHiddenTile ? 1 : 0,
                       duration: const Duration(milliseconds: 100),
                       child: const Text(
-                        'Double tap to expand',
+                        'Double click to expand',
                         maxLines: 1,
                         style: TextStyle(color: Colors.grey),
                       ),

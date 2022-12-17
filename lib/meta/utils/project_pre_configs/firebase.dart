@@ -9,6 +9,8 @@ import 'package:fluttermatic/core/services/logs.dart';
 import 'package:fluttermatic/meta/utils/project_pre_configs/response.dart';
 
 class FirebasePreConfig {
+  static const String firebaseClassPathVersion = '4.3.10';
+
   /// Will add all the necessary firebase services to the app for Android.
   /// Provide the project path and the Firebase Google Services JSON parsed
   /// as [Map<String, dynamic>]
@@ -39,7 +41,7 @@ class FirebasePreConfig {
       //   ...
       //   dependencies {
       //   // ... adds the following line:
-      //   classpath 'com.google.gms:google-services:4.3.10'  // Google Services plugin
+      //   classpath 'com.google.gms:google-services:_version_'  // Google Services plugin
       // }
       //   ...
       List<String> buildGradle =
@@ -53,7 +55,7 @@ class FirebasePreConfig {
 
         if (buildGradle[i].trim().startsWith('dependencies {')) {
           newBuildGradle.add(
-              '${' ' * 8}classpath \'com.google.gms:google-services:4.3.10\'  // Google Services plugin');
+              '${' ' * 8}classpath \'com.google.gms:google-services:$firebaseClassPathVersion\'  // Google Services plugin');
         }
       }
 
